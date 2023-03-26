@@ -3,9 +3,16 @@
     "RoverControlApp": {
       "commandName": "Project"
     },
-    "UseThisBoii": {
+    "GDE_Wisniax": {
       "commandName": "Executable",
       "executablePath": "C:\\Users\\Kuba\\Downloads\\Godot_v4.0.1-stable_mono_win64\\Godot_v4.0.1-stable_mono_win64.exe",
+      "commandLineArgs": "--path . --verbose",
+      "workingDirectory": ".",
+      "nativeDebugging": true
+    },
+    "GDE_Alvaro": {
+      "commandName": "Executable",
+      "executablePath": "D:\\GoDot\\Godot_v4.0.1-stable_mono_win64\\Godot_v4.0.1-stable_mono_win64.exe",
       "commandLineArgs": "--path . --verbose",
       "workingDirectory": ".",
       "nativeDebugging": true

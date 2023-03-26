@@ -4,6 +4,6 @@
     <DebuggerFlavor>ProjectDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup>
-    <ActiveDebugProfile>UseThisBoii</ActiveDebugProfile>
+    <ActiveDebugProfile>GDE_Alvaro</ActiveDebugProfile>
   </PropertyGroup>
 </Project>
