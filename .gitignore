@@ -8,6 +8,7 @@
 
 # User-specific files
 *.rsuser
+/.vs/RoverControlApp/v17/.suo
 *.suo
 *.user
 *.userosscache
