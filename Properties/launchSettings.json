@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "RoverControlApp": {
+      "commandName": "Project"
+    },
+    "UseThisBoii": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\Kuba\\Downloads\\Godot_v4.0.1-stable_mono_win64\\Godot_v4.0.1-stable_mono_win64.exe",
+      "commandLineArgs": "--path . --verbose",
+      "workingDirectory": ".",
+      "nativeDebugging": true
+    }
+  }
+}
