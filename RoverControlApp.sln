@@ -1,12 +1,21 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoverControlApp", "RoverControlApp.csproj", "{34EB4E76-4C5A-42AF-8108-53D2843B7C8E}"
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoverControlApp", "RoverControlApp.csproj", "{34EB4E76-4C5A-42AF-8108-53D2843B7C8E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1AFB70FB-1B6C-4982-B29C-487E650C260D} = {1AFB70FB-1B6C-4982-B29C-487E650C260D}
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OnvifCameraControlTest", "OnvifCameraControlTest\OnvifCameraControlTest.csproj", "{1AFB70FB-1B6C-4982-B29C-487E650C260D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-	Debug|Any CPU = Debug|Any CPU
-	ExportDebug|Any CPU = ExportDebug|Any CPU
-	ExportRelease|Any CPU = ExportRelease|Any CPU
+		Debug|Any CPU = Debug|Any CPU
+		ExportDebug|Any CPU = ExportDebug|Any CPU
+		ExportRelease|Any CPU = ExportRelease|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{34EB4E76-4C5A-42AF-8108-53D2843B7C8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -15,5 +24,21 @@ Global
 		{34EB4E76-4C5A-42AF-8108-53D2843B7C8E}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
 		{34EB4E76-4C5A-42AF-8108-53D2843B7C8E}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
 		{34EB4E76-4C5A-42AF-8108-53D2843B7C8E}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+		{34EB4E76-4C5A-42AF-8108-53D2843B7C8E}.Release|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{34EB4E76-4C5A-42AF-8108-53D2843B7C8E}.Release|Any CPU.Build.0 = ExportRelease|Any CPU
+		{1AFB70FB-1B6C-4982-B29C-487E650C260D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AFB70FB-1B6C-4982-B29C-487E650C260D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AFB70FB-1B6C-4982-B29C-487E650C260D}.ExportDebug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AFB70FB-1B6C-4982-B29C-487E650C260D}.ExportDebug|Any CPU.Build.0 = Debug|Any CPU
+		{1AFB70FB-1B6C-4982-B29C-487E650C260D}.ExportRelease|Any CPU.ActiveCfg = Release|Any CPU
+		{1AFB70FB-1B6C-4982-B29C-487E650C260D}.ExportRelease|Any CPU.Build.0 = Release|Any CPU
+		{1AFB70FB-1B6C-4982-B29C-487E650C260D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AFB70FB-1B6C-4982-B29C-487E650C260D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F0F73664-8C2A-473A-8AE4-A4A3995F15EE}
 	EndGlobalSection
 EndGlobal
