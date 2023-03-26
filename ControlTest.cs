@@ -18,6 +18,7 @@ public partial class ControlTest : Control
 		if (passeEvent is not InputEventKey eventKey) return;
 		if (!eventKey.Pressed) return;
 
+		/*
 		switch (eventKey.Keycode)
 		{
 			case (int)Key.Up:
@@ -45,6 +46,7 @@ public partial class ControlTest : Control
 				camera.MoveStop();
 				break;
 		}
+		*/
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
