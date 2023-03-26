@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.ServiceModel;
 using System.Threading.Tasks;
 using Onvif;
 
@@ -10,12 +11,23 @@ public class OnvifCameraController
 	//private readonly PTZClient _ptzClient;
 	//private readonly PTZNode _ptzNode;
 	//private readonly PTZStatus _ptzStatus;
+	public CommunicationState State { get; }
 	private OnvifAgent? Agent;
 
 	public OnvifCameraController(string cameraUrl, string username, string password)
 	{
-		Agent = new OnvifAgent(cameraUrl, username, password);
+		try
+		{
+			Agent = new OnvifAgent(cameraUrl, username, password);
+			State = Agent.Device.Device.State;
+		}
+		catch (Exception e)
+		{
+			Agent = null;
+			State = CommunicationState.Faulted;
+		}
 	}
+
 
 	public void MoveLeft()
 	{
@@ -36,7 +48,7 @@ public class OnvifCameraController
 	{
 		Agent?.Ptz.MoveUp();
 	}
-	
+
 	public void MoveStop()
 	{
 		Agent?.Ptz.Stop();
@@ -57,11 +69,5 @@ public class OnvifCameraController
 		Agent?.Ptz.ZoomOut();
 	}
 
-	public void EnableCameraKeybindings()
-	{
-		// q: How to enable the camera keybindings?
-	}
-	//witaj
-	//Witam :)
 
 }

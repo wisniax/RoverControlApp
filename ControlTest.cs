@@ -1,3 +1,4 @@
+using System.ServiceModel;
 using Godot;
 using OnvifCameraControlTest;
 
@@ -11,42 +12,19 @@ public partial class ControlTest : Control
 	public override void _Ready()
 	{
 		camera = new OnvifCameraController("placeholder", "admin", "admin");
-	}
+		GD.Print(camera.State == CommunicationState.Opened ? "Camera is connected" : "Camera is not connected");
 
-	public override void _Input(InputEvent passeEvent)
-	{
-		if (passeEvent is not InputEventKey eventKey) return;
-		if (!eventKey.Pressed) return;
+		KeyShow.OnHKeyPressed += () => GD.Print("TEST");
 
-		/*
-		switch (eventKey.Keycode)
-		{
-			case (int)Key.Up:
-				camera.MoveUp();
-				break;
-			case (int)KeyList.Down:
-				camera.MoveDown();
-				break;
-			case (int)KeyList.Left:
-				camera.MoveLeft();
-				break;
-			case (int)KeyList.Right:
-				camera.MoveRight();
-				break;
-			case (int)KeyList.PageUp:
-				camera.MoveUp();
-				break;
-			case (int)KeyList.PageDown:
-				camera.MoveDown();
-				break;
-			case (int)KeyList.Home:
-				camera.MoveHome();
-				break;
-			case (int)KeyList.End:
-				camera.MoveStop();
-				break;
-		}
-		*/
+		KeyShow.OnUpArrowPressed += camera.MoveUp;
+		KeyShow.OnRightArrowPressed += camera.MoveRight;
+		KeyShow.OnDownArrowPressed += camera.MoveDown;
+		KeyShow.OnLeftArrowPressed += camera.MoveLeft;
+		KeyShow.OnHKeyPressed += camera.GotoHomePosition;
+		KeyShow.OnAddKeyPressed += camera.ZoomIn;
+		KeyShow.OnSubtractKeyPressed += camera.ZoomOut;
+		KeyShow.OnKeyReleased += camera.MoveStop;
+
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
