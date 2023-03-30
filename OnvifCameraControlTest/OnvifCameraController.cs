@@ -1,72 +1,97 @@
 ﻿using System;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.ServiceModel;
 using System.Threading.Tasks;
-using Onvif;
+using Onvif.Core;
+using Onvif.Core.Client;
+using Onvif.Core.Client.Common;
 
 namespace OnvifCameraControlTest;
-
+/// <summary>
+/// Wrapper class to rename more consistently Onvif.Core features that will be used throught out this solution.
+/// </summary>
 public class OnvifCameraController
 {
-	//private readonly PTZClient _ptzClient;
-	//private readonly PTZNode _ptzNode;
-	//private readonly PTZStatus _ptzStatus;
-	public CommunicationState State { get; }
-	private OnvifAgent? Agent;
+	public CommunicationState State { get; private set; }
+	private Camera? _agent;
 
 	public OnvifCameraController(string cameraUrl, string username, string password)
 	{
-		try
+		var task = Task.Run(() => ConnectToCamera(cameraUrl, username, password));
+
+		_agent = task.Wait(TimeSpan.FromSeconds(10)) ? task.Result : null;
+		State = _agent == null ? CommunicationState.Opening : CommunicationState.Faulted;
+	}
+
+	private Camera? ConnectToCamera(string cameraUrl, string username, string password)
+	{
+		return Camera.Create(new Account(cameraUrl, username, password), ex =>
 		{
-			Agent = new OnvifAgent(cameraUrl, username, password);
-			State = Agent.Device.Device.State;
-		}
-		catch (Exception e)
-		{
-			Agent = null;
 			State = CommunicationState.Faulted;
-		}
+
+		});
 	}
 
-
-	public void MoveLeft()
+	public async void MoveLeft()
 	{
-		Agent?.Ptz.MoveRight();
+		var vector2 = new PTZVector { PanTilt = new Vector2D { x = 1f } };
+		var speed2 = new PTZSpeed { PanTilt = new Vector2D { x = 1f, y = 1f } };
+		await _agent.MoveAsync(MoveType.Relative, vector2, speed2, 0);
 	}
 
-	public void MoveRight()
+	public async void MoveRight()
 	{
-		Agent?.Ptz.MoveLeft();
+		var vector1 = new PTZVector { PanTilt = new Vector2D { x = -1f } };
+		var speed1 = new PTZSpeed { PanTilt = new Vector2D { x = 1f, y = 1f } };
+		await _agent.MoveAsync(MoveType.Relative, vector1, speed1, 0);
 	}
 
-	public void MoveUp()
+	public async void MoveUp()
 	{
-		Agent?.Ptz.MoveDown();
+		var vector4 = new PTZVector { PanTilt = new Vector2D { y = 1f } };
+		var speed4 = new PTZSpeed { PanTilt = new Vector2D { x = 1f, y = 1f } };
+		await _agent.MoveAsync(MoveType.Relative, vector4, speed4, 0);
 	}
 
-	public void MoveDown()
+	public async void MoveDown()
 	{
-		Agent?.Ptz.MoveUp();
+		var vector3 = new PTZVector { PanTilt = new Vector2D { y = -1f } };
+		var speed3 = new PTZSpeed { PanTilt = new Vector2D { x = 1f, y = 1f } };
+		await _agent.MoveAsync(MoveType.Relative, vector3, speed3, 0);
 	}
 
-	public void MoveStop()
+	public async void MoveStop()
 	{
-		Agent?.Ptz.Stop();
+		if (_agent == null) return;
+		await _agent?.Ptz.StopAsync(_agent.Profile.token, true, false)!;
 	}
 
-	public void GotoHomePosition()
+	public async void GotoHomePosition()
 	{
-		Agent?.Ptz.GotoHomePosition();
+		if (_agent == null) return;
+		var speed = new PTZSpeed { PanTilt = new Vector2D { x = 1f, y = 1f } };
+		await _agent?.Ptz.GotoHomePositionAsync(_agent.Profile.token, speed)!;
 	}
 
-	public void ZoomIn()
+	public async void ZoomIn()
 	{
-		Agent?.Ptz.ZoomIn();
+		var vector2 = new PTZVector { Zoom = new Vector1D { x = 1f } };
+		var speed2 = new PTZSpeed { Zoom = new Vector1D { x = 1f } };
+		await _agent.MoveAsync(MoveType.Relative, vector2, speed2, 0);
 	}
 
-	public void ZoomOut()
+	public async void ZoomOut()
 	{
-		Agent?.Ptz.ZoomOut();
+		var vector2 = new PTZVector { Zoom = new Vector1D { x = -1f } };
+		var speed2 = new PTZSpeed { Zoom = new Vector1D { x = 1f } };
+		await _agent.MoveAsync(MoveType.Relative, vector2, speed2, 0);
+	}
+
+	public async void ZoomStop()
+	{
+		if (_agent == null) return;
+		await _agent?.Ptz.StopAsync(_agent.Profile.token, false, true)!;
 	}
 
 
