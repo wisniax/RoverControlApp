@@ -9,7 +9,7 @@ using Onvif.Core.Client.Common;
 
 namespace OnvifCameraControlTest;
 /// <summary>
-/// Wrapper class to rename more consistently Onvif.Core features that will be used throught out this solution.
+/// Wrapper class to rename more consistently Onvif.Core features that will be used through out this solution.
 /// </summary>
 public class OnvifCameraController
 {
