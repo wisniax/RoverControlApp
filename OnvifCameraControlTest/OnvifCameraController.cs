@@ -18,16 +18,18 @@ public class OnvifCameraController
 
 	public OnvifCameraController(string cameraUrl, string username, string password)
 	{
-		//var task = Task.Run(() => ConnectToCamera(cameraUrl, username, password));
+		var task = Task.Run(() => ConnectToCamera(cameraUrl, username, password));
 
-		//_agent = task.Wait(TimeSpan.FromSeconds(10)) ? task.Result : null;
-		var account = new Account("192.168.5.35", "admin", "admin");
-		_agent = Camera.Create(account, ex =>
-		{
-			//State = CommunicationState.Faulted;
+		_agent = task.Wait(TimeSpan.FromSeconds(60)) ? task.Result : null; // nie robi się w 10s (w ~30s) -> zmiana na 60s 
 
-		});
-		State = _agent == null ? CommunicationState.Opening : CommunicationState.Faulted;
+        //var account = new Account("192.168.5.35", "admin", "admin");
+        //_agent = Camera.Create(account, ex =>
+        //{
+        //    //State = CommunicationState.Faulted;
+
+        //});
+
+        State = _agent == null ? CommunicationState.Opening : CommunicationState.Faulted;
 	}
 
 	private Camera? ConnectToCamera(string cameraUrl, string username, string password)
