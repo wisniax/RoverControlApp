@@ -18,9 +18,15 @@ public class OnvifCameraController
 
 	public OnvifCameraController(string cameraUrl, string username, string password)
 	{
-		var task = Task.Run(() => ConnectToCamera(cameraUrl, username, password));
+		//var task = Task.Run(() => ConnectToCamera(cameraUrl, username, password));
 
-		_agent = task.Wait(TimeSpan.FromSeconds(10)) ? task.Result : null;
+		//_agent = task.Wait(TimeSpan.FromSeconds(10)) ? task.Result : null;
+		var account = new Account("192.168.5.35", "admin", "admin");
+		_agent = Camera.Create(account, ex =>
+		{
+			//State = CommunicationState.Faulted;
+
+		});
 		State = _agent == null ? CommunicationState.Opening : CommunicationState.Faulted;
 	}
 

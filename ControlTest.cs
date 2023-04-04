@@ -14,7 +14,7 @@ public partial class ControlTest : Control
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		camera = new OnvifCameraController("placeholder", "admin", "admin");
+		camera = new OnvifCameraController("192.168.5.35", "admin", "admin");
 		GD.Print(camera.State == CommunicationState.Opened ? "Camera is connected" : "Camera is not connected");
 
 		KeyShow.OnUpArrowPressed += camera.MoveUp;
