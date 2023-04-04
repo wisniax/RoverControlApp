@@ -1,25 +1,15 @@
 {
   "profiles": {
-    "RoverControlApp": {
-      "commandName": "Project"
-    },
-    "GDE_Wisniax": {
+    "Godot": {
       "commandName": "Executable",
-      "executablePath": "C:\\Users\\Kuba\\Downloads\\Godot_v4.0.1-stable_mono_win64\\Godot_v4.0.1-stable_mono_win64.exe",
+      "executablePath": "Godot_v4.0.1-stable_mono_win64.exe",
       "commandLineArgs": "--path . --verbose",
       "workingDirectory": ".",
       "nativeDebugging": true
     },
-    "GDE_Alvaro": {
+    "Godot Console": {
       "commandName": "Executable",
-      "executablePath": "D:\\GoDot\\Godot_v4.0.1-stable_mono_win64\\Godot_v4.0.1-stable_mono_win64.exe",
-      "commandLineArgs": "--path . --verbose",
-      "workingDirectory": ".",
-      "nativeDebugging": true
-    },
-    "GDC_Wisniax": {
-      "commandName": "Executable",
-      "executablePath": "C:\\Users\\Kuba\\Downloads\\Godot_v4.0.1-stable_mono_win64\\Godot_v4.0.1-stable_mono_win64_console.exe",
+      "executablePath": "Godot_v4.0.1-stable_mono_win64_console.exe",
       "commandLineArgs": "--path . --verbose",
       "workingDirectory": ".",
       "nativeDebugging": true
