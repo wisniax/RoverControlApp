@@ -17,10 +17,10 @@ script = ExtResource("1_herao")
 
 [node name="KeyShow" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 10.0
-offset_bottom = 10.0
+offset_left = 5.0
+offset_top = 28.0
+offset_right = 5.0
+offset_bottom = 28.0
 script = ExtResource("2_typ35")
 
 [node name="up" type="TextureRect" parent="KeyShow"]
@@ -56,6 +56,12 @@ offset_right = 201.0
 offset_bottom = 100.0
 rotation = 7.85398
 texture = ExtResource("3_clvhq")
+
+[node name="CamStatus" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "CAM_STATUS"
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1

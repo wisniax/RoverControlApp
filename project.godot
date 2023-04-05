@@ -15,6 +15,10 @@ run/main_scene="res://control.tscn"
 config/features=PackedStringArray("4.0", "C#", "GL Compatibility")
 config/icon="res://icon.svg"
 
+[autoload]
+
+DebuggerWaiter="res://DebuggerWaiter.cs"
+
 [dotnet]
 
 project/assembly_name="RoverControlApp"
