@@ -12,7 +12,10 @@
       "executablePath": "Godot_v4.0.1-stable_mono_win64_console.exe",
       "commandLineArgs": "--path . --verbose",
       "workingDirectory": ".",
-      "nativeDebugging": false
+      "nativeDebugging": true,
+      "remoteDebugEnabled": false,
+      "remoteDebugMachine": "KUBAPC",
+      "authenticationMode": "None"
     }
   }
 }
