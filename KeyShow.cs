@@ -25,15 +25,21 @@ public partial class KeyShow : Control
 	private TextureRect _down;
 	private TextureRect _right;
 	private TextureRect _left;
+	private TextureRect _zoomIn;
+	private TextureRect _zoomOut;
+	private Label _halt;
 	public override void _Ready()
 	{
 		_up = GetNode<TextureRect>("up");
 		_down = GetNode<TextureRect>("down");
 		_right = GetNode<TextureRect>("right");
 		_left = GetNode<TextureRect>("left");
+        _zoomIn = GetNode<TextureRect>("zoomIn");
+        _zoomOut = GetNode<TextureRect>("zoomOut");
+        _halt = GetNode<Label>("halt");
 
 		foreach (var child in GetChildren())
-			if (child is TextureRect tchild)
+			if (child is Control tchild)
 			{
 				tchild.Visible = false;
 			}
@@ -99,18 +105,21 @@ public partial class KeyShow : Control
 				break;
 
 			case Key.H:
+				_halt.Visible = inputEventKey.Pressed;
 				if (!inputEventKey.Pressed) break;
 				OnHKeyPressed?.Invoke();
 				GD.Print("H_PRESSED");
 				break;
 
 			case Key.KpAdd:
+				_zoomIn.Visible = inputEventKey.Pressed;	
 				if (!inputEventKey.Pressed) break;
 				OnAddKeyPressed?.Invoke();
 				GD.Print("ADD_PRESSED");
 				break;
 
 			case Key.KpSubtract:
+				_zoomOut.Visible = inputEventKey.Pressed;
 				if (!inputEventKey.Pressed) break;
 				OnSubtractKeyPressed?.Invoke();
 				GD.Print("SUBTRACT_PRESSED");

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Godot;
 using Onvif.Core.Client;
 using OnvifCameraControlTest;
+using OnvifCameraControlTest.OnvifCameraThreadControllerEvents;
 
 namespace RoverControlApp;
 
@@ -21,14 +22,13 @@ public partial class ControlTest : Control
 		//camera = new OnvifCameraController("192.168.5.35", "admin", "admin");
 		//GD.Print(camera.State == CommunicationState.Opened ? "Camera is connected" : "Camera is not connected");
 
-		//KeyShow.OnUpArrowPressed += camera.MoveUp;
-		//KeyShow.OnRightArrowPressed += camera.MoveRight;
-		//KeyShow.OnDownArrowPressed += camera.MoveDown;
-		//KeyShow.OnLeftArrowPressed += camera.MoveLeft;
-		//KeyShow.OnHKeyPressed += camera.GotoHomePosition;
-		//KeyShow.OnAddKeyPressed += camera.ZoomIn;
-		//KeyShow.OnSubtractKeyPressed += camera.ZoomOut;
-		//KeyShow.OnKeyReleased += camera.MoveStop;
+		KeyShow.OnUpArrowPressed += camera.MoveUp;
+		KeyShow.OnRightArrowPressed += camera.MoveRight;
+		KeyShow.OnDownArrowPressed += camera.MoveDown;
+		KeyShow.OnLeftArrowPressed += camera.MoveLeft;
+		KeyShow.OnAddKeyPressed += camera.ZoomIn;
+		KeyShow.OnSubtractKeyPressed += camera.ZoomOut;
+		KeyShow.OnKeyReleased += camera.MoveStop;
 
 
 
