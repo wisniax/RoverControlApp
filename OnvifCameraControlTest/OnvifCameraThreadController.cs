@@ -164,6 +164,12 @@ namespace OnvifCameraControlTest
             return State;
         }
 
+        public void Stop()
+        {
+            State = CommunicationState.Closing;
+            _threadBarrier.SignalAndWait(0);
+        }
+
         private void ThreadWork(object? obj)
         {
             _threadBarrier.AddParticipant();
@@ -296,9 +302,9 @@ namespace OnvifCameraControlTest
             if (@new.Equals(old))
                 return false;
 
-            if (@new.HasFlag(CameraZoomState.ZoomIn))
+            if (@new == CameraZoomState.ZoomIn)
                 zoom = 1.0f;
-            else if (@new.HasFlag(CameraZoomState.ZoomOut))
+            else if (@new == CameraZoomState.ZoomOut)
                 zoom = -1.0f;
 
             return true;
