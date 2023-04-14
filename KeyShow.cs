@@ -24,8 +24,10 @@ public partial class KeyShow : Control
 
 	public static event EventHandler<Vector3> OnAbsoluteVectorChanged;
 
+	private const float JoyPadDeadzone = 0.3f;
 
 	private List<Key> _pressedKeys;
+	private Vector2 _rightAnalogVector2;
 
 	private TextureRect _up;
 	private TextureRect _down;
@@ -37,6 +39,8 @@ public partial class KeyShow : Control
 	public override void _Ready()
 	{
 		_pressedKeys = new List<Key>();
+		_rightAnalogVector2 = Vector2.Zero;
+
 		_up = GetNode<TextureRect>("up");
 		_down = GetNode<TextureRect>("down");
 		_right = GetNode<TextureRect>("right");
@@ -66,16 +70,25 @@ public partial class KeyShow : Control
 
 	public override void _Input(InputEvent @event)
 	{
-		if (@event is InputEventKey inputEventKey) HandleInputEventKey(inputEventKey);
-		else return;
+		switch (@event)
+		{
+			case InputEventKey inputEventKey:
+				HandleInputEventKey(inputEventKey);
+				break;
+			case InputEventJoypadMotion inputEventJoypadMotion:
+				HandleInputEventAnalog(inputEventJoypadMotion);
+				break;
+			default:
+				return;
+		}
 		RecalculateVector();
 	}
 
 	private void RecalculateVector()
 	{
 		Vector3 absoluteVector3 = Vector3.Zero;
-		if (_pressedKeys.Count > 0)
-			ResolveVectorFromKeysPressed(ref absoluteVector3);
+		/*if (_pressedKeys.Count > 0) */
+		ResolveVectorFromKeysPressed(ref absoluteVector3);
 		OnAbsoluteVectorChanged?.Invoke(this, absoluteVector3);
 	}
 
@@ -121,7 +134,18 @@ public partial class KeyShow : Control
 			}
 		}
 
+		absoluteVector3.X += _rightAnalogVector2.X;
+		absoluteVector3.Y += _rightAnalogVector2.Y;
 		absoluteVector3 = absoluteVector3.Clamp(new Vector3(-1f, -1f, -1f), new Vector3(1f, 1f, 1f));
+	}
+
+	private void HandleInputEventAnalog(InputEventJoypadMotion analogEvent)
+	{
+		Vector2 velocity = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
+		velocity = velocity.Clamp(new Vector2(-1f, -1f), new Vector2(1f, 1f));
+		velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, JoyPadDeadzone)) ? 0 : velocity.X;
+		velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, JoyPadDeadzone)) ? 0 : velocity.Y;
+		_rightAnalogVector2 = velocity;
 	}
 
 	private void HandleInputEventKey(InputEventKey inputEventKey)
