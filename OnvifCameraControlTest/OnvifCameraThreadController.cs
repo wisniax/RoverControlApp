@@ -1,41 +1,42 @@
 ﻿using Onvif.Core.Client.Common;
 using Onvif.Core.Client;
 using System.ServiceModel;
-using System.Numerics;
+using Godot;
+using Microsoft.VisualBasic;
+using Mutex = System.Threading.Mutex;
 
 namespace OnvifCameraControlTest
 {
-	[Flags]
-	public enum CameraMotionState
-	{
-		None = 0b0000,
-		Pan_Lock = 0b1111,
-		PanRight = 0b0001,
-		PanLeft = 0b0010,
-		PanRL_Lock = 0b0011,
-		PanUp = 0b0100,
-		PanDown = 0b1000,
-		PanUD_Lock = 0b1100
-	}
+	//[Flags]
+	//public enum CameraMotionState
+	//{
+	//	None = 0b0000,
+	//	Pan_Lock = 0b1111,
+	//	PanRight = 0b0001,
+	//	PanLeft = 0b0010,
+	//	PanRL_Lock = 0b0011,
+	//	PanUp = 0b0100,
+	//	PanDown = 0b1000,
+	//	PanUD_Lock = 0b1100
+	//}
 
-	public enum CameraZoomState
-	{
-		None,
-		ZoomIn,
-		ZoomOut
-	}
+	//public enum CameraZoomState
+	//{
+	//	None,
+	//	ZoomIn,
+	//	ZoomOut
+	//}
 
 	public class OnvifCameraThreadController
 	{
-
-		private static readonly TimeSpan MinSpanEveryCom = new(0, 0, 0,0,500);
+		private static readonly TimeSpan MinSpanEveryCom = new(0, 0, 0, 0, 500);
 		//private const int ComMaxInTimespan = 1;
-		
+
 		/// <summary>
 		/// Should X and Y axis be inverted?
 		/// </summary>
 		public readonly bool InvertControl = false;
-		
+
 		/// <summary>
 		/// Meant to be used by ThreadWork ONLY <br/>
 		/// </summary>
@@ -44,10 +45,15 @@ namespace OnvifCameraControlTest
 		private readonly Mutex _dataMutex = new();
 		private readonly Barrier _threadBarrier = new(1);
 
+		public void ChangeMoveVector(object sender, Vector3 vector3)
+		{
+			CameraMotion = vector3;
+		}
+
 		/// <summary>
 		/// Current camera motion operation.
 		/// </summary>
-		public CameraMotionState CameraMotion
+		public Vector3 CameraMotion
 		{
 			get
 			{
@@ -65,30 +71,30 @@ namespace OnvifCameraControlTest
 			}
 		}
 
-		private volatile CameraMotionState _cameraMotion = CameraMotionState.None;
+		private Vector3 _cameraMotion = Vector3.Zero;
 
 		/// <summary>
 		/// Current camera zoom operation.
 		/// </summary>
-		public CameraZoomState CameraZoom
-		{
-			get
-			{
-				_dataMutex.WaitOne();
-				var copy = _cameraZoom;
-				_dataMutex.ReleaseMutex();
-				return copy;
-			}
-			set
-			{
-				_dataMutex.WaitOne();
-				_cameraZoom = value;
-				_dataMutex.ReleaseMutex();
-				_threadBarrier.SignalAndWait(0);
-			}
-		}
+		//public CameraZoomState CameraZoom
+		//{
+		//	get
+		//	{
+		//		_dataMutex.WaitOne();
+		//		var copy = _cameraZoom;
+		//		_dataMutex.ReleaseMutex();
+		//		return copy;
+		//	}
+		//	set
+		//	{
+		//		_dataMutex.WaitOne();
+		//		_cameraZoom = value;
+		//		_dataMutex.ReleaseMutex();
+		//		_threadBarrier.SignalAndWait(0);
+		//	}
+		//}
 
-		private volatile CameraZoomState _cameraZoom = CameraZoomState.None;
+		//private volatile CameraZoomState _cameraZoom = CameraZoomState.None;
 
 		/// <summary>
 		/// State of onvif.
@@ -200,8 +206,8 @@ namespace OnvifCameraControlTest
 			State = CommunicationState.Opened;
 
 			_dataMutex.WaitOne();
-			CameraMotionState motionLast = _cameraMotion = CameraMotionState.None;
-			CameraZoomState zoomLast = _cameraZoom = CameraZoomState.None;
+			Vector3 motionLast = _cameraMotion = Vector3.Zero;
+			//CameraZoomState zoomLast = _cameraZoom = CameraZoomState.None;
 			_dataMutex.ReleaseMutex();
 
 			//camera operation loop
@@ -209,47 +215,60 @@ namespace OnvifCameraControlTest
 			{
 				_threadBarrier.SignalAndWait();
 
-				if (UpdateMotion(motionLast, CameraMotion, out Vector2 panVector))
-					if (panVector.LengthSquared() < 0.1f)
-					{
-						ComSleepTillCanRequest();
-						_tcamera.Ptz.StopAsync(_tcamera.Profile.token, true, false).Wait();
-					}
-					else
-					{
-						PTZSpeed ptzSpeed = new()
-						{
-							PanTilt = new()
-							{
-								x = panVector.X,
-								y = panVector.Y
-							}
-						};
-						ComSleepTillCanRequest();
-						_tcamera.Ptz.ContinuousMoveAsync(_tcamera.Profile.token, ptzSpeed, string.Empty).Wait();
-					}
+				if (!UpdateMotion(motionLast, CameraMotion, out Vector3 moveVector3)) continue;
 
-				if (UpdateZoom(zoomLast, CameraZoom, out float zoom))
-					if (Math.Abs(zoom) < 0.1f)
+				bool stopTilt = Mathf.IsEqualApprox(moveVector3.X, 0f, 0.1f) && Mathf.IsEqualApprox(moveVector3.Y, 0f, 0.1f);
+				bool stopZoom = Mathf.IsEqualApprox(moveVector3.Z, 0f, 0.1f);
+
+				//Check whether those WERE stopped previously
+				stopTilt &= !(Mathf.IsEqualApprox(motionLast.X, 0f, 0.1f) && Mathf.IsEqualApprox(motionLast.Y, 0f, 0.1f));
+				stopZoom &= !Mathf.IsEqualApprox(motionLast.Z, 0f, 0.1f);
+
+				if (stopTilt || stopZoom)
+				{
+					ComSleepTillCanRequest();
+					_tcamera.Ptz.StopAsync(_tcamera.Profile.token, stopTilt, stopZoom).Wait();
+				}
+
+				if (!moveVector3.IsZeroApprox())
+				{
+					PTZSpeed ptzSpeed = new()
 					{
-						ComSleepTillCanRequest();
-						_tcamera.Ptz.StopAsync(_tcamera.Profile.token, false, true).Wait();
-					}
-					else
-					{
-						PTZSpeed ptzSpeed = new()
+						PanTilt = new()
 						{
-							Zoom = new()
-							{
-								x = zoom
-							}
-						};
-						ComSleepTillCanRequest();
-						_tcamera.Ptz.ContinuousMoveAsync(_tcamera.Profile.token, ptzSpeed, string.Empty).Wait();
-					}
+							x = moveVector3.X,
+							y = moveVector3.Y
+						},
+						Zoom = new()
+						{
+							x = moveVector3.Z
+						}
+					};
+					ComSleepTillCanRequest();
+					_tcamera.Ptz.ContinuousMoveAsync(_tcamera.Profile.token, ptzSpeed, string.Empty).Wait();
+				}
+
+				//if (UpdateZoom(zoomLast, CameraZoom, out float zoom))
+				//if (Math.Abs(zoom) < 0.1f)
+				//{
+				//	ComSleepTillCanRequest();
+				//	_tcamera.Ptz.StopAsync(_tcamera.Profile.token, false, true).Wait();
+				//}
+				//else
+				//{
+				//	PTZSpeed ptzSpeed = new()
+				//	{
+				//		Zoom = new()
+				//		{
+				//			x = zoom
+				//		}
+				//	};
+				//	ComSleepTillCanRequest();
+				//	_tcamera.Ptz.ContinuousMoveAsync(_tcamera.Profile.token, ptzSpeed, string.Empty).Wait();
+				//}
 
 				motionLast = CameraMotion;
-				zoomLast = CameraZoom;
+				//zoomLast = CameraZoom;
 			}
 
 			//closeup
@@ -267,37 +286,20 @@ namespace OnvifCameraControlTest
 		/// <summary>
 		/// Meant to be used by ThreadWork ONLY <br/>
 		/// </summary>
-		private static bool UpdateMotion(CameraMotionState old, CameraMotionState @new, out Vector2 speed)
+		private bool UpdateMotion(Vector3 old, Vector3 @new, out Vector3 speed)
 		{
-			speed = new Vector2(0.0f);
-			if (@new.Equals(old))
+			speed = Vector3.Zero;
+			if (@new.IsEqualApprox(old))
 				return false;
 
-			switch (@new & CameraMotionState.PanRL_Lock)
-			{
-				case CameraMotionState.PanRight:
-					speed.X = 1.0f;
-					break;
-				case CameraMotionState.PanLeft:
-					speed.X = -1.0f;
-					break;
-				default:
-					//no change on lock or none
-					break;
-			}
+			speed = InvertControl ? new Vector3(-@new.X, -@new.Y, @new.Z) : @new;
 
-			switch (@new & CameraMotionState.PanUD_Lock)
-			{
-				case CameraMotionState.PanUp:
-					speed.Y = 1.0f;
-					break;
-				case CameraMotionState.PanDown:
-					speed.Y = -1.0f;
-					break;
-				default:
-					//no change on lock or none
-					break;
-			}
+			//Have to make sure none scalar is |x| <= 0.1f bc camera treats it as a MAX SPEED
+			if (Mathf.IsEqualApprox(speed.X, 0f, 0.1f)) speed.X = 0f;
+			if (Mathf.IsEqualApprox(speed.Y, 0f, 0.1f)) speed.Y = 0f;
+			if (Mathf.IsEqualApprox(speed.Z, 0f, 0.1f)) speed.Z = 0f;
+
+			speed = speed.Clamp(new Vector3(-1f, -1f, -1f), new Vector3(1f, 1f, 1f));
 
 			//speed = Vector2.Normalize(speed);
 			return true;
@@ -306,21 +308,21 @@ namespace OnvifCameraControlTest
 		/// <summary>
 		/// Meant to be used by ThreadWork ONLY <br/>
 		/// </summary>
-		private static bool UpdateZoom(CameraZoomState old, CameraZoomState @new, out float zoom)
-		{
-			zoom = 0.0f;
-			if (@new.Equals(old))
-				return false;
+		//private static bool UpdateZoom(CameraZoomState old, CameraZoomState @new, out float zoom)
+		//{
+		//	zoom = 0.0f;
+		//	if (@new.Equals(old))
+		//		return false;
 
-			zoom = @new switch
-			{
-				CameraZoomState.ZoomIn => 1.0f,
-				CameraZoomState.ZoomOut => -1.0f,
-				_ => 0.0f
-			};
+		//	zoom = @new switch
+		//	{
+		//		CameraZoomState.ZoomIn => 1.0f,
+		//		CameraZoomState.ZoomOut => -1.0f,
+		//		_ => 0.0f
+		//	};
 
-			return true;
-		}
+		//	return true;
+		//}
 
 		/// <summary>
 		/// Meant to be used by ThreadWork ONLY <br/>

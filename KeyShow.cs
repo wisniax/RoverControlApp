@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using Godot;
 
 namespace RoverControlApp;
@@ -20,8 +22,10 @@ public partial class KeyShow : Control
 	public static event KeyPressedEventHandler OnSubtractKeyPressed;
 	public static event KeyPressedEventHandler OnZoomKeyReleased;
 
+	public static event EventHandler<Vector3> OnAbsoluteVectorChanged;
 
 
+	private List<Key> _pressedKeys;
 
 	private TextureRect _up;
 	private TextureRect _down;
@@ -32,6 +36,7 @@ public partial class KeyShow : Control
 	private Label _halt;
 	public override void _Ready()
 	{
+		_pressedKeys = new List<Key>();
 		_up = GetNode<TextureRect>("up");
 		_down = GetNode<TextureRect>("down");
 		_right = GetNode<TextureRect>("right");
@@ -61,48 +66,103 @@ public partial class KeyShow : Control
 
 	public override void _Input(InputEvent @event)
 	{
-		if (@event is not InputEventKey inputEventKey) return;
+		if (@event is InputEventKey inputEventKey) HandleInputEventKey(inputEventKey);
+		else return;
+		RecalculateVector();
+	}
+
+	private void RecalculateVector()
+	{
+		Vector3 absoluteVector3 = Vector3.Zero;
+		if (_pressedKeys.Count > 0)
+			ResolveVectorFromKeysPressed(ref absoluteVector3);
+		OnAbsoluteVectorChanged?.Invoke(this, absoluteVector3);
+	}
+
+	private void ResolveVectorFromKeysPressed(ref Vector3 absoluteVector3)
+	{
+		foreach (var pressedKey in _pressedKeys)
+		{
+			switch (pressedKey)
+			{
+				case Key.W:
+				case Key.Up:
+					absoluteVector3 += Vector3.Up;
+					break;
+
+				case Key.D:
+				case Key.Right:
+					absoluteVector3 += Vector3.Right;
+					break;
+
+				case Key.S:
+				case Key.Down:
+					absoluteVector3 += Vector3.Down;
+					break;
+
+				case Key.A:
+				case Key.Left:
+					absoluteVector3 += Vector3.Left;
+					break;
+
+				case Key.H:
+					break;
+
+				case Key.KpAdd:
+					absoluteVector3 += Vector3.Back;
+					break;
+
+				case Key.KpSubtract:
+					absoluteVector3 += Vector3.Forward;
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		absoluteVector3 = absoluteVector3.Clamp(new Vector3(-1f, -1f, -1f), new Vector3(1f, 1f, 1f));
+	}
+
+	private void HandleInputEventKey(InputEventKey inputEventKey)
+	{
 		if (inputEventKey.IsEcho()) return;
 		// ReSharper disable once SwitchStatementHandlesSomeKnownEnumValuesWithDefault
+		if (inputEventKey.Pressed) _pressedKeys.Add(inputEventKey.PhysicalKeycode);
+		else _pressedKeys.RemoveAll((x) => x == inputEventKey.PhysicalKeycode);
+
 		switch (inputEventKey.PhysicalKeycode)
 		{
 			case Key.W:
 			case Key.Up:
 				_up.Visible = inputEventKey.Pressed;
-				if (inputEventKey.Pressed)
-					OnUpArrowPressed?.Invoke();
-				else
-					OnKeyReleased?.Invoke();
+				if (inputEventKey.Pressed) OnUpArrowPressed?.Invoke();
+				else OnKeyReleased?.Invoke();
 				GD.Print(inputEventKey.Pressed ? "UP_PRESSED" : "UP_RELEASED");
 				break;
 
 			case Key.D:
 			case Key.Right:
 				_right.Visible = inputEventKey.Pressed;
-				if (inputEventKey.Pressed)
-					OnRightArrowPressed?.Invoke();
-				else
-					OnKeyReleased?.Invoke();
+				if (inputEventKey.Pressed) OnRightArrowPressed?.Invoke();
+				else OnKeyReleased?.Invoke();
+
 				GD.Print(inputEventKey.Pressed ? "RIGHT_PRESSED" : "RIGHT_RELEASED");
 				break;
 
 			case Key.S:
 			case Key.Down:
 				_down.Visible = inputEventKey.Pressed;
-				if (inputEventKey.Pressed)
-					OnDownArrowPressed?.Invoke();
-				else
-					OnKeyReleased?.Invoke();
+				if (inputEventKey.Pressed) OnDownArrowPressed?.Invoke();
+				else OnKeyReleased?.Invoke();
 				GD.Print(inputEventKey.Pressed ? "DOWN_PRESSED" : "DOWN_RELEASED");
 				break;
 
 			case Key.A:
 			case Key.Left:
 				_left.Visible = inputEventKey.Pressed;
-				if (inputEventKey.Pressed)
-					OnLeftArrowPressed?.Invoke();
-				else
-					OnKeyReleased?.Invoke();
+				if (inputEventKey.Pressed) OnLeftArrowPressed?.Invoke();
+				else OnKeyReleased?.Invoke();
 				GD.Print(inputEventKey.Pressed ? "LEFT_PRESSED" : "LEFT_RELEASED");
 				break;
 
@@ -115,26 +175,20 @@ public partial class KeyShow : Control
 
 			case Key.KpAdd:
 				_zoomIn.Visible = inputEventKey.Pressed;
-				if (inputEventKey.Pressed)
-					OnAddKeyPressed?.Invoke();
-				else
-					OnZoomKeyReleased?.Invoke();
+				if (inputEventKey.Pressed) OnAddKeyPressed?.Invoke();
+				else OnZoomKeyReleased?.Invoke();
 				GD.Print(inputEventKey.Pressed ? "ADD_PRESSED" : "ADD_RELEASED");
 				break;
 
 			case Key.KpSubtract:
 				_zoomOut.Visible = inputEventKey.Pressed;
-				if (inputEventKey.Pressed)
-					OnSubtractKeyPressed?.Invoke();
-				else
-					OnZoomKeyReleased?.Invoke();
+				if (inputEventKey.Pressed) OnSubtractKeyPressed?.Invoke();
+				else OnZoomKeyReleased?.Invoke();
 				GD.Print(inputEventKey.Pressed ? "SUBTRACT_PRESSED" : "SUBTRACT_RELEASED");
 				break;
 
 			default:
 				break;
 		}
-
-
 	}
 }
