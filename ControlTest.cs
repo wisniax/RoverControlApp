@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using Godot;
 using Onvif.Core.Client;
 using OnvifCameraControlTest;
-using OnvifCameraControlTest.OnvifCameraThreadControllerEvents;
 
 namespace RoverControlApp;
 
@@ -29,6 +28,7 @@ public partial class ControlTest : Control
 		KeyShow.OnAddKeyPressed += camera.ZoomIn;
 		KeyShow.OnSubtractKeyPressed += camera.ZoomOut;
 		KeyShow.OnKeyReleased += camera.MoveStop;
+		KeyShow.OnZoomKeyReleased += camera.ZoomStop;
 
 
 

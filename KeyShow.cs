@@ -1,5 +1,6 @@
 using Godot;
-using System;
+
+namespace RoverControlApp;
 
 public partial class KeyShow : Control
 {
@@ -17,6 +18,7 @@ public partial class KeyShow : Control
 	public static event KeyPressedEventHandler OnHKeyPressed;
 	public static event KeyPressedEventHandler OnAddKeyPressed;
 	public static event KeyPressedEventHandler OnSubtractKeyPressed;
+	public static event KeyPressedEventHandler OnZoomKeyReleased;
 
 
 
@@ -34,9 +36,9 @@ public partial class KeyShow : Control
 		_down = GetNode<TextureRect>("down");
 		_right = GetNode<TextureRect>("right");
 		_left = GetNode<TextureRect>("left");
-        _zoomIn = GetNode<TextureRect>("zoomIn");
-        _zoomOut = GetNode<TextureRect>("zoomOut");
-        _halt = GetNode<Label>("halt");
+		_zoomIn = GetNode<TextureRect>("zoomIn");
+		_zoomOut = GetNode<TextureRect>("zoomOut");
+		_halt = GetNode<Label>("halt");
 
 		foreach (var child in GetChildren())
 			if (child is Control tchild)
@@ -51,10 +53,10 @@ public partial class KeyShow : Control
 
 
 
-		if (Input.IsKeyPressed(Key.R))
-		{
-			Position = new Vector2(10f, 10f);
-		}
+		//if (Input.IsKeyPressed(Key.R))
+		//{
+		//	Position = new Vector2(10f, 10f);
+		//}
 	}
 
 	public override void _Input(InputEvent @event)
@@ -112,17 +114,21 @@ public partial class KeyShow : Control
 				break;
 
 			case Key.KpAdd:
-				_zoomIn.Visible = inputEventKey.Pressed;	
-				if (!inputEventKey.Pressed) break;
-				OnAddKeyPressed?.Invoke();
-				GD.Print("ADD_PRESSED");
+				_zoomIn.Visible = inputEventKey.Pressed;
+				if (inputEventKey.Pressed)
+					OnAddKeyPressed?.Invoke();
+				else
+					OnZoomKeyReleased?.Invoke();
+				GD.Print(inputEventKey.Pressed ? "ADD_PRESSED" : "ADD_RELEASED");
 				break;
 
 			case Key.KpSubtract:
 				_zoomOut.Visible = inputEventKey.Pressed;
-				if (!inputEventKey.Pressed) break;
-				OnSubtractKeyPressed?.Invoke();
-				GD.Print("SUBTRACT_PRESSED");
+				if (inputEventKey.Pressed)
+					OnSubtractKeyPressed?.Invoke();
+				else
+					OnZoomKeyReleased?.Invoke();
+				GD.Print(inputEventKey.Pressed ? "SUBTRACT_PRESSED" : "SUBTRACT_RELEASED");
 				break;
 
 			default:
