@@ -29,13 +29,13 @@ namespace OnvifCameraControlTest
 
 	public class OnvifCameraThreadController
 	{
-		private static readonly TimeSpan MinSpanEveryCom = new(0, 0, 0, 0, 500);
-		//private const int ComMaxInTimespan = 1;
+		private static readonly TimeSpan MinSpanEveryCom = new(0, 0, 0, 0, 550);
+		private static readonly TimeSpan MaxSpanEveryCom = new(0, 0, 0, 1, 500);
 
 		/// <summary>
 		/// Should X and Y axis be inverted?
 		/// </summary>
-		public readonly bool InvertControl = false;
+		public readonly bool InvertControl = true;
 
 		/// <summary>
 		/// Meant to be used by ThreadWork ONLY <br/>
@@ -213,21 +213,23 @@ namespace OnvifCameraControlTest
 			//camera operation loop
 			while (State == CommunicationState.Opened)
 			{
-				_threadBarrier.SignalAndWait();
-
+				//_threadBarrier.SignalAndWait();
+				ComSleepTillCanRequest();
 				if (!UpdateMotion(motionLast, CameraMotion, out Vector3 moveVector3)) continue;
 
-				bool stopTilt = Mathf.IsEqualApprox(moveVector3.X, 0f, 0.1f) && Mathf.IsEqualApprox(moveVector3.Y, 0f, 0.1f);
+				bool stopTilt = Mathf.IsEqualApprox(moveVector3.X, 0f, 0.1f) || Mathf.IsEqualApprox(moveVector3.Y, 0f, 0.1f);
 				bool stopZoom = Mathf.IsEqualApprox(moveVector3.Z, 0f, 0.1f);
 
 				//Check whether those WERE stopped previously
-				stopTilt &= !(Mathf.IsEqualApprox(motionLast.X, 0f, 0.1f) && Mathf.IsEqualApprox(motionLast.Y, 0f, 0.1f));
+				//stopTilt &= !(Mathf.IsEqualApprox(motionLast.X, 0f, 0.1f) || Mathf.IsEqualApprox(motionLast.Y, 0f, 0.1f));
 				stopZoom &= !Mathf.IsEqualApprox(motionLast.Z, 0f, 0.1f);
+
+				//var cus = _tcamera.Ptz.GetStatusAsync(_tcamera.Profile.token).Result;
 
 				if (stopTilt || stopZoom)
 				{
-					ComSleepTillCanRequest();
 					_tcamera.Ptz.StopAsync(_tcamera.Profile.token, stopTilt, stopZoom).Wait();
+					//ComRequestSleep();
 				}
 
 				if (!moveVector3.IsZeroApprox())
@@ -246,7 +248,9 @@ namespace OnvifCameraControlTest
 					};
 					ComSleepTillCanRequest();
 					_tcamera.Ptz.ContinuousMoveAsync(_tcamera.Profile.token, ptzSpeed, string.Empty).Wait();
+					//ComRequestSleep();
 				}
+				ComRequestSleep();
 
 				//if (UpdateZoom(zoomLast, CameraZoom, out float zoom))
 				//if (Math.Abs(zoom) < 0.1f)
@@ -289,8 +293,11 @@ namespace OnvifCameraControlTest
 		private bool UpdateMotion(Vector3 old, Vector3 @new, out Vector3 speed)
 		{
 			speed = Vector3.Zero;
-			if (@new.IsEqualApprox(old))
+			if (@new.IsEqualApprox(old) && ((_lastComTimeStamp + MaxSpanEveryCom > System.DateTime.Now)))
+			{
+				Thread.Sleep(100);
 				return false;
+			}
 
 			speed = InvertControl ? new Vector3(-@new.X, -@new.Y, @new.Z) : @new;
 
@@ -341,7 +348,10 @@ namespace OnvifCameraControlTest
 				//		_lastComTimeStamp.Remove(val);
 				//}
 			}
+		}
 
+		private void ComRequestSleep()
+		{
 			_lastComTimeStamp = System.DateTime.Now;
 		}
 

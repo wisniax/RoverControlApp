@@ -24,7 +24,7 @@ public partial class KeyShow : Control
 
 	public static event EventHandler<Vector3> OnAbsoluteVectorChanged;
 
-	private const float JoyPadDeadzone = 0.3f;
+	private const float JoyPadDeadzone = 0.2f;
 
 	private List<Key> _pressedKeys;
 	private Vector2 _rightAnalogVector2;
@@ -141,7 +141,7 @@ public partial class KeyShow : Control
 
 	private void HandleInputEventAnalog(InputEventJoypadMotion analogEvent)
 	{
-		Vector2 velocity = Input.GetVector("move_left", "move_right", "move_forward", "move_back");
+		Vector2 velocity = Input.GetVector("move_left", "move_right", "move_down", "move_up");
 		velocity = velocity.Clamp(new Vector2(-1f, -1f), new Vector2(1f, 1f));
 		velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, JoyPadDeadzone)) ? 0 : velocity.X;
 		velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, JoyPadDeadzone)) ? 0 : velocity.Y;
