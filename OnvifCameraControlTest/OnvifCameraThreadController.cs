@@ -7,35 +7,17 @@ using Mutex = System.Threading.Mutex;
 
 namespace OnvifCameraControlTest
 {
-	//[Flags]
-	//public enum CameraMotionState
-	//{
-	//	None = 0b0000,
-	//	Pan_Lock = 0b1111,
-	//	PanRight = 0b0001,
-	//	PanLeft = 0b0010,
-	//	PanRL_Lock = 0b0011,
-	//	PanUp = 0b0100,
-	//	PanDown = 0b1000,
-	//	PanUD_Lock = 0b1100
-	//}
-
-	//public enum CameraZoomState
-	//{
-	//	None,
-	//	ZoomIn,
-	//	ZoomOut
-	//}
-
 	public class OnvifCameraThreadController
 	{
-		private static readonly TimeSpan MinSpanEveryCom = new(0, 0, 0, 0, 550);
-		private static readonly TimeSpan MaxSpanEveryCom = new(0, 0, 0, 1, 500);
+		public TimeSpan MinSpanEveryCom = new(0, 0, 0, 0, 550);
+
+		public TimeSpan MaxSpanEveryCom => 3 * MinSpanEveryCom;
+
 
 		/// <summary>
 		/// Should X and Y axis be inverted?
 		/// </summary>
-		public readonly bool InvertControl = true;
+		public bool InvertControl { get; set; } = false;
 
 		/// <summary>
 		/// Meant to be used by ThreadWork ONLY <br/>
@@ -67,34 +49,11 @@ namespace OnvifCameraControlTest
 				_dataMutex.WaitOne();
 				_cameraMotion = value;
 				_dataMutex.ReleaseMutex();
-				_threadBarrier.SignalAndWait(0);
+				//_threadBarrier.SignalAndWait(0);
 			}
 		}
 
 		private Vector3 _cameraMotion = Vector3.Zero;
-
-		/// <summary>
-		/// Current camera zoom operation.
-		/// </summary>
-		//public CameraZoomState CameraZoom
-		//{
-		//	get
-		//	{
-		//		_dataMutex.WaitOne();
-		//		var copy = _cameraZoom;
-		//		_dataMutex.ReleaseMutex();
-		//		return copy;
-		//	}
-		//	set
-		//	{
-		//		_dataMutex.WaitOne();
-		//		_cameraZoom = value;
-		//		_dataMutex.ReleaseMutex();
-		//		_threadBarrier.SignalAndWait(0);
-		//	}
-		//}
-
-		//private volatile CameraZoomState _cameraZoom = CameraZoomState.None;
 
 		/// <summary>
 		/// State of onvif.
@@ -152,12 +111,12 @@ namespace OnvifCameraControlTest
 		/// <summary>
 		/// Starts camera connection attempt 
 		/// </summary>
-		/// <param name="cameraUrl"></param>
+		/// <param name="cameraPtzUrl"></param>
 		/// <param name="user"></param>
 		/// <param name="password"></param>
 		/// <returns><see cref="CommunicationState.Faulted"/> when there was error during startup, otherwise <see cref="CommunicationState.Opened"/></returns>
 		/// <exception cref="InvalidOperationException"></exception>
-		public async Task<CommunicationState> Start(string cameraUrl, string user, string password)
+		public void Start(string cameraPtzUrl, string user, string password)
 		{
 			if (_thread != null)
 				throw new InvalidOperationException("Thread is still valid");
@@ -166,24 +125,25 @@ namespace OnvifCameraControlTest
 			_threadError = null;
 			_thread = new Thread(ThreadWork) { IsBackground = true };
 
-			var acc = new Account(cameraUrl, user, password);
+			var acc = new Account(cameraPtzUrl, user, password);
 			_thread.Start(acc);
 
 			//wait till startup completed
 
-			while (State is CommunicationState.Created or CommunicationState.Opening) await Task.Delay(69);
+			//while (State is CommunicationState.Created or CommunicationState.Opening) await Task.Delay(69);
 
 			//check health
-			if (State == CommunicationState.Faulted)
-				_thread = null;
+			//if (State == CommunicationState.Faulted)
+			//	_thread = null;
 
-			return State;
+			//return State;
 		}
 
 		public void Stop()
 		{
 			State = CommunicationState.Closing;
 			_threadBarrier.SignalAndWait(0);
+			_thread = null;
 		}
 
 		private void ThreadWork(object? obj)
@@ -191,7 +151,7 @@ namespace OnvifCameraControlTest
 			_threadBarrier.AddParticipant();
 
 			//start up
-			State = CommunicationState.Opening;
+			State = CommunicationState.Created;
 			{
 				_tcamera = Camera.Create((Account)obj!, (e) => _threadError = e);
 
@@ -202,6 +162,10 @@ namespace OnvifCameraControlTest
 					return;
 				}
 			}
+			State = CommunicationState.Opening;
+
+			_tcamera.Ptz.StopAsync(_tcamera.Profile.token, true, true).Wait();
+
 			//camera operation loop pre
 			State = CommunicationState.Opened;
 
@@ -252,32 +216,13 @@ namespace OnvifCameraControlTest
 				}
 				ComRequestSleep();
 
-				//if (UpdateZoom(zoomLast, CameraZoom, out float zoom))
-				//if (Math.Abs(zoom) < 0.1f)
-				//{
-				//	ComSleepTillCanRequest();
-				//	_tcamera.Ptz.StopAsync(_tcamera.Profile.token, false, true).Wait();
-				//}
-				//else
-				//{
-				//	PTZSpeed ptzSpeed = new()
-				//	{
-				//		Zoom = new()
-				//		{
-				//			x = zoom
-				//		}
-				//	};
-				//	ComSleepTillCanRequest();
-				//	_tcamera.Ptz.ContinuousMoveAsync(_tcamera.Profile.token, ptzSpeed, string.Empty).Wait();
-				//}
-
 				motionLast = CameraMotion;
-				//zoomLast = CameraZoom;
 			}
 
 			//closeup
 			State = CommunicationState.Closing;
 			{
+				_tcamera.Ptz.Close();
 				_tcamera = null; // no close idk, and closing internals is dumb idea
 			}
 
@@ -311,25 +256,6 @@ namespace OnvifCameraControlTest
 			//speed = Vector2.Normalize(speed);
 			return true;
 		}
-
-		/// <summary>
-		/// Meant to be used by ThreadWork ONLY <br/>
-		/// </summary>
-		//private static bool UpdateZoom(CameraZoomState old, CameraZoomState @new, out float zoom)
-		//{
-		//	zoom = 0.0f;
-		//	if (@new.Equals(old))
-		//		return false;
-
-		//	zoom = @new switch
-		//	{
-		//		CameraZoomState.ZoomIn => 1.0f,
-		//		CameraZoomState.ZoomOut => -1.0f,
-		//		_ => 0.0f
-		//	};
-
-		//	return true;
-		//}
 
 		/// <summary>
 		/// Meant to be used by ThreadWork ONLY <br/>

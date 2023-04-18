@@ -24,7 +24,7 @@ public partial class KeyShow : Control
 
 	public static event EventHandler<Vector3> OnAbsoluteVectorChanged;
 
-	private const float JoyPadDeadzone = 0.2f;
+	public static float JoyPadDeadzone { get; set; } = 0.2f;
 
 	private List<Key> _pressedKeys;
 	private Vector2 _rightAnalogVector2;
@@ -60,12 +60,6 @@ public partial class KeyShow : Control
 	public override void _Process(double delta)
 	{
 
-
-
-		//if (Input.IsKeyPressed(Key.R))
-		//{
-		//	Position = new Vector2(10f, 10f);
-		//}
 	}
 
 	public override void _Input(InputEvent @event)
