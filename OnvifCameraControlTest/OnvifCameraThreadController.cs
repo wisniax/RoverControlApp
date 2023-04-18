@@ -11,7 +11,7 @@ namespace OnvifCameraControlTest
 	{
 		public TimeSpan MinSpanEveryCom = new(0, 0, 0, 0, 550);
 
-		public TimeSpan MaxSpanEveryCom => 3 * MinSpanEveryCom;
+		public TimeSpan MaxSpanEveryCom => 1.5 * MinSpanEveryCom;
 
 
 		/// <summary>

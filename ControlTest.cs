@@ -23,12 +23,12 @@ public partial class ControlTest : Control
 
 		_camera = new OnvifCameraThreadController
 		{
-			InvertControl = Settings.CameraInverseAxis,
-			MinSpanEveryCom = TimeSpan.FromSeconds(1 / Settings.PtzRequestFrequency)
+			InvertControl = Settings.Settings.CameraInverseAxis,
+			MinSpanEveryCom = TimeSpan.FromSeconds(1 / Settings.Settings.PtzRequestFrequency)
 		};
 
-		_camera.Start(Settings.CameraPtzIp, Settings.CameraLogin, Settings.CameraPassword);
-		KeyShow.JoyPadDeadzone = Settings.JoyPadDeadzone;
+		_camera.Start(Settings.Settings.CameraPtzIp, Settings.Settings.CameraLogin, Settings.Settings.CameraPassword);
+		KeyShow.JoyPadDeadzone = Settings.Settings.JoyPadDeadzone;
 		KeyShow.OnAbsoluteVectorChanged += _camera.ChangeMoveVector;
 
 		_camStatus = GetNode<Label>("CamStatus");
@@ -46,6 +46,7 @@ public partial class ControlTest : Control
 		_deltaSum = 0;
 		switch (_camera.State)
 		{
+			case CommunicationState.Created:
 			case CommunicationState.Opening:
 				_deltaSumMax = 0.69;
 				string dot;
@@ -94,7 +95,6 @@ public partial class ControlTest : Control
 				_camStatus.RemoveThemeColorOverride("font_color");
 				break;
 			case CommunicationState.Closing:
-			case CommunicationState.Created:
 			default:
 				break;
 		}

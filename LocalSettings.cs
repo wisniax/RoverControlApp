@@ -8,18 +8,20 @@ using Godot;
 
 namespace RoverControlApp
 {
-	public class DefaultSettingsClass
+	public class LocalSettingsVars
 	{
 		public string CameraRtspIp { get; set; } = "rtsp://localhost:554";
 		public string CameraPtzIp { get; set; } = "localhost:80";
 		public string CameraLogin { get; set; } = "admin";
 		public string CameraPassword { get; set; } = "admin";
 		public bool CameraInverseAxis { get; set; } = false;
-		public float JoyPadDeadzone { get; set; } = 0.2f;
+		public float JoyPadDeadzone { get; set; } = 0.15f;
 		public double PtzRequestFrequency { get; set; } = 1.69;
 	}
-	public class LocalSettings : DefaultSettingsClass
+
+	public class LocalSettings
 	{
+		public LocalSettingsVars Settings { get; set; }
 
 		private readonly string _settingsPath = "user://RoverControlAppDefault.cfg";
 
@@ -37,10 +39,7 @@ namespace RoverControlApp
 			if (err != Error.Ok) return false;
 
 			string serializedSettings = (string)config.GetValue("Default", "defaultSettings");
-			var settings = JsonSerializer.Deserialize<DefaultSettingsClass>(serializedSettings);
-			CameraRtspIp = settings.CameraRtspIp;
-			CameraPtzIp = settings.CameraPtzIp;
-			CameraInverseAxis = settings.CameraInverseAxis;
+			Settings = JsonSerializer.Deserialize<LocalSettingsVars>(serializedSettings);
 
 			return true;
 		}
