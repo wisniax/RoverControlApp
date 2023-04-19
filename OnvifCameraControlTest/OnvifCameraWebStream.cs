@@ -43,6 +43,7 @@ namespace OnvifCameraControlTest
 		static void OnFrameReceived(object? sender, RawFrame frame)
 		{
 			//Do smth
+			var cusie = frame.FrameSegment;
 		}
 
 		private static async Task ConnectAsync(ConnectionParameters connectionParameters, CancellationToken token)
