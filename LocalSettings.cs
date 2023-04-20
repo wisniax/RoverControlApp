@@ -10,8 +10,10 @@ namespace RoverControlApp
 {
 	public class LocalSettingsVars
 	{
-		public string CameraRtspIp { get; set; } = "rtsp://localhost:554";
-		public string CameraPtzIp { get; set; } = "localhost:80";
+		public string CameraIp { get; set; } = "192.168.5.35";
+		public string CameraPtzPort { get; set; } = "80";
+		public string CameraRtspPort { get; set; } = "554";
+		public string CameraRtspStreamPath { get; set; } = "/live/0/MAIN";
 		public string CameraLogin { get; set; } = "admin";
 		public string CameraPassword { get; set; } = "admin";
 		public bool CameraInverseAxis { get; set; } = false;
@@ -21,7 +23,7 @@ namespace RoverControlApp
 
 	public class LocalSettings
 	{
-		public LocalSettingsVars Settings { get; set; }
+		public LocalSettingsVars Settings { get; private set; }
 
 		private readonly string _settingsPath = "user://RoverControlAppDefault.cfg";
 
@@ -51,6 +53,12 @@ namespace RoverControlApp
 			config.SetValue("Default", "defaultSettings", serializedSettings);
 			Error err = config.Save(_settingsPath);
 			return err == Error.Ok;
+		}
+
+		public void ForceDefaultSettings()
+		{
+			Settings = new LocalSettingsVars();
+			SaveSettings();
 		}
 	}
 }

@@ -14,7 +14,7 @@ public partial class ControlTest : Control
 	private OnvifCameraThreadController _camera;
 	private OnvifCameraWebStream _webStream;
 	public static LocalSettings Settings { get; set; }
-	
+
 
 	Label _camStatus;
 	private TextureRect _imydz;
@@ -30,14 +30,20 @@ public partial class ControlTest : Control
 			MinSpanEveryCom = TimeSpan.FromSeconds(1 / Settings.Settings.PtzRequestFrequency)
 		};
 
-		_camera.Start(Settings.Settings.CameraPtzIp, Settings.Settings.CameraLogin, Settings.Settings.CameraPassword);
+		_camera.Start(Settings.Settings.CameraIp + ':' + Settings.Settings.CameraPtzPort, Settings.Settings.CameraLogin, Settings.Settings.CameraPassword);
 		KeyShow.JoyPadDeadzone = Settings.Settings.JoyPadDeadzone;
 		KeyShow.OnAbsoluteVectorChanged += _camera.ChangeMoveVector;
 
 		_camStatus = GetNode<Label>("CamStatus");
 		_imydz = GetNode<TextureRect>("TextureRect");
 
-		_webStream = new OnvifCameraWebStream();
+		_webStream = new OnvifCameraWebStream(
+			Settings.Settings.CameraLogin,
+			Settings.Settings.CameraPassword,
+			Settings.Settings.CameraRtspStreamPath,
+			Settings.Settings.CameraIp,
+			"rtsp",
+			Settings.Settings.CameraRtspPort);
 	}
 
 	double _deltaSum;

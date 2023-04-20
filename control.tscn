@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://KeyShow.cs" id="2_typ35"]
 [ext_resource type="Texture2D" uid="uid://dltgylarepav8" path="res://strzala.png" id="3_clvhq"]
 
-[sub_resource type="ImageTexture" id="ImageTexture_2kq15"]
+[sub_resource type="ImageTexture" id="ImageTexture_hfpdr"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -95,10 +95,11 @@ offset_bottom = 23.0
 text = "CAM_STATUS"
 
 [node name="TextureRect" type="TextureRect" parent="."]
+z_index = -1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = SubResource("ImageTexture_2kq15")
+texture = SubResource("ImageTexture_hfpdr")
