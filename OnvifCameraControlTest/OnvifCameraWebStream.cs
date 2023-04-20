@@ -8,125 +8,98 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Text.Json;
+using System.Drawing.Imaging;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
+using Emgu.Util;
+using Godot;
 using RtspClientSharp.RawFrames;
 
 namespace OnvifCameraControlTest
 {
-	public  class OnvifCameraWebStream
+	public class OnvifCameraWebStream
 	{
-		public OnvifCameraWebStream()
+		static readonly object Identity = new object();
+		public VideoCapture Capture { get; private set; }
+		private Texture2D _latestImage;
+		public volatile bool NewFrameSaved;
+
+		public Texture2D LatestImage
 		{
-			var serverUri = new Uri("rtsp://192.168.5.35:554/live/0/MAIN");
-			//var serverUri = new Uri("rtsp://admin:admin@192.168.5.35:554/live/0/MAIN");
-			var credentials = new NetworkCredential("admin", "admin");
-
-			var connectionParameters = new ConnectionParameters(serverUri, credentials);
-			var cancellationTokenSource = new CancellationTokenSource();
-
-			Task connectTask = ConnectAsync(connectionParameters, cancellationTokenSource.Token);
-
-
-			Console.WriteLine("Press any key to cancel");
-			Console.ReadLine();
-
-			cancellationTokenSource.Cancel();
-
-			Console.WriteLine("Canceling");
-			connectTask.Wait(CancellationToken.None);
-		}
-
-		List<RawFrame>? ReadFromSavedFrames(string str)
-		{
-			return JsonSerializer.Deserialize<List<RawFrame>>(str);
-		}
-
-		static void OnFrameReceived(object? sender, RawFrame frame)
-		{
-			//Do smth
-			var cusie = frame.FrameSegment;
-		}
-
-		private static async Task ConnectAsync(ConnectionParameters connectionParameters, CancellationToken token)
-		{
-			try
+			get
 			{
-				TimeSpan delay = TimeSpan.FromSeconds(5);
-
-				using (var rtspClient = new RtspClient(connectionParameters))
+				lock (Identity)
 				{
-					rtspClient.FrameReceived +=
-						(sender, frame) => Console.WriteLine($"New frame {frame.Timestamp}: {frame.GetType().Name}");
-					rtspClient.FrameReceived += OnFrameReceived;
-
-					while (true)
-					{
-						Console.WriteLine("Connecting...");
-
-						try
-						{
-							await rtspClient.ConnectAsync(token);
-						}
-						catch (OperationCanceledException)
-						{
-							return;
-						}
-						catch (RtspClientException e)
-						{
-							Console.WriteLine(e.ToString());
-							await Task.Delay(delay, token);
-							continue;
-						}
-
-						Console.WriteLine("Connected.");
-
-						try
-						{
-							await rtspClient.ReceiveAsync(token);
-							//rtspClient.
-						}
-						catch (OperationCanceledException)
-						{
-							return;
-						}
-						catch (RtspClientException e)
-						{
-							Console.WriteLine(e.ToString());
-							await Task.Delay(delay, token);
-						}
-					}
+					return _latestImage;
 				}
 			}
-			catch (OperationCanceledException)
+			set
 			{
+				lock (Identity)
+				{
+					NewFrameSaved = true;
+					_latestImage = value;
+				}
+			}
+		}
+
+		//public Bitmap LatestBitmap { get; private set; }
+		public OnvifCameraWebStream()
+		{
+			var configTuple = new Tuple<CapProp, int>(CapProp.HwAcceleration, (int)VideoAccelerationType.Any);
+			//Capture = new VideoCapture("rtsp://admin:admin@192.168.5.35:554/live/0/MAIN", VideoCapture.API.Ffmpeg, configTuple);
+			Capture = new VideoCapture("rtsp://admin:admin@192.168.5.35:554/live/0/MAIN", VideoCapture.API.Ffmpeg, configTuple);
+			Capture.Set(CapProp.Buffersize, 0);
+			//Capture.Set(CapProp.)
+			Capture.ExceptionMode = true;
+			//Capture.Set(CapProp.ConvertRgb, 1);
+			Capture.ImageGrabbed += CurrentDevice_ImageGrabbed;
+
+			//capture.
+			//capture.SetCaptureProperty(CapProp.Fps, 0);
+			var ex = new EmguExceptionHandler();
+			Capture.Start(ex);
+		}
+
+		private void CurrentDevice_ImageGrabbed(object? sender, EventArgs e)
+		{
+			//Console.WriteLine("Frame Received");
+			using Mat m = new Mat();
+			//using Mat m2 = new Mat();
+			if (!Capture.Retrieve(m, 0)) return;
+			//while (Capture.Retrieve(m2)) ;
+			byte[] arr = new byte[(int)m.Total * m.NumberOfChannels];
+			//m.ToBitmap()
+			//m.GetData(false);
+			//m.ConvertTo(m, DepthType.Cv8U);
+			Emgu.CV.CvInvoke.CvtColor(m, m, ColorConversion.Bgr2Rgb);
+			m.CopyTo(arr);
+			//m.ToImage<>();
+			var image = Image.CreateFromData(m.Width, m.Height, false, Image.Format.Rgb8, arr);
+			LatestImage = ImageTexture.CreateFromImage(image);
+
+			//LatestBitmap = m.ToBitmap();
+			//using MemoryStream ms = new MemoryStream();
+			//LatestBitmap.Save(ms, ImageFormat.Bmp);
+			//cos.Save(@"C:\Users\Admin\source\repos\doUsuniecia\doUsuniecia\latestFrame.bmp");
+
+		}
+
+
+		class EmguExceptionHandler : ExceptionHandler
+		{
+			public override bool HandleException(Exception ex)
+			{
+				// Handle the exception as needed
+				GD.Print($"Exception caught by my fancy class: {ex.Message}");
+				//Console.WriteLine($"Exception caught by my fancy class: {ex.Message}");
+
+				// Return true if the exception has been handled, or false if it should be rethrown
+				// and the application terminated.
+				return true;
 			}
 		}
 
 
-		//static async Task Main(string[] args)
-		//{
-		//	Uri RTSPURL = new Uri("http://81.187.169.213/mjpg/1/video.mjpg?camera=1&timestamp=1668882353161");
-		//	CancellationToken token = new CancellationToken();
-		//	var credentials = new NetworkCredential("", "");
-		//	var connectionParameters = new ConnectionParameters(RTSPURL, credentials);
-		//	connectionParameters.RtpTransport = RtpTransportProtocol.TCP;
-
-		//	using (var rtspClient = new RtspClient(connectionParameters))
-		//	{
-		//		await rtspClient.ConnectAsync(token);
-		//		await rtspClient.ReceiveAsync(token);
-		//		Console.WriteLine("Using RTSPClient");
-
-		//		rtspClient.FrameReceived += (sender, frame) =>
-		//		{
-		//			Console.WriteLine("Got Frame");
-		//			using (MemoryStream memStream = new MemoryStream(frame.FrameSegment.Array, 0, frame.FrameSegment.Array.Count(), true))
-		//			{
-
-		//				var bmp = new Bitmap(memStream);
-		//			}
-
-		//		};
-		//	}
-		//}
 	}
 }

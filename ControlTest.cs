@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.ServiceModel;
 using System.Threading.Tasks;
 using Godot;
@@ -11,7 +12,9 @@ namespace RoverControlApp;
 public partial class ControlTest : Control
 {
 	private OnvifCameraThreadController _camera;
+	private OnvifCameraWebStream _webStream;
 	public static LocalSettings Settings { get; set; }
+	
 
 	Label _camStatus;
 	private TextureRect _imydz;
@@ -33,6 +36,8 @@ public partial class ControlTest : Control
 
 		_camStatus = GetNode<Label>("CamStatus");
 		_imydz = GetNode<TextureRect>("TextureRect");
+
+		_webStream = new OnvifCameraWebStream();
 	}
 
 	double _deltaSum;
@@ -41,6 +46,16 @@ public partial class ControlTest : Control
 	int _progress = 0;
 	public override void _Process(double delta)
 	{
+		//Image im = new Image();
+		//im.LoadBmpFromBuffer();
+		//Image im = ;
+		//_imydz.Texture = Image.CreateFromData(_webStream.LatestBitmap.Width, _webStream.LatestBitmap.Height, false, Image.Format., _webStream.LatestBitmap. );
+
+		if (_webStream.NewFrameSaved)
+		{
+			_imydz.Texture = _webStream.LatestImage;
+			_webStream.NewFrameSaved = false;
+		}
 		_deltaSum += delta;
 		if (!(_deltaSum > _deltaSumMax)) return;
 		_deltaSum = 0;
