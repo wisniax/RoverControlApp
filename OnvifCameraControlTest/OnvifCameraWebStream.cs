@@ -43,6 +43,7 @@ namespace OnvifCameraControlTest
 		{
 			var configTuple = new Tuple<CapProp, int>(CapProp.HwAcceleration, (int)VideoAccelerationType.Any);
 			Capture = new VideoCapture($"{_protocol}://{_login}:{_password}@{_ip}:{_port}{_pathToStream}", VideoCapture.API.Ffmpeg, configTuple);
+			//Capture = new VideoCapture($"rtsp://admin:admin@192.168.5.35/live/0/MAIN", VideoCapture.API.Ffmpeg, configTuple);
 			//Capture.Set(CapProp.XiColorFilterArray, 4);
 			Capture.Set(CapProp.Buffersize, 0);
 			Capture.ExceptionMode = true;
@@ -100,6 +101,7 @@ namespace OnvifCameraControlTest
 				{
 					cam.Capture.ImageGrabbed -= cam.CurrentDevice_ImageGrabbed;
 					cam.Capture.Dispose();
+					cam.Capture = null;
 				}
 				Thread.Sleep(500);
 				(_obj as OnvifCameraWebStream)?.StartCapture();

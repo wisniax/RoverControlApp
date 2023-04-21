@@ -30,6 +30,7 @@ namespace RoverControlApp
 		public LocalSettings()
 		{
 			if (LoadSettings()) return;
+			Settings = new();
 			if (SaveSettings()) return;
 			throw new Exception("Can't create settings file...");
 		}
@@ -49,7 +50,7 @@ namespace RoverControlApp
 		public bool SaveSettings()
 		{
 			var config = new ConfigFile();
-			string serializedSettings = JsonSerializer.Serialize(this);
+			string serializedSettings = JsonSerializer.Serialize(Settings);
 			config.SetValue("Default", "defaultSettings", serializedSettings);
 			Error err = config.Save(_settingsPath);
 			return err == Error.Ok;

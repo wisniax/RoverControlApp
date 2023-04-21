@@ -103,3 +103,4 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = SubResource("ImageTexture_hfpdr")
+expand_mode = 1
