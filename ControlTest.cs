@@ -57,11 +57,12 @@ public partial class ControlTest : Control
 		//Image im = ;
 		//_imydz.Texture = Image.CreateFromData(_webStream.LatestBitmap.Width, _webStream.LatestBitmap.Height, false, Image.Format., _webStream.LatestBitmap. );
 
-		if (_webStream.NewFrameSaved)
+		if (_webStream is { NewFrameSaved: true })
 		{
 			_imydz.Texture = _webStream.LatestImage;
 			_webStream.NewFrameSaved = false;
 		}
+
 		_deltaSum += delta;
 		if (!(_deltaSum > _deltaSumMax)) return;
 		_deltaSum = 0;
