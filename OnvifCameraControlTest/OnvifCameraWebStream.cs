@@ -12,13 +12,17 @@ namespace OnvifCameraControlTest
 		public VideoCapture? Capture { get; private set; }
 		private Texture2D? _latestImage;
 		public volatile bool NewFrameSaved;
-		private byte[]? _arr;
+		
+
+		ImageTexture? imageTexture;
+
+
 		private Task? _timerTask;
 		private readonly PeriodicTimer _timer;
 		private readonly CancellationTokenSource _cts = new();
 		//private static Timer _timer;
 		private Thread _thread;
-		private Mat m;
+		//private Mat m;
 		private string _ip;
 		private string _port;
 		private string _protocol;
@@ -48,7 +52,8 @@ namespace OnvifCameraControlTest
 
 		public void StartCapture()
 		{
-			m = new Mat();
+			//var m = new Mat();
+
 			//var configTuple = new Tuple<CapProp, int>(CapProp.HwAcceleration, (int)VideoAccelerationType.Any);
 			Capture = new VideoCapture($"{_protocol}://{_login}:{_password}@{_ip}:{_port}{_pathToStream}", VideoCaptureAPIs.FFMPEG);
 			//Capture = new VideoCapture($"rtsp://admin:admin@192.168.5.35/live/0/MAIN", VideoCapture.API.Ffmpeg, configTuple);
@@ -140,31 +145,28 @@ namespace OnvifCameraControlTest
 
 		private void TryGrabImage()
 		{
-
-			//using Mat m = new Mat();
+			using Mat m = new Mat();
 
 			if (Capture == null) return;
-			//GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame read attempted");
 			Stopwatch watch = Stopwatch.StartNew();
 
 			if (!Capture.Grab())
 				return;
-			//GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame Grabbed in {watch.ElapsedMilliseconds}ms");
-			//watch.Restart();
+
 			if (!Capture.Retrieve(m))
 				return;
-			//if (!Capture.Read(m)) 
-			//	return;
 
-			//GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame Received in {watch.ElapsedMilliseconds}ms");
-			//watch.Restart();
 			Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
 			//if (_arr?.Length != m.Total() * m.Channels())
-			var	_arr = new byte[m.Total() * m.Channels()];
-
+			var _arr = new byte[m.Total() * m.Channels()];
+			
 			Marshal.Copy(m.Data, _arr, 0, (int)m.Total() * m.Channels());
+			
 			var image = Image.CreateFromData(m.Width, m.Height, false, Image.Format.Rgb8, _arr);
-			LatestImage = ImageTexture.CreateFromImage(image);
+			if (imageTexture == null) imageTexture = ImageTexture.CreateFromImage(image);
+			else imageTexture.Update(image);
+			
+			LatestImage = imageTexture;
 			GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame received in: {watch.ElapsedMilliseconds}ms");
 		}
 
