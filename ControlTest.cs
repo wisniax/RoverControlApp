@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.ServiceModel;
+using System.Threading;
 using System.Threading.Tasks;
 using Godot;
 using Onvif.Core.Client;
@@ -15,7 +16,7 @@ public partial class ControlTest : Control
 	private OnvifCameraWebStream _webStream;
 	public static LocalSettings Settings { get; set; }
 
-
+	public static readonly DateTime AppStartTimestamp = DateTime.Now;
 	Label _camStatus;
 	private TextureRect _imydz;
 
@@ -120,5 +121,10 @@ public partial class ControlTest : Control
 			default:
 				break;
 		}
+	}
+
+	public static long GetAppTime()
+	{
+		return (long)(DateTime.Now - AppStartTimestamp).TotalMilliseconds;
 	}
 }
