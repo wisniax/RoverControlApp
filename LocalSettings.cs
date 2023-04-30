@@ -44,7 +44,7 @@ namespace RoverControlApp
 			string serializedSettings = (string)config.GetValue("Default", "defaultSettings");
 			Settings = JsonSerializer.Deserialize<LocalSettingsVars>(serializedSettings);
 
-			return true;
+			return serializedSettings != "{\"Settings\":null}";
 		}
 
 		public bool SaveSettings()
