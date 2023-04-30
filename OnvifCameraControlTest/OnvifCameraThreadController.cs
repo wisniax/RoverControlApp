@@ -218,6 +218,10 @@ namespace OnvifCameraControlTest
 					};
 					ComSleepTillCanRequest();
 					_tcamera.Ptz.ContinuousMoveAsync(_tcamera.Profile.token, ptzSpeed, string.Empty).Wait();
+					var cos = _tcamera.Ptz.GetStatusAsync(_tcamera.Profile.token);
+					cos.Wait();
+					GD.Print("Camera move status:" + cos.Result.MoveStatus.PanTilt);
+
 					//ComRequestSleep();
 				}
 				ComRequestSleep();

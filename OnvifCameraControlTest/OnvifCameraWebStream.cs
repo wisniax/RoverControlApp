@@ -12,7 +12,7 @@ namespace OnvifCameraControlTest
 		public VideoCapture? Capture { get; private set; }
 		private Texture2D? _latestImage;
 		public volatile bool NewFrameSaved;
-
+		private byte[]? _arr;
 		private Task? _timerTask;
 		private readonly PeriodicTimer _timer;
 		private readonly CancellationTokenSource _cts = new();
@@ -92,7 +92,7 @@ namespace OnvifCameraControlTest
 			StartCapture();
 			_thread = new Thread(KeepGrabbingFrames);
 			//_thread.IsBackground = true;
-			_thread.Priority = ThreadPriority.Highest;
+			_thread.Priority = ThreadPriority.AboveNormal;
 			_thread.Start();
 			//_timer = new(TimeSpan.FromMilliseconds(20));
 			//StartTimer();
@@ -140,36 +140,32 @@ namespace OnvifCameraControlTest
 
 		private void TryGrabImage()
 		{
-			
+
 			//using Mat m = new Mat();
 
 			if (Capture == null) return;
-			GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame read attempted");
+			//GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame read attempted");
 			Stopwatch watch = Stopwatch.StartNew();
 
-			if (!Capture.Grab()) 
+			if (!Capture.Grab())
 				return;
-			GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame Grabbed in {watch.ElapsedMilliseconds}ms");
-			watch.Restart();
-			if (!Capture.Retrieve(m)) 
+			//GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame Grabbed in {watch.ElapsedMilliseconds}ms");
+			//watch.Restart();
+			if (!Capture.Retrieve(m))
 				return;
 			//if (!Capture.Read(m)) 
 			//	return;
 
-			GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame Received in {watch.ElapsedMilliseconds}ms");
-			watch.Restart();
-			byte[] arr = new byte[m.Total() * m.Channels()];
+			//GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame Received in {watch.ElapsedMilliseconds}ms");
+			//watch.Restart();
 			Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
-			GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame Converted in {watch.ElapsedMilliseconds}ms");
-			watch.Restart();
-			//m.CopyTo(arr);
-			//m.ToMemoryStream(".bmp", new ImageEncodingParam(IMwri))
-			Marshal.Copy(m.Data, arr, 0, (int)m.Total() * m.Channels());
-			GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame Copied in {watch.ElapsedMilliseconds}ms");
-			watch.Restart();
-			var image = Image.CreateFromData(m.Width, m.Height, false, Image.Format.Rgb8, arr);
+			//if (_arr?.Length != m.Total() * m.Channels())
+			var	_arr = new byte[m.Total() * m.Channels()];
+
+			Marshal.Copy(m.Data, _arr, 0, (int)m.Total() * m.Channels());
+			var image = Image.CreateFromData(m.Width, m.Height, false, Image.Format.Rgb8, _arr);
 			LatestImage = ImageTexture.CreateFromImage(image);
-			GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame read finished in {watch.ElapsedMilliseconds}ms");
+			GD.Print($"{DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()}: Frame received in: {watch.ElapsedMilliseconds}ms");
 		}
 
 		public void StartTimer()
