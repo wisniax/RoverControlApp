@@ -29,7 +29,7 @@ namespace OnvifCameraControlTest
 
 		public void ChangeMoveVector(object sender, Vector3 vector3)
 		{
-			CameraMotion = vector3;
+            CameraMotion = vector3;
 		}
 
 		/// <summary>
@@ -46,7 +46,8 @@ namespace OnvifCameraControlTest
 			}
 			set
 			{
-				_dataMutex.WaitOne();
+				GD.Print($"OCTC: CameraMotion update: {value}");
+                _dataMutex.WaitOne();
 				_cameraMotion = value;
 				_dataMutex.ReleaseMutex();
 				//_threadBarrier.SignalAndWait(0);
@@ -69,7 +70,8 @@ namespace OnvifCameraControlTest
 			}
 			private set
 			{
-				_dataMutex.WaitOne();
+                GD.Print($"OCTC: CommunicationState update: {value}");
+                _dataMutex.WaitOne();
 				_state = value;
 				_dataMutex.ReleaseMutex();
 			}
@@ -118,7 +120,8 @@ namespace OnvifCameraControlTest
 		/// <exception cref="InvalidOperationException"></exception>
 		public void Start(string cameraPtzUrl, string user, string password)
 		{
-			if (_thread != null)
+            GD.Print($"OCTC: Start");
+            if (_thread != null)
 				throw new InvalidOperationException("Thread is still valid");
 
 			State = CommunicationState.Created;
@@ -149,15 +152,17 @@ namespace OnvifCameraControlTest
 		private void ThreadWork(object? obj)
 		{
 			_threadBarrier.AddParticipant();
-
-			//start up
-			State = CommunicationState.Created;
+            GD.Print($"OCTC: Thread Start");
+            //start up
+            State = CommunicationState.Created;
 			{
-				_tcamera = Camera.Create((Account)obj!, (e) => _threadError = e);
+                GD.Print($"OCTC: Camera Create");
+                _tcamera = Camera.Create((Account)obj!, (e) => _threadError = e);
 
 				if (_threadError is not null)
 				{
-					State = CommunicationState.Faulted;
+                    GD.Print($"OCTC: Camera Fault");
+                    State = CommunicationState.Faulted;
 					_threadBarrier.RemoveParticipant();
 					return;
 				}
@@ -174,8 +179,9 @@ namespace OnvifCameraControlTest
 			//CameraZoomState zoomLast = _cameraZoom = CameraZoomState.None;
 			_dataMutex.ReleaseMutex();
 
-			//camera operation loop
-			while (State == CommunicationState.Opened)
+            GD.Print($"OCTC: Thread Loop Entered");
+            //camera operation loop
+            while (State == CommunicationState.Opened)
 			{
 				//_threadBarrier.SignalAndWait();
 				ComSleepTillCanRequest();
@@ -218,9 +224,9 @@ namespace OnvifCameraControlTest
 
 				motionLast = CameraMotion;
 			}
-
-			//closeup
-			State = CommunicationState.Closing;
+            GD.Print($"OCTC: Thread Loop Exited");
+            //closeup
+            State = CommunicationState.Closing;
 			{
 				_tcamera.Ptz.Close();
 				_tcamera = null; // no close idk, and closing internals is dumb idea
