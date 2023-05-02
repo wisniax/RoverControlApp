@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.ServiceModel;
 using System.Threading;
@@ -49,8 +50,9 @@ public partial class ControlTest : Control
 
 	double _deltaSum;
 	double _deltaSumMax = 0;
-
+	ImageTexture? _giTexture;
 	int _progress = 0;
+
 	public override void _Process(double delta)
 	{
 		//Image im = new Image();
@@ -60,7 +62,11 @@ public partial class ControlTest : Control
 
 		if (_webStream is { NewFrameSaved: true })
 		{
-			_imydz.Texture = _webStream.LatestImage;
+			_webStream._mutex.WaitOne();
+			if (_giTexture == null) _giTexture = ImageTexture.CreateFromImage(_webStream.LatestImage);
+			else _giTexture.Update(_webStream.LatestImage);
+			_webStream._mutex.ReleaseMutex();
+			_imydz.Texture = _giTexture;
 			_webStream.NewFrameSaved = false;
 		}
 
