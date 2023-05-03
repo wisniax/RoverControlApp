@@ -11,7 +11,7 @@ namespace RoverControlApp.MVVM.Model
 {
 	public class PressedKeys
 	{
-		public static event EventHandler<Vector4> OnAbsoluteVectorChanged;
+		public event EventHandler<Vector4> OnAbsoluteVectorChanged;
 		private Vector4 _lastAbsoluteVector;
 
 		public Vector4 LastAbsoluteVector

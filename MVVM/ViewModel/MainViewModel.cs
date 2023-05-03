@@ -3,6 +3,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Threading;
 using Godot;
+using Onvif.Core.Client.Ptz;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
 
@@ -15,6 +16,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static PressedKeys PressedKeys { get; private set; }
 
 		private RtspStreamClient _rtspClient;
+		private OnvifPtzCameraController _ptzClient;
 
 		private Label _label;
 		private TextureRect _imTextureRect;
@@ -28,6 +30,12 @@ namespace RoverControlApp.MVVM.ViewModel
 			Settings = new LocalSettings();
 			Settings.SaveSettings();
 			PressedKeys = new PressedKeys();
+
+			_ptzClient = new OnvifPtzCameraController(
+				Settings.Settings.CameraIp,
+				Settings.Settings.CameraPtzPort,
+				Settings.Settings.CameraLogin,
+				Settings.Settings.CameraPassword);
 
 			_rtspClient = new RtspStreamClient(
 				Settings.Settings.CameraLogin,
@@ -77,6 +85,15 @@ namespace RoverControlApp.MVVM.ViewModel
 			else
 				sb.AppendLine($"RTSP: {_rtspClient.State}, Time: {age}s");
 
+			age = _ptzClient.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+
+			if (_ptzClient.State == CommunicationState.Opened)
+			{
+				sb.AppendLine($"PTZ: Since last move request: {age}s");
+				sb.AppendLine($"PTZ: Move vector: {_ptzClient.CameraMotion}");
+			}
+			else
+				sb.AppendLine($"PTZ: {_ptzClient.State}, Time: {age}s");
 
 			_label.Text = sb.ToString();
 		}

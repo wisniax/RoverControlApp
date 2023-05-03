@@ -49,11 +49,7 @@ namespace RoverControlApp.MVVM.Model
 
 		public CommunicationState State
 		{
-			get
-			{
-				var copy = _state;
-				return copy;
-			}
+			get => _state;
 			private set
 			{
 				MainViewModel.EventLogger.LogMessege($"RTSP: CommunicationState update: {value}");
@@ -75,7 +71,7 @@ namespace RoverControlApp.MVVM.Model
 			this._pathToStream = pathToStream;
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
-			_rtspThread = new Thread(ThreadWork) { IsBackground = true, Name = "RtspStream_Thread", Priority = ThreadPriority.AboveNormal };
+			_rtspThread = new Thread(ThreadWork) { IsBackground = true, Name = "RtspStream_Thread", Priority = ThreadPriority.BelowNormal };
 			_rtspThread.Start();
 		}
 
@@ -90,9 +86,11 @@ namespace RoverControlApp.MVVM.Model
 
 		public void Dispose()
 		{
+			MainViewModel.EventLogger.LogMessege("RTSP: Dispose called... Closing client");
 			State = CommunicationState.Closing;
 			_cts.Cancel();
 			_rtspThread.Join();
+			_rtspThread = null;
 			EndCapture();
 			State = CommunicationState.Closed;
 		}
@@ -102,8 +100,8 @@ namespace RoverControlApp.MVVM.Model
 			Capture?.Release();
 			Capture?.Dispose();
 			Capture = null;
-			//State = CommunicationState.Closed;
 		}
+
 		private void CreateCapture()
 		{
 			if (Capture != null) EndCapture();
@@ -134,14 +132,16 @@ namespace RoverControlApp.MVVM.Model
 			switch (State)
 			{
 				case CommunicationState.Created:
+					State = CommunicationState.Closing;
 					break;
 				case CommunicationState.Opening:
+					State = CommunicationState.Closing;
 					break;
 				case CommunicationState.Opened:
 
 					_generalPurposeStopwatch.Restart();
 					var ret = TryGrabImage();
-					
+
 					if (!ret || _generalPurposeStopwatch.Elapsed.TotalSeconds > 5)
 					{
 						MainViewModel.EventLogger.LogMessege($"RTSP: Camera connection lost ;( Grabbing a frame took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
@@ -155,7 +155,7 @@ namespace RoverControlApp.MVVM.Model
 					State = CommunicationState.Closed;
 					break;
 				case CommunicationState.Closed:
-					CreateCapture();
+					if (!_cts.IsCancellationRequested) CreateCapture();
 					break;
 				case CommunicationState.Faulted:
 					_generalPurposeStopwatch.Restart();
@@ -188,14 +188,14 @@ namespace RoverControlApp.MVVM.Model
 
 			if (!Capture.Grab()) return false;
 			if (!Capture.Retrieve(m)) return false;
-			
+
 
 			Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
 
 			if (_arr?.Length != m.Total() * m.Channels())
 				_arr = new byte[m.Total() * m.Channels()];
 
-			
+
 
 			Marshal.Copy(m.Data, _arr, 0, (int)m.Total() * m.Channels());
 
