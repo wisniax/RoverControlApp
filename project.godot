@@ -27,6 +27,7 @@ OnAppLoad="*res://Core/OnAppLoad.gd"
 [display]
 
 window/size/viewport_width=1154
+window/subwindows/embed_subwindows=false
 
 [dotnet]
 
