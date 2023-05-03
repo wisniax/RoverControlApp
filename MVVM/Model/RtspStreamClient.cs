@@ -88,6 +88,15 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
+		public void Dispose()
+		{
+			State = CommunicationState.Closing;
+			_cts.Cancel();
+			_rtspThread.Join();
+			EndCapture();
+			State = CommunicationState.Closed;
+		}
+
 		private void EndCapture()
 		{
 			Capture?.Release();
@@ -114,6 +123,7 @@ namespace RoverControlApp.MVVM.Model
 
 			MainViewModel.EventLogger.LogMessege($"RTSP: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 
+			Capture?.Set(VideoCaptureProperties.XI_Timeout, 5000);
 			Capture?.Set(VideoCaptureProperties.BufferSize, 0);
 			Capture?.SetExceptionMode(false);
 			State = CommunicationState.Opened;
@@ -141,6 +151,7 @@ namespace RoverControlApp.MVVM.Model
 					}
 					break;
 				case CommunicationState.Closing:
+					EndCapture();
 					State = CommunicationState.Closed;
 					break;
 				case CommunicationState.Closed:
@@ -177,11 +188,14 @@ namespace RoverControlApp.MVVM.Model
 
 			if (!Capture.Grab()) return false;
 			if (!Capture.Retrieve(m)) return false;
+			
 
 			Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
 
 			if (_arr?.Length != m.Total() * m.Channels())
 				_arr = new byte[m.Total() * m.Channels()];
+
+			
 
 			Marshal.Copy(m.Data, _arr, 0, (int)m.Total() * m.Channels());
 

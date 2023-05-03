@@ -43,6 +43,8 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		protected override void Dispose(bool disposing)
 		{
+			_rtspClient.Dispose();
+			_rtspClient = null;
 			base.Dispose(disposing);
 		}
 
@@ -50,15 +52,6 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return;
 			PressedKeys.HandleInputEvent();
-		}
-
-		private void UpdateLabel()
-		{
-			var sb = new StringBuilder();
-			sb.AppendLine($"RTSP connection: {_rtspClient.State}, Time: " +
-			              $"{_rtspClient.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"))}s");
-
-			_label.Text = sb.ToString();
 		}
 
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -74,7 +67,18 @@ namespace RoverControlApp.MVVM.ViewModel
 				_rtspClient.NewFrameSaved = false;
 			}
 			UpdateLabel();
-			
+		}
+		private void UpdateLabel()
+		{
+			var sb = new StringBuilder();
+			string age = _rtspClient.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			if (_rtspClient.State == CommunicationState.Opened)
+				sb.AppendLine($"RTSP: Frame is {age}s old");
+			else
+				sb.AppendLine($"RTSP: {_rtspClient.State}, Time: {age}s");
+
+
+			_label.Text = sb.ToString();
 		}
 	}
 }
