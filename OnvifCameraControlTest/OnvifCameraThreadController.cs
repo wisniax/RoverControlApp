@@ -29,7 +29,7 @@ namespace OnvifCameraControlTest
 
 		public void ChangeMoveVector(object sender, Vector3 vector3)
 		{
-            CameraMotion = vector3;
+			CameraMotion = vector3;
 		}
 
 		/// <summary>
@@ -47,7 +47,7 @@ namespace OnvifCameraControlTest
 			set
 			{
 				GD.Print($"OCTC: CameraMotion update: {value}");
-                _dataMutex.WaitOne();
+				_dataMutex.WaitOne();
 				_cameraMotion = value;
 				_dataMutex.ReleaseMutex();
 				//_threadBarrier.SignalAndWait(0);
@@ -70,8 +70,8 @@ namespace OnvifCameraControlTest
 			}
 			private set
 			{
-                GD.Print($"OCTC: CommunicationState update: {value}");
-                _dataMutex.WaitOne();
+				GD.Print($"OCTC: CommunicationState update: {value}");
+				_dataMutex.WaitOne();
 				_state = value;
 				_dataMutex.ReleaseMutex();
 			}
@@ -120,13 +120,13 @@ namespace OnvifCameraControlTest
 		/// <exception cref="InvalidOperationException"></exception>
 		public void Start(string cameraPtzUrl, string user, string password)
 		{
-            GD.Print($"OCTC: Start");
-            if (_thread != null)
+			GD.Print($"OCTC: Start");
+			if (_thread != null)
 				throw new InvalidOperationException("Thread is still valid");
 
 			State = CommunicationState.Created;
 			_threadError = null;
-			_thread = new Thread(ThreadWork) { IsBackground = true };
+			_thread = new Thread(ThreadWork) { IsBackground = true, Name = "OnvifCameraPtzController" };
 
 			var acc = new Account(cameraPtzUrl, user, password);
 			_thread.Start(acc);
@@ -152,17 +152,17 @@ namespace OnvifCameraControlTest
 		private void ThreadWork(object? obj)
 		{
 			_threadBarrier.AddParticipant();
-            GD.Print($"OCTC: Thread Start");
-            //start up
-            State = CommunicationState.Created;
+			GD.Print($"OCTC: Thread Start");
+			//start up
+			State = CommunicationState.Created;
 			{
-                GD.Print($"OCTC: Camera Create");
-                _tcamera = Camera.Create((Account)obj!, (e) => _threadError = e);
+				GD.Print($"OCTC: Camera Create");
+				_tcamera = Camera.Create((Account)obj!, (e) => _threadError = e);
 
 				if (_threadError is not null)
 				{
-                    GD.Print($"OCTC: Camera Fault");
-                    State = CommunicationState.Faulted;
+					GD.Print($"OCTC: Camera Fault");
+					State = CommunicationState.Faulted;
 					_threadBarrier.RemoveParticipant();
 					return;
 				}
@@ -179,22 +179,21 @@ namespace OnvifCameraControlTest
 			//CameraZoomState zoomLast = _cameraZoom = CameraZoomState.None;
 			_dataMutex.ReleaseMutex();
 
-            GD.Print($"OCTC: Thread Loop Entered");
-            //camera operation loop
-            while (State == CommunicationState.Opened)
+			GD.Print($"OCTC: Thread Loop Entered");
+			//camera operation loop
+			while (State == CommunicationState.Opened)
 			{
 				//_threadBarrier.SignalAndWait();
 				ComSleepTillCanRequest();
 				if (!UpdateMotion(motionLast, CameraMotion, out Vector3 moveVector3)) continue;
 
-				bool stopTilt = Mathf.IsEqualApprox(moveVector3.X, 0f, 0.1f) || Mathf.IsEqualApprox(moveVector3.Y, 0f, 0.1f);
-				bool stopZoom = Mathf.IsEqualApprox(moveVector3.Z, 0f, 0.1f);
+				bool x1 = !Mathf.IsEqualApprox(moveVector3.X, 0f, 0.1f); // Is currently moving on x axis
+				bool y1 = !Mathf.IsEqualApprox(moveVector3.Y, 0f, 0.1f); // Is currently moving on y axis
+				bool x0 = !Mathf.IsEqualApprox(motionLast.X, 0f, 0.1f); // Was moving on x axis b4?
+				bool y0 = !Mathf.IsEqualApprox(motionLast.Y, 0f, 0.1f); // Was moving on y axis b4?
 
-				//Check whether those WERE stopped previously
-				//stopTilt &= !(Mathf.IsEqualApprox(motionLast.X, 0f, 0.1f) || Mathf.IsEqualApprox(motionLast.Y, 0f, 0.1f));
-				stopZoom &= !Mathf.IsEqualApprox(motionLast.Z, 0f, 0.1f);
-
-				//var cus = _tcamera.Ptz.GetStatusAsync(_tcamera.Profile.token).Result;
+				bool stopTilt = (!x1 && x0) || (!y1 && y0) || (!x1 && !y1); //When to stop camera :)
+				bool stopZoom = Mathf.IsEqualApprox(moveVector3.Z, 0f, 0.1f) && !Mathf.IsEqualApprox(motionLast.Z, 0f, 0.1f);
 
 				if (stopTilt || stopZoom)
 				{
@@ -208,14 +207,15 @@ namespace OnvifCameraControlTest
 					{
 						PanTilt = new()
 						{
-							x = moveVector3.X,
-							y = moveVector3.Y
+							x = Math.Abs(moveVector3.X - motionLast.X) < 0.05f ? 0 : moveVector3.X,
+							y = Math.Abs(moveVector3.Y - motionLast.Y) < 0.05f ? 0 : moveVector3.Y
 						},
 						Zoom = new()
 						{
-							x = moveVector3.Z
+							x = Math.Abs(moveVector3.Z - motionLast.Z) < 0.05f ? 0 : moveVector3.Z
 						}
 					};
+
 					ComSleepTillCanRequest();
 					_tcamera.Ptz.ContinuousMoveAsync(_tcamera.Profile.token, ptzSpeed, string.Empty).Wait();
 					var cos = _tcamera.Ptz.GetStatusAsync(_tcamera.Profile.token);
@@ -228,9 +228,9 @@ namespace OnvifCameraControlTest
 
 				motionLast = CameraMotion;
 			}
-            GD.Print($"OCTC: Thread Loop Exited");
-            //closeup
-            State = CommunicationState.Closing;
+			GD.Print($"OCTC: Thread Loop Exited");
+			//closeup
+			State = CommunicationState.Closing;
 			{
 				_tcamera.Ptz.Close();
 				_tcamera = null; // no close idk, and closing internals is dumb idea
