@@ -94,8 +94,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			else
 				sb.AppendLine($"PTZ: {_ptzClient.State}, Time: {age}s");
-
-			_label.Text = sb.ToString();
+			_label.Text = sb.ToString().ReplaceLineEndings("\n");
 		}
 	}
 }
