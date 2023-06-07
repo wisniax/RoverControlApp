@@ -22,14 +22,14 @@ namespace RoverControlApp.Core
 
 		private void PrintOnStartup()
 		{
-			LogMessege($"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()} Hello on startup :)");
-			LogMessege($"Operating system:  --> {Environment.OSVersion.VersionString}");
-			LogMessege($"Process path:      --> {Environment.ProcessPath}");
-			LogMessege($"Program directory: --> {Environment.CurrentDirectory}");
-			LogMessege($"Config directory:  --> {OS.GetUserDataDir()}");
+			LogMessage($"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()} Hello on startup :)");
+			LogMessage($"Operating system:  --> {Environment.OSVersion.VersionString}");
+			LogMessage($"Process path:      --> {Environment.ProcessPath}");
+			LogMessage($"Program directory: --> {Environment.CurrentDirectory}");
+			LogMessage($"Config directory:  --> {OS.GetUserDataDir()}");
 		}
 
-		public void LogMessege(string str)
+		public void LogMessage(string str)
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.Append((DateTime.Now - _appStartedTimestamp).TotalSeconds.ToString("f4", new CultureInfo("en-US")));

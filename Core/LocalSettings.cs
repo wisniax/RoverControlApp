@@ -46,12 +46,12 @@ namespace RoverControlApp
 			Error err = config.Load(_settingsPath);
 			if (err != Error.Ok)
 			{
-				MainViewModel.EventLogger.LogMessege($"Loading local settings failed: {err}");
+				MainViewModel.EventLogger.LogMessage($"Loading local settings failed: {err}");
 				return false;
 			}
 			string serializedSettings = (string)config.GetValue("Default", "defaultSettings");
 			Settings = JsonSerializer.Deserialize<LocalSettingsVars>(serializedSettings);
-			MainViewModel.EventLogger.LogMessege("Loading local settings succeeded");
+			MainViewModel.EventLogger.LogMessage("Loading local settings succeeded");
 			return true;
 		}
 
@@ -64,11 +64,11 @@ namespace RoverControlApp
 
 			if (err != Error.Ok)
 			{
-				MainViewModel.EventLogger.LogMessege($"Saving settings failed: {err}");
+				MainViewModel.EventLogger.LogMessage($"Saving settings failed: {err}");
 				return false;
 			}
 
-			MainViewModel.EventLogger.LogMessege("Saving settings succeeded");
+			MainViewModel.EventLogger.LogMessage("Saving settings succeeded");
 			return true;
 
 		}
