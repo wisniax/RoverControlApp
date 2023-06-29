@@ -36,8 +36,14 @@ namespace RoverControlApp.Core
             public double Axis3 { get; set; } = 0;
             public double Axis4X { get; set; } = 0;
             public double Axis4Rot { get; set; } = 0;
-
             public double Gripper { get; set; } = 0;
         }
-    }
+
+        public class RoverFeedback
+        {
+	        public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+			public bool EStop {get; set; } = true;
+			public string Status {get; set; } = string.Empty;
+		}
+	}
 }
