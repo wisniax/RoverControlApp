@@ -5,6 +5,7 @@
     <RootNamespace>RoverControlApp</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="MQTTnet" Version="4.2.1.781" />
     <PackageReference Include="Onvif.Core" Version="2.2.2" />
     <PackageReference Include="OpenCvSharp4" Version="4.7.0.20230115" />
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.7.0.20230115" />
