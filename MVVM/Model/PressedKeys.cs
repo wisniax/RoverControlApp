@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Onvif.Core.Client.Common;
 using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
@@ -12,8 +13,9 @@ namespace RoverControlApp.MVVM.Model
 	public class PressedKeys
 	{
 		public event EventHandler<Vector4> OnAbsoluteVectorChanged;
-		private Vector4 _lastAbsoluteVector;
+		public event EventHandler<Vector2> OnRoverMovementVector;
 
+		private Vector4 _lastAbsoluteVector;
 		public Vector4 LastAbsoluteVector
 		{
 			get => _lastAbsoluteVector;
@@ -24,12 +26,29 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
+		private Vector2 _roverMovementVector;
+		public Vector2 RoverMovementVector
+		{
+			get => _roverMovementVector;
+			private set
+			{
+				_roverMovementVector = value;
+				OnRoverMovementVector?.Invoke(this, value);
+			}
+		}
+
 		public PressedKeys()
 		{
 			_lastAbsoluteVector = Vector4.Zero;
 		}
 
 		public void HandleInputEvent()
+		{
+			HandleCameraInputEvent();
+			HandleMovementInputEvent();
+		}
+
+		void HandleCameraInputEvent()
 		{
 			Vector4 absoluteVector4 = Vector4.Zero;
 
@@ -41,14 +60,30 @@ namespace RoverControlApp.MVVM.Model
 			absoluteVector4.Z = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.X;
 			absoluteVector4.W = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.Y;
 
-			if(Input.IsActionPressed("camera_zoom_mod"))
+			if (Input.IsActionPressed("camera_zoom_mod"))
 			{
-				absoluteVector4.X /= 10f;
-				absoluteVector4.Y /= 10f;
+				absoluteVector4.X /= 8f;
+				absoluteVector4.Y /= 8f;
 			}
 
 			absoluteVector4 = absoluteVector4.Clamp(new Vector4(-1f, -1f, -1f, -1f), new Vector4(1f, 1f, 1f, 1f));
 			LastAbsoluteVector = absoluteVector4;
 		}
+
+		void HandleMovementInputEvent()
+		{
+			Vector2 velocity = Input.GetVector("rover_move_left", "rover_move_right", "rover_move_forward", 
+				"rover_move_backward", Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone));
+			velocity = velocity.Clamp(new Vector2(-1f, -1f), new Vector2(1f, 1f));
+			velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.X;
+			velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.Y;
+			if (Input.IsActionPressed("camera_zoom_mod"))
+			{
+				velocity.X /= 8f;
+				velocity.Y /= 8f;
+			}
+			RoverMovementVector = velocity;
+		}
+
 	}
 }

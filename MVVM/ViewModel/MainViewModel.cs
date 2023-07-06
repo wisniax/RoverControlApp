@@ -14,6 +14,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static EventLogger EventLogger { get; private set; }
 		public static LocalSettings Settings { get; private set; }
 		public static PressedKeys PressedKeys { get; private set; }
+		public static RoverCommunication RoverCommunication { get; private set; }
 
 		private RtspStreamClient _rtspClient;
 		private OnvifPtzCameraController _ptzClient;
@@ -23,7 +24,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ImageTexture? _imTexture;
 
 		// Called when the node enters the scene tree for the first time.
-		public override void _Ready()
+		public override async void _Ready()
 		{
 			Thread.CurrentThread.Name = "MainUI_Thread";
 			EventLogger = new EventLogger();
@@ -45,6 +46,9 @@ namespace RoverControlApp.MVVM.ViewModel
 				"rtsp",
 				Settings.Settings.CameraRtspPort);
 
+			RoverCommunication = new RoverCommunication();
+			await RoverCommunication.Connect_Client();
+
 			_imTextureRect = GetNode<TextureRect>("CameraView");
 			_label = GetNode<Label>("DebugView");
 		}
@@ -53,6 +57,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			_rtspClient.Dispose();
 			_rtspClient = null;
+			RoverCommunication.Dispose();
 			base.Dispose(disposing);
 		}
 
@@ -80,6 +85,9 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			var sb = new StringBuilder();
 			string age = _rtspClient.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+
+			sb.AppendLine($"MQTT: Rover Mov: {PressedKeys.RoverMovementVector}");
+
 			if (_rtspClient.State == CommunicationState.Opened)
 				sb.AppendLine($"RTSP: Frame is {age}s old");
 			else

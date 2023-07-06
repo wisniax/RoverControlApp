@@ -25,12 +25,21 @@ namespace RoverControlApp
 			public bool EnablePtzControl {get; set; } = true;
 			public bool VerboseDebug {get; set; } = false;
 			public float JoyPadDeadzone { get; set; } = 0.15f;
-			public double PtzRequestFrequency { get; set; } = 1.69;
+			public double PtzRequestFrequency { get; set; } = 2.69;
+			public string MqttBrokerIp { get; set; } = "broker.hivemq.com";
+			public int MqttBrokerPort { get; set; } = 1883;
+			public string MqttTopic { get; set; } = "RappTORS";
+			public string MqttTopicJoyStatus { get; set; } = "JoyStatus";
+			public string MqttTopicRoverControl { get; set; } = "RoverControl";
+			public string MqttTopicManipulatorControl { get; set; } = "ManipulatorControl";
+			public string MqttTopicRoverFeedback { get; set; } = "RoverFeedback";
+			public string MqttTopicRoverStatus { get; set; } = "RoverStatus";
 		}
 
 		public LocalSettingsVars Settings { get; private set; }
 
 		private readonly string _settingsPath = "user://RoverControlAppDefault.cfg";
+
 
 		public LocalSettings()
 		{
