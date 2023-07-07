@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.ServiceModel;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using Godot;
 using Onvif.Core.Client.Ptz;
@@ -67,7 +68,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		public override void _Input(InputEvent @event)
 		{
 			if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return;
-			PressedKeys.HandleInputEvent();
+			PressedKeys.HandleInputEvent(@event);
 		}
 
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -89,7 +90,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			var sb = new StringBuilder();
 			string age = _rtspClient.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
-			sb.AppendLine($"MQTT: Rover Mov: {PressedKeys.RoverMovementVector}");
+			sb.AppendLine($"MQTT: Rover Mov: {JsonSerializer.Serialize(PressedKeys.RoverMovement)}");
 
 			if (_rtspClient.State == CommunicationState.Opened)
 				sb.AppendLine($"RTSP: Frame is {age}s old");

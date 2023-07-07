@@ -45,6 +45,7 @@ namespace RoverControlApp
 			public LocalSettingsMqtt LocalSettingsMqtt { get; set; } = new LocalSettingsMqtt();
 			public bool VerboseDebug { get; set; } = false;
 			public float JoyPadDeadzone { get; set; } = 0.15f;
+			public bool NewFancyRoverController { get; set; } = false;
 		}
 
 		public LocalSettingsVars Settings { get; private set; }
