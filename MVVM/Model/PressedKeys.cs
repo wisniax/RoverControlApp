@@ -36,8 +36,8 @@ namespace RoverControlApp.MVVM.Model
 				_roverMovementVector = value;
 				OnRoverMovementVector?.Invoke(this, new MqttClasses.RoverControl()
 				{
-					XAxis = value.X,
-					YAxis = value.Y,
+					XVelAxis = value.Y,
+					ZRotAxis = value.X,
 				});
 			}
 		}
@@ -77,8 +77,8 @@ namespace RoverControlApp.MVVM.Model
 
 		void HandleMovementInputEvent()
 		{
-			Vector2 velocity = Input.GetVector("rover_move_left", "rover_move_right", "rover_move_forward", 
-				"rover_move_backward", Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone));
+			Vector2 velocity = Input.GetVector("rover_move_left", "rover_move_right", "rover_move_backward",
+				"rover_move_forward", Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone));
 			// velocity = velocity.Clamp(new Vector2(-1f, -1f), new Vector2(1f, 1f));
 			velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.X;
 			velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.Y;

@@ -14,10 +14,11 @@ namespace RoverControlApp.Core
 		{
 			EStop = 0,
 			Rover = 1,
-			Manipulator = 2
-		};
+			Manipulator = 2,
+			Autonomy = 3
+		}
 
-		public class JoyStatus
+		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
 			public bool PadConnected { get; set; } = false;
@@ -26,8 +27,8 @@ namespace RoverControlApp.Core
 
 		public class RoverControl
 		{
-			public float XAxis { get; set; } = 0;
-			public float YAxis { get; set; } = 0;
+			public double XVelAxis { get; set; } = 0;
+			public double ZRotAxis { get; set; } = 0;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 

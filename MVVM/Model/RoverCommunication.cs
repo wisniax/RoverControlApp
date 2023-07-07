@@ -37,10 +37,10 @@ namespace RoverControlApp.MVVM.Model
 			_managedMqttClient = mqttFactory.CreateManagedMqttClient();
 
 			var mqttClientOptions = new MqttClientOptionsBuilder()
-				.WithTcpServer(MainViewModel.Settings.Settings.MqttBrokerIp, MainViewModel.Settings.Settings.MqttBrokerPort)
+				.WithTcpServer(MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttBrokerIp, MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttBrokerPort)
 				.WithKeepAlivePeriod(TimeSpan.FromSeconds(2.5))
-				.WithWillTopic($"{MainViewModel.Settings.Settings.MqttTopic}/{MainViewModel.Settings.Settings.MqttTopicRoverStatus}")
-				.WithWillPayload(JsonSerializer.Serialize(new Core.MqttClasses.JoyStatus() { CommunicationState = CommunicationState.Faulted }))
+				.WithWillTopic($"{MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttTopic}/{MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttTopicRoverStatus}")
+				.WithWillPayload(JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Faulted }))
 				.Build();
 
 			var managedMqttClientOptions = new ManagedMqttClientOptionsBuilder()
@@ -57,18 +57,32 @@ namespace RoverControlApp.MVVM.Model
 
 			MainViewModel.EventLogger.LogMessage("MQTT: The managed MQTT client is connected.");
 
+			await _managedMqttClient.EnqueueAsync(
+				$"{MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttTopic}/{MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttTopicRoverStatus}",
+				JsonSerializer.Serialize(new MqttClasses.RoverStatus()
+				{
+					CommunicationState = CommunicationState.Opened, 
+					ControlMode = MqttClasses.ControlMode.Rover
+				}));
+
 			MainViewModel.PressedKeys.OnRoverMovementVector += RoverMovementVectorChanged;
-
-			// Wait until the queue is fully processed.
-			//SpinWait.SpinUntil(() => _managedMqttClient.PendingApplicationMessagesCount == 0, 10000);
-
-			//Console.WriteLine($"Pending messages = {_managedMqttClient.PendingApplicationMessagesCount}");
 		}
 
 		private async void RoverMovementVectorChanged(object sender, MqttClasses.RoverControl e)
 		{
-			await _managedMqttClient.EnqueueAsync($"{MainViewModel.Settings.Settings.MqttTopic}/{MainViewModel.Settings.Settings.MqttTopicRoverControl}",
-				JsonSerializer.Serialize(e), MqttQualityOfServiceLevel.AtMostOnce, false);
+			await _managedMqttClient.EnqueueAsync($"{MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttTopic}/{MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttTopicRoverControl}",
+				JsonSerializer.Serialize(e));
+		}
+
+		public async Task StopClient()
+		{
+			await _managedMqttClient.EnqueueAsync($"{MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttTopic}/{MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttTopicRoverStatus}",
+				JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Closed }));
+
+			await _managedMqttClient.EnqueueAsync($"{MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttTopic}/{MainViewModel.Settings.Settings.LocalSettingsMqtt.MqttTopicRoverControl}",
+				JsonSerializer.Serialize(new MqttClasses.RoverControl()));
+			
+			await _managedMqttClient.StopAsync();
 		}
 
 		public void Dispose()
