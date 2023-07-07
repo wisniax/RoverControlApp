@@ -27,27 +27,29 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		private Vector2 _roverMovementVector;
-		public Vector2 RoverMovementVector
+		private MqttClasses.RoverControl _roverMovement;
+		public MqttClasses.RoverControl RoverMovement
 		{
-			get => _roverMovementVector;
+			get => _roverMovement;
 			private set
 			{
-				_roverMovementVector = value;
-				OnRoverMovementVector?.Invoke(this, new MqttClasses.RoverControl()
-				{
-					XVelAxis = value.Y,
-					ZRotAxis = value.X,
-				});
+				_roverMovement = value;
+				OnRoverMovementVector?.Invoke(this, value);
 			}
 		}
+
+		private RoverControllerPresets.IRoverDriveController _roverDriveControllerPreset;
 
 		public PressedKeys()
 		{
 			_lastAbsoluteVector = Vector4.Zero;
+			_roverMovement = new MqttClasses.RoverControl();
+			_roverDriveControllerPreset = MainViewModel.Settings.Settings.NewFancyRoverController
+				? new RoverControllerPresets.ForzaLikeController()
+				: new RoverControllerPresets.GoodOldGamesLikeController();
 		}
 
-		public void HandleInputEvent()
+		public void HandleInputEvent(InputEvent @event)
 		{
 			HandleCameraInputEvent();
 			HandleMovementInputEvent();
@@ -77,19 +79,8 @@ namespace RoverControlApp.MVVM.Model
 
 		void HandleMovementInputEvent()
 		{
-			Vector2 velocity = Input.GetVector("rover_move_left", "rover_move_right", "rover_move_backward",
-				"rover_move_forward", Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone));
-			// velocity = velocity.Clamp(new Vector2(-1f, -1f), new Vector2(1f, 1f));
-			velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.X;
-			velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.Y;
-			if (Input.IsActionPressed("camera_zoom_mod"))
-			{
-				velocity.X /= 8f;
-				velocity.Y /= 8f;
-			}
-
-			if (RoverMovementVector.IsEqualApprox(velocity)) return;
-			RoverMovementVector = velocity;
+			if (!_roverDriveControllerPreset.CalculateMoveVector(out MqttClasses.RoverControl roverControl)) return;
+			RoverMovement = roverControl;
 		}
 
 	}
