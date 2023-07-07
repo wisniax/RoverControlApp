@@ -14,7 +14,7 @@ namespace RoverControlApp
 
 	public class LocalSettings
 	{
-		public class LocalSettingsVars
+		public class LocalSettingsCamera
 		{
 			public string CameraIp { get; set; } = "192.168.5.35";
 			public string CameraPtzPort { get; set; } = "80";
@@ -25,22 +25,31 @@ namespace RoverControlApp
 			public bool CameraInverseAxis { get; set; } = false;
 			public bool EnableRtspStream { get; set; } = true;
 			public bool EnablePtzControl { get; set; } = true;
-			public bool VerboseDebug { get; set; } = false;
-			public float JoyPadDeadzone { get; set; } = 0.15f;
 			public double PtzRequestFrequency { get; set; } = 2.69;
+		}
+
+		public class LocalSettingsMqtt
+		{
 			public string MqttBrokerIp { get; set; } = "broker.hivemq.com";
 			public int MqttBrokerPort { get; set; } = 1883;
 			public string MqttTopic { get; set; } = "RappTORS";
-			public string MqttTopicJoyStatus { get; set; } = "JoyStatus";
 			public string MqttTopicRoverControl { get; set; } = "RoverControl";
 			public string MqttTopicManipulatorControl { get; set; } = "ManipulatorControl";
 			public string MqttTopicRoverFeedback { get; set; } = "RoverFeedback";
 			public string MqttTopicRoverStatus { get; set; } = "RoverStatus";
 		}
 
+		public class LocalSettingsVars
+		{
+			public LocalSettingsCamera LocalSettingsCamera { get; set; } = new LocalSettingsCamera();
+			public LocalSettingsMqtt LocalSettingsMqtt { get; set; } = new LocalSettingsMqtt();
+			public bool VerboseDebug { get; set; } = false;
+			public float JoyPadDeadzone { get; set; } = 0.15f;
+		}
+
 		public LocalSettingsVars Settings { get; private set; }
 
-		private readonly string _settingsPath = Path.Join(OS.GetUserDataDir(), "RoverControlAppSettings.cfg");
+		private readonly string _settingsPath = Path.Join(OS.GetUserDataDir(), "RoverControlAppSettings.json");
 
 		public LocalSettings()
 		{
