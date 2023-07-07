@@ -46,6 +46,8 @@ namespace RoverControlApp.MVVM.ViewModel
 				"rtsp",
 				Settings.Settings.CameraRtspPort);
 
+			PressedKeys.OnAbsoluteVectorChanged += _ptzClient.CameraMotionRequestSubscriber;
+
 			RoverCommunication = new RoverCommunication();
 			await RoverCommunication.Connect_Client();
 
@@ -98,7 +100,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			if (_ptzClient.State == CommunicationState.Opened)
 			{
 				sb.AppendLine($"PTZ: Since last move request: {age}s");
-				sb.AppendLine($"PTZ: Move vector: {_ptzClient.CameraMotion}");
+				sb.AppendLine($"PTZ: Move vector: {_ptzClient.CameraMotionRequest}");
 			}
 			else
 				sb.AppendLine($"PTZ: {_ptzClient.State}, Time: {age}s");

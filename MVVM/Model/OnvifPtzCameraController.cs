@@ -1,17 +1,13 @@
-﻿using System;
+﻿using Godot;
+using Onvif.Core.Client;
+using Onvif.Core.Client.Common;
+using RoverControlApp.MVVM.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
-using Godot;
-using GodotPlugins.Game;
-using Onvif.Core.Client;
-using Onvif.Core.Client.Common;
-using RoverControlApp.MVVM.ViewModel;
 using DateTime = System.DateTime;
 using Mutex = System.Threading.Mutex;
 
@@ -19,63 +15,73 @@ namespace RoverControlApp.MVVM.Model
 {
 	public class OnvifPtzCameraController
 	{
-		private string _ip;
-		private string _port;
-		private string _login;
-		private string _password;
+		private readonly long COM_TIME_RANGE = 1000; //ms
+		private readonly int COM_LIMIT_IN_RANGE = 2; //count
+
+		private struct MoveUpdateData
+		{
+			public Vector4 TiltAndZoom = Vector4.Zero;
+			public bool StopTilt = false;
+			public bool StopZoom = false;
+
+			public MoveUpdateData(Vector4 tiltAndZoom, bool stopTilt, bool stopZoom)
+			{
+				TiltAndZoom = tiltAndZoom;
+				StopTilt = stopTilt;
+				StopZoom = stopZoom;
+			}
+
+			public static explicit operator PTZSpeed(MoveUpdateData data)
+			{
+				return new()
+				{
+					PanTilt =
+					new()
+					{
+						x = data.TiltAndZoom.X,
+						y = data.TiltAndZoom.Y
+					},
+					Zoom =
+					new()
+					{
+						x = data.TiltAndZoom.Z
+					}
+				};
+			}
+
+			public int ComWeight => (StopTilt || StopZoom ? 1 : 0)
+				+ (TiltAndZoom.IsZeroApprox() ? 1 : 0);
+
+		}
 
 		private Camera? _camera = null;
 
-		private Vector4 _cameraMotion = Vector4.Zero;
+		private Vector4 _cameraMotionRequest = Vector4.Zero;
+		private Vector4 _cameraMotionLast = Vector4.Zero;
+
+		private List<System.DateTimeOffset> _comHistory = new();
+		private Queue<MoveUpdateData> _comQueue = new();
+		private Barrier _requestBarrier = new(2);
+
+		private CancellationTokenSource _cts;
 
 		private readonly Mutex _dataMutex = new();
-		public Vector4 CameraMotion
-		{
-			get
-			{
-				_dataMutex.WaitOne();
-				var copy = _cameraMotion;
-				_dataMutex.ReleaseMutex();
-				return copy;
-			}
-			private set
-			{
-				if (MainViewModel.Settings.Settings.VerboseDebug) MainViewModel.EventLogger.LogMessage($"PTZ: CameraMotion update: {value}");
-				_dataMutex.WaitOne();
-				_cameraMotion = value;
-				_dataMutex.ReleaseMutex();
-			}
-		}
-
-		private volatile CommunicationState _state;
-
-		public CommunicationState State
-		{
-			get => _state;
-			private set
-			{
-				MainViewModel.EventLogger.LogMessage($"PTZ: CommunicationState update: {value}");
-				_state = value;
-			}
-		}
 
 		private volatile Stopwatch _generalPurposeStopwatch;
-		public double ElapsedSecondsOnCurrentState => _generalPurposeStopwatch.Elapsed.TotalSeconds;
-
-		public TimeSpan MinSpanEveryCom =>
-			TimeSpan.FromSeconds(1 / MainViewModel.Settings.Settings.PtzRequestFrequency);
-		public TimeSpan MaxSpanEveryCom => 1.5 * MinSpanEveryCom;
-
+		private string _ip;
+		private string _login;
+		private string _password;
+		private string _port;
 
 
 		private Thread _ptzThread;
 		private Exception? _ptzThreadError = null;
-		private CancellationTokenSource _cts;
-		private DateTime _lastComTimeStamp = System.DateTime.Now;
 
-		public void ChangeMoveVector(object sender, Vector4 vector)
+		private volatile CommunicationState _state;
+
+		public void CameraMotionRequestSubscriber(object sender, Vector4 vector)
 		{
-			CameraMotion = vector;
+			CameraMotionRequest = vector;
 		}
 
 		public OnvifPtzCameraController(string ip, string port, string login, string password)
@@ -86,25 +92,19 @@ namespace RoverControlApp.MVVM.Model
 			_password = password;
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
-			_ptzThread = new Thread(ThreadWork) { IsBackground = true, Name = "PtzController_Thread", Priority = ThreadPriority.AboveNormal };
-			_ptzThread.Start();
-			MainViewModel.PressedKeys.OnAbsoluteVectorChanged += ChangeMoveVector;
-		}
-
-		private void ThreadWork()
-		{
-			MainViewModel.EventLogger.LogMessage("PTZ: Thread started");
-			Vector4 motionLast = _cameraMotion = Vector4.Zero;
-
-			while (!_cts.IsCancellationRequested)
+			_ptzThread = new Thread(ThreadWork)
 			{
-				DoWork(ref motionLast);
-			}
+				IsBackground = true,
+				Name = "PtzController_Thread",
+				Priority = ThreadPriority.AboveNormal
+			};
+			_ptzThread.Start();
 		}
 
 		private void CreateCamera()
 		{
-			if (_camera != null) EndCamera();
+			if (_camera != null)
+				EndCamera();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Created;
 			var acc = new Account(_ip + ':' + _port, _login, _password);
@@ -112,37 +112,43 @@ namespace RoverControlApp.MVVM.Model
 
 			if (_ptzThreadError is not null)
 			{
-				MainViewModel.EventLogger.LogMessage($"PTZ: Connecting to camera failed after " +
-													 $"{(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s with error: {_ptzThreadError}");
+				MainViewModel.EventLogger
+					.LogMessage(
+						$"PTZ: Connecting to camera failed after " +
+							$"{(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s with error: {_ptzThreadError}");
 				State = CommunicationState.Faulted;
 				return;
 			}
 
 			State = CommunicationState.Opening;
-			//_camera?.Ptz.OpenAsync().Wait();
 			_camera?.Ptz.StopAsync(_camera.Profile.token, true, true).Wait();
 			State = CommunicationState.Opened;
-			MainViewModel.EventLogger.LogMessage($"PTZ: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
-
+			MainViewModel.EventLogger
+				.LogMessage(
+					$"PTZ: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 		}
 
 		private void EndCamera()
 		{
-			//_camera?.Ptz.Close();
 			_ptzThreadError = null;
 			_camera = null;
 		}
 
-		private void DoWork(ref Vector4 motionLast)
+		private void ThreadWork()
+		{
+			MainViewModel.EventLogger.LogMessage("PTZ: Thread started");
+
+			while (!_cts.IsCancellationRequested)
+			{
+				DoWork();
+			}
+		}
+
+		private void DoWork()
 		{
 			switch (State)
 			{
-				case CommunicationState.Created:
-					State = CommunicationState.Closing;
-					break;
-				case CommunicationState.Opening:
-					State = CommunicationState.Closing;
-					break;
+
 				case CommunicationState.Opened:
 					_generalPurposeStopwatch.Restart();
 
@@ -150,7 +156,7 @@ namespace RoverControlApp.MVVM.Model
 
 					try
 					{
-						TryMoveCamera(ref motionLast);
+						TryMoveCamera();
 					}
 					catch (AggregateException e)
 					{
@@ -160,7 +166,9 @@ namespace RoverControlApp.MVVM.Model
 
 					if (_generalPurposeStopwatch.Elapsed.TotalSeconds > 10 || errCaught)
 					{
-						MainViewModel.EventLogger.LogMessage($"PTZ: Camera connection lost ;( Sending a move request took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+						MainViewModel.EventLogger
+							.LogMessage(
+								$"PTZ: Camera connection lost ;( Sending a move request took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 						State = CommunicationState.Faulted;
 						EndCamera();
 						return;
@@ -172,7 +180,8 @@ namespace RoverControlApp.MVVM.Model
 					State = CommunicationState.Closed;
 					break;
 				case CommunicationState.Closed:
-					if (!_cts.IsCancellationRequested) CreateCamera();
+					if (!_cts.IsCancellationRequested)
+						CreateCamera();
 					break;
 				case CommunicationState.Faulted:
 					_generalPurposeStopwatch.Restart();
@@ -180,91 +189,120 @@ namespace RoverControlApp.MVVM.Model
 					State = CommunicationState.Closed;
 					break;
 				default:
-					throw new ArgumentOutOfRangeException();
+					State = CommunicationState.Closing;
+					break;
 			}
 		}
 
-		private void TryMoveCamera(ref Vector4 motionLast)
+
+		private void TryMoveCamera()
 		{
-			//_threadBarrier.SignalAndWait();
-			ComSleepTillCanRequest();
-			if (!UpdateMotion(motionLast, CameraMotion, out Vector4 moveVector)) return;
+			if (_comQueue.Count > 0)
+				_requestBarrier.SignalAndWait(100);
+			else
+				_requestBarrier.SignalAndWait();
 
-			bool x1 = !Mathf.IsEqualApprox(moveVector.X, 0f, 0.1f); // Is currently moving on x axis
-			bool y1 = !Mathf.IsEqualApprox(moveVector.Y, 0f, 0.1f); // Is currently moving on y axis
-			bool x0 = !Mathf.IsEqualApprox(motionLast.X, 0f, 0.1f); // Was moving on x axis b4?
-			bool y0 = !Mathf.IsEqualApprox(motionLast.Y, 0f, 0.1f); // Was moving on y axis b4?
+			//populate queue
+			if (UpdateMotion(_cameraMotionLast, CameraMotionRequest, out MoveUpdateData moveUpdateData))
+				_comQueue.Enqueue(moveUpdateData);
+			_cameraMotionLast = CameraMotionRequest;
 
-			bool stopTilt = (!x1 && x0) || (!y1 && y0) || (!x1 && !y1); //When to stop camera :)
-			bool stopZoom = Mathf.IsEqualApprox(moveVector.Z, 0f, 0.1f) && !Mathf.IsEqualApprox(motionLast.Z, 0f, 0.1f);
-
-			if (stopTilt || stopZoom)
-			{
-				_camera?.Ptz.StopAsync(_camera.Profile.token, stopTilt, stopZoom).Wait();
-				//ComRequestSleep();
-			}
-
-			if (moveVector.IsZeroApprox())
-			{
-				ComRequestSleep();
-				motionLast = CameraMotion;
+			if (_comQueue.Count == 0)
 				return;
+
+			//clear older than 1000ms
+			foreach (DateTimeOffset offset in _comHistory.ToList())
+			{
+				if (offset.ToUnixTimeMilliseconds() + COM_TIME_RANGE < DateTimeOffset.Now.ToUnixTimeMilliseconds())
+					_comHistory.Remove(offset);
 			}
 
-			PTZSpeed ptzSpeed = new()
+			if (COM_LIMIT_IN_RANGE - _comHistory.Count >= _comQueue.Peek().ComWeight)
 			{
-				PanTilt = new()
+				MoveUpdateData nextMove = _comQueue.Dequeue();
+				if (nextMove.StopTilt || nextMove.StopZoom)
 				{
-					x = Math.Abs(moveVector.X - motionLast.X) < 0.05f ? 0 : moveVector.X,
-					y = Math.Abs(moveVector.Y - motionLast.Y) < 0.05f ? 0 : moveVector.Y
-				},
-				Zoom = new()
-				{
-					x = moveVector.Z
-					//x = Math.Abs(moveVector.Z - motionLast.Z) < 0.05f ? 0 : moveVector.Z
+					_camera?.Ptz.StopAsync(_camera.Profile.token, nextMove.StopTilt, nextMove.StopZoom).Wait();
+					_generalPurposeStopwatch.Restart();
+					_comHistory.Add(DateTimeOffset.Now);
+					if (MainViewModel.Settings.Settings.VerboseDebug)
+						MainViewModel.EventLogger.LogMessage($"PTZ: CameraMotion send: {(nextMove.StopTilt ? "StopTilt" : string.Empty)} {(nextMove.StopZoom ? "StopZoom" : string.Empty)}");
 				}
-			};
 
-			ComSleepTillCanRequest();
-			_camera?.Ptz.ContinuousMoveAsync(_camera.Profile.token, ptzSpeed, string.Empty).Wait();
-			ComRequestSleep();
-			motionLast = CameraMotion;
+				if (!nextMove.TiltAndZoom.IsZeroApprox())
+				{
+					_camera?.Ptz.ContinuousMoveAsync(_camera.Profile.token, (PTZSpeed)nextMove, string.Empty).Wait();
+					_generalPurposeStopwatch.Restart();
+					_comHistory.Add(DateTimeOffset.Now);
+					if (MainViewModel.Settings.Settings.VerboseDebug)
+						MainViewModel.EventLogger.LogMessage($"PTZ: CameraMotion send: Tilt.X={nextMove.TiltAndZoom.X}, Tilt.Y={nextMove.TiltAndZoom.Y} Zoom={nextMove.TiltAndZoom.Z}");
+				}
+			}
 		}
 
-		private bool UpdateMotion(Vector4 old, Vector4 @new, out Vector4 speed)
+		private bool UpdateMotion(Vector4 moveOld, Vector4 moveNew, out MoveUpdateData data)
 		{
-			speed = Vector4.Zero;
-			if (@new.IsEqualApprox(old) && ((_camera?.LastUse + MaxSpanEveryCom > System.DateTime.Now)))
-			{
-				Thread.Sleep(100);
-				return false;
-			}
+			data = new();
 
-			speed = MainViewModel.Settings.Settings.CameraInverseAxis ? new Vector4(-@new.X, -@new.Y, @new.Z, @new.W) : @new;
+			if (moveNew.IsEqualApprox(moveOld))
+				return false;
+
+			data.TiltAndZoom = MainViewModel.Settings.Settings.CameraInverseAxis
+				? new Vector4(-moveNew.X, -moveNew.Y, moveNew.Z, moveNew.W)
+				: moveNew;
 
 			//Have to make sure none scalar is |x| <= 0.1f bc camera treats it as a MAX SPEED
-			if (Mathf.IsEqualApprox(speed.X, 0f, 0.1f)) speed.X = 0f;
-			if (Mathf.IsEqualApprox(speed.Y, 0f, 0.1f)) speed.Y = 0f;
-			if (Mathf.IsEqualApprox(speed.Z, 0f, 0.1f)) speed.Z = 0f;
+			if (Mathf.IsEqualApprox(data.TiltAndZoom.X, 0f, 0.1f))
+				data.TiltAndZoom.X = 0f;
+			if (Mathf.IsEqualApprox(data.TiltAndZoom.Y, 0f, 0.1f))
+				data.TiltAndZoom.Y = 0f;
+			if (Mathf.IsEqualApprox(data.TiltAndZoom.Z, 0f, 0.1f))
+				data.TiltAndZoom.Z = 0f;
+			data.TiltAndZoom = data.TiltAndZoom.Clamp(new Vector4(-1f, -1f, -1f, -1f), new Vector4(1f, 1f, 1f, 1f));
 
-			speed = speed.Clamp(new Vector4(-1f, -1f, -1f, -1f), new Vector4(1f, 1f, 1f, 1f));
+			bool xNow = !Mathf.IsEqualApprox(moveNew.X, 0f, 0.1f); // Is currently moving on x axis
+			bool yNow = !Mathf.IsEqualApprox(moveNew.Y, 0f, 0.1f); // Is currently moving on y axis
+			bool xBefore = !Mathf.IsEqualApprox(_cameraMotionLast.X, 0f, 0.1f); // Was moving on x axis b4?
+			bool yBefore = !Mathf.IsEqualApprox(_cameraMotionLast.Y, 0f, 0.1f); // Was moving on y axis b4?
 
-			//speed = Vector2.Normalize(speed);
+			data.StopTilt = (!xNow && xBefore) || (!yNow && yBefore) || (!xNow && !yNow); //When to stop camera :)
+			data.StopZoom = Mathf.IsEqualApprox(moveNew.Z, 0f, 0.1f) && !Mathf.IsEqualApprox(_cameraMotionLast.Z, 0f, 0.1f);
+
 			return true;
 		}
 
-		private void ComSleepTillCanRequest()
+		public Vector4 CameraMotionRequest
 		{
-			//check if limit not passed
-			while (_lastComTimeStamp + MinSpanEveryCom > System.DateTime.Now)
+			get
 			{
-				Thread.Sleep(69);
+				_dataMutex.WaitOne();
+				var copy = _cameraMotionRequest;
+				_dataMutex.ReleaseMutex();
+				return copy;
+			}
+			private set
+			{
+				if (MainViewModel.Settings.Settings.VerboseDebug)
+					MainViewModel.EventLogger.LogMessage($"PTZ: CameraMotion update: {value}");
+				_dataMutex.WaitOne();
+				_cameraMotionRequest = value;
+				_dataMutex.ReleaseMutex();
+				bool success = _requestBarrier.SignalAndWait(200);
+				if (MainViewModel.Settings.Settings.VerboseDebug && !success)
+					MainViewModel.EventLogger.LogMessage($"PTZ: Barrier timeout! Last input ignored!");
 			}
 		}
 
-		private void ComRequestSleep()
+		public double ElapsedSecondsOnCurrentState => _generalPurposeStopwatch.Elapsed.TotalSeconds;
+
+		public CommunicationState State
 		{
-			_lastComTimeStamp = System.DateTime.Now;
+			get => _state;
+			private set
+			{
+				MainViewModel.EventLogger.LogMessage($"PTZ: CommunicationState update: {value}");
+				_state = value;
+			}
 		}
 	}
 }
