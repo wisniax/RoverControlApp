@@ -87,6 +87,8 @@ namespace RoverControlApp.MVVM.Model
 				velocity.X /= 8f;
 				velocity.Y /= 8f;
 			}
+
+			if (RoverMovementVector.IsEqualApprox(velocity)) return;
 			RoverMovementVector = velocity;
 		}
 

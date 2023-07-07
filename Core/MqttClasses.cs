@@ -12,15 +12,16 @@ namespace RoverControlApp.Core
 	{
 		public enum ControlMode
 		{
-			Rover = 0,
-			Manipulator = 1
+			EStop = 0,
+			Rover = 1,
+			Manipulator = 2
 		};
 
 		public class JoyStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
 			public bool PadConnected { get; set; } = false;
-			public ControlMode ControlMode { get; set; } = ControlMode.Rover;
+			public ControlMode ControlMode { get; set; } = ControlMode.EStop;
 		}
 
 		public class RoverControl
