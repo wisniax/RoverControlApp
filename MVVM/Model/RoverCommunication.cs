@@ -12,6 +12,7 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Protocol;
+using RoverControlApp.Core;
 using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
@@ -37,7 +38,7 @@ namespace RoverControlApp.MVVM.Model
 
 			var mqttClientOptions = new MqttClientOptionsBuilder()
 				.WithTcpServer(MainViewModel.Settings.Settings.MqttBrokerIp, MainViewModel.Settings.Settings.MqttBrokerPort)
-				.WithKeepAlivePeriod(TimeSpan.FromSeconds(1))
+				.WithKeepAlivePeriod(TimeSpan.FromSeconds(5))
 				.WithWillTopic($"{MainViewModel.Settings.Settings.MqttTopic}/{MainViewModel.Settings.Settings.MqttTopicRoverStatus}")
 				.WithWillPayload(JsonSerializer.Serialize(new Core.MqttClasses.JoyStatus() { CommunicationState = CommunicationState.Faulted }))
 				.Build();
@@ -64,16 +65,10 @@ namespace RoverControlApp.MVVM.Model
 			//Console.WriteLine($"Pending messages = {_managedMqttClient.PendingApplicationMessagesCount}");
 		}
 
-		private async void RoverMovementVectorChanged(object sender, Vector2 e)
+		private async void RoverMovementVectorChanged(object sender, MqttClasses.RoverControl e)
 		{
-			var temp = new Core.MqttClasses.RoverControl
-			{
-				XAxis = e.X,
-				YAxis = e.Y
-			};
-
 			await _managedMqttClient.EnqueueAsync($"{MainViewModel.Settings.Settings.MqttTopic}/{MainViewModel.Settings.Settings.MqttTopicRoverControl}",
-				JsonSerializer.Serialize(temp), MqttQualityOfServiceLevel.ExactlyOnce, true);
+				JsonSerializer.Serialize(e), MqttQualityOfServiceLevel.ExactlyOnce, true);
 		}
 
 		public void Dispose()

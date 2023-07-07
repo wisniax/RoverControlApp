@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Godot;
 using RoverControlApp.MVVM.ViewModel;
+using FileAccess = System.IO.FileAccess;
 
 namespace RoverControlApp
 {
@@ -21,9 +23,9 @@ namespace RoverControlApp
 			public string CameraLogin { get; set; } = "admin";
 			public string CameraPassword { get; set; } = "admin";
 			public bool CameraInverseAxis { get; set; } = false;
-			public bool EnableRtspStream {get; set; } = true;
-			public bool EnablePtzControl {get; set; } = true;
-			public bool VerboseDebug {get; set; } = false;
+			public bool EnableRtspStream { get; set; } = true;
+			public bool EnablePtzControl { get; set; } = true;
+			public bool VerboseDebug { get; set; } = false;
 			public float JoyPadDeadzone { get; set; } = 0.15f;
 			public double PtzRequestFrequency { get; set; } = 2.69;
 			public string MqttBrokerIp { get; set; } = "broker.hivemq.com";
@@ -38,8 +40,7 @@ namespace RoverControlApp
 
 		public LocalSettingsVars Settings { get; private set; }
 
-		private readonly string _settingsPath = "user://RoverControlAppDefault.cfg";
-
+		private readonly string _settingsPath = Path.Join(OS.GetUserDataDir(), "RoverControlAppSettings.cfg");
 
 		public LocalSettings()
 		{
@@ -51,14 +52,21 @@ namespace RoverControlApp
 
 		public bool LoadSettings()
 		{
-			var config = new ConfigFile();
-			Error err = config.Load(_settingsPath);
-			if (err != Error.Ok)
+			if (!Directory.Exists(OS.GetUserDataDir())) return false;
+			if (!File.Exists(_settingsPath)) return false;
+			string serializedSettings;
+			try
 			{
-				MainViewModel.EventLogger.LogMessage($"Loading local settings failed: {err}");
+				var fs = new FileStream(_settingsPath, FileMode.Open, FileAccess.Read);
+				var sr = new StreamReader(fs);
+				serializedSettings = sr.ReadToEnd();
+			}
+			catch (Exception e)
+			{
+				MainViewModel.EventLogger.LogMessage($"Loading local settings failed: {e}");
 				return false;
 			}
-			string serializedSettings = (string)config.GetValue("Default", "defaultSettings");
+
 			Settings = JsonSerializer.Deserialize<LocalSettingsVars>(serializedSettings);
 			MainViewModel.EventLogger.LogMessage("Loading local settings succeeded");
 			return true;
@@ -66,16 +74,27 @@ namespace RoverControlApp
 
 		public bool SaveSettings()
 		{
-			var config = new ConfigFile();
-			string serializedSettings = JsonSerializer.Serialize(Settings);
-			config.SetValue("Default", "defaultSettings", serializedSettings);
-			Error err = config.Save(_settingsPath);
-
-			if (err != Error.Ok)
+			try
 			{
-				MainViewModel.EventLogger.LogMessage($"Saving settings failed: {err}");
+				if (!Directory.Exists(OS.GetUserDataDir())) Directory.CreateDirectory(OS.GetUserDataDir());
+				// if (!File.Exists(OS.GetUserDataDir())) File.Create(OS.GetUserDataDir());
+				var fs = new FileStream(_settingsPath, FileMode.Create, FileAccess.Write);
+				var sw = new StreamWriter(fs);
+				string serializedSettings = JsonSerializer.Serialize(Settings);
+
+				sw.WriteLine(serializedSettings);
+				sw.Flush();
+				sw.Close();
+				fs.Close();
+			}
+			catch (Exception e)
+			{
+				MainViewModel.EventLogger.LogMessage($"Saving settings failed with: {e}");
 				return false;
 			}
+
+			//config.SetValue("Default", "defaultSettings", serializedSettings);
+			//Error err = config.Save(_settingsPath);
 
 			MainViewModel.EventLogger.LogMessage("Saving settings succeeded");
 			return true;

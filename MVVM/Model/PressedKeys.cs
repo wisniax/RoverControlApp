@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Onvif.Core.Client.Common;
+using RoverControlApp.Core;
 using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
@@ -13,7 +14,7 @@ namespace RoverControlApp.MVVM.Model
 	public class PressedKeys
 	{
 		public event EventHandler<Vector4> OnAbsoluteVectorChanged;
-		public event EventHandler<Vector2> OnRoverMovementVector;
+		public event EventHandler<MqttClasses.RoverControl> OnRoverMovementVector;
 
 		private Vector4 _lastAbsoluteVector;
 		public Vector4 LastAbsoluteVector
@@ -33,7 +34,11 @@ namespace RoverControlApp.MVVM.Model
 			private set
 			{
 				_roverMovementVector = value;
-				OnRoverMovementVector?.Invoke(this, value);
+				OnRoverMovementVector?.Invoke(this, new MqttClasses.RoverControl()
+				{
+					XAxis = value.X,
+					YAxis = value.Y,
+				});
 			}
 		}
 
@@ -74,7 +79,7 @@ namespace RoverControlApp.MVVM.Model
 		{
 			Vector2 velocity = Input.GetVector("rover_move_left", "rover_move_right", "rover_move_forward", 
 				"rover_move_backward", Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone));
-			velocity = velocity.Clamp(new Vector2(-1f, -1f), new Vector2(1f, 1f));
+			// velocity = velocity.Clamp(new Vector2(-1f, -1f), new Vector2(1f, 1f));
 			velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.X;
 			velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.Y;
 			if (Input.IsActionPressed("camera_zoom_mod"))
