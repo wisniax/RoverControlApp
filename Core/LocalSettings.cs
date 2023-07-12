@@ -41,8 +41,8 @@ namespace RoverControlApp
 
 		public class LocalSettingsVars
 		{
-			public LocalSettingsCamera LocalSettingsCamera { get; set; } = new LocalSettingsCamera();
-			public LocalSettingsMqtt LocalSettingsMqtt { get; set; } = new LocalSettingsMqtt();
+			public LocalSettingsCamera Camera { get; set; } = new LocalSettingsCamera();
+			public LocalSettingsMqtt Mqtt { get; set; } = new LocalSettingsMqtt();
 			public bool VerboseDebug { get; set; } = false;
 			public float JoyPadDeadzone { get; set; } = 0.15f;
 			public bool NewFancyRoverController { get; set; } = false;

@@ -8,6 +8,7 @@ This document covers how to implement Rover Control via this App.
 
 - [Introduction](#toc-introduction)
 - [API](#toc-api)
+  - [MQTT Rover Status](#toc-rover-status)
   - [MQTT Rover Control](#toc-rover-control)
 
 # <a id="toc-introduction"></a>Introduction
@@ -16,7 +17,7 @@ This document covers how to implement Rover Control via this App.
 
 # <a id="toc-api"></a>API
 
-## <a id="toc-rover-control"></a> MQTT Rover Status
+## <a id="toc-rover-status"></a> MQTT Rover Status
 This sends a JSON-serialized message across MQTT with status, defined as such:
 ```
 public class RoverStatus

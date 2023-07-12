@@ -5,6 +5,9 @@
     <RootNamespace>RoverControlApp</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="api-doc.md" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="MQTTnet" Version="4.2.1.781" />
     <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.2.1.781" />
     <PackageReference Include="Onvif.Core" Version="2.2.2" />

@@ -34,18 +34,18 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys = new PressedKeys();
 
 			_ptzClient = new OnvifPtzCameraController(
-				Settings.Settings.LocalSettingsCamera.CameraIp,
-				Settings.Settings.LocalSettingsCamera.CameraPtzPort,
-				Settings.Settings.LocalSettingsCamera.CameraLogin,
-				Settings.Settings.LocalSettingsCamera.CameraPassword);
+				Settings.Settings.Camera.CameraIp,
+				Settings.Settings.Camera.CameraPtzPort,
+				Settings.Settings.Camera.CameraLogin,
+				Settings.Settings.Camera.CameraPassword);
 
 			_rtspClient = new RtspStreamClient(
-				Settings.Settings.LocalSettingsCamera.CameraLogin,
-				Settings.Settings.LocalSettingsCamera.CameraPassword,
-				Settings.Settings.LocalSettingsCamera.CameraRtspStreamPath,
-				Settings.Settings.LocalSettingsCamera.CameraIp,
+				Settings.Settings.Camera.CameraLogin,
+				Settings.Settings.Camera.CameraPassword,
+				Settings.Settings.Camera.CameraRtspStreamPath,
+				Settings.Settings.Camera.CameraIp,
 				"rtsp",
-				Settings.Settings.LocalSettingsCamera.CameraRtspPort);
+				Settings.Settings.Camera.CameraRtspPort);
 
 			PressedKeys.OnAbsoluteVectorChanged += _ptzClient.CameraMotionRequestSubscriber;
 
