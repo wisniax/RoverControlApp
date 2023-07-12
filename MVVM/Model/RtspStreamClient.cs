@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using Godot;
 using OpenCvSharp;
 using RoverControlApp.MVVM.ViewModel;
-using static Godot.WebSocketPeer;
 
 namespace RoverControlApp.MVVM.Model
 {
