@@ -22,10 +22,9 @@ namespace RoverControlApp.Core
 
 				Vector2 velocity = Input.GetVector("rover_move_left", "rover_move_right", "rover_move_backward",
 					"rover_move_forward", Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone));
-				velocity = velocity.Clamp(new Vector2(-Math.Abs(velocity.Y)/2.5f, -1f), new Vector2(Math.Abs(velocity.Y)/2.5f, 1f)); // Max turn angle: 36 deg.
 				velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.X;
 				velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, 0.005f) ? 0 : velocity.Y;
-
+				velocity = velocity.Clamp(new Vector2(-Math.Abs(velocity.Y) / 2.5f, -1f), new Vector2(Math.Abs(velocity.Y) / 2.5f, 1f)); // Max turn angle: 36 deg.
 				float forcedX = Input.GetAxis("rover_rotate_left", "rover_rotate_right");
 				if (!Mathf.IsEqualApprox(forcedX, 0f, 0.05f)) velocity.X = forcedX;
 
