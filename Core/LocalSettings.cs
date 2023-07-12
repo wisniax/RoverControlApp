@@ -41,8 +41,8 @@ namespace RoverControlApp
 
 		public class LocalSettingsVars
 		{
-			public LocalSettingsCamera Camera { get; set; } = new LocalSettingsCamera();
-			public LocalSettingsMqtt Mqtt { get; set; } = new LocalSettingsMqtt();
+			public LocalSettingsCamera Camera { get; set; } = new();
+			public LocalSettingsMqtt Mqtt { get; set; } = new();
 			public bool VerboseDebug { get; set; } = false;
 			public float JoyPadDeadzone { get; set; } = 0.15f;
 			public bool NewFancyRoverController { get; set; } = false;
@@ -67,9 +67,11 @@ namespace RoverControlApp
 			string serializedSettings;
 			try
 			{
-				var fs = new FileStream(_settingsPath, FileMode.Open, FileAccess.Read);
-				var sr = new StreamReader(fs);
+				using var fs = new FileStream(_settingsPath, FileMode.Open, FileAccess.Read);
+				using var sr = new StreamReader(fs);
 				serializedSettings = sr.ReadToEnd();
+				sr.Close();
+				fs.Close();
 			}
 			catch (Exception e)
 			{
@@ -88,8 +90,8 @@ namespace RoverControlApp
 			{
 				if (!Directory.Exists(OS.GetUserDataDir())) Directory.CreateDirectory(OS.GetUserDataDir());
 				// if (!File.Exists(OS.GetUserDataDir())) File.Create(OS.GetUserDataDir());
-				var fs = new FileStream(_settingsPath, FileMode.Create, FileAccess.Write);
-				var sw = new StreamWriter(fs);
+				using var fs = new FileStream(_settingsPath, FileMode.Create, FileAccess.Write);
+				using var sw = new StreamWriter(fs);
 				string serializedSettings = JsonSerializer.Serialize(Settings);
 
 				sw.WriteLine(serializedSettings);
