@@ -1,54 +1,51 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Godot;
 using RoverControlApp.MVVM.ViewModel;
 using FileAccess = System.IO.FileAccess;
 
-namespace RoverControlApp
+namespace RoverControlApp.Core
 {
 
 	public class LocalSettings
 	{
-		public class LocalSettingsCamera
+		public class Camera
 		{
-			public string CameraIp { get; set; } = "192.168.5.35";
-			public string CameraPtzPort { get; set; } = "80";
-			public string CameraRtspPort { get; set; } = "554";
-			public string CameraRtspStreamPath { get; set; } = "/live/0/MAIN";
-			public string CameraLogin { get; set; } = "admin";
-			public string CameraPassword { get; set; } = "admin";
-			public bool CameraInverseAxis { get; set; } = false;
+			public string Ip { get; set; } = "192.168.5.35";
+			public string PtzPort { get; set; } = "80";
+			public string RtspPort { get; set; } = "554";
+			public string RtspStreamPath { get; set; } = "/live/0/MAIN";
+			public string Login { get; set; } = "admin";
+			public string Password { get; set; } = "admin";
+			public bool InverseAxis { get; set; } = false;
 			public bool EnableRtspStream { get; set; } = true;
 			public bool EnablePtzControl { get; set; } = true;
 			public double PtzRequestFrequency { get; set; } = 2.69;
 		}
 
-		public class LocalSettingsMqtt
+		public class Mqtt
 		{
-			public string MqttBrokerIp { get; set; } = "broker.hivemq.com";
-			public int MqttBrokerPort { get; set; } = 1883;
-			public string MqttTopic { get; set; } = "RappTORS";
-			public string MqttTopicRoverControl { get; set; } = "RoverControl";
-			public string MqttTopicManipulatorControl { get; set; } = "ManipulatorControl";
-			public string MqttTopicRoverFeedback { get; set; } = "RoverFeedback";
-			public string MqttTopicRoverStatus { get; set; } = "RoverStatus";
+			public string BrokerIp { get; set; } = "broker.hivemq.com";
+			public int BrokerPort { get; set; } = 1883;
+			public double PingInterval { get; set; } = 2.5;
+			public string MainTopic { get; set; } = "RappTORS";
+			public string TopicRoverControl { get; set; } = "RoverControl";
+			public string TopicManipulatorControl { get; set; } = "ManipulatorControl";
+			public string TopicRoverFeedback { get; set; } = "RoverFeedback";
+			public string TopicRoverStatus { get; set; } = "RoverStatus";
 		}
 
-		public class LocalSettingsVars
+		public class Vars
 		{
-			public LocalSettingsCamera Camera { get; set; } = new();
-			public LocalSettingsMqtt Mqtt { get; set; } = new();
+			public Camera Camera { get; set; } = new();
+			public Mqtt Mqtt { get; set; } = new();
 			public bool VerboseDebug { get; set; } = false;
 			public float JoyPadDeadzone { get; set; } = 0.15f;
 			public bool NewFancyRoverController { get; set; } = false;
 		}
 
-		public LocalSettingsVars Settings { get; private set; }
+		public Vars Settings { get; private set; }
 
 		private readonly string _settingsPath = Path.Join(OS.GetUserDataDir(), "RoverControlAppSettings.json");
 
@@ -79,7 +76,7 @@ namespace RoverControlApp
 				return false;
 			}
 
-			Settings = JsonSerializer.Deserialize<LocalSettingsVars>(serializedSettings);
+			Settings = JsonSerializer.Deserialize<Vars>(serializedSettings);
 			MainViewModel.EventLogger.LogMessage("Loading local settings succeeded");
 			return true;
 		}
@@ -115,7 +112,7 @@ namespace RoverControlApp
 
 		public void ForceDefaultSettings()
 		{
-			Settings = new LocalSettingsVars();
+			Settings = new Vars();
 			SaveSettings();
 		}
 	}

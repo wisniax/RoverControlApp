@@ -15,6 +15,18 @@ namespace RoverControlApp.MVVM.Model
 	{
 		public event EventHandler<Vector4> OnAbsoluteVectorChanged;
 		public event EventHandler<MqttClasses.RoverControl> OnRoverMovementVector;
+		public event Func<bool, Task> OnPadConnectionChanged;
+		public event Func<Task> OnControlModeButtonPressed;
+
+		public bool PadConnected
+		{
+			get => Input.GetConnectedJoypads().Count > 0;
+			private set
+			{
+				OnPadConnectionChanged.Invoke(value);
+				HandleInputEvent(null!);
+			}
+		}
 
 		private Vector4 _lastAbsoluteVector;
 		public Vector4 LastAbsoluteVector
@@ -42,6 +54,7 @@ namespace RoverControlApp.MVVM.Model
 
 		public PressedKeys()
 		{
+			Input.JoyConnectionChanged += (device, connected) => { PadConnected = connected; };
 			_lastAbsoluteVector = Vector4.Zero;
 			_roverMovement = new MqttClasses.RoverControl();
 			_roverDriveControllerPreset = MainViewModel.Settings.Settings.NewFancyRoverController
@@ -53,6 +66,7 @@ namespace RoverControlApp.MVVM.Model
 		{
 			HandleCameraInputEvent();
 			HandleMovementInputEvent();
+			HandleFunctionInputEvent();
 		}
 
 		void HandleCameraInputEvent()
@@ -81,6 +95,11 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (!_roverDriveControllerPreset.CalculateMoveVector(out MqttClasses.RoverControl roverControl)) return;
 			RoverMovement = roverControl;
+		}
+		private void HandleFunctionInputEvent()
+		{
+			if (!Input.IsActionJustPressed("ControlModeChange", true)) return;
+			OnControlModeButtonPressed?.Invoke();
 		}
 
 	}

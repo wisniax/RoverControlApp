@@ -23,6 +23,7 @@ namespace RoverControlApp.Core
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
 			public bool PadConnected { get; set; } = false;
 			public ControlMode ControlMode { get; set; } = ControlMode.EStop;
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
 		public class RoverControl

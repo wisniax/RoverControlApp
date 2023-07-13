@@ -34,21 +34,21 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys = new PressedKeys();
 
 			_ptzClient = new OnvifPtzCameraController(
-				Settings.Settings.Camera.CameraIp,
-				Settings.Settings.Camera.CameraPtzPort,
-				Settings.Settings.Camera.CameraLogin,
-				Settings.Settings.Camera.CameraPassword);
+				Settings.Settings.Camera.Ip,
+				Settings.Settings.Camera.PtzPort,
+				Settings.Settings.Camera.Login,
+				Settings.Settings.Camera.Password);
 
 			_rtspClient = new RtspStreamClient(
-				Settings.Settings.Camera.CameraLogin,
-				Settings.Settings.Camera.CameraPassword,
-				Settings.Settings.Camera.CameraRtspStreamPath,
-				Settings.Settings.Camera.CameraIp,
+				Settings.Settings.Camera.Login,
+				Settings.Settings.Camera.Password,
+				Settings.Settings.Camera.RtspStreamPath,
+				Settings.Settings.Camera.Ip,
 				"rtsp",
-				Settings.Settings.Camera.CameraRtspPort);
+				Settings.Settings.Camera.RtspPort);
 
-			RoverCommunication = new RoverCommunication();
-			await RoverCommunication.Connect_Client();
+			RoverCommunication = new RoverCommunication(Settings.Settings.Mqtt);
+			//await RoverCommunication.Connect_Client();
 
 			_imTextureRect = GetNode<TextureRect>("CameraView");
 			_label = GetNode<Label>("DebugView");
@@ -57,8 +57,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		protected override void Dispose(bool disposing)
 		{
 			_rtspClient.Dispose();
-			_rtspClient = null;
-			RoverCommunication.StopClient().Wait(1000);
+			//RoverCommunication.StopClient().Wait(1000);
 			RoverCommunication.Dispose();
 			base.Dispose(disposing);
 		}
