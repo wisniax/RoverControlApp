@@ -146,14 +146,22 @@ namespace RoverControlApp.MVVM.Model
 
 		private async Task StopClient()
 		{
+			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicRoverControl}",
+				JsonSerializer.Serialize(new MqttClasses.RoverControl()));
+
 			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicRoverStatus}",
 				JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Closed }),
 				MqttQualityOfServiceLevel.ExactlyOnce, true);
 
-			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicRoverControl}",
-				JsonSerializer.Serialize(new MqttClasses.RoverControl()));
+			await Task.Run(async Task? () =>
+			{
+				for (int i = 0; (_managedMqttClient?.PendingApplicationMessagesCount > 0) && (i < 10); i++)
+				{
+					await Task.Delay(100);
+				}
+			});
 
-			await _managedMqttClient?.StopAsync()!;
+			await _managedMqttClient?.StopAsync(_managedMqttClient?.PendingApplicationMessagesCount == 0)!;
 		}
 
 		public void Dispose()
