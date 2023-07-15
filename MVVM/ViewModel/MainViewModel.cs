@@ -24,6 +24,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private Label _label;
 		private TextureRect _imTextureRect;
 		private ImageTexture? _imTexture;
+		private UIOverlay _uiOverlay;
 
 		// Called when the node enters the scene tree for the first time.
 		public override async void _Ready()
@@ -53,6 +54,10 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			_imTextureRect = GetNode<TextureRect>("CameraView");
 			_label = GetNode<Label>("DebugView");
+			_uiOverlay = GetNode<UIOverlay>("UIOverlay");
+
+			PressedKeys.OnControlModeChanged += _uiOverlay.ControlModeChangedSubscriber;
+			_uiOverlay.ControlMode = PressedKeys.ControlMode;
 		}
 
 		protected override void Dispose(bool disposing)

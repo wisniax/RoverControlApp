@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://ca7r5g4t6el7s"]
+[gd_scene load_steps=5 format=3 uid="uid://ca7r5g4t6el7s"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
+[ext_resource type="PackedScene" uid="uid://bpm7uiv1e6n8i" path="res://MVVM/View/UIOverlay.tscn" id="3_mtbtk"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nnhut"]
 bg_color = Color(0, 0, 0, 0.392157)
@@ -35,3 +36,6 @@ offset_bottom = -15.0
 grow_vertical = 0
 theme_override_font_sizes/font_size = 14
 theme_override_styles/normal = SubResource("StyleBoxFlat_nnhut")
+
+[node name="UIOverlay" parent="." instance=ExtResource("3_mtbtk")]
+layout_mode = 1
