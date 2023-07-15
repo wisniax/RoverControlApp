@@ -18,8 +18,8 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static PressedKeys PressedKeys { get; private set; }
 		public static RoverCommunication RoverCommunication { get; private set; }
 
-		private RtspStreamClient _rtspClient;
-		private OnvifPtzCameraController _ptzClient;
+		private RtspStreamClient? _rtspClient;
+		private OnvifPtzCameraController? _ptzClient;
 
 		private Label _label;
 		private TextureRect _imTextureRect;
@@ -57,9 +57,10 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		protected override void Dispose(bool disposing)
 		{
-			_rtspClient.Dispose();
-			//RoverCommunication.StopClient().Wait(1000);
 			RoverCommunication.Dispose();
+			_rtspClient?.Dispose();
+			//_rtspClient = null;
+			_ptzClient?.Dispose();
 			base.Dispose(disposing);
 		}
 

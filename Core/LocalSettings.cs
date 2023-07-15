@@ -12,7 +12,7 @@ namespace RoverControlApp.Core
 	{
 		public class Camera
 		{
-			public string Ip { get; set; } = "192.168.5.35";
+			public string Ip { get; set; } = "192.168.1.35";
 			public string PtzPort { get; set; } = "80";
 			public string RtspPort { get; set; } = "554";
 			public string RtspStreamPath { get; set; } = "/live/0/MAIN";
@@ -89,7 +89,7 @@ namespace RoverControlApp.Core
 				// if (!File.Exists(OS.GetUserDataDir())) File.Create(OS.GetUserDataDir());
 				using var fs = new FileStream(_settingsPath, FileMode.Create, FileAccess.Write);
 				using var sw = new StreamWriter(fs);
-				string serializedSettings = JsonSerializer.Serialize(Settings);
+				string serializedSettings = JsonSerializer.Serialize(Settings, new JsonSerializerOptions() { WriteIndented = true });
 
 				sw.WriteLine(serializedSettings);
 				sw.Flush();

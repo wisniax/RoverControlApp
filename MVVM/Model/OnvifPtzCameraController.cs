@@ -17,7 +17,7 @@ using Mutex = System.Threading.Mutex;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class OnvifPtzCameraController
+	public class OnvifPtzCameraController : IDisposable
 	{
 		private string _ip;
 		private string _port;
@@ -68,7 +68,7 @@ namespace RoverControlApp.MVVM.Model
 
 
 
-		private Thread _ptzThread;
+		private Thread? _ptzThread;
 		private Exception? _ptzThreadError = null;
 		private CancellationTokenSource _cts;
 		private DateTime _lastComTimeStamp = System.DateTime.Now;
@@ -100,6 +100,8 @@ namespace RoverControlApp.MVVM.Model
 			{
 				DoWork(ref motionLast);
 			}
+			State = CommunicationState.Closing;
+			DoWork(ref motionLast);
 		}
 
 		private void CreateCamera()
@@ -265,6 +267,15 @@ namespace RoverControlApp.MVVM.Model
 		private void ComRequestSleep()
 		{
 			_lastComTimeStamp = System.DateTime.Now;
+		}
+
+		public void Dispose()
+		{
+			_cts.Cancel();
+			_ptzThread?.Join(1000);
+			_cts.Dispose();
+			_ptzThread = null;
+			_dataMutex.Dispose();
 		}
 	}
 }

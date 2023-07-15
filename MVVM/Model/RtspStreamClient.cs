@@ -13,7 +13,7 @@ using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class RtspStreamClient
+	public class RtspStreamClient : IDisposable
 	{
 		public VideoCapture? Capture { get; private set; }
 		private Image? _latestImage;
@@ -37,7 +37,7 @@ namespace RoverControlApp.MVVM.Model
 
 		public volatile bool NewFrameSaved;
 
-		private Thread _rtspThread;
+		private Thread? _rtspThread;
 
 		private string _ip;
 		private string _port;
@@ -81,17 +81,17 @@ namespace RoverControlApp.MVVM.Model
 			{
 				DoWork();
 			}
+			State = CommunicationState.Closing;
+			DoWork();
 		}
 
 		public void Dispose()
 		{
 			MainViewModel.EventLogger.LogMessage("RTSP: Dispose called... Closing client");
-			State = CommunicationState.Closing;
 			_cts.Cancel();
-			_rtspThread.Join();
+			_rtspThread?.Join(1000);
+			_cts.Dispose();
 			_rtspThread = null;
-			EndCapture();
-			State = CommunicationState.Closed;
 		}
 
 		private void EndCapture()
@@ -99,6 +99,7 @@ namespace RoverControlApp.MVVM.Model
 			Capture?.Release();
 			Capture?.Dispose();
 			Capture = null;
+			m.Dispose();
 		}
 
 		private void CreateCapture()

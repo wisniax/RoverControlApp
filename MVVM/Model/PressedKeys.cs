@@ -119,10 +119,15 @@ namespace RoverControlApp.MVVM.Model
 				ControlMode = MqttClasses.ControlMode.EStop;
 			else ControlMode++;
 
-			RoverMovement = new MqttClasses.RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
-			LastAbsoluteVector = Vector4.Zero;
+			StopAll();
 
 			OnControlModeChanged?.Invoke(ControlMode);
+		}
+
+		private void StopAll()
+		{
+			RoverMovement = new MqttClasses.RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
+			LastAbsoluteVector = Vector4.Zero;
 		}
 	}
 }
