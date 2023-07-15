@@ -16,7 +16,14 @@ namespace RoverControlApp.MVVM.Model
 		public event EventHandler<Vector4> OnAbsoluteVectorChanged;
 		public event EventHandler<MqttClasses.RoverControl> OnRoverMovementVector;
 		public event Func<bool, Task> OnPadConnectionChanged;
-		public event Func<Task> OnControlModeButtonPressed;
+		public event Func<MqttClasses.ControlMode, Task>? OnControlModeChanged;
+
+		private volatile MqttClasses.ControlMode _controlMode;
+		public MqttClasses.ControlMode ControlMode
+		{
+			get => _controlMode;
+			private set => _controlMode = value;
+		}
 
 		public bool PadConnected
 		{
@@ -64,13 +71,15 @@ namespace RoverControlApp.MVVM.Model
 
 		public void HandleInputEvent(InputEvent @event)
 		{
+			HandleFunctionInputEvent();
 			HandleCameraInputEvent();
 			HandleMovementInputEvent();
-			HandleFunctionInputEvent();
 		}
 
-		void HandleCameraInputEvent()
+		private void HandleCameraInputEvent()
 		{
+			if (ControlMode == MqttClasses.ControlMode.Manipulator) return;
+
 			Vector4 absoluteVector4 = Vector4.Zero;
 
 			Vector2 velocity = Input.GetVector("camera_move_left", "camera_move_right", "camera_move_down", "camera_move_up");
@@ -91,16 +100,29 @@ namespace RoverControlApp.MVVM.Model
 			LastAbsoluteVector = absoluteVector4;
 		}
 
-		void HandleMovementInputEvent()
+		private void HandleMovementInputEvent()
 		{
+			if (ControlMode != MqttClasses.ControlMode.Rover) return;
 			if (!_roverDriveControllerPreset.CalculateMoveVector(out MqttClasses.RoverControl roverControl)) return;
 			RoverMovement = roverControl;
 		}
 		private void HandleFunctionInputEvent()
 		{
-			if (!Input.IsActionJustPressed("ControlModeChange", true)) return;
-			OnControlModeButtonPressed?.Invoke();
+			HandleControlModeChange();
 		}
 
+		private void HandleControlModeChange()
+		{
+			if (!Input.IsActionJustPressed("ControlModeChange", true)) return;
+
+			if ((int)ControlMode + 1 >= Enum.GetNames<MqttClasses.ControlMode>().Length)
+				ControlMode = MqttClasses.ControlMode.EStop;
+			else ControlMode++;
+
+			RoverMovement = new MqttClasses.RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
+			LastAbsoluteVector = Vector4.Zero;
+
+			OnControlModeChanged?.Invoke(ControlMode);
+		}
 	}
 }

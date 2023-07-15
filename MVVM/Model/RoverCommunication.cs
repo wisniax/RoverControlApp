@@ -13,6 +13,7 @@ using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Protocol;
+using MQTTnet.Server;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.ViewModel;
 
@@ -20,32 +21,41 @@ namespace RoverControlApp.MVVM.Model
 {
 	public class RoverCommunication : IDisposable
 	{
-		public event Func<MqttClasses.ControlMode, Task>? OnControlModeChanged;
-		//public event Func<MqttClasses.ControlMode, Task>? OnControlStatusChanged;
+		public event Func<MqttClasses.RoverStatus?, Task>? OnRoverStatusChanged;
 
 		private IManagedMqttClient? _managedMqttClient;
 		private LocalSettings.Mqtt _settingsMqtt;
 		private CancellationTokenSource _cts;
 		private Thread? _mqttThread;
-		private volatile MqttClasses.ControlMode _controlMode;
+		//List<IDisposable> _eventsToDispose = new List<IDisposable>();
 
-		public MqttClasses.ControlMode ControlMode
+		private MqttClasses.ControlMode ControlMode => MainViewModel.PressedKeys.ControlMode;
+
+		private MqttClasses.RoverStatus? _roverStatus;
+		public MqttClasses.RoverStatus? RoverStatus
 		{
-			get => _controlMode;
-			set
+			get => _roverStatus;
+			private set
 			{
-				_controlMode = value;
-				OnControlModeChanged?.Invoke(value);
+				_roverStatus = value;
+				OnRoverStatusChanged?.Invoke(value);
 			}
 		}
 
-
-		private MqttClasses.RoverStatus RoverStatus => new()
+		private MqttClasses.RoverStatus GenerateRoverStatus
 		{
-			CommunicationState = IsConnected ? CommunicationState.Opened : CommunicationState.Closed,
-			ControlMode = ControlMode,
-			PadConnected = MainViewModel.PressedKeys.PadConnected
-		};
+			get
+			{
+				var obj = new MqttClasses.RoverStatus
+				{
+					CommunicationState = IsConnected ? CommunicationState.Opened : CommunicationState.Faulted,
+					ControlMode = ControlMode,
+					PadConnected = MainViewModel.PressedKeys.PadConnected
+				};
+				RoverStatus = obj;
+				return obj;
+			}
+		}
 
 		public bool IsConnected => _managedMqttClient?.IsConnected ?? false;
 
@@ -55,15 +65,8 @@ namespace RoverControlApp.MVVM.Model
 			_cts = new CancellationTokenSource();
 			_mqttThread = new Thread(ThreadWork) { IsBackground = true, Name = "MqttStream_Thread", Priority = ThreadPriority.BelowNormal };
 			_mqttThread.Start();
-			MainViewModel.PressedKeys.OnControlModeButtonPressed += PressedKeysOnOnControlModeButtonPressed;
-		}
+			MainViewModel.PressedKeys.OnControlModeChanged += PressedKeys_OnControlModeChanged;
 
-		private Task PressedKeysOnOnControlModeButtonPressed()
-		{
-			if ((int)ControlMode + 1 >= Enum.GetNames<MqttClasses.ControlMode>().Length)
-				ControlMode = MqttClasses.ControlMode.EStop;
-			else ControlMode++;
-			return Task.CompletedTask;
 		}
 
 		private async void ThreadWork()
@@ -78,7 +81,7 @@ namespace RoverControlApp.MVVM.Model
 			_managedMqttClient?.Dispose();
 		}
 
-		public async Task Connect_Client()
+		private async Task Connect_Client()
 		{
 			var mqttFactory = new MqttFactory();
 
@@ -96,7 +99,8 @@ namespace RoverControlApp.MVVM.Model
 			var managedMqttClientOptions = new ManagedMqttClientOptionsBuilder()
 				.WithClientOptions(mqttClientOptions)
 				.WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
-				.WithMaxPendingMessages(3)
+				.WithMaxPendingMessages(99)
+				.WithPendingMessagesOverflowStrategy(MqttPendingMessagesOverflowStrategy.DropOldestQueuedMessage)
 				.Build();
 
 			await _managedMqttClient.StartAsync(managedMqttClientOptions);
@@ -106,12 +110,11 @@ namespace RoverControlApp.MVVM.Model
 			_managedMqttClient.DisconnectedAsync += HandleDisconnected;
 			_managedMqttClient.ConnectedAsync += HandleConnected;
 
-			OnControlModeChanged += RoverCommunication_OnControlModeChanged;
 			MainViewModel.PressedKeys.OnPadConnectionChanged += b => RoverCommunication_OnControlStatusChanged();
 			MainViewModel.PressedKeys.OnRoverMovementVector += RoverMovementVectorChanged!;
 		}
 
-		private async Task RoverCommunication_OnControlModeChanged(MqttClasses.ControlMode arg)
+		private async Task PressedKeys_OnControlModeChanged(MqttClasses.ControlMode arg)
 		{
 			MainViewModel.EventLogger.LogMessage($"MQTT: Control Mode changed {arg}");
 			await RoverCommunication_OnControlStatusChanged();
@@ -119,20 +122,20 @@ namespace RoverControlApp.MVVM.Model
 
 		private async Task HandleConnected(MqttClientConnectedEventArgs arg)
 		{
-			await RoverCommunication_OnControlStatusChanged();
 			MainViewModel.EventLogger.LogMessage($"MQTT: Connected");
+			await RoverCommunication_OnControlStatusChanged();
 		}
 
-		private Task HandleDisconnected(MqttClientDisconnectedEventArgs arg)
+		private async Task HandleDisconnected(MqttClientDisconnectedEventArgs arg)
 		{
 			MainViewModel.EventLogger.LogMessage($"MQTT: Disconnected");
-			return Task.CompletedTask;
+			await RoverCommunication_OnControlStatusChanged();
 		}
 
 		private async Task RoverCommunication_OnControlStatusChanged()
 		{
 			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicRoverStatus}",
-				JsonSerializer.Serialize(RoverStatus), MqttQualityOfServiceLevel.ExactlyOnce, true);
+				JsonSerializer.Serialize(GenerateRoverStatus), MqttQualityOfServiceLevel.ExactlyOnce, true);
 		}
 
 		private async void RoverMovementVectorChanged(object sender, MqttClasses.RoverControl e)
@@ -141,7 +144,7 @@ namespace RoverControlApp.MVVM.Model
 				JsonSerializer.Serialize(e));
 		}
 
-		public async Task StopClient()
+		private async Task StopClient()
 		{
 			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicRoverStatus}",
 				JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Closed }),
@@ -155,6 +158,7 @@ namespace RoverControlApp.MVVM.Model
 
 		public void Dispose()
 		{
+			//_eventsToDispose.ForEach(o => o.Dispose());
 			_cts.Cancel();
 			_mqttThread?.Join();
 			_mqttThread = null;

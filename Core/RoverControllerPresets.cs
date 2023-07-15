@@ -33,8 +33,10 @@ namespace RoverControlApp.Core
 					velocity.X /= 8f;
 					velocity.Y /= 8f;
 				}
-				if (new Vector2((float)MainViewModel.PressedKeys.RoverMovement.ZRotAxis, (float)MainViewModel.PressedKeys.RoverMovement.XVelAxis)
-					.IsEqualApprox(velocity)) return false;
+
+				var oldVelocity = new Vector2((float)MainViewModel.PressedKeys.RoverMovement.ZRotAxis,
+					(float)MainViewModel.PressedKeys.RoverMovement.XVelAxis);
+				if (oldVelocity.IsEqualApprox(velocity)) return false;
 
 
 				roverControl.ZRotAxis = velocity.X;

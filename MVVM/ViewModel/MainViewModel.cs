@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Net.Mime;
 using System.ServiceModel;
 using System.Text;
 using System.Text.Json;
@@ -87,7 +88,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			var sb = new StringBuilder();
 			string age = _rtspClient.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
-			sb.AppendLine($"MQTT: Rover Mov: {JsonSerializer.Serialize(PressedKeys.RoverMovement)}");
+			sb.AppendLine($"MQTT: Rover Status: {JsonSerializer.Serialize(RoverCommunication.RoverStatus)}");
+			sb.AppendLine($"PressedKeys: Rover Mov: {JsonSerializer.Serialize(PressedKeys.RoverMovement)}");
 
 			if (_rtspClient.State == CommunicationState.Opened)
 				sb.AppendLine($"RTSP: Frame is {age}s old");
