@@ -55,18 +55,9 @@ public partial class UIOverlay : Control
 	public override void _Ready()
 	{
 		roverModeAnimator = GetNode<AnimationPlayer>(roverModeAnimatorPath);
-		//roverModeAnimator.AnimationFinished += playNext;
 		ControlMode = MqttClasses.ControlMode.EStop;
 	}
 
-	//async void playNext(StringName _)
-	//{
-	//	await Task.Delay(1000);
-	//	if (((int)_controlMode) + 1 == Enum.GetValues<MqttClasses.ControlMode>().Length)
-	//		ControlMode = MqttClasses.ControlMode.EStop;
-	//	else
-	//		ControlMode++;
-	//}
 
 	public void SetupAnimSwap(MqttClasses.ControlMode from, MqttClasses.ControlMode to)
 	{
