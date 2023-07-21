@@ -15,6 +15,7 @@ namespace RoverControlApp.MVVM.Model
 	{
 		public event EventHandler<Vector4> OnAbsoluteVectorChanged;
 		public event EventHandler<MqttClasses.RoverControl> OnRoverMovementVector;
+		public event EventHandler<MqttClasses.ManipulatorControl> OnManipulatorMovement;
 		public event Func<bool, Task> OnPadConnectionChanged;
 		public event Func<MqttClasses.ControlMode, Task>? OnControlModeChanged;
 
@@ -57,16 +58,30 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
+		private MqttClasses.ManipulatorControl _manipulatorMovement;
+		public MqttClasses.ManipulatorControl ManipulatorMovement
+		{
+			get => _manipulatorMovement;
+			set
+			{
+				_manipulatorMovement = value;
+				OnManipulatorMovement?.Invoke(this, value);
+			}
+		}
+
 		private RoverControllerPresets.IRoverDriveController _roverDriveControllerPreset;
+		private RoverControllerPresets.IRoverManipulatorController _roverManipulatorControllerPreset;
 
 		public PressedKeys()
 		{
 			Input.JoyConnectionChanged += (device, connected) => { PadConnected = connected; };
 			_lastAbsoluteVector = Vector4.Zero;
 			_roverMovement = new MqttClasses.RoverControl();
+			_manipulatorMovement = new MqttClasses.ManipulatorControl();
 			_roverDriveControllerPreset = MainViewModel.Settings.Settings.NewFancyRoverController
 				? new RoverControllerPresets.ForzaLikeController()
 				: new RoverControllerPresets.GoodOldGamesLikeController();
+			_roverManipulatorControllerPreset = new RoverControllerPresets.SingleAxisManipulatorController();
 		}
 
 		public void HandleInputEvent(InputEvent @event)
@@ -74,6 +89,14 @@ namespace RoverControlApp.MVVM.Model
 			HandleFunctionInputEvent();
 			HandleCameraInputEvent();
 			HandleMovementInputEvent();
+			HandleManipulatorInputEvent();
+		}
+
+		private void HandleManipulatorInputEvent()
+		{
+			if (ControlMode != MqttClasses.ControlMode.Manipulator) return;
+			if (!_roverManipulatorControllerPreset.CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl)) return;
+			ManipulatorMovement = manipulatorControl;
 		}
 
 		private void HandleCameraInputEvent()
@@ -127,6 +150,7 @@ namespace RoverControlApp.MVVM.Model
 		private void StopAll()
 		{
 			RoverMovement = new MqttClasses.RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
+			ManipulatorMovement = new MqttClasses.ManipulatorControl();
 			LastAbsoluteVector = Vector4.Zero;
 		}
 	}

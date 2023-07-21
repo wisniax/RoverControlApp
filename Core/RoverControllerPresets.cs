@@ -14,6 +14,12 @@ namespace RoverControlApp.Core
 		{
 			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl);
 		}
+
+		public interface IRoverManipulatorController
+		{
+			public bool CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl);
+		}
+
 		public class ForzaLikeController : IRoverDriveController
 		{
 			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl)
@@ -71,6 +77,26 @@ namespace RoverControlApp.Core
 			}
 		}
 
+		public class SingleAxisManipulatorController : IRoverManipulatorController
+		{
+			public bool CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl)
+			{
+				manipulatorControl = new();
 
+				float velocity = Input.GetAxis("manipulator_speed_backward", "manipulator_speed_forward");
+
+				manipulatorControl = new MqttClasses.ManipulatorControl()
+				{
+					Axis1 = Input.IsActionPressed("manipulator_axis_1") ? velocity : 0f,
+					Axis2 = Input.IsActionPressed("manipulator_axis_2") ? velocity : 0f,
+					Axis3 = Input.IsActionPressed("manipulator_axis_3") ? velocity : 0f,
+					Axis4 = Input.IsActionPressed("manipulator_axis_4") ? velocity : 0f,
+					Axis5 = Input.IsActionPressed("manipulator_axis_5") ? velocity : 0f,
+					Gripper = Input.IsActionPressed("manipulator_gripper") ? velocity : 0f
+				};
+
+				return !manipulatorControl.Equals(MainViewModel.PressedKeys.ManipulatorMovement);
+			}
+		}
 	}
 }

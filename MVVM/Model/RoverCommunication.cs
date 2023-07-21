@@ -112,6 +112,7 @@ namespace RoverControlApp.MVVM.Model
 
 			MainViewModel.PressedKeys.OnPadConnectionChanged += b => RoverCommunication_OnControlStatusChanged();
 			MainViewModel.PressedKeys.OnRoverMovementVector += RoverMovementVectorChanged!;
+			MainViewModel.PressedKeys.OnManipulatorMovement += RoverManipulatorVectorChanged;
 		}
 
 		private async Task PressedKeys_OnControlModeChanged(MqttClasses.ControlMode arg)
@@ -141,6 +142,11 @@ namespace RoverControlApp.MVVM.Model
 		private async void RoverMovementVectorChanged(object sender, MqttClasses.RoverControl e)
 		{
 			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicRoverControl}",
+				JsonSerializer.Serialize(e));
+		}
+		private async void RoverManipulatorVectorChanged(object? sender, MqttClasses.ManipulatorControl e)
+		{
+			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicManipulatorControl}",
 				JsonSerializer.Serialize(e));
 		}
 
