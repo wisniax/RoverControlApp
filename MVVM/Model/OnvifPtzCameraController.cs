@@ -16,7 +16,7 @@ namespace RoverControlApp.MVVM.Model
 	public class OnvifPtzCameraController
 	{
 		private readonly long COM_TIME_RANGE = 1000; //ms
-		private readonly int COM_LIMIT_IN_RANGE = 2; //count
+		private readonly int COM_LIMIT_IN_RANGE = 4; //count
 
 		private struct MoveUpdateData
 		{
@@ -68,6 +68,7 @@ namespace RoverControlApp.MVVM.Model
 		private readonly Mutex _dataMutex = new();
 
 		private volatile Stopwatch _generalPurposeStopwatch;
+		private volatile Stopwatch _queueStopwatch;
 		private string _ip;
 		private string _login;
 		private string _password;
@@ -91,6 +92,7 @@ namespace RoverControlApp.MVVM.Model
 			_login = login;
 			_password = password;
 			_generalPurposeStopwatch = Stopwatch.StartNew();
+			_queueStopwatch =  Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
 			_ptzThread = new Thread(ThreadWork)
 			{
@@ -198,17 +200,33 @@ namespace RoverControlApp.MVVM.Model
 		private void TryMoveCamera()
 		{
 			if (_comQueue.Count > 0)
-				_requestBarrier.SignalAndWait(100);
+				_requestBarrier.SignalAndWait(200);
 			else
-				_requestBarrier.SignalAndWait();
+				_requestBarrier.SignalAndWait(5000);
 
 			//populate queue
-			if (UpdateMotion(_cameraMotionLast, CameraMotionRequest, out MoveUpdateData moveUpdateData))
+			if (UpdateMotion(_cameraMotionLast, CameraMotionRequest, out MoveUpdateData moveUpdateData) || _queueStopwatch.Elapsed.TotalSeconds >= 5)
+			{
+				if (MainViewModel.Settings.Settings.VerboseDebug)
+					MainViewModel.EventLogger.LogMessage($"PTZ: Enqueued: Vec: {moveUpdateData.TiltAndZoom} TiltStop: {moveUpdateData.StopTilt} ZoomStop: {moveUpdateData.StopZoom}");
 				_comQueue.Enqueue(moveUpdateData);
+				_queueStopwatch.Restart();
+			}
 			_cameraMotionLast = CameraMotionRequest;
+
+			//when move is stopped, clear entire queue
+			if ((moveUpdateData.StopTilt || moveUpdateData.StopZoom) && _queueStopwatch.Elapsed.TotalMilliseconds >= 200)
+			{
+				_comQueue.Clear();
+				_comQueue.Enqueue(moveUpdateData);
+				_queueStopwatch.Restart();
+			}
 
 			if (_comQueue.Count == 0)
 				return;
+
+			while (_comQueue.Count > 4)
+				_comQueue.Dequeue();
 
 			//clear older than 1000ms
 			foreach (DateTimeOffset offset in _comHistory.ToList())
@@ -222,20 +240,20 @@ namespace RoverControlApp.MVVM.Model
 				MoveUpdateData nextMove = _comQueue.Dequeue();
 				if (nextMove.StopTilt || nextMove.StopZoom)
 				{
+					if (MainViewModel.Settings.Settings.VerboseDebug)
+						MainViewModel.EventLogger.LogMessage($"PTZ: CameraMotion send: {(nextMove.StopTilt ? "StopTilt" : string.Empty)} {(nextMove.StopZoom ? "StopZoom" : string.Empty)}");
 					_camera?.Ptz.StopAsync(_camera.Profile.token, nextMove.StopTilt, nextMove.StopZoom).Wait();
 					_generalPurposeStopwatch.Restart();
 					_comHistory.Add(DateTimeOffset.Now);
-					if (MainViewModel.Settings.Settings.VerboseDebug)
-						MainViewModel.EventLogger.LogMessage($"PTZ: CameraMotion send: {(nextMove.StopTilt ? "StopTilt" : string.Empty)} {(nextMove.StopZoom ? "StopZoom" : string.Empty)}");
 				}
 
 				if (!nextMove.TiltAndZoom.IsZeroApprox())
 				{
+					if (MainViewModel.Settings.Settings.VerboseDebug)
+						MainViewModel.EventLogger.LogMessage($"PTZ: CameraMotion send: Tilt.X={nextMove.TiltAndZoom.X}, Tilt.Y={nextMove.TiltAndZoom.Y} Zoom={nextMove.TiltAndZoom.Z}");
 					_camera?.Ptz.ContinuousMoveAsync(_camera.Profile.token, (PTZSpeed)nextMove, string.Empty).Wait();
 					_generalPurposeStopwatch.Restart();
 					_comHistory.Add(DateTimeOffset.Now);
-					if (MainViewModel.Settings.Settings.VerboseDebug)
-						MainViewModel.EventLogger.LogMessage($"PTZ: CameraMotion send: Tilt.X={nextMove.TiltAndZoom.X}, Tilt.Y={nextMove.TiltAndZoom.Y} Zoom={nextMove.TiltAndZoom.Z}");
 				}
 			}
 		}
@@ -244,10 +262,7 @@ namespace RoverControlApp.MVVM.Model
 		{
 			data = new();
 
-			if (moveNew.IsEqualApprox(moveOld))
-				return false;
-
-			data.TiltAndZoom = MainViewModel.Settings.Settings.CameraInverseAxis
+			data.TiltAndZoom = MainViewModel.Settings.Settings.Camera.CameraInverseAxis
 				? new Vector4(-moveNew.X, -moveNew.Y, moveNew.Z, moveNew.W)
 				: moveNew;
 
@@ -268,6 +283,9 @@ namespace RoverControlApp.MVVM.Model
 			data.StopTilt = (!xNow && xBefore) || (!yNow && yBefore) || (!xNow && !yNow); //When to stop camera :)
 			data.StopZoom = Mathf.IsEqualApprox(moveNew.Z, 0f, 0.1f) && !Mathf.IsEqualApprox(_cameraMotionLast.Z, 0f, 0.1f);
 
+			if (moveNew.IsEqualApprox(moveOld))
+				return false;
+
 			return true;
 		}
 
@@ -287,7 +305,7 @@ namespace RoverControlApp.MVVM.Model
 				_dataMutex.WaitOne();
 				_cameraMotionRequest = value;
 				_dataMutex.ReleaseMutex();
-				bool success = _requestBarrier.SignalAndWait(200);
+				bool success = _requestBarrier.SignalAndWait(100);
 				if (MainViewModel.Settings.Settings.VerboseDebug && !success)
 					MainViewModel.EventLogger.LogMessage($"PTZ: Barrier timeout! Last input ignored!");
 			}
