@@ -14,8 +14,8 @@ namespace RoverControlApp.MVVM.Model
 	public class PressedKeys
 	{
 		public event EventHandler<Vector4> OnAbsoluteVectorChanged;
-		public event EventHandler<MqttClasses.RoverControl> OnRoverMovementVector;
-		public event EventHandler<MqttClasses.ManipulatorControl> OnManipulatorMovement;
+		public event Func<MqttClasses.RoverControl, Task> OnRoverMovementVector;
+		public event Func<MqttClasses.ManipulatorControl, Task> OnManipulatorMovement;
 		public event Func<bool, Task> OnPadConnectionChanged;
 		public event Func<MqttClasses.ControlMode, Task>? OnControlModeChanged;
 
@@ -54,7 +54,7 @@ namespace RoverControlApp.MVVM.Model
 			private set
 			{
 				_roverMovement = value;
-				OnRoverMovementVector?.Invoke(this, value);
+				OnRoverMovementVector?.Invoke(value);
 			}
 		}
 
@@ -62,10 +62,10 @@ namespace RoverControlApp.MVVM.Model
 		public MqttClasses.ManipulatorControl ManipulatorMovement
 		{
 			get => _manipulatorMovement;
-			set
+			private set
 			{
 				_manipulatorMovement = value;
-				OnManipulatorMovement?.Invoke(this, value);
+				OnManipulatorMovement?.Invoke(value);
 			}
 		}
 

@@ -26,27 +26,31 @@ namespace RoverControlApp.Core
 			{
 				roverControl = new MqttClasses.RoverControl();
 
-				Vector2 velocity = Input.GetVector("rover_move_left", "rover_move_right", "rover_move_backward",
-					"rover_move_forward", Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone));
-				velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : velocity.X;
-				velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, 0.005f) ? 0 : velocity.Y;
-				velocity = velocity.Clamp(new Vector2(-Math.Abs(velocity.Y) / 2.5f, -1f), new Vector2(Math.Abs(velocity.Y) / 2.5f, 1f)); // Max turn angle: 36 deg.
+				float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
+				velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
+
+				float turn = Input.GetAxis("rover_move_left", "rover_move_right");
+				turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, MainViewModel.Settings.Settings.JoyPadDeadzone)) ? 0 : turn;
+
+				turn *= Mathf.Abs(velocity) / 2.5f; // Max turn angle: 36 deg.
+
+				Vector2 vec = new Vector2(turn, velocity);
 				float forcedX = Input.GetAxis("rover_rotate_left", "rover_rotate_right");
-				if (!Mathf.IsEqualApprox(forcedX, 0f, 0.05f)) velocity.X = forcedX;
+				if (!Mathf.IsEqualApprox(forcedX, 0f, 0.05f)) vec.X = forcedX / 2f;
 
 				if (Input.IsActionPressed("camera_zoom_mod"))
 				{
-					velocity.X /= 8f;
-					velocity.Y /= 8f;
+					vec.X /= 8f;
+					vec.Y /= 8f;
 				}
 
 				var oldVelocity = new Vector2((float)MainViewModel.PressedKeys.RoverMovement.ZRotAxis,
 					(float)MainViewModel.PressedKeys.RoverMovement.XVelAxis);
-				if (oldVelocity.IsEqualApprox(velocity)) return false;
+				if (oldVelocity.IsEqualApprox(vec)) return false;
 
 
-				roverControl.ZRotAxis = velocity.X;
-				roverControl.XVelAxis = velocity.Y;
+				roverControl.ZRotAxis = vec.X;
+				roverControl.XVelAxis = vec.Y;
 				return true;
 			}
 		}

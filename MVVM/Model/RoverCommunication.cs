@@ -127,10 +127,11 @@ namespace RoverControlApp.MVVM.Model
 			await RoverCommunication_OnControlStatusChanged();
 		}
 
-		private async Task HandleDisconnected(MqttClientDisconnectedEventArgs arg)
+		private Task HandleDisconnected(MqttClientDisconnectedEventArgs arg)
 		{
 			MainViewModel.EventLogger.LogMessage($"MQTT: Disconnected");
-			await RoverCommunication_OnControlStatusChanged();
+			return Task.CompletedTask;
+			//await RoverCommunication_OnControlStatusChanged();
 		}
 
 		private async Task RoverCommunication_OnControlStatusChanged()
@@ -139,21 +140,24 @@ namespace RoverControlApp.MVVM.Model
 				JsonSerializer.Serialize(GenerateRoverStatus), MqttQualityOfServiceLevel.ExactlyOnce, true);
 		}
 
-		private async void RoverMovementVectorChanged(object sender, MqttClasses.RoverControl e)
+		private async Task RoverMovementVectorChanged(MqttClasses.RoverControl roverControl)
 		{
 			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicRoverControl}",
-				JsonSerializer.Serialize(e));
+				JsonSerializer.Serialize(roverControl));
 		}
-		private async void RoverManipulatorVectorChanged(object? sender, MqttClasses.ManipulatorControl e)
+		private async Task RoverManipulatorVectorChanged(MqttClasses.ManipulatorControl manipulatorControl)
 		{
 			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicManipulatorControl}",
-				JsonSerializer.Serialize(e));
+				JsonSerializer.Serialize(manipulatorControl));
 		}
 
 		private async Task StopClient()
 		{
 			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicRoverControl}",
 				JsonSerializer.Serialize(new MqttClasses.RoverControl()));
+
+			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicManipulatorControl}",
+				JsonSerializer.Serialize(new MqttClasses.ManipulatorControl()));
 
 			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.MainTopic}/{_settingsMqtt.TopicRoverStatus}",
 				JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Closed }),
@@ -163,7 +167,7 @@ namespace RoverControlApp.MVVM.Model
 			{
 				for (int i = 0; (_managedMqttClient?.PendingApplicationMessagesCount > 0) && (i < 10); i++)
 				{
-					await Task.Delay(100);
+					await Task.Delay(TimeSpan.FromMilliseconds(100));
 				}
 			});
 

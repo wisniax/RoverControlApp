@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.Net.Mime;
 using System.ServiceModel;
@@ -92,25 +93,37 @@ namespace RoverControlApp.MVVM.ViewModel
 		private void UpdateLabel()
 		{
 			var sb = new StringBuilder();
-			string age = _rtspClient.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			string? age = _rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
-			sb.AppendLine($"MQTT: Rover Status: {JsonSerializer.Serialize(RoverCommunication.RoverStatus)}");
-			sb.AppendLine($"PressedKeys: Rover Mov: {JsonSerializer.Serialize(PressedKeys.RoverMovement)}");
+			sb.AppendLine($"MQTT: Control Mode: {RoverCommunication.RoverStatus?.ControlMode},\t" +
+			              $"Connection: {RoverCommunication.RoverStatus?.CommunicationState},\t" +
+			              $"Pad connected: {RoverCommunication.RoverStatus?.PadConnected}");
+			switch (RoverCommunication.RoverStatus?.ControlMode)
+			{
+				case MqttClasses.ControlMode.Rover:
+					sb.AppendLine($"PressedKeys: Rover Mov: {JsonSerializer.Serialize(PressedKeys.RoverMovement)}");
+					break;
+				case MqttClasses.ControlMode.Manipulator:
+					sb.AppendLine($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys.ManipulatorMovement)}");
+					break;
+				default:
+					break;
+			}
 
 			if (_rtspClient.State == CommunicationState.Opened)
 				sb.AppendLine($"RTSP: Frame is {age}s old");
 			else
 				sb.AppendLine($"RTSP: {_rtspClient.State}, Time: {age}s");
 
-			age = _ptzClient.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			age = _ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
-			if (_ptzClient.State == CommunicationState.Opened)
+			if (_ptzClient?.State == CommunicationState.Opened)
 			{
 				sb.AppendLine($"PTZ: Since last move request: {age}s");
 				sb.AppendLine($"PTZ: Move vector: {_ptzClient.CameraMotion}");
 			}
 			else
-				sb.AppendLine($"PTZ: {_ptzClient.State}, Time: {age}s");
+				sb.AppendLine($"PTZ: {_ptzClient?.State}, Time: {age}s");
 			_label.Text = sb.ToString().ReplaceLineEndings("\n");
 		}
 	}

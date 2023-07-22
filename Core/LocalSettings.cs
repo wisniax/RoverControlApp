@@ -42,7 +42,7 @@ namespace RoverControlApp.Core
 			public Mqtt Mqtt { get; set; } = new();
 			public bool VerboseDebug { get; set; } = false;
 			public float JoyPadDeadzone { get; set; } = 0.15f;
-			public bool NewFancyRoverController { get; set; } = false;
+			public bool NewFancyRoverController { get; set; } = true;
 		}
 
 		public Vars Settings { get; private set; }
