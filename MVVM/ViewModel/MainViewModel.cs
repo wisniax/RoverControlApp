@@ -12,8 +12,9 @@ namespace RoverControlApp.MVVM.ViewModel
 {
 	public partial class MainViewModel : Control
 	{
-		public static EventLogger EventLogger { get; private set; }
-		public static LocalSettings Settings { get; private set; }
+		//TODO return to previous version
+		public static EventLogger EventLogger { get; set; }
+		public static LocalSettings Settings { get; set; }
 		public static PressedKeys PressedKeys { get; private set; }
 		public static RoverCommunication RoverCommunication { get; private set; }
 

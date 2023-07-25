@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Godot;
 using RoverControlApp.MVVM.ViewModel;
+using RoverControlApp.MVVM.Model;
 using FileAccess = System.IO.FileAccess;
 
 namespace RoverControlApp.Core;
@@ -16,43 +17,43 @@ public class LocalSettings
 {
 	public class LocalSettingsCamera
 	{
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string CameraIp { get; set; } = "192.168.5.35";
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string CameraPtzPort { get; set; } = "80";
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string CameraRtspPort { get; set; } = "554";
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string CameraRtspStreamPath { get; set; } = "/live/0/MAIN";
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string CameraLogin { get; set; } = "admin";
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string CameraPassword { get; set; } = "admin";
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.Check)]
 		public bool CameraInverseAxis { get; set; } = false;
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.Check)]
 		public bool EnableRtspStream { get; set; } = true;
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.Check)]
 		public bool EnablePtzControl { get; set; } = true;
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.Range,"1;4;0.01;f;d")]
 		public double PtzRequestFrequency { get; set; } = 2.69;
 	}
 
 	public class LocalSettingsMqtt
 	{
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string MqttBrokerIp { get; set; } = "broker.hivemq.com";
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
 		public int MqttBrokerPort { get; set; } = 1883;
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string MqttTopic { get; set; } = "RappTORS";
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string MqttTopicRoverControl { get; set; } = "RoverControl";
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string MqttTopicManipulatorControl { get; set; } = "ManipulatorControl";
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string MqttTopicRoverFeedback { get; set; } = "RoverFeedback";
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string MqttTopicRoverStatus { get; set; } = "RoverStatus";
 	}
 
@@ -63,11 +64,11 @@ public class LocalSettings
 		public LocalSettingsCamera Camera { get; set; } = new();
 		[SettingsManagerVisible]
 		public LocalSettingsMqtt Mqtt { get; set; } = new();
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.Check)]
 		public bool VerboseDebug { get; set; } = false;
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.Range, "0;1;0.01;f;f")]
 		public float JoyPadDeadzone { get; set; } = 0.15f;
-		[SettingsManagerVisible]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.Check)]
 		public bool NewFancyRoverController { get; set; } = false;
 
 	}

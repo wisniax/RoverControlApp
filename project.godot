@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Rover Control App"
-run/main_scene="res://MVVM/View/MainView.tscn"
+run/main_scene="res://MVVM/View/SettingsManager.tscn"
 config/features=PackedStringArray("4.0", "C#", "GL Compatibility")
 run/max_fps=60
 run/low_processor_mode=true
