@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://c3d5jobdlb4pw"]
+[gd_scene load_steps=3 format=3 uid="uid://em10imnbie42"]
 
-[ext_resource type="Script" path="res://MVVM/ViewModel/SettingsManager.cs" id="1_xybni"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/SettingsManager.cs" id="1_pihm0"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/SettingsManagerTree.cs" id="2_mu20m"]
 
 [node name="SettingsManager" type="Control"]
 layout_mode = 3
@@ -9,8 +10,11 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_pihm0")
+SMTreeNodePath = NodePath("SettingsManagerTree")
+StatusBarNodePath = NodePath("StatusBar")
 
-[node name="SettingsManager" type="Tree" parent="."]
+[node name="SettingsManagerTree" type="Tree" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,7 +23,26 @@ offset_bottom = -48.0
 grow_horizontal = 2
 grow_vertical = 2
 columns = 2
-script = ExtResource("1_xybni")
+script = ExtResource("2_mu20m")
+
+[node name="StatusBar" type="RichTextLabel" parent="."]
+clip_contents = false
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -576.0
+offset_top = -47.0
+offset_right = -3.0
+grow_horizontal = 2
+grow_vertical = 0
+tooltip_text = "Status"
+bbcode_enabled = true
+text = "Constructing..."
+scroll_active = false
+shortcut_keys_enabled = false
 
 [node name="SaveSettings" type="Button" parent="."]
 layout_mode = 1
@@ -65,3 +88,7 @@ offset_bottom = -6.0
 grow_horizontal = 0
 grow_vertical = 0
 text = "DEFAULTS"
+
+[connection signal="pressed" from="SaveSettings" to="." method="OnSaveSettingsPressed"]
+[connection signal="pressed" from="LoadSettings" to="." method="OnLoadSettingsPressed"]
+[connection signal="pressed" from="ForceDefaultSettings" to="." method="OnForceDefaultSettingsPressed"]

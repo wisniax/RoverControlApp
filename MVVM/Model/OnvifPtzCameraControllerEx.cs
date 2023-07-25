@@ -13,7 +13,7 @@ using Mutex = System.Threading.Mutex;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class OnvifPtzCameraController
+	public class OnvifPtzCameraControllerEx
 	{
 		private readonly long COM_TIME_RANGE = 1000; //ms
 		private readonly int COM_LIMIT_IN_RANGE = 4; //count
@@ -72,7 +72,7 @@ namespace RoverControlApp.MVVM.Model
 		private string _ip;
 		private string _login;
 		private string _password;
-		private string _port;
+		private int _port;
 
 
 		private Thread _ptzThread;
@@ -85,7 +85,7 @@ namespace RoverControlApp.MVVM.Model
 			CameraMotionRequest = vector;
 		}
 
-		public OnvifPtzCameraController(string ip, string port, string login, string password)
+		public OnvifPtzCameraControllerEx(string ip, int port, string login, string password)
 		{
 			_ip = ip;
 			_port = port;
@@ -109,7 +109,7 @@ namespace RoverControlApp.MVVM.Model
 				EndCamera();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Created;
-			var acc = new Account(_ip + ':' + _port, _login, _password);
+			var acc = new Account(_ip + ':' + _port.ToString(), _login, _password);
 			_camera = Camera.Create(acc, (e) => _ptzThreadError = e);
 
 			if (_ptzThreadError is not null)

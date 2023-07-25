@@ -17,14 +17,14 @@ public class LocalSettings
 {
 	public class LocalSettingsCamera
 	{
-		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String,formatData: @"(?i)(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:\d{1,3}\.){3}\d{1,3}|(?:http:\/\/|https:\/\/)\S+")]
 		public string CameraIp { get; set; } = "192.168.5.35";
 		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
-		public string CameraPtzPort { get; set; } = "80";
-		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
-		public string CameraRtspPort { get; set; } = "554";
-		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string CameraRtspStreamPath { get; set; } = "/live/0/MAIN";
+		[SettingsManagerVisible(TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
+		public int CameraRtspPort { get; set; } = 554;
+		[SettingsManagerVisible(TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
+		public int CameraPtzPort { get; set; } = 80;
 		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
 		public string CameraLogin { get; set; } = "admin";
 		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
@@ -41,8 +41,8 @@ public class LocalSettings
 
 	public class LocalSettingsMqtt
 	{
-		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]
-		public string MqttBrokerIp { get; set; } = "broker.hivemq.com";
+		[SettingsManagerVisible(TreeItem.TreeCellMode.String,formatData: @"(?i)(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:\d{1,3}\.){3}\d{1,3}|(?:http:\/\/|https:\/\/)\S+")]
+		public string MqttBrokerIp { get; set; } = "http://broker.hivemq.com";
 		[SettingsManagerVisible(TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
 		public int MqttBrokerPort { get; set; } = 1883;
 		[SettingsManagerVisible(TreeItem.TreeCellMode.String)]

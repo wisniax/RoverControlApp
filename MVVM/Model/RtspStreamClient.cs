@@ -40,7 +40,7 @@ namespace RoverControlApp.MVVM.Model
 		private Thread _rtspThread;
 
 		private string _ip;
-		private string _port;
+		private int _port;
 		private string _protocol;
 		private string _login;
 		private string _password;
@@ -60,7 +60,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private CancellationTokenSource _cts;
 
-		public RtspStreamClient(string login, string password, string pathToStream, string ip, string protocol = "rtsp", string port = "554")
+		public RtspStreamClient(string login, string password, string pathToStream, string ip, string protocol = "rtsp", int port = 554)
 		{
 			this._ip = ip;
 			this._port = port;

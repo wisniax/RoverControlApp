@@ -19,7 +19,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static RoverCommunication RoverCommunication { get; private set; }
 
 		private RtspStreamClient _rtspClient;
-		private OnvifPtzCameraController _ptzClient;
+		private OnvifPtzCameraControllerEx _ptzClient;
 
 		private Label _label;
 		private TextureRect _imTextureRect;
@@ -34,7 +34,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			Settings.SaveSettings();
 			PressedKeys = new PressedKeys();
 
-			_ptzClient = new OnvifPtzCameraController(
+			_ptzClient = new OnvifPtzCameraControllerEx(
 				Settings.Settings.Camera.CameraIp,
 				Settings.Settings.Camera.CameraPtzPort,
 				Settings.Settings.Camera.CameraLogin,
