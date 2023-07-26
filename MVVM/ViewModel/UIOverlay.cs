@@ -71,7 +71,7 @@ public partial class UIOverlay : Control
 
 		track = anim.FindTrack($"{roverModeLabelPath}:text", Animation.TrackType.Value);
 		key = anim.TrackFindKey(track, 1.0);
-		anim.TrackSetKeyValue(track, key, PRESET[to].Text);
+		anim.TrackSetKeyValue(track, key, PRESET[to].Text);	
 	}
 
 	public MqttClasses.ControlMode ControlMode
@@ -91,7 +91,7 @@ public partial class UIOverlay : Control
 			_controlMode = value;
 		}
 	}
-
+		
 	private struct Setting
 	{
 
@@ -100,7 +100,7 @@ public partial class UIOverlay : Control
 			BackColor = backColor;
 			FontColor = fontColor;
 			Text = text;
-		}
+	}
 
 		public Color BackColor { get; set; }
 

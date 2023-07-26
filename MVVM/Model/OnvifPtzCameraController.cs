@@ -20,7 +20,7 @@ namespace RoverControlApp.MVVM.Model
 	public class OnvifPtzCameraController : IDisposable
 	{
 		private string _ip;
-		private string _port;
+		private int _port;
 		private string _login;
 		private string _password;
 
@@ -73,12 +73,12 @@ namespace RoverControlApp.MVVM.Model
 		private CancellationTokenSource _cts;
 		private DateTime _lastComTimeStamp = System.DateTime.Now;
 
-		public void ChangeMoveVector(object sender, Vector4 vector)
+		public void ChangeMoveVector(object? sender, Vector4 vector)
 		{
 			CameraMotion = vector;
 		}
 
-		public OnvifPtzCameraController(string ip, string port, string login, string password)
+		public OnvifPtzCameraController(string ip, int port, string login, string password)
 		{
 			_ip = ip;
 			_port = port;
@@ -88,7 +88,6 @@ namespace RoverControlApp.MVVM.Model
 			_cts = new CancellationTokenSource();
 			_ptzThread = new Thread(ThreadWork) { IsBackground = true, Name = "PtzController_Thread", Priority = ThreadPriority.AboveNormal };
 			_ptzThread.Start();
-			MainViewModel.PressedKeys.OnAbsoluteVectorChanged += ChangeMoveVector;
 		}
 
 		private void ThreadWork()

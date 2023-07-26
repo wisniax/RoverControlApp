@@ -1,6 +1,6 @@
 using System;
 using System.Globalization;
-using System.Net.Mime;
+using System.Threading.Tasks;
 using System.ServiceModel;
 using System.Text;
 using System.Text.Json;
@@ -19,6 +19,11 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static PressedKeys PressedKeys { get; private set; }
 		public static RoverCommunication RoverCommunication { get; private set; }
 
+		[Export]
+		public NodePath SettingsManagerNodePath;
+		[Export]
+		public NodePath ShowSettingsBtnNodePath;
+
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
 
@@ -26,15 +31,16 @@ namespace RoverControlApp.MVVM.ViewModel
 		private TextureRect _imTextureRect;
 		private ImageTexture? _imTexture;
 		private UIOverlay _uiOverlay;
+		private SettingsManager _settingsManager;
+		private Button _showSettingsBtn;
 
-		// Called when the node enters the scene tree for the first time.
-		public override async void _Ready()
+		private void StartUp()
 		{
-			Thread.CurrentThread.Name = "MainUI_Thread";
 			EventLogger = new EventLogger();
 			Settings = new LocalSettings();
 			Settings.SaveSettings();
 			PressedKeys = new PressedKeys();
+			RoverCommunication = new RoverCommunication(Settings.Settings.Mqtt);
 
 			_ptzClient = new OnvifPtzCameraController(
 				Settings.Settings.Camera.Ip,
@@ -50,15 +56,38 @@ namespace RoverControlApp.MVVM.ViewModel
 				"rtsp",
 				Settings.Settings.Camera.RtspPort);
 
-			RoverCommunication = new RoverCommunication(Settings.Settings.Mqtt);
-			//await RoverCommunication.Connect_Client();
-
 			_imTextureRect = GetNode<TextureRect>("CameraView");
 			_label = GetNode<Label>("DebugView");
 			_uiOverlay = GetNode<UIOverlay>("UIOverlay");
+			_settingsManager = GetNode<SettingsManager>(SettingsManagerNodePath);
+			_showSettingsBtn = GetNode<Button>(ShowSettingsBtnNodePath);
 
+			PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
 			PressedKeys.OnControlModeChanged += _uiOverlay.ControlModeChangedSubscriber;
+
+			_settingsManager.Target = Settings;
 			_uiOverlay.ControlMode = PressedKeys.ControlMode;
+		}
+
+		// Called when the node enters the scene tree for the first time.
+		public override void _Ready()
+		{
+			Thread.CurrentThread.Name = "MainUI_Thread";
+			StartUp();
+		}
+
+		public void VirtualRestart()
+		{
+
+			_showSettingsBtn.ButtonPressed = Visible = false;
+			SetProcess(false);
+			PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
+			PressedKeys.OnControlModeChanged -= _uiOverlay.ControlModeChangedSubscriber;
+			_ptzClient?.Dispose();
+			_rtspClient?.Dispose();
+			StartUp();
+			Visible = true;
+			SetProcess(true);
 		}
 
 		protected override void Dispose(bool disposing)

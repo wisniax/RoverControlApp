@@ -1,53 +1,81 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text.Json;
 using Godot;
 using RoverControlApp.MVVM.ViewModel;
+using RoverControlApp.MVVM.Model;
 using FileAccess = System.IO.FileAccess;
 
-namespace RoverControlApp.Core
+namespace RoverControlApp.Core;
+
+public class LocalSettings
 {
-
-	public class LocalSettings
+	public class Camera
 	{
-		public class Camera
-		{
-			public string Ip { get; set; } = "192.168.1.35";
-			public string PtzPort { get; set; } = "80";
-			public string RtspPort { get; set; } = "554";
-			public string RtspStreamPath { get; set; } = "/live/0/MAIN";
-			public string Login { get; set; } = "admin";
-			public string Password { get; set; } = "admin";
-			public bool InverseAxis { get; set; } = false;
-			public bool EnableRtspStream { get; set; } = true;
-			public bool EnablePtzControl { get; set; } = true;
-			public double PtzRequestFrequency { get; set; } = 2.69;
-		}
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String,formatData: @"(?i)(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:\d{1,3}\.){3}\d{1,3}|(?:http:\/\/|https:\/\/)\S+")]
+		public string Ip { get; set; } = "192.168.5.35";
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		public string RtspStreamPath { get; set; } = "/live/0/MAIN";
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
+		public int RtspPort { get; set; } = 554;
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
+		public int PtzPort { get; set; } = 80;
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		public string Login { get; set; } = "admin";
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		public string Password { get; set; } = "admin";
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Check)]
+		public bool InverseAxis { get; set; } = false;
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Check)]
+		public bool EnableRtspStream { get; set; } = true;
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Check)]
+		public bool EnablePtzControl { get; set; } = true;
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range,"1;4;0.01;f;d")]
+		public double PtzRequestFrequency { get; set; } = 2.69;
+	}
 
-		public class Mqtt
-		{
-			public string BrokerIp { get; set; } = "broker.hivemq.com";
-			public int BrokerPort { get; set; } = 1883;
-			public double PingInterval { get; set; } = 2.5;
-			public string MainTopic { get; set; } = "RappTORS";
-			public string TopicRoverControl { get; set; } = "RoverControl";
-			public string TopicManipulatorControl { get; set; } = "ManipulatorControl";
-			public string TopicRoverFeedback { get; set; } = "RoverFeedback";
-			public string TopicRoverStatus { get; set; } = "RoverStatus";
-		}
+	public class Mqtt
+	{
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String,formatData: @"(?i)(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:\d{1,3}\.){3}\d{1,3}|(?:http:\/\/|https:\/\/)\S+")]
+		public string BrokerIp { get; set; } = "http://broker.hivemq.com";
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
+		public int BrokerPort { get; set; } = 1883;
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range, "0.1;60;0.1;t;d")]
+		public double PingInterval { get; set; } = 2.5;
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		public string TopicMain { get; set; } = "RappTORS";
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		public string TopicRoverControl { get; set; } = "RoverControl";
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		public string TopicManipulatorControl { get; set; } = "ManipulatorControl";
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		public string TopicRoverFeedback { get; set; } = "RoverFeedback";
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		public string TopicRoverStatus { get; set; } = "RoverStatus";
+	}
 
-		public class Vars
-		{
-			public Camera Camera { get; set; } = new();
-			public Mqtt Mqtt { get; set; } = new();
-			public bool VerboseDebug { get; set; } = false;
-			public float JoyPadDeadzone { get; set; } = 0.15f;
-			public bool NewFancyRoverController { get; set; } = true;
-		}
 
-		public Vars Settings { get; private set; }
+	public class Vars
+	{
+		[SettingsManagerVisible(customName:"Camera Settings")]
+		public Camera Camera { get; set; } = new();
+		[SettingsManagerVisible(customName: "MQTT Settings")]
+		public Mqtt Mqtt { get; set; } = new();
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Check)]
+		public bool VerboseDebug { get; set; } = false;
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range, "0;1;0.01;f;f")]
+		public float JoyPadDeadzone { get; set; } = 0.15f;
+		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Check)]
+		public bool NewFancyRoverController { get; set; } = false;
 
-		private readonly string _settingsPath = Path.Join(OS.GetUserDataDir(), "RoverControlAppSettings.json");
+	}
+
+	[SettingsManagerVisible]
+	public Vars Settings { get; private set; }
+
+	private readonly string _settingsPath = Path.Join(OS.GetUserDataDir(), "RoverControlAppSettings.json");
 
 		public LocalSettings()
 		{
@@ -105,10 +133,9 @@ namespace RoverControlApp.Core
 			//config.SetValue("Default", "defaultSettings", serializedSettings);
 			//Error err = config.Save(_settingsPath);
 
-			MainViewModel.EventLogger.LogMessage("Saving settings succeeded");
-			return true;
-
-		}
+		MainViewModel.EventLogger.LogMessage("Saving settings succeeded");
+		return true;
+	}
 
 		public void ForceDefaultSettings()
 		{
@@ -117,4 +144,4 @@ namespace RoverControlApp.Core
 		}
 	}
 
-}
+

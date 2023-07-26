@@ -1,0 +1,73 @@
+[gd_scene load_steps=4 format=3 uid="uid://em10imnbie42"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/SettingsManager.cs" id="1_pihm0"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/SettingsManagerTree.cs" id="2_mu20m"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sy7lu"]
+bg_color = Color(0, 0.45098, 0.545098, 1)
+
+[node name="SettingsManager" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_sy7lu")
+script = ExtResource("1_pihm0")
+SMTreeNodePath = NodePath("SettingsManagerTree")
+StatusBarNodePath = NodePath("StatusBar/StatusBarLabel")
+
+[node name="SettingsManagerTree" type="Tree" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = -77.0
+grow_horizontal = 2
+grow_vertical = 2
+columns = 2
+script = ExtResource("2_mu20m")
+
+[node name="StatusBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = -43.0
+offset_right = -4.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="StatusBarLabel" type="RichTextLabel" parent="StatusBar"]
+clip_contents = false
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Status"
+bbcode_enabled = true
+scroll_active = false
+shortcut_keys_enabled = false
+
+[node name="Loaders" type="VBoxContainer" parent="StatusBar"]
+layout_mode = 2
+
+[node name="LoadSettings" type="Button" parent="StatusBar/Loaders"]
+layout_mode = 2
+text = "RESET"
+
+[node name="ForceDefaultSettings" type="Button" parent="StatusBar/Loaders"]
+layout_mode = 2
+text = "DEFAULTS"
+
+[node name="SaveSettings" type="Button" parent="StatusBar"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "SAVE AND
+RESTART APP"
+
+[connection signal="pressed" from="StatusBar/Loaders/LoadSettings" to="." method="OnLoadSettingsPressed"]
+[connection signal="pressed" from="StatusBar/Loaders/ForceDefaultSettings" to="." method="OnForceDefaultSettingsPressed"]
+[connection signal="pressed" from="StatusBar/SaveSettings" to="." method="OnSaveSettingsPressed"]
