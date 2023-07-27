@@ -61,7 +61,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			_settingsManager = GetNode<SettingsManager>(SettingsManagerNodePath);
 			_showSettingsBtn = GetNode<Button>(ShowSettingsBtnNodePath);
 
-			PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
+			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
 			PressedKeys.OnControlModeChanged += _uiOverlay.ControlModeChangedSubscriber;
 
 			_settingsManager.Target = Settings;
@@ -80,12 +80,15 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			_showSettingsBtn!.ButtonPressed = Visible = false;
 			SetProcess(false);
-			PressedKeys!.OnAbsoluteVectorChanged -= _ptzClient!.ChangeMoveVector;
+			if (_ptzClient != null)
+			{
+				if (PressedKeys != null) PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
+				_ptzClient?.Dispose();
+			}
 			PressedKeys.OnControlModeChanged -= _uiOverlay!.ControlModeChangedSubscriber;
-			_ptzClient?.Dispose();
-			//_ptzClient = null;
+			_ptzClient = null;
 			_rtspClient?.Dispose();
-			//_rtspClient = null;
+			_rtspClient = null;
 			RoverCommunication?.Dispose();
 			StartUp();
 			Visible = true;
