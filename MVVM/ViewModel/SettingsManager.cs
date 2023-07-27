@@ -1,5 +1,4 @@
 using Godot;
-using System;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
@@ -9,8 +8,8 @@ public partial class SettingsManager : Panel
 	[Signal]
 	public delegate void RequestedRestartEventHandler();
 
-	private SettingsManagerTree smTree;
-	private RichTextLabel statusBar;
+	private SettingsManagerTree? smTree;
+	private RichTextLabel? statusBar;
 
 	public override void _Ready()
 	{
@@ -19,20 +18,20 @@ public partial class SettingsManager : Panel
 	}
 	public void OnForceDefaultSettingsPressed()
 	{
-		MainViewModel.Settings.ForceDefaultSettings();
+		MainViewModel.Settings?.ForceDefaultSettings();
 		smTree.Reconstruct();
 		statusBar.Text = "[color=lightgreen]Default settings loaded![/color]";
 	}
 	public void OnLoadSettingsPressed()
 	{
-		MainViewModel.Settings.LoadSettings();
+		MainViewModel.Settings?.LoadSettings();
 		smTree.Reconstruct();
 		statusBar.Text = "[color=lightgreen]Settings loaded![/color]";
 	}
 
 	public void OnSaveSettingsPressed()
 	{
-		MainViewModel.Settings.SaveSettings();
+		MainViewModel.Settings?.SaveSettings();
 		statusBar.Text = "[color=lightgreen]Settings saved![/color]";
 		EmitSignal(SignalName.RequestedRestart, null);
 	}

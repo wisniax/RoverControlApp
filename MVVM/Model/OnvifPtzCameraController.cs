@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Godot;
@@ -40,7 +39,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 			private set
 			{
-				if (MainViewModel.Settings.Settings.VerboseDebug) MainViewModel.EventLogger.LogMessage($"PTZ: CameraMotion update: {value}");
+				if (MainViewModel.Settings?.Settings?.VerboseDebug == true) MainViewModel.EventLogger?.LogMessage($"PTZ: CameraMotion update: {value}");
 				_dataMutex.WaitOne();
 				_cameraMotion = value;
 				_dataMutex.ReleaseMutex();
@@ -54,7 +53,7 @@ namespace RoverControlApp.MVVM.Model
 			get => _state;
 			private set
 			{
-				MainViewModel.EventLogger.LogMessage($"PTZ: CommunicationState update: {value}");
+				MainViewModel.EventLogger?.LogMessage($"PTZ: CommunicationState update: {value}");
 				_state = value;
 			}
 		}

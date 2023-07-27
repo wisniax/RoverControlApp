@@ -2,21 +2,19 @@ using Godot;
 using RoverControlApp.Core;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Metrics;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class SettingsManagerTree : Tree
 {
-	private static readonly int COLUMN_NAME = 0;
-	private static readonly int COLUMN_VALUE = 1;
+	private const int COLUMN_NAME = 0;
+	private const int COLUMN_VALUE = 1;
 
 
-	private List<object> _middleObjects;
-	private object _target;
+	private List<object>? _middleObjects;
+	private object _target = null!;
 
 	[Signal]
 	public delegate void ReconstructNeededEventHandler();
@@ -99,7 +97,7 @@ public partial class SettingsManagerTree : Tree
 		foreach (var member in searchList)
 		{
 			if (member.GetCustomAttribute<SettingsManagerVisibleAttribute>()
-				is not SettingsManagerVisibleAttribute memberAttribute)
+				is not { } memberAttribute)
 				continue;
 
 			//fetch object
@@ -217,9 +215,9 @@ public partial class SettingsManagerTree : Tree
 							break;
 					}
 				}
-				catch (Exception _) //yourself...
+				catch (Exception) //yourself...
 				{
-					MainViewModel.EventLogger
+					MainViewModel.EventLogger?
 						.LogMessage(
 							$"SettingsManager: ERROR Range type is incorrectly set for property/field \"{itemEdited.GetMetadata(COLUMN_NAME).AsString()}\" (Root class: {Target})");
 					itemEdited.SetEditable(COLUMN_VALUE, false);
@@ -243,7 +241,7 @@ public partial class SettingsManagerTree : Tree
 	{
 		ConstructScene(Target);
 		Connect(SignalName.ReconstructNeeded, new Callable(this, MethodName.Reconstruct));
-		Connect(SignalName.ItemEdited, new Callable(this, MethodName.ItemEditedSelfSubscriber));
+		Connect(Tree.SignalName.ItemEdited, new Callable(this, MethodName.ItemEditedSelfSubscriber));
 	}
 
 	public void Reconstruct() { ConstructScene(Target); }

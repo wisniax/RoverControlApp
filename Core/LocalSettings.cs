@@ -14,134 +14,129 @@ public class LocalSettings
 {
 	public class Camera
 	{
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String,formatData: @"(?i)(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:\d{1,3}\.){3}\d{1,3}|(?:http:\/\/|https:\/\/)\S+")]
-		public string Ip { get; set; } = "192.168.5.35";
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"(?i)(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:\d{1,3}\.){3}\d{1,3}|(?:http:\/\/|https:\/\/)\S+")]
+		public string Ip { get; set; } = "192.168.1.35";
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string RtspStreamPath { get; set; } = "/live/0/MAIN";
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
 		public int RtspPort { get; set; } = 554;
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
 		public int PtzPort { get; set; } = 80;
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string Login { get; set; } = "admin";
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string Password { get; set; } = "admin";
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Check)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool InverseAxis { get; set; } = false;
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Check)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool EnableRtspStream { get; set; } = true;
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Check)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool EnablePtzControl { get; set; } = true;
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range,"1;4;0.01;f;d")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "1;4;0.01;f;d")]
 		public double PtzRequestFrequency { get; set; } = 2.69;
 	}
 
 	public class Mqtt
 	{
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String,formatData: @"(?i)(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:\d{1,3}\.){3}\d{1,3}|(?:http:\/\/|https:\/\/)\S+")]
-		public string BrokerIp { get; set; } = "http://broker.hivemq.com";
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+		public string BrokerIp { get; set; } = "broker.hivemq.com";
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
 		public int BrokerPort { get; set; } = 1883;
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range, "0.1;60;0.1;t;d")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "0.1;60;0.1;t;d")]
 		public double PingInterval { get; set; } = 2.5;
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicMain { get; set; } = "RappTORS";
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicRoverControl { get; set; } = "RoverControl";
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicManipulatorControl { get; set; } = "ManipulatorControl";
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicRoverFeedback { get; set; } = "RoverFeedback";
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.String)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicRoverStatus { get; set; } = "RoverStatus";
 	}
 
 
 	public class Vars
 	{
-		[SettingsManagerVisible(customName:"Camera Settings")]
+		[SettingsManagerVisible(customName: "Camera Settings")]
 		public Camera Camera { get; set; } = new();
 		[SettingsManagerVisible(customName: "MQTT Settings")]
 		public Mqtt Mqtt { get; set; } = new();
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Check)]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool VerboseDebug { get; set; } = false;
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Range, "0;1;0.01;f;f")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "0;1;0.01;f;f")]
 		public float JoyPadDeadzone { get; set; } = 0.15f;
-		[SettingsManagerVisible(cellMode:TreeItem.TreeCellMode.Check)]
-		public bool NewFancyRoverController { get; set; } = false;
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+		public bool NewFancyRoverController { get; set; } = true;
 
 	}
 
 	[SettingsManagerVisible]
-	public Vars Settings { get; private set; }
+	public Vars? Settings { get; private set; }
 
 	private readonly string _settingsPath = Path.Join(OS.GetUserDataDir(), "RoverControlAppSettings.json");
 
-		public LocalSettings()
-		{
-			if (LoadSettings()) return;
-			Settings = new();
-			if (SaveSettings()) return;
-			throw new Exception("Can't create settings file...");
-		}
+	public LocalSettings()
+	{
+		if (LoadSettings()) return;
+		Settings = new();
+		if (SaveSettings()) return;
+		throw new Exception("Can't create settings file...");
+	}
 
-		public bool LoadSettings()
+	public bool LoadSettings()
+	{
+		if (!Directory.Exists(OS.GetUserDataDir())) return false;
+		if (!File.Exists(_settingsPath)) return false;
+		try
 		{
-			if (!Directory.Exists(OS.GetUserDataDir())) return false;
-			if (!File.Exists(_settingsPath)) return false;
-			string serializedSettings;
-			try
-			{
-				using var fs = new FileStream(_settingsPath, FileMode.Open, FileAccess.Read);
-				using var sr = new StreamReader(fs);
-				serializedSettings = sr.ReadToEnd();
-				sr.Close();
-				fs.Close();
-			}
-			catch (Exception e)
-			{
-				MainViewModel.EventLogger.LogMessage($"Loading local settings failed: {e}");
-				return false;
-			}
-
+			using var fs = new FileStream(_settingsPath, FileMode.Open, FileAccess.Read);
+			using var sr = new StreamReader(fs);
+			var serializedSettings = sr.ReadToEnd();
+			sr.Close();
+			fs.Close();
 			Settings = JsonSerializer.Deserialize<Vars>(serializedSettings);
-			MainViewModel.EventLogger.LogMessage("Loading local settings succeeded");
-			return true;
+		}
+		catch (Exception e)
+		{
+			MainViewModel.EventLogger.LogMessage($"Loading local settings failed: {e}");
+			return false;
 		}
 
-		public bool SaveSettings()
+		MainViewModel.EventLogger.LogMessage("Loading local settings succeeded");
+		return true;
+	}
+
+	public bool SaveSettings()
+	{
+		try
 		{
-			try
-			{
-				if (!Directory.Exists(OS.GetUserDataDir())) Directory.CreateDirectory(OS.GetUserDataDir());
-				// if (!File.Exists(OS.GetUserDataDir())) File.Create(OS.GetUserDataDir());
-				using var fs = new FileStream(_settingsPath, FileMode.Create, FileAccess.Write);
-				using var sw = new StreamWriter(fs);
-				string serializedSettings = JsonSerializer.Serialize(Settings, new JsonSerializerOptions() { WriteIndented = true });
+			if (!Directory.Exists(OS.GetUserDataDir())) Directory.CreateDirectory(OS.GetUserDataDir());
+			using var fs = new FileStream(_settingsPath, FileMode.Create, FileAccess.Write);
+			using var sw = new StreamWriter(fs);
+			string serializedSettings = JsonSerializer.Serialize(Settings, new JsonSerializerOptions() { WriteIndented = true });
 
-				sw.WriteLine(serializedSettings);
-				sw.Flush();
-				sw.Close();
-				fs.Close();
-			}
-			catch (Exception e)
-			{
-				MainViewModel.EventLogger.LogMessage($"Saving settings failed with: {e}");
-				return false;
-			}
-
-			//config.SetValue("Default", "defaultSettings", serializedSettings);
-			//Error err = config.Save(_settingsPath);
+			sw.WriteLine(serializedSettings);
+			sw.Flush();
+			sw.Close();
+			fs.Close();
+		}
+		catch (Exception e)
+		{
+			MainViewModel.EventLogger.LogMessage($"Saving settings failed with: {e}");
+			return false;
+		}
 
 		MainViewModel.EventLogger.LogMessage("Saving settings succeeded");
 		return true;
 	}
 
-		public void ForceDefaultSettings()
-		{
-			Settings = new Vars();
-			SaveSettings();
-		}
+	public void ForceDefaultSettings()
+	{
+		Settings = new Vars();
+		SaveSettings();
 	}
+}
 
 
