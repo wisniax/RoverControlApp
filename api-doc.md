@@ -54,7 +54,7 @@ With enums defined as such:
 Topic definition (from settings): `(MqttTopic)/(MqttTopicRoverStatus)`.
 > Default path: `RappTORS/RoverStatus`
 
-The example messege looks like this:
+The example message looks like this:
 `{"CommunicationState":4,"PadConnected":false,"ControlMode":0,"Timestamp":1690702283284}`
 
 
@@ -73,7 +73,7 @@ public class RoverControl
 Topic definition (from settings): `(MqttTopic)/(MqttTopicRoverControl)`
 > Default path: `RappTORS/RoverControl`
 
-The example messege looks like this:
+The example message looks like this:
 `{"XVelAxis":-0.6493909358978271,"ZRotAxis":-0.7604547739028931,"Timestamp":1688729381666}`
 
 ## <a id="toc-manipulator-control"></a> MQTT Manipulator Control
@@ -97,7 +97,7 @@ and `Timestamp` being Unix Time Milliseconds standard
 Topic definition (from settings): `(MqttTopic)/(MqttTopicManipulatorControl)`
 > Default path: `RappTORS/ManipulatorControl`
 
-The example messege looks like this:
+The example message looks like this:
 `{"Axis1":0.1001,"Axis2":-0.6493,"Axis3":0.33142,"Axis4":-0.7604548,"Axis5":0.3476,"Gripper":0,"Timestamp":1689672174749}`
 
 ## <a id="toc-mission-status"></a> MQTT Mission Status
@@ -127,7 +127,7 @@ with enum defined as such:
 Topic definition (from settings): `(MqttTopic)/(MqttTopicMissionStatus)`
 > Default path: `RappTORS/MissionStatus`
 
-The example messege looks like this:
+The example message looks like this:
 `{"MissionStatus":5,"Timestamp":1689672174749}`
 
 
@@ -166,5 +166,5 @@ with enums defined as such:
 Topic definition (from settings): `(MqttTopic)/(MqttTopicSetPoint)`
 > Default path: `RappTORS/SetPoint`
 
-The example messege looks like this:
+The example message looks like this:
 `{"PointType":3,"PointName":"Reactor_Area","PhotoType":0,"Timestamp":1689672174749}`
