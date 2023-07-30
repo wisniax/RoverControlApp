@@ -11,6 +11,8 @@ This document covers how to implement Rover Control via this App.
   - [MQTT Rover Status](#toc-rover-status)
   - [MQTT Rover Control](#toc-rover-control)
   - [MQTT Manipulator Control](#toc-manipulator-control)
+  - [MQTT Mission Status](#toc-mission-status)
+  - [MQTT Set Point Of Interest](#toc-set-point)
 
 # <a id="toc-introduction"></a>Introduction
 
@@ -30,24 +32,24 @@ public class RoverStatus
 }
 ```
 With enums defined as such:
-```
-public enum CommunicationState
-{
-	Created = 0,
-	Opening = 1,
-	Opened = 2,
-	Closing = 3,
-	Closed = 4,
-	Faulted = 5
-}
-public enum ControlMode
-{
-	EStop = 0,
-	Rover = 1,
-	Manipulator = 2,
-	Autonomy = 3
-}
- ```
+> ```
+> public enum CommunicationState
+> {
+> 	Created = 0,
+> 	Opening = 1,
+> 	Opened = 2,
+> 	Closing = 3,
+> 	Closed = 4,
+> 	Faulted = 5
+> }
+> public enum ControlMode
+> {
+> 	EStop = 0,
+> 	Rover = 1,
+> 	Manipulator = 2,
+> 	Autonomy = 3
+> }
+>  ```
 
 Topic definition (from settings): `(MqttTopic)/(MqttTopicRoverStatus)`.
 > Default path: `RappTORS/RoverStatus`
@@ -92,8 +94,77 @@ public class ManipulatorControl
 With values range being `-1:1`
 and `Timestamp` being Unix Time Milliseconds standard
 
-Topic definition (from settings): `(MqttTopic)/(TopicManipulatorControl)`
+Topic definition (from settings): `(MqttTopic)/(MqttTopicManipulatorControl)`
 > Default path: `RappTORS/ManipulatorControl`
 
 The example messege looks like this:
 `{"Axis1":0.1001,"Axis2":-0.6493,"Axis3":0.33142,"Axis4":-0.7604548,"Axis5":0.3476,"Gripper":0,"Timestamp":1689672174749}`
+
+## <a id="toc-mission-status"></a> MQTT Mission Status
+
+This sends a JSON-serialized message across MQTT with actual Mission Status, defined as such:
+```
+public class RoverMissionStatus
+{
+	public MissionStatus MissionStatus { get; set; }
+	public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+}
+```
+With `Timestamp` being Unix Time Milliseconds standard and
+with enum defined as such:
+> ```
+> public enum MissionStatus
+> {
+> 	Created = 0,
+> 	Starting = 1,
+> 	Started = 2,
+> 	Stopping = 3,
+> 	Stopped = 4,
+> 	Interrupted = 5
+> }
+>  ```
+
+Topic definition (from settings): `(MqttTopic)/(MqttTopicMissionStatus)`
+> Default path: `RappTORS/MissionStatus`
+
+The example messege looks like this:
+`{"MissionStatus":5,"Timestamp":1689672174749}`
+
+
+## <a id="toc-set-point"></a> MQTT Set Point
+
+This sends a JSON-serialized message across MQTT to Set Point on map, defined as such:
+```
+public class RoverSetPoint
+{
+	public PointType PointType {get; set; }
+	public string? PointName { get; set; } // May work as PolyName when proper
+	public PhotoType PhotoType {get; set; }
+	public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+}
+```
+With `Timestamp` being Unix Time Milliseconds standard and
+with enums defined as such:
+> ```
+> public enum PointType
+> {
+> 	Landmark = 0,
+> 	Obstacle = 1,
+> 	RemovePoint = 2,
+> 	CreatePoly = 3,
+> 	AddPointToPoly = 4,
+> 	RemovePoly = 5,
+> }
+> public enum PhotoType
+> {
+> 	None = 0,
+> 	Generic = 1,
+> 	Spheric = 2
+> }
+>  ```
+
+Topic definition (from settings): `(MqttTopic)/(MqttTopicSetPoint)`
+> Default path: `RappTORS/SetPoint`
+
+The example messege looks like this:
+`{"PointType":3,"PointName":"Reactor_Area","PhotoType":0,"Timestamp":1689672174749}`

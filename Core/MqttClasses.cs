@@ -15,6 +15,30 @@ namespace RoverControlApp.Core
 			Manipulator = 2,
 			Autonomy = 3
 		}
+		public enum MissionStatus
+		{
+			Created = 0,
+			Starting = 1,
+			Started = 2,
+			Stopping = 3,
+			Stopped = 4,
+			Interrupted = 5
+		}
+		public enum PointType
+		{
+			Landmark = 0,
+			Obstacle = 1,
+			RemovePoint = 2,
+			CreatePoly = 3,
+			AddPointToPoly = 4,
+			RemovePoly = 5,
+		}
+		public enum PhotoType
+		{
+			None = 0,
+			Generic = 1,
+			Spheric = 2
+		}
 
 		public class RoverStatus
 		{
@@ -57,6 +81,20 @@ namespace RoverControlApp.Core
 			{
 				return HashCode.Combine(Axis1, Axis2, Axis3, Axis4, Axis5, Gripper);
 			}
+		}
+
+		public class RoverMissionStatus
+		{
+			public MissionStatus MissionStatus { get; set; }
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+
+		public class RoverSetPoint
+		{
+			public PointType PointType {get; set; }
+			public string? PointName { get; set; } // May work as AreaName when proper
+			public PhotoType PhotoType {get; set; }
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
 		public class RoverFeedback
