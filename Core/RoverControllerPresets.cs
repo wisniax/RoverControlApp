@@ -28,11 +28,11 @@ namespace RoverControlApp.Core
 				float turn = Input.GetAxis("rover_move_left", "rover_move_right");
 				turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToInt32(MainViewModel.Settings?.Settings?.JoyPadDeadzone))) ? 0 : turn;
 
-				turn *= Mathf.Abs(velocity) / 2.5f; // Max turn angle: 36 deg.
+				turn *= Mathf.Abs(velocity); // Max turn angle: 45 deg.
 
 				Vector2 vec = new Vector2(turn, velocity);
 				float forcedX = Input.GetAxis("rover_rotate_left", "rover_rotate_right");
-				if (!Mathf.IsEqualApprox(forcedX, 0f, 0.05f)) vec.X = forcedX / 2f;
+				if (!Mathf.IsEqualApprox(forcedX, 0f, 0.05f)) vec.X = forcedX / 5f;
 
 				if (Input.IsActionPressed("camera_zoom_mod"))
 				{

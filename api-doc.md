@@ -24,8 +24,9 @@ This sends a JSON-serialized message across MQTT with status, defined as such:
 public class RoverStatus
 {
 	public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
-	public bool PadConnected { get; set; } = false;
+	public bool PadConnected { get; set; }
 	public ControlMode ControlMode { get; set; } = ControlMode.EStop;
+	public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 }
 ```
 With enums defined as such:
@@ -52,7 +53,7 @@ Topic definition (from settings): `(MqttTopic)/(MqttTopicRoverStatus)`.
 > Default path: `RappTORS/RoverStatus`
 
 The example messege looks like this:
-`{"CommunicationState":5,"PadConnected":false,"ControlMode":0}`
+`{"CommunicationState":4,"PadConnected":false,"ControlMode":0,"Timestamp":1690702283284}`
 
 
 
