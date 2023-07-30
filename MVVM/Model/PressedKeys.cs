@@ -145,6 +145,12 @@ namespace RoverControlApp.MVVM.Model
 			StopAll();
 
 			OnControlModeChanged?.Invoke(ControlMode);
+
+			if (ControlMode == MqttClasses.ControlMode.EStop)
+			{
+				Vibrato_Nope();
+				Vibrato_EStop();
+			}
 		}
 
 		private void StopAll()
@@ -152,6 +158,18 @@ namespace RoverControlApp.MVVM.Model
 			RoverMovement = new MqttClasses.RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
 			ManipulatorMovement = new MqttClasses.ManipulatorControl();
 			LastAbsoluteVector = Vector4.Zero;
+		}
+
+		void Vibrato_Nope()
+		{
+			foreach (var padId in Input.GetConnectedJoypads())
+				Input.StopJoyVibration(padId);
+		}
+
+		void Vibrato_EStop()
+		{
+			foreach (var padId in Input.GetConnectedJoypads())
+				Input.StartJoyVibration(padId, 0.0f, 1.0f, 1.0f);
 		}
 	}
 }
