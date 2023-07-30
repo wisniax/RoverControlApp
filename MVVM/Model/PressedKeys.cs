@@ -32,7 +32,7 @@ namespace RoverControlApp.MVVM.Model
 			private set
 			{
 				OnPadConnectionChanged.Invoke(value);
-				HandleInputEvent(null!);
+				StopAll();
 			}
 		}
 
