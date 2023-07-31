@@ -13,6 +13,7 @@ This document covers how to implement Rover Control via this App.
   - [MQTT Manipulator Control](#toc-manipulator-control)
   - [MQTT Mission Status](#toc-mission-status)
   - [MQTT Set Point Of Interest](#toc-set-point)
+  - [MQTT Feedback with list of active objects](#toc-feedback-active-obj)
 
 # <a id="toc-introduction"></a>Introduction
 
@@ -127,6 +128,8 @@ with enum defined as such:
 Topic definition (from settings): `(MqttTopic)/(MqttTopicMissionStatus)`
 > Default path: `RappTORS/MissionStatus`
 
+> Retain: ON
+
 The example messege looks like this:
 `{"MissionStatus":5,"Timestamp":1689672174749}`
 
@@ -137,9 +140,10 @@ This sends a JSON-serialized message across MQTT to Set Point on map, defined as
 ```
 public class RoverSetPoint
 {
-	public PointType PointType {get; set; }
-	public string? PointName { get; set; } // May work as PolyName when proper
-	public PhotoType PhotoType {get; set; }
+	public PointType PointType { get; set; }
+	public string? Target { get; set; }
+	public string? Description { get; set; }
+	public PhotoType PhotoType { get; set; }
 	public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 }
 ```
@@ -164,7 +168,24 @@ with enums defined as such:
 >  ```
 
 Topic definition (from settings): `(MqttTopic)/(MqttTopicSetPoint)`
-> Default path: `RappTORS/SetPoint`
+> Default path: `RappTORS/KMLNode/SetPoint`
 
 The example messege looks like this:
 `{"PointType":3,"PointName":"Reactor_Area","PhotoType":0,"Timestamp":1689672174749}`
+
+
+## <a id="toc-feedback-active-obj"></a> MQTT Feedback with list of active objects
+
+```
+public class ActiveKmlObjects
+{
+	public List<string> area { get; set; }
+	public List<string> poi { get; set; }
+	public long Timestamp { get; set; }
+}
+```
+
+> Default path: `RappTORS/KMLNode/ActiveKMLObjects`
+
+## <a id="toc-generate-kml"></a> MQTT Force KML save
+WIP
