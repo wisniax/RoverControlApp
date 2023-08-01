@@ -77,7 +77,10 @@ public class LocalSettings
 		public bool NewFancyRoverController { get; set; } = true;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool JoyVibrateOnModeChange { get; set; } = true;
-
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"-?[0-9]+;-?[0-9]+")]
+		public string MissionControlPosition { get; set; } = "40;40";
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"-?[0-9]+;-?[0-9]+")]
+		public string MissionControlSize { get; set; } = "360;160";
 	}
 
 	[SettingsManagerVisible]

@@ -36,6 +36,13 @@ public partial class SettingsManager : Panel
 		EmitSignal(SignalName.RequestedRestart, null);
 	}
 
+	public void Redraw(bool onTrue)
+	{
+		if(onTrue)
+			smTree.Reconstruct();
+	}
+
+
 	[Export]
 	public NodePath SMTreeNodePath { get; set; }
 	[Export]

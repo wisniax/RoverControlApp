@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using System.ServiceModel;
 using System.Text;
@@ -18,9 +19,14 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static MissionStatus? MissionStatus { get; private set; }
 
 		[Export]
-		public NodePath? SettingsManagerNodePath;
+		private NodePath BtnShowSettingsNodePath = "";
 		[Export]
-		public NodePath? ShowSettingsBtnNodePath;
+		private NodePath SettingsManagerNodePath = "";
+
+		[Export]
+		private NodePath BtnShowMissionControlNodePath = "";
+		[Export]
+		private NodePath MissionControlNodePath = "";
 
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
@@ -31,7 +37,8 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ImageTexture? _imTexture;
 		private UIOverlay? _uiOverlay;
 		private SettingsManager? _settingsManager;
-		private Button? _showSettingsBtn;
+		private MissionControl? _missionControl;
+		private Button? _btnShowSettings, _btnShowMissionControl;
 
 		private void StartUp()
 		{
@@ -66,14 +73,25 @@ namespace RoverControlApp.MVVM.ViewModel
 			_imTextureRect = GetNode<TextureRect>("CameraView");
 			_label = GetNode<Label>("DebugView");
 			_uiOverlay = GetNode<UIOverlay>("UIOverlay");
+			_btnShowSettings = GetNode<Button>(BtnShowSettingsNodePath);
 			_settingsManager = GetNode<SettingsManager>(SettingsManagerNodePath);
-			_showSettingsBtn = GetNode<Button>(ShowSettingsBtnNodePath);
+			_btnShowMissionControl = GetNode<Button>(BtnShowMissionControlNodePath);
+			_missionControl = GetNode<MissionControl>(MissionControlNodePath);
 
 			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
 			PressedKeys.OnControlModeChanged += _uiOverlay.ControlModeChangedSubscriber;
 			if (_joyVibrato is not null) PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 
 			_settingsManager.Target = Settings;
+
+			var vec2String = MainViewModel.Settings.Settings.MissionControlSize.Split(';');
+			_missionControl.Size = new Vector2I(Convert.ToInt32(vec2String[0]), Convert.ToInt32(vec2String[1]));
+			vec2String = MainViewModel.Settings.Settings.MissionControlPosition.Split(';');
+			_missionControl.Position = new Vector2I(Convert.ToInt32(vec2String[0]), Convert.ToInt32(vec2String[1]));
+
+			MissionStatus.OnRoverMissionStatusChanged += _missionControl!.MissionStatusUpdatedSubscriber;
+			_missionControl.UpdateVisual();
+
 			_uiOverlay.ControlMode = PressedKeys.ControlMode;
 			//state new mode
 			_joyVibrato?.ControlModeChangedSubscriber(PressedKeys.ControlMode);
@@ -88,9 +106,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void VirtualRestart()
 		{
-
-			_showSettingsBtn!.ButtonPressed = Visible = false;
-			SetProcess(false);
+			_btnShowSettings.ButtonPressed = _btnShowMissionControl.ButtonPressed= false;
 			if (_ptzClient != null)
 			{
 				if (PressedKeys != null) PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
@@ -104,10 +120,9 @@ namespace RoverControlApp.MVVM.ViewModel
 				PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			_joyVibrato?.Dispose();
 			_joyVibrato = null;
+			MissionStatus!.OnRoverMissionStatusChanged -= _missionControl!.MissionStatusUpdatedSubscriber;
 			RoverCommunication?.Dispose();
 			StartUp();
-			Visible = true;
-			SetProcess(true);
 		}
 
 		protected override void Dispose(bool disposing)
