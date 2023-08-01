@@ -15,6 +15,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static LocalSettings? Settings { get; private set; }
 		public static PressedKeys? PressedKeys { get; private set; }
 		public static RoverCommunication? RoverCommunication { get; private set; }
+		public static MissionStatus? MissionStatus { get; private set; }
 
 		[Export]
 		public NodePath? SettingsManagerNodePath;
@@ -39,6 +40,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			Settings.SaveSettings();
 			PressedKeys = new PressedKeys();
 			RoverCommunication = new RoverCommunication(Settings.Settings!.Mqtt);
+			MissionStatus = new MissionStatus();
 
 			if (Settings.Settings.JoyVibrateOnModeChange)
 			{

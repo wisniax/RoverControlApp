@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ServiceModel;
 using Godot;
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
@@ -83,25 +84,31 @@ namespace RoverControlApp.Core
 			}
 		}
 
-		public class RoverMissionStatus
-		{
-			public MissionStatus MissionStatus { get; set; }
-			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-		}
-
-		public class RoverSetPoint
-		{
-			public PointType PointType {get; set; }
-			public string? PointName { get; set; } // May work as AreaName when proper
-			public PhotoType PhotoType {get; set; }
-			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-		}
-
 		public class RoverFeedback
 		{
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 			public bool EStop { get; set; } = true;
 			public string Status { get; set; } = string.Empty;
+		}
+		public class RoverMissionStatus
+		{
+			public MissionStatus MissionStatus { get; set; } = MissionStatus.Stopped;
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+
+		public class RoverSetPoint
+		{
+			public PointType PointType { get; set; }
+			public string? Target { get; set; }
+			public string? Description { get; set; }
+			public PhotoType PhotoType { get; set; }
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+		public class ActiveKmlObjects
+		{
+			public List<string> area { get; set; }
+			public List<string> poi { get; set; }
+			public long Timestamp { get; set; }
 		}
 	}
 }

@@ -54,6 +54,12 @@ public class LocalSettings
 		public string TopicRoverFeedback { get; set; } = "RoverFeedback";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicRoverStatus { get; set; } = "RoverStatus";
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+		public string TopicMissionStatus { get; set; } = "MissionStatus";
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+		public string TopicKmlSetPoint { get; set; } = "KMLNode/ActiveKMLObjects";
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+		public string TopicKmlListOfActiveObj { get; set; } = "RappTORS/KMLNode/ActiveKMLObjects";
 	}
 
 

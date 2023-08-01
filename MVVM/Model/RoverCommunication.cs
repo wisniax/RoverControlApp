@@ -110,6 +110,15 @@ namespace RoverControlApp.MVVM.Model
 				MainViewModel.PressedKeys.OnRoverMovementVector += RoverMovementVectorChanged;
 				MainViewModel.PressedKeys.OnManipulatorMovement += RoverManipulatorVectorChanged;
 			}
+
+			if (MainViewModel.MissionStatus != null)
+				MainViewModel.MissionStatus.OnRoverMissionStatusChanged += OnRoverMissionStatusChanged;
+		}
+
+		private async Task OnRoverMissionStatusChanged(MqttClasses.RoverMissionStatus? arg)
+		{
+			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{_settingsMqtt.TopicMissionStatus}",
+				JsonSerializer.Serialize(arg), MqttQualityOfServiceLevel.ExactlyOnce, true);
 		}
 
 		private async Task PressedKeys_OnControlModeChanged(MqttClasses.ControlMode arg)
@@ -158,6 +167,8 @@ namespace RoverControlApp.MVVM.Model
 			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{_settingsMqtt.TopicRoverStatus}",
 				JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Closed }),
 				MqttQualityOfServiceLevel.ExactlyOnce, true);
+			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{_settingsMqtt.TopicMissionStatus}",
+				JsonSerializer.Serialize(new MqttClasses.RoverMissionStatus()), MqttQualityOfServiceLevel.ExactlyOnce, true);
 
 			await Task.Run(async Task? () =>
 			{
