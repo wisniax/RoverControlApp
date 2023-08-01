@@ -18,9 +18,9 @@ public class LocalSettings
 		public string Ip { get; set; } = "192.168.1.35";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string RtspStreamPath { get; set; } = "/live/0/MAIN";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
 		public int RtspPort { get; set; } = 554;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
 		public int PtzPort { get; set; } = 80;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string Login { get; set; } = "admin";
@@ -32,7 +32,7 @@ public class LocalSettings
 		public bool EnableRtspStream { get; set; } = true;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool EnablePtzControl { get; set; } = true;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "1;4;0.01;f;d")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "1;4;0.01;f;d")]
 		public double PtzRequestFrequency { get; set; } = 2.69;
 	}
 
@@ -40,9 +40,9 @@ public class LocalSettings
 	{
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string BrokerIp { get; set; } = "broker.hivemq.com";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "0;65535;1;f;i")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
 		public int BrokerPort { get; set; } = 1883;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "0.1;60;0.1;t;d")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.1;60;0.1;t;d")]
 		public double PingInterval { get; set; } = 2.5;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicMain { get; set; } = "RappTORS";
@@ -65,10 +65,12 @@ public class LocalSettings
 		public Mqtt Mqtt { get; set; } = new();
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool VerboseDebug { get; set; } = false;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, "0;1;0.01;f;f")]
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
 		public float JoyPadDeadzone { get; set; } = 0.15f;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool NewFancyRoverController { get; set; } = true;
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+		public bool JoyVibrateOnModeChange { get; set; } = true;
 
 	}
 

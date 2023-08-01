@@ -23,6 +23,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
+		private JoyVibrato? _joyVibrato;
 
 		private Label? _label;
 		private TextureRect? _imTextureRect;
@@ -39,6 +40,11 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys = new PressedKeys();
 			RoverCommunication = new RoverCommunication(Settings.Settings!.Mqtt);
 
+			if (Settings.Settings.JoyVibrateOnModeChange)
+			{
+				_joyVibrato = new();
+			}
+			
 			if (Settings.Settings.Camera.EnablePtzControl)
 				_ptzClient = new OnvifPtzCameraController(
 					Settings.Settings.Camera.Ip,
@@ -63,9 +69,12 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
 			PressedKeys.OnControlModeChanged += _uiOverlay.ControlModeChangedSubscriber;
+			if (_joyVibrato is not null) PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 
 			_settingsManager.Target = Settings;
 			_uiOverlay.ControlMode = PressedKeys.ControlMode;
+			//state new mode
+			_joyVibrato?.ControlModeChangedSubscriber(PressedKeys.ControlMode);
 		}
 
 		// Called when the node enters the scene tree for the first time.
@@ -89,6 +98,10 @@ namespace RoverControlApp.MVVM.ViewModel
 			_ptzClient = null;
 			_rtspClient?.Dispose();
 			_rtspClient = null;
+			if(PressedKeys is not null && _joyVibrato is not null)
+				PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
+			_joyVibrato?.Dispose();
+			_joyVibrato = null;
 			RoverCommunication?.Dispose();
 			StartUp();
 			Visible = true;
