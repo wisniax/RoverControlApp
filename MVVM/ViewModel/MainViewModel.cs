@@ -55,7 +55,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			{
 				_joyVibrato = new();
 			}
-			
+
 			if (Settings.Settings.Camera.EnablePtzControl)
 				_ptzClient = new OnvifPtzCameraController(
 					Settings.Settings.Camera.Ip,
@@ -103,7 +103,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void VirtualRestart()
 		{
-			_btnShowSettings.ButtonPressed = _btnShowMissionControl.ButtonPressed= false;
+			_btnShowSettings.ButtonPressed = _btnShowMissionControl.ButtonPressed = false;
 			if (_ptzClient != null)
 			{
 				if (PressedKeys != null) PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
@@ -113,7 +113,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			_ptzClient = null;
 			_rtspClient?.Dispose();
 			_rtspClient = null;
-			if(PressedKeys is not null && _joyVibrato is not null)
+			if (PressedKeys is not null && _joyVibrato is not null)
 				PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			_joyVibrato?.Dispose();
 			_joyVibrato = null;

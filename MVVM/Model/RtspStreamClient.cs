@@ -17,6 +17,8 @@ namespace RoverControlApp.MVVM.Model
 	{
 		public VideoCapture? Capture { get; private set; }
 		private Image? _latestImage;
+		private Mat? m;
+
 
 		public Image LatestImage
 		{
@@ -99,7 +101,7 @@ namespace RoverControlApp.MVVM.Model
 			Capture?.Release();
 			Capture?.Dispose();
 			Capture = null;
-			m.Dispose();
+			m?.Dispose();
 		}
 
 		private void CreateCapture()
@@ -107,17 +109,18 @@ namespace RoverControlApp.MVVM.Model
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
 			var task = Task.Run(() => Capture = new VideoCapture($"{_protocol}://{_login}:{_password}@{_ip}:{_port}{_pathToStream}"));
+			m = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;
 			if (!task.Wait(TimeSpan.FromSeconds(15)) || Capture == null || !Capture.IsOpened())
 			{
-				MainViewModel.EventLogger.LogMessage($"RTSP: Connecting to camera failed after {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+				MainViewModel.EventLogger?.LogMessage($"RTSP: Connecting to camera failed after {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 				State = CommunicationState.Faulted;
 				EndCapture();
 				return;
 			}
 
-			MainViewModel.EventLogger.LogMessage($"RTSP: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+			MainViewModel.EventLogger?.LogMessage($"RTSP: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 
 			Capture?.Set(VideoCaptureProperties.XI_Timeout, 5000);
 			Capture?.Set(VideoCaptureProperties.BufferSize, 0);
@@ -142,7 +145,7 @@ namespace RoverControlApp.MVVM.Model
 
 					if (!ret || _generalPurposeStopwatch.Elapsed.TotalSeconds > 5)
 					{
-						MainViewModel.EventLogger.LogMessage($"RTSP: Camera connection lost ;( Grabbing a frame took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+						MainViewModel.EventLogger?.LogMessage($"RTSP: Camera connection lost ;( Grabbing a frame took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 						State = CommunicationState.Faulted;
 						EndCapture();
 						return;
@@ -178,14 +181,21 @@ namespace RoverControlApp.MVVM.Model
 
 
 		private byte[]? _arr;
-		private Mat m = new Mat();
 
 		private bool TryGrabImage()
 		{
-			if (Capture == null) return false;
+			if (Capture == null || m == null) return false;
 
-			if (!Capture.Grab()) return false;
-			if (!Capture.Retrieve(m)) return false;
+			try
+			{
+				if (!Capture.Grab()) return false;
+				if (!Capture.Retrieve(m)) return false;
+			}
+			catch (Exception e)
+			{
+				MainViewModel.EventLogger?.LogMessage(e.ToString());
+				return false;
+			}
 
 
 			Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
