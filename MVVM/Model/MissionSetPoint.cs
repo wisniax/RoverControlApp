@@ -9,6 +9,7 @@ namespace RoverControlApp.MVVM.Model
 {
 	public class MissionSetPoint
 	{
+		public MqttClasses.ActiveKmlObjects ActiveKmlObjects { get; private set; }
 		public MqttClasses.RoverSetPoint GenerateNewPointRequest(MqttClasses.PointType pointType, string targetStr, string description, MqttClasses.PhotoType photoType)
 		{
 			return new MqttClasses.RoverSetPoint()

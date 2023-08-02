@@ -17,6 +17,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static PressedKeys? PressedKeys { get; private set; }
 		public static RoverCommunication? RoverCommunication { get; private set; }
 		public static MissionStatus? MissionStatus { get; private set; }
+		public static MqttClient? MqttClient { get; private set; }
 
 		[Export]
 		private NodePath BtnShowSettingsNodePath = "";
