@@ -1,11 +1,6 @@
 ﻿using Godot;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Onvif.Core.Client.Common;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.ViewModel;
 
@@ -13,7 +8,7 @@ namespace RoverControlApp.MVVM.Model
 {
 	public class PressedKeys
 	{
-		public event EventHandler<Vector4> OnAbsoluteVectorChanged;
+		public event EventHandler<Vector4>? OnAbsoluteVectorChanged;
 		public event Func<MqttClasses.RoverControl, Task> OnRoverMovementVector;
 		public event Func<MqttClasses.ManipulatorControl, Task> OnManipulatorMovement;
 		public event Func<bool, Task> OnPadConnectionChanged;
@@ -23,7 +18,12 @@ namespace RoverControlApp.MVVM.Model
 		public MqttClasses.ControlMode ControlMode
 		{
 			get => _controlMode;
-			private set => _controlMode = value;
+			private set
+			{
+				_controlMode = value;
+				MainViewModel.EventLogger?.LogMessage($"PressedKeys: Control Mode changed {value}");
+				OnControlModeChanged?.Invoke(value);
+			}
 		}
 
 		public bool PadConnected
@@ -144,7 +144,6 @@ namespace RoverControlApp.MVVM.Model
 
 			StopAll();
 
-			OnControlModeChanged?.Invoke(ControlMode);
 		}
 
 		private void StopAll()

@@ -17,21 +17,25 @@ namespace RoverControlApp.Core
 {
 	public class MqttClient : IDisposable
 	{
-		public event Func<MqttClasses.RoverStatus?, Task>? OnConnectionChanged;
+		public event Func<CommunicationState?, Task>? OnConnectionChanged;
+		public event Action? OnClientStarted;
+
 		private IManagedMqttClient? _managedMqttClient;
 		private LocalSettings.Mqtt _settingsMqtt;
 		private CancellationTokenSource _cts;
 		private Thread? _mqttThread;
 
-		private CommunicationState _isConnected;
+		private CommunicationState _connectionState;
 
-		//public bool IsConnected => _managedMqttClient?.IsConnected ?? false;
-		public CommunicationState IsConnected
+		//public bool ConnectionState => _managedMqttClient?.ConnectionState ?? false;
+		public CommunicationState ConnectionState
 		{
-			get => _isConnected;
-			set
+			get => _connectionState;
+			private set
 			{
-				_isConnected = value;
+				if (_connectionState == value) return;
+				_connectionState = value;
+				OnConnectionChanged?.Invoke(value);
 			}
 		}
 
@@ -41,8 +45,6 @@ namespace RoverControlApp.Core
 			_cts = new CancellationTokenSource();
 			_mqttThread = new Thread(ThreadWork) { IsBackground = true, Name = "MqttStream_Thread", Priority = ThreadPriority.BelowNormal };
 			_mqttThread.Start();
-			if (MainViewModel.PressedKeys != null)
-				MainViewModel.PressedKeys.OnControlModeChanged += PressedKeys_OnControlModeChanged;
 		}
 
 		private async void ThreadWork()
@@ -54,6 +56,8 @@ namespace RoverControlApp.Core
 
 			MainViewModel.EventLogger?.LogMessage("MQTT: Cancellation requested. Stopping.");
 			await StopClient();
+			_managedMqttClient!.DisconnectedAsync -= HandleDisconnected;
+			_managedMqttClient.ConnectedAsync -= HandleConnected;
 			_managedMqttClient?.Dispose();
 		}
 
@@ -82,19 +86,16 @@ namespace RoverControlApp.Core
 			await _managedMqttClient.StartAsync(managedMqttClientOptions);
 
 			MainViewModel.EventLogger?.LogMessage("MQTT: The managed MQTT client started.");
-
 			_managedMqttClient.DisconnectedAsync += HandleDisconnected;
 			_managedMqttClient.ConnectedAsync += HandleConnected;
 
-			if (MainViewModel.PressedKeys != null)
-			{
-				MainViewModel.PressedKeys.OnPadConnectionChanged += _ => RoverCommunication_OnControlStatusChanged();
-				MainViewModel.PressedKeys.OnRoverMovementVector += RoverMovementVectorChanged;
-				MainViewModel.PressedKeys.OnManipulatorMovement += RoverManipulatorVectorChanged;
-			}
+			OnClientStarted?.Invoke();
+		}
 
-			if (MainViewModel.MissionStatus != null)
-				MainViewModel.MissionStatus.OnRoverMissionStatusChanged += OnRoverMissionStatusChanged;
+		public async Task EnqueueAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
+		{
+			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{subtopic}",
+				arg, qos, retain);
 		}
 
 		private async Task StopClient()
@@ -108,6 +109,7 @@ namespace RoverControlApp.Core
 			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{_settingsMqtt.TopicRoverStatus}",
 				JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Closed }),
 				MqttQualityOfServiceLevel.ExactlyOnce, true);
+
 			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{_settingsMqtt.TopicMissionStatus}",
 				JsonSerializer.Serialize(new MqttClasses.RoverMissionStatus()), MqttQualityOfServiceLevel.ExactlyOnce, true);
 
@@ -120,18 +122,21 @@ namespace RoverControlApp.Core
 			});
 
 			await _managedMqttClient?.StopAsync(_managedMqttClient?.PendingApplicationMessagesCount == 0)!;
+			SpinWait.SpinUntil(() => _managedMqttClient.IsConnected, 250);
 		}
 
-		private async Task HandleConnected(MqttClientConnectedEventArgs arg)
+		private Task HandleConnected(MqttClientConnectedEventArgs arg)
 		{
 			MainViewModel.EventLogger?.LogMessage("MQTT: Connected");
-			await RoverCommunication_OnControlStatusChanged();
+			ConnectionState = CommunicationState.Opened;
+			return Task.CompletedTask;
 		}
 
-		private async Task HandleDisconnected(MqttClientDisconnectedEventArgs arg)
+		private Task HandleDisconnected(MqttClientDisconnectedEventArgs arg)
 		{
 			MainViewModel.EventLogger?.LogMessage("MQTT: Disconnected");
-			await RoverCommunication_OnControlStatusChanged();
+			ConnectionState = CommunicationState.Faulted;
+			return Task.CompletedTask;
 		}
 
 
@@ -139,7 +144,8 @@ namespace RoverControlApp.Core
 		{
 			//_eventsToDispose.ForEach(o => o.Dispose());
 			_cts.Cancel();
-			_mqttThread?.Join();
+			_mqttThread?.Join(500);
+			Thread.Sleep(250);
 			_mqttThread = null;
 		}
 	}

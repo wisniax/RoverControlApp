@@ -46,9 +46,10 @@ namespace RoverControlApp.MVVM.ViewModel
 			EventLogger = new EventLogger();
 			Settings = new LocalSettings();
 			Settings.SaveSettings();
+			MqttClient = new MqttClient(Settings.Settings!.Mqtt);
 			PressedKeys = new PressedKeys();
-			RoverCommunication = new RoverCommunication(Settings.Settings!.Mqtt);
 			MissionStatus = new MissionStatus();
+			RoverCommunication = new RoverCommunication(Settings.Settings!.Mqtt);
 
 			if (Settings.Settings.JoyVibrateOnModeChange)
 			{
@@ -123,12 +124,14 @@ namespace RoverControlApp.MVVM.ViewModel
 			_joyVibrato = null;
 			MissionStatus!.OnRoverMissionStatusChanged -= _missionControl!.MissionStatusUpdatedSubscriber;
 			RoverCommunication?.Dispose();
+			MqttClient?.Dispose();
 			StartUp();
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			RoverCommunication?.Dispose();
+			MqttClient?.Dispose();
 			_rtspClient?.Dispose();
 			_ptzClient?.Dispose();
 			base.Dispose(disposing);
