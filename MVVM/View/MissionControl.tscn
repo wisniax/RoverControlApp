@@ -8,32 +8,32 @@ position = Vector2i(40, 40)
 size = Vector2i(360, 160)
 min_size = Vector2i(360, 160)
 script = ExtResource("1_j63bh")
-BtnStartNodePath = NodePath("HBoxContainer/BtnStart")
-BtnStopNodePath = NodePath("HBoxContainer/BtnStop")
-LabelStatusNodePath = NodePath("HBoxContainer/LabelStatus")
+BtnStartNodePath = NodePath("MissionStatusControl/BtnStart")
+BtnStopNodePath = NodePath("MissionStatusControl/BtnStop")
+LabelStatusNodePath = NodePath("MissionStatusControl/LabelStatus")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="MissionStatusControl" type="HBoxContainer" parent="."]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 28.0
-offset_top = -52.0
-offset_right = -26.0
-offset_bottom = -21.0
+offset_left = 8.0
+offset_top = -37.0
+offset_right = -8.0
+offset_bottom = -6.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="LabelStatus" type="Label" parent="HBoxContainer"]
+[node name="LabelStatus" type="Label" parent="MissionStatusControl"]
 layout_mode = 2
 size_flags_horizontal = 2
 text = "LABEL_TEMP
 "
 
-[node name="BtnStart" type="Button" parent="HBoxContainer"]
+[node name="BtnStart" type="Button" parent="MissionStatusControl"]
 layout_mode = 2
 text = "START TEMP"
 
-[node name="BtnStop" type="Button" parent="HBoxContainer"]
+[node name="BtnStop" type="Button" parent="MissionStatusControl"]
 layout_mode = 2
 text = "STOP TEMP"

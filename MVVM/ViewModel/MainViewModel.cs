@@ -85,13 +85,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			if (_joyVibrato is not null) PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 
 			_settingsManager.Target = Settings;
-
-			var vec2String = MainViewModel.Settings.Settings.MissionControlSize.Split(';');
-			_missionControl.Size = new Vector2I(Convert.ToInt32(vec2String[0]), Convert.ToInt32(vec2String[1]));
-			vec2String = MainViewModel.Settings.Settings.MissionControlPosition.Split(';');
-			_missionControl.Position = new Vector2I(Convert.ToInt32(vec2String[0]), Convert.ToInt32(vec2String[1]));
-
 			MissionStatus.OnRoverMissionStatusChanged += _missionControl!.MissionStatusUpdatedSubscriber;
+			_missionControl.LoadSizeAndPos();
 			_missionControl.UpdateVisual();
 
 			_uiOverlay.ControlMode = PressedKeys.ControlMode;

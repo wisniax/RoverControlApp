@@ -59,6 +59,14 @@ public partial class MissionControl : Window
 		}
 	}
 
+	public void LoadSizeAndPos()
+	{
+		var vec2String = MainViewModel.Settings!.Settings!.MissionControlSize.Split(';');
+		Size = new Vector2I(Convert.ToInt32(vec2String[0]), Convert.ToInt32(vec2String[1]));
+		vec2String = MainViewModel.Settings!.Settings!.MissionControlPosition.Split(';');
+		Position = new Vector2I(Convert.ToInt32(vec2String[0]), Convert.ToInt32(vec2String[1]));
+	}
+
 	public void SaveSizeAndPos()
 	{
 		MainViewModel.Settings!.Settings!.MissionControlSize = Size.X.ToString() + ';' + Size.Y.ToString();
