@@ -59,20 +59,28 @@ namespace RoverControlApp.MVVM.Model
 			}
 			catch (Exception e)
 			{
-				MainViewModel.EventLogger?.LogMessage($"MissionStats: Error caught {e}");
+				MainViewModel.EventLogger?.LogMessage($"MissionStatus: Error caught {e}");
 				Status = new MqttClasses.RoverMissionStatus();
 				return;
 			}
+
 			if (status == null)
+			{
+				MainViewModel.EventLogger?.LogMessage($"MissionStatus: Null reference stopping mission.");
 				Status = new MqttClasses.RoverMissionStatus();
+				return;
+			}
+
+			var hoursPassed = (DateTime.Now - DateTimeOffset.FromUnixTimeMilliseconds(status.Timestamp).DateTime).TotalHours;
+			if (hoursPassed > 8)
+			{
+				MainViewModel.EventLogger?.LogMessage("MissionStatus: Retrieving status succeeded but was older than 8 hours thus mission was stopped.");
+				Status = new MqttClasses.RoverMissionStatus();
+				return;
+			}
+
 			Status = status;
-
-			MainViewModel.EventLogger?.LogMessage("MQTT: Retrieving status succeeded");
-		}
-
-		private bool TryRetrieveOldStatus()
-		{
-			return false;
+			MainViewModel.EventLogger?.LogMessage("MissionStatus: Retrieving status succeeded");
 		}
 
 		public void StopMission()
