@@ -20,27 +20,25 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static MqttClient? MqttClient { get; private set; }
 		public static MissionSetPoint? MissionSetPoint { get; private set; }
 
-		[Export]
-		private NodePath BtnShowSettingsNodePath = "";
-		[Export]
-		private NodePath SettingsManagerNodePath = "";
-
-		[Export]
-		private NodePath BtnShowMissionControlNodePath = "";
-		[Export]
-		private NodePath MissionControlNodePath = "";
-
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
 		private JoyVibrato? _joyVibrato;
 
-		private Label? _label;
 		private TextureRect? _imTextureRect;
 		private ImageTexture? _imTexture;
-		private UIOverlay? _uiOverlay;
-		private SettingsManager? _settingsManager;
-		private MissionControl? _missionControl;
-		private Button? _btnShowSettings, _btnShowMissionControl;
+
+		[Export]
+		private UIOverlay UIOverlayNode = null!;
+
+		[Export]
+		private Button ShowSettingsBtn = null!, ShowMissionControlBrn = null!;
+		[Export]
+		private SettingsManager SettingsManagerNode = null!;
+		[Export]
+		private MissionControl MissionControlNode = null!;
+
+		[Export]
+		private RichTextLabel FancyDebugViewRLab = null!;
 
 		private void StartUp()
 		{
@@ -75,23 +73,17 @@ namespace RoverControlApp.MVVM.ViewModel
 								Settings.Settings.Camera.RtspPort);
 
 			_imTextureRect = GetNode<TextureRect>("CameraView");
-			_label = GetNode<Label>("DebugView");
-			_uiOverlay = GetNode<UIOverlay>("UIOverlay");
-			_btnShowSettings = GetNode<Button>(BtnShowSettingsNodePath);
-			_settingsManager = GetNode<SettingsManager>(SettingsManagerNodePath);
-			_btnShowMissionControl = GetNode<Button>(BtnShowMissionControlNodePath);
-			_missionControl = GetNode<MissionControl>(MissionControlNodePath);
 
 			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
-			PressedKeys.OnControlModeChanged += _uiOverlay.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged += UIOverlayNode.ControlModeChangedSubscriber;
 			if (_joyVibrato is not null) PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 
-			_settingsManager.Target = Settings;
-			MissionStatus.OnRoverMissionStatusChanged += _missionControl!.MissionStatusUpdatedSubscriber;
-			_missionControl.LoadSizeAndPos();
-			_missionControl.SMissionControlVisualUpdate();
+			SettingsManagerNode.Target = Settings;
+			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode!.MissionStatusUpdatedSubscriber;
+			MissionControlNode.LoadSizeAndPos();
+			MissionControlNode.SMissionControlVisualUpdate();
 
-			_uiOverlay.ControlMode = PressedKeys.ControlMode;
+			UIOverlayNode.ControlMode = PressedKeys.ControlMode;
 			//state new mode
 			_joyVibrato?.ControlModeChangedSubscriber(PressedKeys.ControlMode);
 		}
@@ -105,13 +97,13 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void VirtualRestart()
 		{
-			_btnShowSettings.ButtonPressed = _btnShowMissionControl.ButtonPressed = false;
+			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = false;
 			if (_ptzClient != null)
 			{
 				if (PressedKeys != null) PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
 				_ptzClient?.Dispose();
 			}
-			PressedKeys.OnControlModeChanged -= _uiOverlay!.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged -= UIOverlayNode!.ControlModeChangedSubscriber;
 			_ptzClient = null;
 			_rtspClient?.Dispose();
 			_rtspClient = null;
@@ -119,7 +111,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			_joyVibrato?.Dispose();
 			_joyVibrato = null;
-			MissionStatus!.OnRoverMissionStatusChanged -= _missionControl!.MissionStatusUpdatedSubscriber;
+			MissionStatus!.OnRoverMissionStatusChanged -= MissionControlNode!.MissionStatusUpdatedSubscriber;
 			RoverCommunication?.Dispose();
 			MqttClient?.Dispose();
 			StartUp();
@@ -154,39 +146,71 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			UpdateLabel();
 		}
+
+		private Color GetColorForCommunicationState(CommunicationState? state)
+		{
+			switch (state)
+			{
+				case CommunicationState.Created:
+				case CommunicationState.Closed:
+					return Colors.Orange;
+				case CommunicationState.Opening:
+				case CommunicationState.Closing:
+					return Colors.Yellow;
+				case CommunicationState.Faulted:
+					return Colors.Red;
+				case CommunicationState.Opened:
+					return Colors.LightGreen;
+				default:
+					return Colors.Cyan;
+
+			}
+		}
+
 		private void UpdateLabel()
 		{
-			var sb = new StringBuilder();
-			string? age = _rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			FancyDebugViewRLab.Clear();
 
-			sb.AppendLine($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode},\t" +
-						  $"Connection: {RoverCommunication?.RoverStatus?.CommunicationState},\t" +
-						  $"Pad connected: {RoverCommunication?.RoverStatus?.PadConnected}");
+			Color mqttStatusColor = GetColorForCommunicationState(RoverCommunication?.RoverStatus?.CommunicationState);
+			
+			Color rtspStatusColor = GetColorForCommunicationState(_rtspClient?.State);
+
+			Color ptzStatusColor = GetColorForCommunicationState(_ptzClient?.State);
+
+			Color rtspAgeColor;
+			if(_rtspClient?.ElapsedSecondsOnCurrentState < 1.0f)
+				rtspAgeColor= Colors.LightGreen; 
+			else
+				rtspAgeColor = Colors.Orange;
+
+			string? rtspAge = _rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			string? ptzAge = _ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+
+			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode},\t" +
+						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication?.RoverStatus?.CommunicationState}[/color],\t" +
+						  $"Pad connected: {RoverCommunication?.RoverStatus?.PadConnected}\n");
 			switch (RoverCommunication?.RoverStatus?.ControlMode)
 			{
 				case MqttClasses.ControlMode.Rover:
-					sb.AppendLine($"PressedKeys: Rover Mov: {JsonSerializer.Serialize(PressedKeys?.RoverMovement)}");
+					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: {JsonSerializer.Serialize(PressedKeys?.RoverMovement)}\n");
 					break;
 				case MqttClasses.ControlMode.Manipulator:
-					sb.AppendLine($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys?.ManipulatorMovement)}");
+					FancyDebugViewRLab.AppendText($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys?.ManipulatorMovement)}\n");
 					break;
 			}
 
 			if (_rtspClient?.State == CommunicationState.Opened)
-				sb.AppendLine($"RTSP: Frame is {age}s old");
+				FancyDebugViewRLab.AppendText($"RTSP: Frame is [color={rtspAgeColor.ToHtml(false)}]{rtspAge}s[/color] old\n");
 			else
-				sb.AppendLine($"RTSP: {_rtspClient?.State ?? CommunicationState.Closed}, Time: {age ?? "N/A "}s");
-
-			age = _ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+				FancyDebugViewRLab.AppendText($"RTSP: [color={rtspStatusColor.ToHtml(false)}]{_rtspClient?.State ?? CommunicationState.Closed}[/color], Time: {rtspAge ?? "N/A "}s\n");
 
 			if (_ptzClient?.State == CommunicationState.Opened)
 			{
-				sb.AppendLine($"PTZ: Since last move request: {age}s");
-				sb.AppendLine($"PTZ: Move vector: {_ptzClient.CameraMotion}");
+				FancyDebugViewRLab.AppendText($"PTZ: Since last move request: {ptzAge}s\n");
+				FancyDebugViewRLab.AppendText($"PTZ: Move vector: {_ptzClient.CameraMotion}\n");
 			}
 			else
-				sb.AppendLine($"PTZ: {_ptzClient?.State ?? CommunicationState.Closed}, Time: {age ?? "N/A "}s");
-			_label!.Text = sb.ToString().ReplaceLineEndings("\n");
+				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{_ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
 		}
 	}
 }
