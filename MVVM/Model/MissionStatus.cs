@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ServiceModel;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
+using GodotPlugins.Game;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.ViewModel;
 
@@ -11,6 +12,12 @@ namespace RoverControlApp.MVVM.Model
 	public class MissionStatus
 	{
 		public event Func<MqttClasses.RoverMissionStatus?, Task>? OnRoverMissionStatusChanged;
+
+		private CancellationTokenSource _cts;
+		private Thread? _retriveMisionStatusThread;
+		private MqttClient? _mqttClient => MainViewModel.MqttClient;
+		private LocalSettings.Mqtt? _mqttSettings => MainViewModel.Settings?.Settings?.Mqtt;
+
 		private MqttClasses.RoverMissionStatus? _status;
 		public MqttClasses.RoverMissionStatus? Status
 		{
@@ -26,11 +33,44 @@ namespace RoverControlApp.MVVM.Model
 
 		public MissionStatus()
 		{
-			if (!TryRetriveOldStatus())
-				Status = new MqttClasses.RoverMissionStatus() { MissionStatus = MqttClasses.MissionStatus.Created };
+			_cts = new CancellationTokenSource();
+			_retriveMisionStatusThread = new Thread(ThreadWork) { IsBackground = true, Name = "RetriveMisionStatusThread", Priority = ThreadPriority.BelowNormal };
+			_retriveMisionStatusThread.Start();
+			//if (!TryRetrieveOldStatus())
+			//	Status = new MqttClasses.RoverMissionStatus() { MissionStatus = MqttClasses.MissionStatus.Created };
 		}
 
-		private bool TryRetriveOldStatus()
+		private void ThreadWork()
+		{
+			MainViewModel.EventLogger?.LogMessage("MissionStatus: Retrieving status in progress");
+			string? serialized = "";
+			SpinWait.SpinUntil(() => _mqttClient?.ConnectionState == CommunicationState.Opened);
+			SpinWait.SpinUntil(() =>
+			{
+				serialized = _mqttClient?.GetReceivedMessageOnTopic(_mqttSettings?.TopicMissionStatus);
+				return serialized != null;
+			}, 5000);
+
+			MqttClasses.RoverMissionStatus? status;
+
+			try
+			{
+				status = JsonSerializer.Deserialize<MqttClasses.RoverMissionStatus>(serialized);
+			}
+			catch (Exception e)
+			{
+				MainViewModel.EventLogger?.LogMessage($"MissionStats: Error caught {e}");
+				Status = new MqttClasses.RoverMissionStatus();
+				return;
+			}
+			if (status == null)
+				Status = new MqttClasses.RoverMissionStatus();
+			Status = status;
+
+			MainViewModel.EventLogger?.LogMessage("MQTT: Retrieving status succeeded");
+		}
+
+		private bool TryRetrieveOldStatus()
 		{
 			return false;
 		}

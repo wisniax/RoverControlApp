@@ -17,6 +17,7 @@ namespace RoverControlApp.Core
 	public class MqttClient : IDisposable
 	{
 		public event Func<CommunicationState?, Task>? OnConnectionChanged;
+		public event Func<string, string?, Task>? OnMessageReceivedAsync;
 		public event Action? OnClientStarted;
 
 		private IManagedMqttClient? _managedMqttClient;
@@ -111,7 +112,16 @@ namespace RoverControlApp.Core
 				_responses[topic] = payload;
 			else if (!_responses.TryAdd(topic, payload))
 				MainViewModel.EventLogger?.LogMessage($"MQTT: Adding {payload} on topic {topic} to dictionary failed");
+			OnMessageReceivedAsync?.Invoke(topic, payload);
 			return Task.CompletedTask;
+		}
+
+		public string? GetReceivedMessageOnTopic(string? topic)
+		{
+			if (topic == null) return null;
+			var response = "";
+			var succ = _responses?.TryGetValue(topic, out response) ?? false;
+			return succ ? response : null;
 		}
 
 		private Task OnSynchronizingSubscriptionsFailedAsync(ManagedProcessFailedEventArgs arg)
