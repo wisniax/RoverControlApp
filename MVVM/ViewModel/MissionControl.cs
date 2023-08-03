@@ -127,6 +127,9 @@ public partial class MissionControl : Window
 			return;
 		}
 
+		if (MainViewModel.MainViewModelInstance is not null)
+			await MainViewModel.MainViewModelInstance.CaptureCameraImage("POIImages", SPoiAddTargetStrLEdit.Text + "_" + DateTime.Now.ToString("yyyyMMdd_hhmmss"));
+
 		PendingSend = true;
 		await MainViewModel.MissionSetPoint.SendNewPointRequest(request);
 		PendingSend = false;

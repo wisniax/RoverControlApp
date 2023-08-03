@@ -4,6 +4,7 @@ using System.ServiceModel;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using System.Threading.Tasks;
 using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
@@ -12,6 +13,7 @@ namespace RoverControlApp.MVVM.ViewModel
 {
 	public partial class MainViewModel : Control
 	{
+		public static MainViewModel? MainViewModelInstance { get; private set; } = null;
 		public static EventLogger? EventLogger { get; private set; }
 		public static LocalSettings? Settings { get; private set; }
 		public static PressedKeys? PressedKeys { get; private set; }
@@ -91,6 +93,10 @@ namespace RoverControlApp.MVVM.ViewModel
 		// Called when the node enters the scene tree for the first time.
 		public override void _Ready()
 		{
+			if (MainViewModelInstance is not null)
+				throw new Exception("MainViewModel must have single instance!!!");
+			MainViewModelInstance = this;
+
 			Thread.CurrentThread.Name = "MainUI_Thread";
 			StartUp();
 		}
@@ -211,6 +217,68 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			else
 				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{_ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
+		}
+
+		public async Task<bool> CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
+		{
+			if (_rtspClient is null)
+				return false;
+
+			Image img = new();
+			_rtspClient.LockGrabbingFrames();
+			if (_rtspClient.LatestImage is not null && !_rtspClient.LatestImage.IsEmpty())
+				img.CopyFrom(_rtspClient.LatestImage);
+			_rtspClient.UnLockGrabbingFrames();
+
+			if (img.IsEmpty())
+			{
+				EventLogger?.LogMessage($"CaptureCameraImage ERROR: No image to capture!");
+				return false;
+			}
+
+			bool saveAsJpg;
+			if (fileExtension.Equals("jpg", StringComparison.InvariantCultureIgnoreCase))
+				saveAsJpg = true;
+			else if(fileExtension.Equals("png", StringComparison.InvariantCultureIgnoreCase))
+				saveAsJpg = false;
+			else
+			{
+				EventLogger?.LogMessage($"CaptureCameraImage ERROR: \"{fileExtension}\" is not valid extension! (png or jpg)");
+				return false;
+			}			
+
+			fileName ??= DateTime.Now.ToString("yyyyMMdd_hhmmss");
+			string pathToFile = $"user://{subfolder}";
+
+			if (!DirAccess.DirExistsAbsolute(pathToFile))
+			{
+				EventLogger?.LogMessage($"CaptureCameraImage INFO: Subfolder \"{pathToFile}\" not exists yet, creating.");
+				var err = DirAccess.MakeDirAbsolute(pathToFile);
+				if(err != Error.Ok)
+				{
+					EventLogger?.LogMessage($"CaptureCameraImage ERROR: Creating subfolder \"{pathToFile}\" failed. ({err.ToString()})");
+					return false;
+				}
+			}
+
+			pathToFile += $"/{fileName}.{fileExtension}";
+
+			if (FileAccess.FileExists(pathToFile))
+				EventLogger?.LogMessage($"CaptureCameraImage WARNING: \"{pathToFile}\" already exists and will be overwrited!");
+
+			Error imgSaveErr;
+			if (saveAsJpg)
+				imgSaveErr = img.SaveJpg(pathToFile);
+			else
+				imgSaveErr = img.SavePng(pathToFile);
+
+			if (imgSaveErr != Error.Ok)
+			{
+				EventLogger?.LogMessage($"CaptureCameraImage ERROR: Creating subfolder \"{pathToFile}\" failed. ({imgSaveErr.ToString()})");
+				return false;
+			}
+
+			return true;
 		}
 	}
 }
