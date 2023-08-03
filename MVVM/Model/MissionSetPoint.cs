@@ -12,15 +12,10 @@ namespace RoverControlApp.MVVM.Model
 	public class MissionSetPoint
 	{
 		private MqttClient? _mqttClient => MainViewModel.MqttClient;
-		private LocalSettings.Vars? _localSettings;
+		private LocalSettings.Vars? _localSettings => MainViewModel.Settings?.Settings;
 		public MqttClasses.ActiveKmlObjects ActiveKmlObjects { get; private set; }
 
-		public MissionSetPoint(LocalSettings.Vars vars)
-		{
-			_localSettings = vars;
-		}
-
-		public MqttClasses.RoverSetPoint GenerateNewPointRequest(MqttClasses.PointType pointType, string targetStr, string description, MqttClasses.PhotoType photoType)
+		public static MqttClasses.RoverSetPoint GenerateNewPointRequest(MqttClasses.PointType pointType, string targetStr, string description, MqttClasses.PhotoType photoType)
 		{
 			return new MqttClasses.RoverSetPoint()
 			{
@@ -41,10 +36,19 @@ namespace RoverControlApp.MVVM.Model
 		public MqttClasses.ActiveKmlObjects GetAvailableTargets()
 		{
 			var cos = new MqttClasses.ActiveKmlObjects();
-			cos.area.Add("Area1");
-			cos.area.Add("Area2");
-			cos.poi.Add("Point1");
-			cos.poi.Add("Obstacle1");
+			cos.area = new()
+			{
+				"Area1",
+				"Area2"
+			};
+			cos.poi = new()
+			{
+				"Point1",
+				"Obstacle1"
+			};
+			cos.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+			ActiveKmlObjects = cos;
 			return cos;
 		}
 	}
