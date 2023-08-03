@@ -18,6 +18,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static RoverCommunication? RoverCommunication { get; private set; }
 		public static MissionStatus? MissionStatus { get; private set; }
 		public static MqttClient? MqttClient { get; private set; }
+		public static MissionSetPoint? MissionSetPoint { get; private set; }
 
 		[Export]
 		private NodePath BtnShowSettingsNodePath = "";
@@ -50,6 +51,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys = new PressedKeys();
 			MissionStatus = new MissionStatus();
 			RoverCommunication = new RoverCommunication(Settings.Settings!.Mqtt);
+			MissionSetPoint = new MissionSetPoint();
 
 			if (Settings.Settings.JoyVibrateOnModeChange)
 			{
@@ -87,7 +89,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			_settingsManager.Target = Settings;
 			MissionStatus.OnRoverMissionStatusChanged += _missionControl!.MissionStatusUpdatedSubscriber;
 			_missionControl.LoadSizeAndPos();
-			_missionControl.UpdateVisual();
+			_missionControl.SMissionControlVisualUpdate();
 
 			_uiOverlay.ControlMode = PressedKeys.ControlMode;
 			//state new mode

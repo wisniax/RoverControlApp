@@ -2,38 +2,181 @@
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionControl.cs" id="1_j63bh"]
 
-[node name="MissionControl" type="Window"]
+[node name="MissionControl" type="Window" node_paths=PackedStringArray("SMissionControlStartBtn", "SMissionControlStopBtn", "SMissionControlRefreshBtn", "SMissionControlStatusLabel", "SMissionControlPOITimestampLab", "SPoiAddTypeOpBtn", "SPoiAddTargetStrLEdit", "SPoiAddDescriptionStrLEdit", "SPoiAddPhotoTypeOpBtn", "SPoiAddConfirmBtn", "SPoiRemoveTypeOpBtn", "SPoiRemoveTargetOpBtn", "SPoiRemoveConfirmBtn")]
 title = "Mission Control"
 position = Vector2i(40, 40)
-size = Vector2i(360, 160)
-min_size = Vector2i(360, 160)
+size = Vector2i(480, 320)
+min_size = Vector2i(480, 320)
+max_size = Vector2i(16384, 320)
 script = ExtResource("1_j63bh")
-BtnStartNodePath = NodePath("MissionStatusControl/BtnStart")
-BtnStopNodePath = NodePath("MissionStatusControl/BtnStop")
-LabelStatusNodePath = NodePath("MissionStatusControl/LabelStatus")
+SMissionControlStartBtn = NodePath("SectionMissionControl/SectionMissionControls/StartBtn")
+SMissionControlStopBtn = NodePath("SectionMissionControl/SectionMissionControls/StopBtn")
+SMissionControlRefreshBtn = NodePath("SectionMissionControl/SectionPOIStatus/RefreshBtn")
+SMissionControlStatusLabel = NodePath("SectionMissionControl/SectionMissionControls/StatusLabel")
+SMissionControlPOITimestampLab = NodePath("SectionMissionControl/SectionPOIStatus/TimestampLab")
+SPoiAddTypeOpBtn = NodePath("POIController/SectionAddPoint/HBC/PointTypeOpBtn")
+SPoiAddTargetStrLEdit = NodePath("POIController/SectionAddPoint/HBC/TargetLEdit")
+SPoiAddDescriptionStrLEdit = NodePath("POIController/SectionAddPoint/DescriptionLEdit")
+SPoiAddPhotoTypeOpBtn = NodePath("POIController/SectionAddPoint/HBC/PhotoTypeOpBtn")
+SPoiAddConfirmBtn = NodePath("POIController/SectionAddPoint/ConfirmBtn")
+SPoiRemoveTypeOpBtn = NodePath("POIController/SectionRemovePoint/HBC/PointTypeOpBtn")
+SPoiRemoveTargetOpBtn = NodePath("POIController/SectionRemovePoint/HBC/TargetOpBtn")
+SPoiRemoveConfirmBtn = NodePath("POIController/SectionRemovePoint/ConfirmBtn")
 
-[node name="MissionStatusControl" type="HBoxContainer" parent="."]
+[node name="POIController" type="VBoxContainer" parent="."]
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 10.0
+offset_right = -10.0
+offset_bottom = 95.0
+grow_horizontal = 2
+theme_override_constants/separation = 12
+
+[node name="SectionAddPoint" type="VBoxContainer" parent="POIController"]
+layout_mode = 2
+
+[node name="AddPointLab" type="Label" parent="POIController/SectionAddPoint"]
+layout_mode = 2
+text = "Adding POI"
+
+[node name="HBC" type="HBoxContainer" parent="POIController/SectionAddPoint"]
+layout_mode = 2
+
+[node name="TypeLab" type="Label" parent="POIController/SectionAddPoint/HBC"]
+layout_mode = 2
+text = "Type:"
+
+[node name="PointTypeOpBtn" type="OptionButton" parent="POIController/SectionAddPoint/HBC"]
+layout_mode = 2
+item_count = 4
+popup/item_0/text = "Landmark"
+popup/item_0/id = 0
+popup/item_1/text = "Obstacle"
+popup/item_1/id = 1
+popup/item_2/text = "Poly"
+popup/item_2/id = 3
+popup/item_3/text = "Point In Poly"
+popup/item_3/id = 4
+
+[node name="TargetLEdit" type="LineEdit" parent="POIController/SectionAddPoint/HBC"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "TargetStr"
+
+[node name="PhotoLab" type="Label" parent="POIController/SectionAddPoint/HBC"]
+layout_mode = 2
+text = "Photo:"
+
+[node name="PhotoTypeOpBtn" type="OptionButton" parent="POIController/SectionAddPoint/HBC"]
+layout_mode = 2
+item_count = 3
+popup/item_0/text = "None"
+popup/item_0/id = 0
+popup/item_1/text = "Generic"
+popup/item_1/id = 1
+popup/item_2/text = "Spheric"
+popup/item_2/id = 2
+
+[node name="DescriptionLEdit" type="LineEdit" parent="POIController/SectionAddPoint"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+placeholder_text = "DescriptionStr"
+
+[node name="ConfirmBtn" type="Button" parent="POIController/SectionAddPoint"]
+layout_mode = 2
+text = "CONFIRM ADD"
+
+[node name="SectionRemovePoint" type="VBoxContainer" parent="POIController"]
+layout_mode = 2
+
+[node name="RemovePointLabel" type="Label" parent="POIController/SectionRemovePoint"]
+layout_mode = 2
+text = "Removing POI"
+
+[node name="HBC" type="HBoxContainer" parent="POIController/SectionRemovePoint"]
+layout_mode = 2
+
+[node name="TypeLab" type="Label" parent="POIController/SectionRemovePoint/HBC"]
+layout_mode = 2
+text = "Type:"
+
+[node name="PointTypeOpBtn" type="OptionButton" parent="POIController/SectionRemovePoint/HBC"]
+layout_mode = 2
+item_count = 2
+selected = 0
+popup/item_0/text = "Point"
+popup/item_0/id = 2
+popup/item_1/text = "Poly"
+popup/item_1/id = 5
+
+[node name="TargetLab" type="Label" parent="POIController/SectionRemovePoint/HBC"]
+layout_mode = 2
+text = "Target:"
+
+[node name="TargetOpBtn" type="OptionButton" parent="POIController/SectionRemovePoint/HBC"]
+layout_mode = 2
+size_flags_horizontal = 3
+item_count = 2
+selected = 0
+popup/item_0/text = "POI JD"
+popup/item_0/id = 0
+popup/item_1/text = "POI JPII"
+popup/item_1/id = 1
+
+[node name="ConfirmBtn" type="Button" parent="POIController/SectionRemovePoint"]
+layout_mode = 2
+text = "CONFIRM REMOVE"
+
+[node name="SectionMissionControl" type="VBoxContainer" parent="."]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = -37.0
-offset_right = -8.0
-offset_bottom = -6.0
+offset_left = 10.0
+offset_top = -41.0
+offset_right = -10.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="LabelStatus" type="Label" parent="MissionStatusControl"]
+[node name="SectionPOIStatus" type="HBoxContainer" parent="SectionMissionControl"]
+layout_mode = 2
+
+[node name="TimestampLab" type="Label" parent="SectionMissionControl/SectionPOIStatus"]
+layout_mode = 2
+text = "TimestampLab_Temp"
+
+[node name="RefreshBtn" type="Button" parent="SectionMissionControl/SectionPOIStatus"]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "Refresh"
+
+[node name="SectionMissionControls" type="HBoxContainer" parent="SectionMissionControl"]
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="SectionMissionControl/SectionMissionControls"]
 layout_mode = 2
 size_flags_horizontal = 2
-text = "LABEL_TEMP
+text = "StatusLabel_Temp
 "
 
-[node name="BtnStart" type="Button" parent="MissionStatusControl"]
+[node name="StartBtn" type="Button" parent="SectionMissionControl/SectionMissionControls"]
 layout_mode = 2
-text = "START TEMP"
+text = "StartBtn_Temp"
 
-[node name="BtnStop" type="Button" parent="MissionStatusControl"]
+[node name="StopBtn" type="Button" parent="SectionMissionControl/SectionMissionControls"]
 layout_mode = 2
-text = "STOP TEMP"
+text = "StopBtn_Temp"
+
+[connection signal="item_selected" from="POIController/SectionAddPoint/HBC/PointTypeOpBtn" to="." method="OnSPoiAddChanged" unbinds=1]
+[connection signal="text_submitted" from="POIController/SectionAddPoint/HBC/TargetLEdit" to="." method="OnSPoiAddChanged" unbinds=1]
+[connection signal="item_selected" from="POIController/SectionAddPoint/HBC/PhotoTypeOpBtn" to="." method="OnSPoiAddChanged" unbinds=1]
+[connection signal="text_submitted" from="POIController/SectionAddPoint/DescriptionLEdit" to="." method="OnSPoiAddChanged" unbinds=1]
+[connection signal="pressed" from="POIController/SectionAddPoint/ConfirmBtn" to="." method="OnSPoiAddConfirmPressed"]
+[connection signal="item_selected" from="POIController/SectionRemovePoint/HBC/PointTypeOpBtn" to="." method="OnSPoiRemoveTypeChanged"]
+[connection signal="item_selected" from="POIController/SectionRemovePoint/HBC/PointTypeOpBtn" to="." method="OnSPoiRemoveChanged" unbinds=1]
+[connection signal="item_selected" from="POIController/SectionRemovePoint/HBC/TargetOpBtn" to="." method="OnSPoiRemoveChanged" unbinds=1]
+[connection signal="pressed" from="POIController/SectionRemovePoint/ConfirmBtn" to="." method="OnSPoiRemoveConfirmPressed"]
+[connection signal="pressed" from="SectionMissionControl/SectionPOIStatus/RefreshBtn" to="." method="OnSMissionControlRefreshBtn"]
+[connection signal="pressed" from="SectionMissionControl/SectionMissionControls/StartBtn" to="." method="OnSMissionControlStartBtn"]
+[connection signal="pressed" from="SectionMissionControl/SectionMissionControls/StopBtn" to="." method="OnSMissionControlStopBtn"]
