@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.ViewModel;
-public partial class MissionControl : Window
+public partial class MissionControl : Panel
 {
 	private const string TEXT_START = "Start";
 	private const string TEXT_RESUME = "Resume";
@@ -242,10 +242,10 @@ public partial class MissionControl : Window
 
 	public void SaveSizeAndPos()
 	{
-		var maxSize = (Vector2I)GetTree().Root.GetViewport().GetVisibleRect().Size;
+		var maxSize = GetTree().Root.GetViewport().GetVisibleRect().Size;
 
-		Size = new Vector2I(Math.Clamp(Size.X, MinSize.X,maxSize.X), Size.Y);
-		Position = new Vector2I(Math.Clamp(Position.X, 0, maxSize.X - Size.X), Math.Clamp(Position.Y, 30, maxSize.Y - Size.Y));
+		Size = new Vector2(Math.Clamp(Size.X, CustomMinimumSize.X,maxSize.X), Size.Y);
+		Position = new Vector2(Math.Clamp(Position.X, 0, maxSize.X - Size.X), Math.Clamp(Position.Y, 30, maxSize.Y - Size.Y));
 
 		MainViewModel.Settings!.Settings!.MissionControlSize = Size.X.ToString() + ';' + Size.Y.ToString();
 		MainViewModel.Settings!.Settings!.MissionControlPosition = Position.X.ToString() + ';' + Position.Y.ToString();

@@ -79,9 +79,9 @@ public class LocalSettings
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool JoyVibrateOnModeChange { get; set; } = true;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"-?[0-9]+;-?[0-9]+")]
-		public string MissionControlPosition { get; set; } = "40;40";
+		public string MissionControlPosition { get; set; } = "20;30";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"-?[0-9]+;-?[0-9]+")]
-		public string MissionControlSize { get; set; } = "360;160";
+		public string MissionControlSize { get; set; } = "480;360";
 	}
 
 	[SettingsManagerVisible]

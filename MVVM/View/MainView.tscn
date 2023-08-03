@@ -81,6 +81,7 @@ text = "SETINGS"
 
 [node name="MissionControl" parent="." instance=ExtResource("4_wrhi8")]
 visible = false
+layout_mode = 0
 
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false
@@ -94,5 +95,4 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
-[connection signal="close_requested" from="MissionControl" to="HBoxContainer/ShowMissionControl" method="set_pressed" binds= [false]]
 [connection signal="RequestedRestart" from="SettingsManager" to="." method="VirtualRestart"]
