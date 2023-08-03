@@ -6,12 +6,11 @@ using MQTTnet.Server;
 using RoverControlApp.MVVM.ViewModel;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using GodotPlugins.Game;
 
 namespace RoverControlApp.Core
 {
@@ -26,6 +25,8 @@ namespace RoverControlApp.Core
 		private Thread? _mqttThread;
 
 		private CommunicationState _connectionState;
+
+		private Dictionary<string, string>? _responses;
 
 		//public bool ConnectionState => _managedMqttClient?.ConnectionState ?? false;
 		public CommunicationState ConnectionState
@@ -43,7 +44,8 @@ namespace RoverControlApp.Core
 		{
 			_settingsMqtt = settingsMqtt;
 			_cts = new CancellationTokenSource();
-			_mqttThread = new Thread(ThreadWork) { IsBackground = true, Name = "MqttStream_Thread", Priority = ThreadPriority.BelowNormal };
+			_responses = new Dictionary<string, string>();
+			_mqttThread = new Thread(ThreadWork) { IsBackground = true, Name = "MqttThread", Priority = ThreadPriority.BelowNormal };
 			_mqttThread.Start();
 		}
 
@@ -88,8 +90,49 @@ namespace RoverControlApp.Core
 			MainViewModel.EventLogger?.LogMessage("MQTT: The managed MQTT client started.");
 			_managedMqttClient.DisconnectedAsync += HandleDisconnected;
 			_managedMqttClient.ConnectedAsync += HandleConnected;
+			_managedMqttClient.SynchronizingSubscriptionsFailedAsync += OnSynchronizingSubscriptionsFailedAsync;
+			_managedMqttClient.ApplicationMessageReceivedAsync += OnApplicationMessageReceivedAsync;
+
+			await SubscribeToAllTopics();
 
 			OnClientStarted?.Invoke();
+		}
+
+		private Task OnApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
+		{
+			MainViewModel.EventLogger?.LogMessage($"MQTT: Messege received on topic {arg.ApplicationMessage.Topic} with: " +
+												  $"{arg.ApplicationMessage.ConvertPayloadToString()}");
+			if (_responses == null) return Task.CompletedTask;
+
+			var topic = arg.ApplicationMessage.Topic[(_settingsMqtt.TopicMain.Length + 1)..];
+			var payload = arg.ApplicationMessage.ConvertPayloadToString();
+
+			if (_responses.ContainsKey(topic))
+				_responses[topic] = payload;
+			else if (!_responses.TryAdd(topic, payload))
+				MainViewModel.EventLogger?.LogMessage($"MQTT: Adding {payload} on topic {topic} to dictionary failed");
+			return Task.CompletedTask;
+		}
+
+		private Task OnSynchronizingSubscriptionsFailedAsync(ManagedProcessFailedEventArgs arg)
+		{
+			MainViewModel.EventLogger?.LogMessage($"MQTT: Synchronizing subscriptions failed with: {arg}");
+			return Task.CompletedTask;
+		}
+
+		private async Task SubscribeToAllTopics()
+		{
+			MainViewModel.EventLogger?.LogMessage("MQTT: Subscribing to all topics:");
+			await SubscribeToTopic(_settingsMqtt.TopicRoverStatus, MqttQualityOfServiceLevel.ExactlyOnce);
+			await SubscribeToTopic(_settingsMqtt.TopicMissionStatus, MqttQualityOfServiceLevel.ExactlyOnce);
+			await SubscribeToTopic(_settingsMqtt.TopicKmlListOfActiveObj, MqttQualityOfServiceLevel.ExactlyOnce);
+			await SubscribeToTopic(_settingsMqtt.TopicRoverFeedback, MqttQualityOfServiceLevel.ExactlyOnce);
+		}
+
+		private async Task SubscribeToTopic(string subtopic, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce)
+		{
+			MainViewModel.EventLogger?.LogMessage($"MQTT: Subscribing to topic: {subtopic}");
+			await _managedMqttClient.SubscribeAsync(_settingsMqtt.TopicMain + '/' + subtopic, qos);
 		}
 
 		public async Task EnqueueAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
@@ -110,8 +153,8 @@ namespace RoverControlApp.Core
 				JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Closed }),
 				MqttQualityOfServiceLevel.ExactlyOnce, true);
 
-			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{_settingsMqtt.TopicMissionStatus}",
-				JsonSerializer.Serialize(new MqttClasses.RoverMissionStatus()), MqttQualityOfServiceLevel.ExactlyOnce, true);
+			//await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{_settingsMqtt.TopicMissionStatus}",
+			//	JsonSerializer.Serialize(new MqttClasses.RoverMissionStatus()), MqttQualityOfServiceLevel.ExactlyOnce, true);
 
 			await Task.Run(async Task? () =>
 			{

@@ -57,9 +57,10 @@ public class LocalSettings
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicMissionStatus { get; set; } = "MissionStatus";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicKmlSetPoint { get; set; } = "KMLNode/ActiveKMLObjects";
+		public string TopicKmlSetPoint { get; set; } = "KMLNode/SetPoint";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicKmlListOfActiveObj { get; set; } = "RappTORS/KMLNode/ActiveKMLObjects";
+		public string TopicKmlListOfActiveObj { get; set; } = "KMLNode/ActiveKMLObjects";
+
 	}
 
 
