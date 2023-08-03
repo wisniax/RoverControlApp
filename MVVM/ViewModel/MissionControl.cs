@@ -119,7 +119,7 @@ public partial class MissionControl : Window
 
 	private async void OnSPoiAddConfirmPressed()
 	{
-		var request = MissionSetPoint.GenerateNewPointRequest((MqttClasses.PointType)SPoiAddTypeOpBtn.Selected, SPoiAddTargetStrLEdit.Text, SPoiAddDescriptionStrLEdit.Text, (MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.Selected);
+		var request = MissionSetPoint.GenerateNewPointRequest((MqttClasses.PointType)SPoiAddTypeOpBtn.Selected, SPoiAddTargetStrLEdit.Text, SPoiAddDescriptionStrLEdit.Text, (MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.GetSelectedId());
 		if (MainViewModel.MissionSetPoint is null)
 		{
 			if(MainViewModel.EventLogger is not null)
@@ -127,8 +127,13 @@ public partial class MissionControl : Window
 			return;
 		}
 
-		if (MainViewModel.MainViewModelInstance is not null)
+		if (
+			MainViewModel.MainViewModelInstance is not null
+			&& (MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.GetSelectedId() != MqttClasses.PhotoType.None
+		)
+		{
 			await MainViewModel.MainViewModelInstance.CaptureCameraImage("POIImages", SPoiAddTargetStrLEdit.Text + "_" + DateTime.Now.ToString("yyyyMMdd_hhmmss"));
+		}
 
 		PendingSend = true;
 		await MainViewModel.MissionSetPoint.SendNewPointRequest(request);
