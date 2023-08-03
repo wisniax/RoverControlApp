@@ -6,10 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://em10imnbie42" path="res://MVVM/View/SettingsManager.tscn" id="4_b20oh"]
 [ext_resource type="PackedScene" uid="uid://crakb6uxv2yt8" path="res://MVVM/View/MissionControl.tscn" id="4_wrhi8"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nnhut"]
-bg_color = Color(0, 0, 0, 0.392157)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
+bg_color = Color(0, 0, 0, 0.501961)
 
-[node name="MainView" type="Control"]
+[node name="MainView" type="Control" node_paths=PackedStringArray("UIOverlayNode", "ShowSettingsBtn", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,10 +17,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_84vv0")
-BtnShowSettingsNodePath = NodePath("HBoxContainer/ShowSettingsBtn")
-SettingsManagerNodePath = NodePath("SettingsManager")
-BtnShowMissionControlNodePath = NodePath("HBoxContainer/ShowMissionControl")
-MissionControlNodePath = NodePath("MissionControl")
+UIOverlayNode = NodePath("UIOverlay")
+ShowSettingsBtn = NodePath("HBoxContainer/ShowSettingsBtn")
+ShowMissionControlBrn = NodePath("HBoxContainer/ShowMissionControl")
+SettingsManagerNode = NodePath("SettingsManager")
+MissionControlNode = NodePath("MissionControl")
+FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 
 [node name="CameraView" type="TextureRect" parent="."]
 layout_mode = 1
@@ -32,16 +34,25 @@ grow_vertical = 2
 texture = ExtResource("2_1llr5")
 expand_mode = 2
 
-[node name="DebugView" type="Label" parent="."]
+[node name="FancyDebugViewRLab" type="RichTextLabel" parent="."]
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 15.0
-offset_bottom = -15.0
+offset_left = 10.0
+offset_top = -102.0
+offset_right = 454.0
+offset_bottom = -10.0
 grow_vertical = 0
-theme_override_font_sizes/font_size = 14
-theme_override_styles/normal = SubResource("StyleBoxFlat_nnhut")
+theme_override_styles/normal = SubResource("StyleBoxFlat_w78xs")
+bbcode_enabled = true
+text = "1Line
+2Line
+3Line
+4Line"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
 
 [node name="UIOverlay" parent="." instance=ExtResource("3_mtbtk")]
 layout_mode = 1
