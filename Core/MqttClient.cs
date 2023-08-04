@@ -10,7 +10,6 @@ using System.ServiceModel;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using GodotPlugins.Game;
 
 namespace RoverControlApp.Core
 {
@@ -61,6 +60,7 @@ namespace RoverControlApp.Core
 			await StopClient();
 			_managedMqttClient!.DisconnectedAsync -= HandleDisconnected;
 			_managedMqttClient.ConnectedAsync -= HandleConnected;
+			_managedMqttClient.SynchronizingSubscriptionsFailedAsync -= OnSynchronizingSubscriptionsFailedAsync;
 			_managedMqttClient?.Dispose();
 		}
 

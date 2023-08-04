@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using RoverControlApp.Core;
@@ -11,9 +8,42 @@ namespace RoverControlApp.MVVM.Model
 {
 	public class MissionSetPoint
 	{
+		public event Func<MqttClasses.ActiveKmlObjects?, Task>? ActiveKmlObjectsUpdated;
 		private MqttClient? _mqttClient => MainViewModel.MqttClient;
 		private LocalSettings.Vars? _localSettings => MainViewModel.Settings?.Settings;
 		public MqttClasses.ActiveKmlObjects ActiveKmlObjects { get; private set; }
+
+		public MissionSetPoint()
+		{
+			_mqttClient.OnMessageReceivedAsync += OnMessageReceivedAsync;
+			UpdateActiveKmlObjects();
+		}
+
+		private Task OnMessageReceivedAsync(string subtopic, string? content)
+		{
+			if (subtopic != _localSettings?.Mqtt.TopicKmlSetPoint || content == null)
+				return Task.CompletedTask;
+
+			UpdateActiveKmlObjects();
+			return Task.CompletedTask;
+		}
+
+		public void UpdateActiveKmlObjects()
+		{
+			MqttClasses.ActiveKmlObjects? activeKmlObjects;
+			try
+			{
+				activeKmlObjects = JsonSerializer.Deserialize<MqttClasses.ActiveKmlObjects>(_mqttClient?.GetReceivedMessageOnTopic(_localSettings?.Mqtt.TopicKmlSetPoint));
+			}
+			catch (Exception e)
+			{
+				MainViewModel.EventLogger?.LogMessage($"MissionSetPoint: Deserializing failed with error: {e}");
+				return;
+			}
+			if (activeKmlObjects == null) return;
+			ActiveKmlObjects = activeKmlObjects;
+			ActiveKmlObjectsUpdated?.Invoke(activeKmlObjects);
+		}
 
 		public static MqttClasses.RoverSetPoint GenerateNewPointRequest(MqttClasses.PointType pointType, string targetStr, string description, MqttClasses.PhotoType photoType)
 		{
@@ -33,23 +63,26 @@ namespace RoverControlApp.MVVM.Model
 				JsonSerializer.Serialize(pointReq));
 		}
 
+
+		[Obsolete("Use property ActiveKmlObjects instead")]
 		public MqttClasses.ActiveKmlObjects GetAvailableTargets()
 		{
-			var cos = new MqttClasses.ActiveKmlObjects();
-			cos.area = new()
-			{
-				"Area1",
-				"Area2"
-			};
-			cos.poi = new()
-			{
-				"Point1",
-				"Obstacle1"
-			};
-			cos.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+			return ActiveKmlObjects;
+			//var cos = new MqttClasses.ActiveKmlObjects();
+			//cos.area = new()
+			//{
+			//	"Area1",
+			//	"Area2"
+			//};
+			//cos.poi = new()
+			//{
+			//	"Point1",
+			//	"Obstacle1"
+			//};
+			//cos.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-			ActiveKmlObjects = cos;
-			return cos;
+			//ActiveKmlObjects = cos;
+			//return cos;
 		}
 	}
 }
