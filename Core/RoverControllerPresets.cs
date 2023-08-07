@@ -28,7 +28,7 @@ namespace RoverControlApp.Core
 				float turn = Input.GetAxis("rover_move_right", "rover_move_left");
 				turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToInt32(MainViewModel.Settings?.Settings?.JoyPadDeadzone))) ? 0 : turn;
 
-				turn *= Mathf.Abs(velocity); // Max turn angle: 45 deg.
+				turn *= velocity; // Max turn angle: 45 deg.
 
 				Vector2 vec = new Vector2(turn, velocity);
 				float forcedX = Input.GetAxis("rover_rotate_right", "rover_rotate_left");
