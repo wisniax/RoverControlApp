@@ -51,6 +51,54 @@ namespace RoverControlApp.Core
 			}
 		}
 
+		public class EricSOnController : IRoverDriveController
+		{
+			private float _turnAngle = 89;
+			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl)
+			{
+				roverControl = new MqttClasses.RoverControl();
+
+				float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
+				velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
+
+				float turn = Input.GetAxis("rover_move_right", "rover_move_left");
+				turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToSingle(MainViewModel.Settings?.Settings?.JoyPadDeadzone))) ? 0 : turn;
+
+				// turn *= velocity * TURN_COEFF; // Max turn angle: 45 deg.
+
+				// (Mathf.Abs(turn) >= 1f)
+				//	velocity /= Mathf.Abs(turn);
+
+				Vector2 vec = new Vector2(velocity, turn);
+
+				turn *= _turnAngle * Mathf.Pi / 180;
+
+				vec = new Vector2(velocity, 0f).Rotated(turn);
+
+
+				//vec = vec.Clamp(new Vector2(-1, -1), new Vector2(1, 1));
+
+				float forcedY = Input.GetAxis("rover_rotate_right", "rover_rotate_left");
+				if (!Mathf.IsEqualApprox(forcedY, 0f, 0.05f)) vec.Y = forcedY / 4f;
+
+				if (Input.IsActionPressed("camera_zoom_mod"))
+				{
+					vec.X /= 8f;
+					vec.Y /= 8f;
+				}
+
+				var oldVelocity = new Vector2(Convert.ToSingle(MainViewModel.PressedKeys?.RoverMovement.ZRotAxis),
+					Convert.ToSingle(MainViewModel.PressedKeys?.RoverMovement.XVelAxis));
+				if (oldVelocity.IsEqualApprox(vec)) return false;
+
+
+				//roverControl.ZRotAxis = vec.Y;
+				roverControl.ZRotAxis = vec.Y;
+				roverControl.XVelAxis = vec.X;
+				return true;
+			}
+		}
+
 		public class GoodOldGamesLikeController : IRoverDriveController
 		{
 			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl)
@@ -70,8 +118,8 @@ namespace RoverControlApp.Core
 					velocity.Y /= 8f;
 				}
 				if (new Vector2(Convert.ToSingle(MainViewModel.PressedKeys?.RoverMovement.ZRotAxis),
-					    Convert.ToSingle(MainViewModel.PressedKeys?.RoverMovement.XVelAxis))
-				    .IsEqualApprox(velocity)) return false;
+						Convert.ToSingle(MainViewModel.PressedKeys?.RoverMovement.XVelAxis))
+					.IsEqualApprox(velocity)) return false;
 
 
 				roverControl.ZRotAxis = velocity.X;

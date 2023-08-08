@@ -178,14 +178,14 @@ namespace RoverControlApp.MVVM.ViewModel
 			FancyDebugViewRLab.Clear();
 
 			Color mqttStatusColor = GetColorForCommunicationState(RoverCommunication?.RoverStatus?.CommunicationState);
-			
+
 			Color rtspStatusColor = GetColorForCommunicationState(_rtspClient?.State);
 
 			Color ptzStatusColor = GetColorForCommunicationState(_ptzClient?.State);
 
 			Color rtspAgeColor;
-			if(_rtspClient?.ElapsedSecondsOnCurrentState < 1.0f)
-				rtspAgeColor= Colors.LightGreen; 
+			if (_rtspClient?.ElapsedSecondsOnCurrentState < 1.0f)
+				rtspAgeColor = Colors.LightGreen;
 			else
 				rtspAgeColor = Colors.Orange;
 
@@ -198,7 +198,9 @@ namespace RoverControlApp.MVVM.ViewModel
 			switch (RoverCommunication?.RoverStatus?.ControlMode)
 			{
 				case MqttClasses.ControlMode.Rover:
-					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: {JsonSerializer.Serialize(PressedKeys?.RoverMovement)}\n");
+					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {PressedKeys?.RoverMovement.XVelAxis:F3}, " +
+												  $"Angle: " +
+												  $"{Mathf.Atan2(PressedKeys?.RoverMovement.ZRotAxis ?? 0f, PressedKeys?.RoverMovement.XVelAxis ?? 0f) * 180 / Mathf.Pi:F1}\n");
 					break;
 				case MqttClasses.ControlMode.Manipulator:
 					FancyDebugViewRLab.AppendText($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys?.ManipulatorMovement)}\n");
@@ -239,13 +241,13 @@ namespace RoverControlApp.MVVM.ViewModel
 			bool saveAsJpg;
 			if (fileExtension.Equals("jpg", StringComparison.InvariantCultureIgnoreCase))
 				saveAsJpg = true;
-			else if(fileExtension.Equals("png", StringComparison.InvariantCultureIgnoreCase))
+			else if (fileExtension.Equals("png", StringComparison.InvariantCultureIgnoreCase))
 				saveAsJpg = false;
 			else
 			{
 				EventLogger?.LogMessage($"CaptureCameraImage ERROR: \"{fileExtension}\" is not valid extension! (png or jpg)");
 				return false;
-			}			
+			}
 
 			fileName ??= DateTime.Now.ToString("yyyyMMdd_hhmmss");
 			string pathToFile = $"user://{subfolder}";
@@ -254,7 +256,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			{
 				EventLogger?.LogMessage($"CaptureCameraImage INFO: Subfolder \"{pathToFile}\" not exists yet, creating.");
 				var err = DirAccess.MakeDirAbsolute(pathToFile);
-				if(err != Error.Ok)
+				if (err != Error.Ok)
 				{
 					EventLogger?.LogMessage($"CaptureCameraImage ERROR: Creating subfolder \"{pathToFile}\" failed. ({err.ToString()})");
 					return false;

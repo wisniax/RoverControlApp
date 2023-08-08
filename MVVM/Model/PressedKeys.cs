@@ -80,7 +80,7 @@ namespace RoverControlApp.MVVM.Model
 			_manipulatorMovement = new MqttClasses.ManipulatorControl();
 			_roverDriveControllerPreset = MainViewModel.Settings.Settings.NewFancyRoverController
 				? new RoverControllerPresets.ForzaLikeController()
-				: new RoverControllerPresets.GoodOldGamesLikeController();
+				: new RoverControllerPresets.EricSOnController();
 			_roverManipulatorControllerPreset = new RoverControllerPresets.SingleAxisManipulatorController();
 		}
 
