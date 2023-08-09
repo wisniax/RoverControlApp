@@ -75,7 +75,6 @@ namespace RoverControlApp.Core
 
 				vec = new Vector2(velocity, 0f).Rotated(turn);
 
-
 				//vec = vec.Clamp(new Vector2(-1, -1), new Vector2(1, 1));
 
 				float forcedY = Input.GetAxis("rover_rotate_right", "rover_rotate_left");

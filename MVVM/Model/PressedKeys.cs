@@ -9,9 +9,9 @@ namespace RoverControlApp.MVVM.Model
 	public class PressedKeys
 	{
 		public event EventHandler<Vector4>? OnAbsoluteVectorChanged;
-		public event Func<MqttClasses.RoverControl, Task> OnRoverMovementVector;
-		public event Func<MqttClasses.ManipulatorControl, Task> OnManipulatorMovement;
-		public event Func<bool, Task> OnPadConnectionChanged;
+		public event Func<MqttClasses.RoverControl, Task>? OnRoverMovementVector;
+		public event Func<MqttClasses.ManipulatorControl, Task>? OnManipulatorMovement;
+		public event Func<bool, Task>? OnPadConnectionChanged;
 		public event Func<MqttClasses.ControlMode, Task>? OnControlModeChanged;
 
 		private volatile MqttClasses.ControlMode _controlMode;
@@ -31,7 +31,7 @@ namespace RoverControlApp.MVVM.Model
 			get => Input.GetConnectedJoypads().Count > 0;
 			private set
 			{
-				OnPadConnectionChanged.Invoke(value);
+				OnPadConnectionChanged?.Invoke(value);
 				StopAll();
 			}
 		}
@@ -74,7 +74,7 @@ namespace RoverControlApp.MVVM.Model
 
 		public PressedKeys()
 		{
-			Input.JoyConnectionChanged += (device, connected) => { PadConnected = connected; };
+			Input.JoyConnectionChanged += InputOnJoyConnectionChanged;
 			_lastAbsoluteVector = Vector4.Zero;
 			_roverMovement = new MqttClasses.RoverControl();
 			_manipulatorMovement = new MqttClasses.ManipulatorControl();
@@ -82,6 +82,11 @@ namespace RoverControlApp.MVVM.Model
 				? new RoverControllerPresets.ForzaLikeController()
 				: new RoverControllerPresets.EricSOnController();
 			_roverManipulatorControllerPreset = new RoverControllerPresets.SingleAxisManipulatorController();
+		}
+
+		private void InputOnJoyConnectionChanged(long device, bool connected)
+		{
+			PadConnected = PadConnected; // Lmao Code AESTHETICS ;)
 		}
 
 		public void HandleInputEvent(InputEvent @event)
@@ -143,7 +148,6 @@ namespace RoverControlApp.MVVM.Model
 			else ControlMode++;
 
 			StopAll();
-
 		}
 
 		private void StopAll()
