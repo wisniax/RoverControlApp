@@ -23,12 +23,12 @@ public partial class VelMonitor : Panel
 
 	Dictionary<int,int> idSettings = new()
 	{
-		{ 1, 0 },
-		{ 2, 2 },
-		{ 3, 4 },
-		{ 4, 1 },
-		{ 5, 3 },
-		{ 6, 5 },
+		{ 1, 1 },
+		{ 2, 0 },
+		{ 3, 3 },
+		{ 4, 2 },
+		{ 5, 5 },
+		{ 6, 4 },
 	};
 
 	Label[] headLabs;
