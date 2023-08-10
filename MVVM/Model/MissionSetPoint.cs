@@ -22,7 +22,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private Task OnMessageReceivedAsync(string subtopic, MqttApplicationMessage? content)
 		{
-			if (subtopic != _localSettings?.Mqtt.TopicKmlSetPoint || content == null)
+			if (subtopic != _localSettings?.Mqtt.TopicKmlListOfActiveObj || content == null)
 				return Task.CompletedTask;
 
 			UpdateActiveKmlObjects();
@@ -31,14 +31,16 @@ namespace RoverControlApp.MVVM.Model
 
 		public void UpdateActiveKmlObjects()
 		{
+			string? msg = "";
 			MqttClasses.ActiveKmlObjects? activeKmlObjects;
 			try
-			{
-				activeKmlObjects = JsonSerializer.Deserialize<MqttClasses.ActiveKmlObjects>(_mqttClient?.GetReceivedMessageOnTopicAsString(_localSettings?.Mqtt.TopicKmlSetPoint));
+			{ 
+				msg = _mqttClient?.GetReceivedMessageOnTopicAsString(_localSettings?.Mqtt.TopicKmlListOfActiveObj);
+				activeKmlObjects = JsonSerializer.Deserialize<MqttClasses.ActiveKmlObjects>(msg);
 			}
 			catch (Exception e)
 			{
-				MainViewModel.EventLogger?.LogMessage($"MissionSetPoint: Deserializing failed with error: {e}");
+				MainViewModel.EventLogger?.LogMessage($"MissionSetPoint: Deserializing failed with error: {e} while trying to deserialize message {msg}");
 				return;
 			}
 			if (activeKmlObjects == null) return;

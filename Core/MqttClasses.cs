@@ -108,7 +108,7 @@ namespace RoverControlApp.Core
 		{
 			public List<string> area { get; set; }
 			public List<string> poi { get; set; }
-			public long Timestamp { get; set; }
+			public long? Timestamp { get; set; }
 		}
 	}
 }

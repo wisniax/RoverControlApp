@@ -300,7 +300,7 @@ public partial class MissionControl : Panel
 		string? timestampStr = 
 			MainViewModel.MissionSetPoint?.ActiveKmlObjects?.Timestamp is null 
 			? null 
-			: DateTimeOffset.FromUnixTimeSeconds(MainViewModel.MissionSetPoint!.ActiveKmlObjects!.Timestamp).ToLocalTime().ToString("s");
+			: DateTimeOffset.FromUnixTimeSeconds(MainViewModel.MissionSetPoint!.ActiveKmlObjects!.Timestamp ?? 0).ToLocalTime().ToString("s");
 		SMissionControlPOITimestampLab.Text = $"ActiveKmlObject Timestamp: {timestampStr ?? "N/A"}";
 	}
 }
