@@ -36,7 +36,7 @@ namespace RoverControlApp.Core
 		{
 			while (_history.Count > 0 && DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - _history.Peek().Timestamp > HistoryLength)
 			{
-				_history.Dequeue();
+				_history.Dequeue().Frame.Dispose();
 			}
 		}
 
