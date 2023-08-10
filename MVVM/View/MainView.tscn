@@ -105,6 +105,7 @@ grow_horizontal = 0
 grow_vertical = 1
 
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
+visible = false
 layout_mode = 1
 offset_left = 36.0
 offset_top = 29.0
