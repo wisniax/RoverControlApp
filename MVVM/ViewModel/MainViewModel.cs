@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.ServiceModel;
 using System.Text;
@@ -25,6 +26,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
 		private JoyVibrato? _joyVibrato;
+		private BackCapture _backCapture = new();
 
 		private TextureRect? _imTextureRect;
 		private ImageTexture? _imTexture;
@@ -88,6 +90,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			UIOverlayNode.ControlMode = PressedKeys.ControlMode;
 			//state new mode
 			_joyVibrato?.ControlModeChangedSubscriber(PressedKeys.ControlMode);
+
+			_backCapture.HistoryLength = Settings.Settings.BackCaptureLength;
 		}
 
 		// Called when the node enters the scene tree for the first time.
@@ -136,16 +140,33 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return;
 			PressedKeys?.HandleInputEvent(@event);
+
+			if (@event.IsActionPressed("app_backcapture_save"))
+			{
+				if (_backCapture.SaveHistory())
+					EventLogger?.LogMessage($"BackCapture INFO: Saved capture!");
+				else
+					EventLogger?.LogMessage($"BackCapture ERROR: Save failed!");
+			}
 		}
+
+		
+
+		
 
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
 		{
 			if (_rtspClient is { NewFrameSaved: true })
 			{
+				_backCapture.CleanUpHistory();
+
 				_rtspClient.LockGrabbingFrames();
 				if (_imTexture == null) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
 				else _imTexture.Update(_rtspClient.LatestImage);
+
+				_backCapture.FrameFeed(_rtspClient.LatestImage);
+
 				_rtspClient.UnLockGrabbingFrames();
 				_imTextureRect!.Texture = _imTexture;
 				_rtspClient.NewFrameSaved = false;
