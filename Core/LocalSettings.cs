@@ -82,6 +82,8 @@ public class LocalSettings
 		public string MissionControlPosition { get; set; } = "20;30";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"-?[0-9]+;-?[0-9]+")]
 		public string MissionControlSize { get; set; } = "480;360";
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData:"0;60000;100;f;l", customTooltip: "How long is history [ms]")]
+		public long BackCaptureLength { get; set; } = 15000;
 	}
 
 	[SettingsManagerVisible]
