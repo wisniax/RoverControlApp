@@ -49,7 +49,7 @@ public partial class VelMonitor : Panel
 			var keyOfValue = idSettings.First(kvp => kvp.Value == i).Key;
 
 			headLabs[i].Text = HEAD_STR + keyOfValue.ToString();
-			dataLabs[i].Text = ANGVEL_STR + "N/A\n" + STEERANG_STR + "N/A";
+			dataLabs[i].Text = ANGVEL_STR + "N/A";
 		}
 	}
 
@@ -103,7 +103,7 @@ public partial class VelMonitor : Panel
 			for (int offset = 4; offset < 76; offset += 12)
 			{
 				var wheelData = SingleWheel.FromBytes(&rawdataPtr[offset]);
-				dataLabs[idSettings[(int)wheelData.id]].Text = ANGVEL_STR + $"{wheelData.angleVelocity}\n" + STEERANG_STR + $"{wheelData.steerAngle}";
+				dataLabs[idSettings[(int)wheelData.id]].Text = ANGVEL_STR + $"{wheelData.angleVelocity}";
 			}
 			
 	}

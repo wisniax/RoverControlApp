@@ -3,11 +3,13 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/VelMonitor.cs" id="1_avgmw"]
 
 [node name="VelMonitor" type="Panel"]
+custom_minimum_size = Vector2(340, 200)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 817.0
-offset_bottom = -381.0
+offset_right = 3.0
+offset_bottom = -448.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_avgmw")
@@ -30,7 +32,7 @@ grow_vertical = 2
 layout_mode = 2
 
 [node name="head0Lab" type="Label" parent="DataSection/ColumnA"]
-custom_minimum_size = Vector2(160, 74)
+custom_minimum_size = Vector2(160, 50)
 layout_mode = 2
 text = "ID0"
 
@@ -40,12 +42,10 @@ offset_left = 6.0
 offset_top = 20.0
 offset_right = 51.0
 offset_bottom = 46.0
-text = "A
-B
-"
+text = "A"
 
 [node name="head2Lab" type="Label" parent="DataSection/ColumnA"]
-custom_minimum_size = Vector2(100, 74)
+custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
 text = "ID2
 "
@@ -56,12 +56,10 @@ offset_left = 6.0
 offset_top = 20.0
 offset_right = 51.0
 offset_bottom = 46.0
-text = "A
-B
-"
+text = "A"
 
 [node name="head4Lab" type="Label" parent="DataSection/ColumnA"]
-custom_minimum_size = Vector2(100, 74)
+custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
 text = "ID4
 "
@@ -70,17 +68,15 @@ text = "ID4
 layout_mode = 0
 offset_left = 6.0
 offset_top = 20.0
-offset_right = 51.0
-offset_bottom = 72.0
-text = "A
-B
-"
+offset_right = 17.0
+offset_bottom = 46.0
+text = "A"
 
 [node name="ColumnB" type="VBoxContainer" parent="DataSection"]
 layout_mode = 2
 
 [node name="head1Lab" type="Label" parent="DataSection/ColumnB"]
-custom_minimum_size = Vector2(160, 74)
+custom_minimum_size = Vector2(160, 50)
 layout_mode = 2
 text = "ID1"
 
@@ -90,12 +86,10 @@ offset_left = 6.0
 offset_top = 20.0
 offset_right = 51.0
 offset_bottom = 46.0
-text = "A
-B
-"
+text = "A"
 
 [node name="head3Lab" type="Label" parent="DataSection/ColumnB"]
-custom_minimum_size = Vector2(100, 74)
+custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
 text = "ID3"
 
@@ -105,12 +99,10 @@ offset_left = 6.0
 offset_top = 20.0
 offset_right = 51.0
 offset_bottom = 46.0
-text = "A
-B
-"
+text = "A"
 
 [node name="head5Lab" type="Label" parent="DataSection/ColumnB"]
-custom_minimum_size = Vector2(100, 74)
+custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
 text = "ID5"
 
@@ -120,9 +112,7 @@ offset_left = 6.0
 offset_top = 20.0
 offset_right = 51.0
 offset_bottom = 46.0
-text = "A
-B
-"
+text = "A"
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
