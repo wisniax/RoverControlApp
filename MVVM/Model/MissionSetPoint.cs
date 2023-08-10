@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+using MQTTnet;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.ViewModel;
 
@@ -19,7 +20,7 @@ namespace RoverControlApp.MVVM.Model
 			UpdateActiveKmlObjects();
 		}
 
-		private Task OnMessageReceivedAsync(string subtopic, string? content)
+		private Task OnMessageReceivedAsync(string subtopic, MqttApplicationMessage? content)
 		{
 			if (subtopic != _localSettings?.Mqtt.TopicKmlSetPoint || content == null)
 				return Task.CompletedTask;
@@ -33,7 +34,7 @@ namespace RoverControlApp.MVVM.Model
 			MqttClasses.ActiveKmlObjects? activeKmlObjects;
 			try
 			{
-				activeKmlObjects = JsonSerializer.Deserialize<MqttClasses.ActiveKmlObjects>(_mqttClient?.GetReceivedMessageOnTopic(_localSettings?.Mqtt.TopicKmlSetPoint));
+				activeKmlObjects = JsonSerializer.Deserialize<MqttClasses.ActiveKmlObjects>(_mqttClient?.GetReceivedMessageOnTopicAsString(_localSettings?.Mqtt.TopicKmlSetPoint));
 			}
 			catch (Exception e)
 			{

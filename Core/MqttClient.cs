@@ -16,7 +16,7 @@ namespace RoverControlApp.Core
 	public class MqttClient : IDisposable
 	{
 		public event Func<CommunicationState?, Task>? OnConnectionChanged;
-		public event Func<string, string?, Task>? OnMessageReceivedAsync;
+		public event Func<string, MqttApplicationMessage?, Task>? OnMessageReceivedAsync;
 		public event Action? OnClientStarted;
 
 		private IManagedMqttClient? _managedMqttClient;
@@ -26,7 +26,7 @@ namespace RoverControlApp.Core
 
 		private CommunicationState _connectionState;
 
-		private Dictionary<string, string>? _responses;
+		private Dictionary<string, MqttApplicationMessage?>? _responses;
 
 		//public bool ConnectionState => _managedMqttClient?.ConnectionState ?? false;
 		public CommunicationState ConnectionState
@@ -44,7 +44,7 @@ namespace RoverControlApp.Core
 		{
 			_settingsMqtt = settingsMqtt;
 			_cts = new CancellationTokenSource();
-			_responses = new Dictionary<string, string>();
+			_responses = new Dictionary<string, MqttApplicationMessage?>();
 			_mqttThread = new Thread(ThreadWork) { IsBackground = true, Name = "MqttThread", Priority = ThreadPriority.BelowNormal };
 			_mqttThread.Start();
 		}
@@ -101,12 +101,12 @@ namespace RoverControlApp.Core
 
 		private Task OnApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
 		{
-			MainViewModel.EventLogger?.LogMessage($"MQTT: Messege received on topic {arg.ApplicationMessage.Topic} with: " +
-												  $"{arg.ApplicationMessage.ConvertPayloadToString()}");
+			//MainViewModel.EventLogger?.LogMessage($"MQTT: Message received on topic {arg.ApplicationMessage.Topic} with: " +
+			//									  $"{arg.ApplicationMessage.ConvertPayloadToString()}");
 			if (_responses == null) return Task.CompletedTask;
 
 			var topic = arg.ApplicationMessage.Topic[(_settingsMqtt.TopicMain.Length + 1)..];
-			var payload = arg.ApplicationMessage.ConvertPayloadToString();
+			var payload = arg.ApplicationMessage;
 
 			if (_responses.ContainsKey(topic))
 				_responses[topic] = payload;
@@ -116,10 +116,19 @@ namespace RoverControlApp.Core
 			return Task.CompletedTask;
 		}
 
-		public string? GetReceivedMessageOnTopic(string? subtopic)
+		public string? GetReceivedMessageOnTopicAsString(string? subtopic)
 		{
 			if (subtopic == null) return null;
-			var response = "";
+			// var response = "";
+			MqttApplicationMessage? response = new();
+			var succ = _responses?.TryGetValue(subtopic, out response) ?? false;
+			return succ ? response.ConvertPayloadToString() : null;
+		}
+
+		public MqttApplicationMessage? GetReceivedMessageOnTopic(string? subtopic)
+		{
+			if (subtopic == null) return null;
+			MqttApplicationMessage? response = new();
 			var succ = _responses?.TryGetValue(subtopic, out response) ?? false;
 			return succ ? response : null;
 		}

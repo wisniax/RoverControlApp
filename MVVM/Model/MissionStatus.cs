@@ -47,7 +47,7 @@ namespace RoverControlApp.MVVM.Model
 			SpinWait.SpinUntil(() => _mqttClient?.ConnectionState == CommunicationState.Opened);
 			SpinWait.SpinUntil(() =>
 			{
-				serialized = _mqttClient?.GetReceivedMessageOnTopic(_mqttSettings?.TopicMissionStatus);
+				serialized = _mqttClient?.GetReceivedMessageOnTopicAsString(_mqttSettings?.TopicMissionStatus);
 				return serialized != null;
 			}, 5000);
 
