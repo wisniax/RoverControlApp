@@ -177,6 +177,7 @@ layout_mode = 2
 text = "StopBtn_Temp"
 
 [connection signal="item_selected" from="POIController/SectionAddPoint/HBC/PointTypeOpBtn" to="." method="OnSPoiAddChanged" unbinds=1]
+[connection signal="text_changed" from="POIController/SectionAddPoint/HBC/TargetLEdit" to="." method="OnSPoiAddChanged" unbinds=1]
 [connection signal="text_submitted" from="POIController/SectionAddPoint/HBC/TargetLEdit" to="." method="OnSPoiAddChanged" unbinds=1]
 [connection signal="item_selected" from="POIController/SectionAddPoint/HBC/PhotoTypeOpBtn" to="." method="OnSPoiAddChanged" unbinds=1]
 [connection signal="text_submitted" from="POIController/SectionAddPoint/DescriptionLEdit" to="." method="OnSPoiAddChanged" unbinds=1]
