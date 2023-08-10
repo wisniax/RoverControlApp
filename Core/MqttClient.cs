@@ -116,11 +116,11 @@ namespace RoverControlApp.Core
 			return Task.CompletedTask;
 		}
 
-		public string? GetReceivedMessageOnTopic(string? topic)
+		public string? GetReceivedMessageOnTopic(string? subtopic)
 		{
-			if (topic == null) return null;
+			if (subtopic == null) return null;
 			var response = "";
-			var succ = _responses?.TryGetValue(topic, out response) ?? false;
+			var succ = _responses?.TryGetValue(subtopic, out response) ?? false;
 			return succ ? response : null;
 		}
 
@@ -137,6 +137,8 @@ namespace RoverControlApp.Core
 			await SubscribeToTopic(_settingsMqtt.TopicMissionStatus, MqttQualityOfServiceLevel.ExactlyOnce);
 			await SubscribeToTopic(_settingsMqtt.TopicKmlListOfActiveObj, MqttQualityOfServiceLevel.ExactlyOnce);
 			await SubscribeToTopic(_settingsMqtt.TopicRoverFeedback, MqttQualityOfServiceLevel.ExactlyOnce);
+			await SubscribeToTopic(_settingsMqtt.TopicWheelFeedback);
+			await SubscribeToTopic(_settingsMqtt.TopicEStopStatus);
 		}
 
 		private async Task SubscribeToTopic(string subtopic, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce)
