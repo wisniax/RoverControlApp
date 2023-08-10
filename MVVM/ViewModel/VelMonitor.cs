@@ -93,7 +93,7 @@ public partial class VelMonitor : Panel
 
 	public unsafe void UpdateVisual(byte[] rawdata)
 	{
-		if(rawdata.Length == 76)
+		if(rawdata.Length != 76)
 		{
 			MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: rawdata.Length mismatch! (!= 76)");
 			return;
