@@ -1,15 +1,16 @@
-[gd_scene load_steps=7 format=3 uid="uid://ca7r5g4t6el7s"]
+[gd_scene load_steps=8 format=3 uid="uid://ca7r5g4t6el7s"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
 [ext_resource type="PackedScene" uid="uid://bpm7uiv1e6n8i" path="res://MVVM/View/UIOverlay.tscn" id="3_mtbtk"]
 [ext_resource type="PackedScene" uid="uid://em10imnbie42" path="res://MVVM/View/SettingsManager.tscn" id="4_b20oh"]
 [ext_resource type="PackedScene" uid="uid://crakb6uxv2yt8" path="res://MVVM/View/MissionControl.tscn" id="4_wrhi8"]
+[ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("UIOverlayNode", "ShowSettingsBtn", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("UIOverlayNode", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -19,10 +20,12 @@ grow_vertical = 2
 script = ExtResource("1_84vv0")
 UIOverlayNode = NodePath("UIOverlay")
 ShowSettingsBtn = NodePath("HBoxContainer/ShowSettingsBtn")
+ShowVelMonitor = NodePath("HBoxContainer/ShowVelMonitor")
 ShowMissionControlBrn = NodePath("HBoxContainer/ShowMissionControl")
 SettingsManagerNode = NodePath("SettingsManager")
 MissionControlNode = NodePath("MissionControl")
 FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
+VelMonitor = NodePath("VelMonitor")
 
 [node name="CameraView" type="TextureRect" parent="."]
 layout_mode = 1
@@ -74,6 +77,11 @@ layout_mode = 2
 toggle_mode = true
 text = "MISSION CONTROL"
 
+[node name="ShowVelMonitor" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+text = "VEL MONITOR"
+
 [node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 toggle_mode = true
@@ -91,8 +99,17 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
+[node name="VelMonitor" parent="." instance=ExtResource("6_wqihy")]
+visible = false
+layout_mode = 1
+offset_left = 810.0
+offset_top = 37.0
+offset_right = -7.0
+offset_bottom = -344.0
+
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="RequestedRestart" from="SettingsManager" to="." method="VirtualRestart"]

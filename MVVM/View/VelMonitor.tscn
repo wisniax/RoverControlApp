@@ -1,0 +1,136 @@
+[gd_scene load_steps=2 format=3 uid="uid://de8ong5scxoka"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/VelMonitor.cs" id="1_avgmw"]
+
+[node name="VelMonitor" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 817.0
+offset_bottom = -381.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_avgmw")
+headLabs_NodePaths = [NodePath("DataSection/ColumnA/head0Lab"), NodePath("DataSection/ColumnB/head1Lab"), NodePath("DataSection/ColumnA/head2Lab"), NodePath("DataSection/ColumnB/head3Lab"), NodePath("DataSection/ColumnA/head4Lab"), NodePath("DataSection/ColumnB/head5Lab")]
+dataLabs_NodePaths = [NodePath("DataSection/ColumnA/head0Lab/data0Lab"), NodePath("DataSection/ColumnB/head1Lab/data1Lab"), NodePath("DataSection/ColumnA/head2Lab/data2Lab"), NodePath("DataSection/ColumnB/head3Lab/data3Lab"), NodePath("DataSection/ColumnA/head4Lab/data4Lab"), NodePath("DataSection/ColumnB/head5Lab/data5Lab")]
+
+[node name="DataSection" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 31.0
+offset_right = -9.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColumnA" type="VBoxContainer" parent="DataSection"]
+layout_mode = 2
+
+[node name="head0Lab" type="Label" parent="DataSection/ColumnA"]
+custom_minimum_size = Vector2(160, 74)
+layout_mode = 2
+text = "ID0"
+
+[node name="data0Lab" type="Label" parent="DataSection/ColumnA/head0Lab"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 20.0
+offset_right = 51.0
+offset_bottom = 46.0
+text = "A
+B
+"
+
+[node name="head2Lab" type="Label" parent="DataSection/ColumnA"]
+custom_minimum_size = Vector2(100, 74)
+layout_mode = 2
+text = "ID2
+"
+
+[node name="data2Lab" type="Label" parent="DataSection/ColumnA/head2Lab"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 20.0
+offset_right = 51.0
+offset_bottom = 46.0
+text = "A
+B
+"
+
+[node name="head4Lab" type="Label" parent="DataSection/ColumnA"]
+custom_minimum_size = Vector2(100, 74)
+layout_mode = 2
+text = "ID4
+"
+
+[node name="data4Lab" type="Label" parent="DataSection/ColumnA/head4Lab"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 20.0
+offset_right = 51.0
+offset_bottom = 72.0
+text = "A
+B
+"
+
+[node name="ColumnB" type="VBoxContainer" parent="DataSection"]
+layout_mode = 2
+
+[node name="head1Lab" type="Label" parent="DataSection/ColumnB"]
+custom_minimum_size = Vector2(160, 74)
+layout_mode = 2
+text = "ID1"
+
+[node name="data1Lab" type="Label" parent="DataSection/ColumnB/head1Lab"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 20.0
+offset_right = 51.0
+offset_bottom = 46.0
+text = "A
+B
+"
+
+[node name="head3Lab" type="Label" parent="DataSection/ColumnB"]
+custom_minimum_size = Vector2(100, 74)
+layout_mode = 2
+text = "ID3"
+
+[node name="data3Lab" type="Label" parent="DataSection/ColumnB/head3Lab"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 20.0
+offset_right = 51.0
+offset_bottom = 46.0
+text = "A
+B
+"
+
+[node name="head5Lab" type="Label" parent="DataSection/ColumnB"]
+custom_minimum_size = Vector2(100, 74)
+layout_mode = 2
+text = "ID5"
+
+[node name="data5Lab" type="Label" parent="DataSection/ColumnB/head5Lab"]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 20.0
+offset_right = 51.0
+offset_bottom = 46.0
+text = "A
+B
+"
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 23.0
+grow_horizontal = 2
+text = "VelMonitor"

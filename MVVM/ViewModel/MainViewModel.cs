@@ -35,7 +35,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private UIOverlay UIOverlayNode = null!;
 
 		[Export]
-		private Button ShowSettingsBtn = null!, ShowMissionControlBrn = null!;
+		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!;
 		[Export]
 		private SettingsManager SettingsManagerNode = null!;
 		[Export]
@@ -43,6 +43,9 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		[Export]
 		private RichTextLabel FancyDebugViewRLab = null!;
+
+		[Export]
+		private VelMonitor VelMonitor = null!;
 
 		private void StartUp()
 		{
@@ -92,6 +95,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			_joyVibrato?.ControlModeChangedSubscriber(PressedKeys.ControlMode);
 
 			_backCapture.HistoryLength = Settings.Settings.BackCaptureLength;
+
+			MqttClient.OnMessageReceivedAsync += VelMonitor.MqttSubscriber;
 		}
 
 		// Called when the node enters the scene tree for the first time.
@@ -107,7 +112,8 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void VirtualRestart()
 		{
-			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = false;
+			MqttClient!.OnMessageReceivedAsync -= VelMonitor.MqttSubscriber;
+			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 			if (_ptzClient != null)
 			{
 				if (PressedKeys != null) PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
