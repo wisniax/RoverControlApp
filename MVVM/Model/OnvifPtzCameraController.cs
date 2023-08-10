@@ -234,7 +234,7 @@ namespace RoverControlApp.MVVM.Model
 		private bool UpdateMotion(Vector4 old, Vector4 @new, out Vector4 speed)
 		{
 			speed = Vector4.Zero;
-			if (@new.IsEqualApprox(old) && ((_camera?.LastUse + MaxSpanEveryCom > System.DateTime.Now)))
+			if (@new.IsEqualApprox(old) && ((_lastComTimeStamp + MaxSpanEveryCom > System.DateTime.Now)))
 			{
 				Thread.Sleep(100);
 				return false;

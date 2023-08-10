@@ -198,9 +198,10 @@ namespace RoverControlApp.MVVM.ViewModel
 			switch (RoverCommunication?.RoverStatus?.ControlMode)
 			{
 				case MqttClasses.ControlMode.Rover:
-					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {PressedKeys?.RoverMovement.XVelAxis:F3}, " +
+					var vecc = new Vector2((float)PressedKeys.RoverMovement.XVelAxis, (float)PressedKeys.RoverMovement.ZRotAxis);
+					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {vecc.Length():F3}, " +
 												  $"Angle: " +
-												  $"{Mathf.Atan2(PressedKeys?.RoverMovement.ZRotAxis ?? 0f, PressedKeys?.RoverMovement.XVelAxis ?? 0f) * 180 / Mathf.Pi:F1}\n");
+												  $"{vecc.Angle() * 180 / Mathf.Pi:F1}\n");
 					break;
 				case MqttClasses.ControlMode.Manipulator:
 					FancyDebugViewRLab.AppendText($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys?.ManipulatorMovement)}\n");

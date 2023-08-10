@@ -53,7 +53,7 @@ namespace RoverControlApp.Core
 
 		public class EricSOnController : IRoverDriveController
 		{
-			private float _turnAngle = 89;
+			private const float TURN_ANGLE = 89;
 			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl)
 			{
 				roverControl = new MqttClasses.RoverControl();
@@ -71,11 +71,13 @@ namespace RoverControlApp.Core
 
 				Vector2 vec = new Vector2(velocity, turn);
 
-				turn *= _turnAngle * Mathf.Pi / 180;
+				turn *= TURN_ANGLE * Mathf.Pi / 180;
 
 				vec = new Vector2(velocity, 0f).Rotated(turn);
 
-				//vec = vec.Clamp(new Vector2(-1, -1), new Vector2(1, 1));
+				var maxVal = -0.0069f * Mathf.Abs(turn * 180 / Mathf.Pi) + 1;
+
+				vec = vec.LimitLength(maxVal);
 
 				float forcedY = Input.GetAxis("rover_rotate_right", "rover_rotate_left");
 				if (!Mathf.IsEqualApprox(forcedY, 0f, 0.05f)) vec.Y = forcedY / 4f;

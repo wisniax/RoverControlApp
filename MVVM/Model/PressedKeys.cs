@@ -26,15 +26,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		public bool PadConnected
-		{
-			get => Input.GetConnectedJoypads().Count > 0;
-			private set
-			{
-				OnPadConnectionChanged?.Invoke(value);
-				StopAll();
-			}
-		}
+		public bool PadConnected => Input.GetConnectedJoypads().Count > 0;
 
 		private Vector4 _lastAbsoluteVector;
 		public Vector4 LastAbsoluteVector
@@ -86,7 +78,10 @@ namespace RoverControlApp.MVVM.Model
 
 		private void InputOnJoyConnectionChanged(long device, bool connected)
 		{
-			PadConnected = PadConnected; // Lmao Code AESTHETICS ;)
+			var status = connected ? "connected" : "disconnected";
+			MainViewModel.EventLogger?.LogMessage($"PressedKeys: Pad {status}");
+			OnPadConnectionChanged?.Invoke(PadConnected);
+			StopAll();
 		}
 
 		public void HandleInputEvent(InputEvent @event)
@@ -152,6 +147,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private void StopAll()
 		{
+			MainViewModel.EventLogger?.LogMessage("PressedKeys: Stopping all movement");
 			RoverMovement = new MqttClasses.RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
 			ManipulatorMovement = new MqttClasses.ManipulatorControl();
 			LastAbsoluteVector = Vector4.Zero;
