@@ -182,7 +182,7 @@ text = "StopBtn_Temp"
 [connection signal="item_selected" from="POIController/SectionAddPoint/HBC/PhotoTypeOpBtn" to="." method="OnSPoiAddChanged" unbinds=1]
 [connection signal="text_submitted" from="POIController/SectionAddPoint/DescriptionLEdit" to="." method="OnSPoiAddChanged" unbinds=1]
 [connection signal="pressed" from="POIController/SectionAddPoint/ConfirmBtn" to="." method="OnSPoiAddConfirmPressed"]
-[connection signal="item_selected" from="POIController/SectionRemovePoint/HBC/PointTypeOpBtn" to="." method="OnSPoiRemoveTypeChanged" unbinds=1]
+[connection signal="item_selected" from="POIController/SectionRemovePoint/HBC/PointTypeOpBtn" to="." method="OnSPoiRemoveTypeChanged"]
 [connection signal="item_selected" from="POIController/SectionRemovePoint/HBC/PointTypeOpBtn" to="." method="OnSPoiRemoveChanged" unbinds=1]
 [connection signal="item_selected" from="POIController/SectionRemovePoint/HBC/TargetOpBtn" to="." method="OnSPoiRemoveChanged" unbinds=1]
 [connection signal="pressed" from="POIController/SectionRemovePoint/ConfirmBtn" to="." method="OnSPoiRemoveConfirmPressed"]
