@@ -1,16 +1,19 @@
-[gd_scene load_steps=8 format=3 uid="uid://ca7r5g4t6el7s"]
+[gd_scene load_steps=11 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
-[ext_resource type="PackedScene" uid="uid://bpm7uiv1e6n8i" path="res://MVVM/View/UIOverlay.tscn" id="3_mtbtk"]
+[ext_resource type="PackedScene" uid="uid://bpm7uiv1e6n8i" path="res://MVVM/View/UIOverlayTemplate.tscn" id="3_mtbtk"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/Grzyb_UIOverlay.cs" id="4_2nwr4"]
 [ext_resource type="PackedScene" uid="uid://em10imnbie42" path="res://MVVM/View/SettingsManager.tscn" id="4_b20oh"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/RoverMode_UIOverlay.cs" id="4_bwker"]
 [ext_resource type="PackedScene" uid="uid://crakb6uxv2yt8" path="res://MVVM/View/MissionControl.tscn" id="4_wrhi8"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/MissionStatus_UIOverlay.cs" id="6_4tmru"]
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("UIOverlayNode", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -18,7 +21,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_84vv0")
-UIOverlayNode = NodePath("UIOverlay")
+RoverModeUIDis = NodePath("RoverModeUIDis")
+GrzybUIDis = NodePath("GrzybUIDis")
+MissionStatusUIDis = NodePath("MissonStatusUIDis")
 ShowSettingsBtn = NodePath("HBoxContainer/ShowSettingsBtn")
 ShowVelMonitor = NodePath("HBoxContainer/ShowVelMonitor")
 ShowMissionControlBrn = NodePath("HBoxContainer/ShowMissionControl")
@@ -57,8 +62,60 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="UIOverlay" parent="." instance=ExtResource("3_mtbtk")]
+[node name="GrzybUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -378.0
+offset_top = 4.0
+offset_right = -378.0
+offset_bottom = 4.0
+grow_horizontal = 0
+script = ExtResource("4_2nwr4")
+Animator = NodePath("RoverMode/AnimationPlayer")
+BackgroundNodePath = NodePath("RoverMode/Background")
+LabelNodePath = NodePath("RoverMode/Label")
+
+[node name="RoverMode" parent="GrzybUIDis" index="0"]
+custom_minimum_size = Vector2(170, 26)
+offset_left = 13.0
+offset_right = 183.0
+
+[node name="RoverModeUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -181.0
+offset_top = 4.0
+offset_right = -181.0
+offset_bottom = 4.0
+grow_horizontal = 0
+script = ExtResource("4_bwker")
+Animator = NodePath("RoverMode/AnimationPlayer")
+BackgroundNodePath = NodePath("RoverMode/Background")
+LabelNodePath = NodePath("RoverMode/Label")
+
+[node name="RoverMode" parent="RoverModeUIDis" index="0"]
+custom_minimum_size = Vector2(180, 26)
+offset_left = -2.0
+offset_right = 178.0
+
+[node name="MissonStatusUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
+layout_mode = 1
+offset_left = 8.0
+offset_top = 4.0
+offset_right = 8.0
+offset_bottom = 4.0
+script = ExtResource("6_4tmru")
+Animator = NodePath("RoverMode/AnimationPlayer")
+BackgroundNodePath = NodePath("RoverMode/Background")
+LabelNodePath = NodePath("RoverMode/Label")
+
+[node name="RoverMode" parent="MissonStatusUIDis" index="0"]
+custom_minimum_size = Vector2(210, 26)
+offset_right = 210.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -132,3 +189,7 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="RequestedRestart" from="SettingsManager" to="." method="VirtualRestart"]
+
+[editable path="GrzybUIDis"]
+[editable path="RoverModeUIDis"]
+[editable path="MissonStatusUIDis"]

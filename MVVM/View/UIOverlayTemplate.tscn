@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://bpm7uiv1e6n8i"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_w533b"]
+
+[node name="UIOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="RoverMode" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(128, 26)
+layout_mode = 1
+offset_right = 128.0
+offset_bottom = 26.0
+
+[node name="Background" type="ColorRect" parent="RoverMode"]
+layout_mode = 2
+color = Color(0.501961, 0.501961, 0.501961, 1)
+
+[node name="Label" type="Label" parent="RoverMode"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "VAL B"
+horizontal_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="RoverMode"]
+root_node = NodePath("../..")
+reset_on_save = false
+libraries = {
+"UIOverlay": SubResource("AnimationLibrary_w533b")
+}

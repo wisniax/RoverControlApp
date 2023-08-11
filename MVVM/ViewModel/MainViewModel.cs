@@ -32,7 +32,11 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ImageTexture? _imTexture;
 
 		[Export]
-		private UIOverlay UIOverlayNode = null!;
+		private RoverMode_UIOverlay RoverModeUIDis = null!;
+		[Export]
+		private Grzyb_UIOverlay GrzybUIDis = null!;
+		[Export]
+		private MissionStatus_UIOverlay MissionStatusUIDis = null!;
 
 		[Export]
 		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!;
@@ -82,7 +86,6 @@ namespace RoverControlApp.MVVM.ViewModel
 			_imTextureRect = GetNode<TextureRect>("CameraView");
 
 			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
-			PressedKeys.OnControlModeChanged += UIOverlayNode.ControlModeChangedSubscriber;
 			if (_joyVibrato is not null) PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 
 			SettingsManagerNode.Target = Settings;
@@ -90,13 +93,21 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionControlNode.LoadSizeAndPos();
 			MissionControlNode.SMissionControlVisualUpdate();
 
-			UIOverlayNode.ControlMode = PressedKeys.ControlMode;
+			MqttClient.OnMessageReceivedAsync += VelMonitor.MqttSubscriber;
+
+			//UIDis
+			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
+			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
+			GrzybUIDis.MqttSubscriber(Settings.Settings.Mqtt.TopicEStopStatus, MqttClient.GetReceivedMessageOnTopic(Settings.Settings.Mqtt.TopicEStopStatus));
+			MqttClient.OnMessageReceivedAsync += GrzybUIDis.MqttSubscriber;
+			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
+
 			//state new mode
 			_joyVibrato?.ControlModeChangedSubscriber(PressedKeys.ControlMode);
 
 			_backCapture.HistoryLength = Settings.Settings.BackCaptureLength;
 
-			MqttClient.OnMessageReceivedAsync += VelMonitor.MqttSubscriber;
+			
 		}
 
 		// Called when the node enters the scene tree for the first time.
@@ -112,14 +123,18 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void VirtualRestart()
 		{
+			//UIDis
+			MqttClient.OnMessageReceivedAsync -= GrzybUIDis.MqttSubscriber;
+			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MqttClient!.OnMessageReceivedAsync -= VelMonitor.MqttSubscriber;
+
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 			if (_ptzClient != null)
 			{
 				if (PressedKeys != null) PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
 				_ptzClient?.Dispose();
 			}
-			PressedKeys.OnControlModeChanged -= UIOverlayNode!.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged -= RoverModeUIDis!.ControlModeChangedSubscriber;
 			_ptzClient = null;
 			_rtspClient?.Dispose();
 			_rtspClient = null;
@@ -178,6 +193,8 @@ namespace RoverControlApp.MVVM.ViewModel
 				_rtspClient.NewFrameSaved = false;
 			}
 			UpdateLabel();
+
+			GrzybUIDis.MqttSubscriber("", null);
 		}
 
 		private Color GetColorForCommunicationState(CommunicationState? state)

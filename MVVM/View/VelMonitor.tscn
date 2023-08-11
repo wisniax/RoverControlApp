@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://de8ong5scxoka"]
+[gd_scene load_steps=3 format=3 uid="uid://de8ong5scxoka"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/VelMonitor.cs" id="1_avgmw"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/SliderController.cs" id="2_hxp73"]
 
 [node name="VelMonitor" type="Panel"]
 custom_minimum_size = Vector2(340, 200)
@@ -43,6 +44,20 @@ offset_top = 20.0
 offset_right = 51.0
 offset_bottom = 46.0
 text = "A"
+
+[node name="HSlider" type="HSlider" parent="DataSection/ColumnA/head0Lab/data0Lab"]
+layout_mode = 2
+offset_top = 20.0
+offset_right = 60.0
+offset_bottom = 36.0
+editable = false
+scrollable = false
+script = ExtResource("2_hxp73")
+ForegroundColor = Color(0.803922, 0, 0, 1)
+BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
+MaxValSetter = 5.0
+MinValSetter = -5.0
+ValSetter = -2.0
 
 [node name="head2Lab" type="Label" parent="DataSection/ColumnA"]
 custom_minimum_size = Vector2(100, 50)
