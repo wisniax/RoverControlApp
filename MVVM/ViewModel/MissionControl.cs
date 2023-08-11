@@ -203,7 +203,7 @@ public partial class MissionControl : Panel
 				break;
 		}
 
-		var request = MissionSetPoint.GenerateNewPointRequest((MqttClasses.PointType)SPoiRemoveTypeOpBtn.Selected, targetStr, string.Empty, MqttClasses.PhotoType.None);
+		var request = MissionSetPoint.GenerateNewPointRequest((MqttClasses.PointType)SPoiRemoveTypeOpBtn.GetSelectedId(), targetStr, string.Empty, MqttClasses.PhotoType.None);
 
 		PendingSend = true;
 		await MainViewModel.MissionSetPoint.SendNewPointRequest(request);
