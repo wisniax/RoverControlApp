@@ -148,6 +148,7 @@ grow_horizontal = 2
 grow_vertical = 0
 
 [node name="SectionPOIStatus" type="HBoxContainer" parent="SectionMissionControl"]
+visible = false
 layout_mode = 2
 
 [node name="TimestampLab" type="Label" parent="SectionMissionControl/SectionPOIStatus"]
