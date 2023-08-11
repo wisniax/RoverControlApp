@@ -12,14 +12,30 @@ public partial class VelMonitor : Panel
 {
 	const int ITEMS = 6;
 
-	const string HEAD_STR = "ID ";
-	const string ANGVEL_STR = "AngVel: ";
-	const string STEERANG_STR = "SteerAng: ";
+	[ExportGroup("Settings")]
+	[Export]
+	string headStr = "ID ";
+	[ExportGroup("Settings")]
+	[Export]
+	string angvelStr = "AngVel: ";
+	 string steerangStr = "SteerAng: ";
 
+	[ExportGroup("Settings")]
+	[Export]
+	float SliderMaxVal = 5;
+	[ExportGroup("Settings")]
+	[Export]
+	float SliderMinVal = -5;
+
+	[ExportGroup("NodePaths")]
 	[Export]
 	NodePath[] headLabs_NodePaths = new NodePath[6];
+	[ExportGroup("NodePaths")]
 	[Export]
 	NodePath[] dataLabs_NodePaths = new NodePath[6];
+	[ExportGroup("NodePaths")]
+	[Export]
+	NodePath[] sliders_NodePaths = new NodePath[6];
 
 	Dictionary<int,int> idSettings = new()
 	{
@@ -33,6 +49,7 @@ public partial class VelMonitor : Panel
 
 	Label[] headLabs;
 	Label[] dataLabs;
+	SliderController[] sliderControllers;
 
 	public override void _Ready()
 	{
@@ -41,6 +58,7 @@ public partial class VelMonitor : Panel
 
 		headLabs = new Label[ITEMS];
 		dataLabs = new Label[ITEMS];
+		sliderControllers = new SliderController[ITEMS];
 		for (int i = 0;i< ITEMS; i++)
 		{
 			headLabs[i] = GetNode<Label>(headLabs_NodePaths[i]);
@@ -48,8 +66,12 @@ public partial class VelMonitor : Panel
 
 			var keyOfValue = idSettings.First(kvp => kvp.Value == i).Key;
 
-			headLabs[i].Text = HEAD_STR + keyOfValue.ToString();
-			dataLabs[i].Text = ANGVEL_STR + "N/A";
+			headLabs[i].Text = headStr + keyOfValue.ToString();
+			dataLabs[i].Text = angvelStr + "N/A";
+
+			sliderControllers[i] = GetNode<SliderController>(sliders_NodePaths[i]);
+			sliderControllers[i].InputMinValue(SliderMinVal);
+			sliderControllers[i].InputMaxValue(SliderMaxVal);
 		}
 	}
 
@@ -103,7 +125,9 @@ public partial class VelMonitor : Panel
 			for (int offset = 4; offset < 76; offset += 12)
 			{
 				var wheelData = SingleWheel.FromBytes(&rawdataPtr[offset]);
-				dataLabs[idSettings[(int)wheelData.id]].Text = ANGVEL_STR + $"{wheelData.angleVelocity}";
+				var localIdx = idSettings[(int)wheelData.id];
+				dataLabs[localIdx].Text = angvelStr + $"{wheelData.angleVelocity}";
+				sliderControllers[localIdx].InputValue(wheelData.angleVelocity);
 			}
 			
 	}

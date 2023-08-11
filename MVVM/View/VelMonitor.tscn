@@ -16,6 +16,7 @@ grow_vertical = 2
 script = ExtResource("1_avgmw")
 headLabs_NodePaths = [NodePath("DataSection/ColumnA/head0Lab"), NodePath("DataSection/ColumnB/head1Lab"), NodePath("DataSection/ColumnA/head2Lab"), NodePath("DataSection/ColumnB/head3Lab"), NodePath("DataSection/ColumnA/head4Lab"), NodePath("DataSection/ColumnB/head5Lab")]
 dataLabs_NodePaths = [NodePath("DataSection/ColumnA/head0Lab/data0Lab"), NodePath("DataSection/ColumnB/head1Lab/data1Lab"), NodePath("DataSection/ColumnA/head2Lab/data2Lab"), NodePath("DataSection/ColumnB/head3Lab/data3Lab"), NodePath("DataSection/ColumnA/head4Lab/data4Lab"), NodePath("DataSection/ColumnB/head5Lab/data5Lab")]
+sliders_NodePaths = [NodePath("DataSection/ColumnA/head0Lab/data0Lab/slider0"), NodePath("DataSection/ColumnB/head1Lab/data1Lab/slider1"), NodePath("DataSection/ColumnA/head2Lab/data2Lab/slider2"), NodePath("DataSection/ColumnB/head3Lab/data3Lab/slider3"), NodePath("DataSection/ColumnA/head4Lab/data4Lab/slider4"), NodePath("DataSection/ColumnB/head5Lab/data5Lab/slider5")]
 
 [node name="DataSection" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -45,19 +46,18 @@ offset_right = 51.0
 offset_bottom = 46.0
 text = "A"
 
-[node name="HSlider" type="HSlider" parent="DataSection/ColumnA/head0Lab/data0Lab"]
+[node name="slider0" type="HSlider" parent="DataSection/ColumnA/head0Lab/data0Lab"]
 layout_mode = 2
 offset_top = 20.0
-offset_right = 60.0
+offset_right = 140.0
 offset_bottom = 36.0
 editable = false
 scrollable = false
+tick_count = 3
+ticks_on_borders = true
 script = ExtResource("2_hxp73")
 ForegroundColor = Color(0.803922, 0, 0, 1)
 BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
-MaxValSetter = 5.0
-MinValSetter = -5.0
-ValSetter = -2.0
 
 [node name="head2Lab" type="Label" parent="DataSection/ColumnA"]
 custom_minimum_size = Vector2(100, 50)
@@ -73,6 +73,19 @@ offset_right = 51.0
 offset_bottom = 46.0
 text = "A"
 
+[node name="slider2" type="HSlider" parent="DataSection/ColumnA/head2Lab/data2Lab"]
+layout_mode = 0
+offset_top = 20.0
+offset_right = 140.0
+offset_bottom = 36.0
+editable = false
+scrollable = false
+tick_count = 3
+ticks_on_borders = true
+script = ExtResource("2_hxp73")
+ForegroundColor = Color(0.803922, 0, 0, 1)
+BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
+
 [node name="head4Lab" type="Label" parent="DataSection/ColumnA"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
@@ -86,6 +99,19 @@ offset_top = 20.0
 offset_right = 17.0
 offset_bottom = 46.0
 text = "A"
+
+[node name="slider4" type="HSlider" parent="DataSection/ColumnA/head4Lab/data4Lab"]
+layout_mode = 0
+offset_top = 20.0
+offset_right = 140.0
+offset_bottom = 36.0
+editable = false
+scrollable = false
+tick_count = 3
+ticks_on_borders = true
+script = ExtResource("2_hxp73")
+ForegroundColor = Color(0.803922, 0, 0, 1)
+BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
 
 [node name="ColumnB" type="VBoxContainer" parent="DataSection"]
 layout_mode = 2
@@ -103,6 +129,19 @@ offset_right = 51.0
 offset_bottom = 46.0
 text = "A"
 
+[node name="slider1" type="HSlider" parent="DataSection/ColumnB/head1Lab/data1Lab"]
+layout_mode = 0
+offset_top = 20.0
+offset_right = 140.0
+offset_bottom = 36.0
+editable = false
+scrollable = false
+tick_count = 3
+ticks_on_borders = true
+script = ExtResource("2_hxp73")
+ForegroundColor = Color(0.803922, 0, 0, 1)
+BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
+
 [node name="head3Lab" type="Label" parent="DataSection/ColumnB"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
@@ -116,6 +155,19 @@ offset_right = 51.0
 offset_bottom = 46.0
 text = "A"
 
+[node name="slider3" type="HSlider" parent="DataSection/ColumnB/head3Lab/data3Lab"]
+layout_mode = 0
+offset_top = 20.0
+offset_right = 140.0
+offset_bottom = 36.0
+editable = false
+scrollable = false
+tick_count = 3
+ticks_on_borders = true
+script = ExtResource("2_hxp73")
+ForegroundColor = Color(0.803922, 0, 0, 1)
+BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
+
 [node name="head5Lab" type="Label" parent="DataSection/ColumnB"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
@@ -128,6 +180,19 @@ offset_top = 20.0
 offset_right = 51.0
 offset_bottom = 46.0
 text = "A"
+
+[node name="slider5" type="HSlider" parent="DataSection/ColumnB/head5Lab/data5Lab"]
+layout_mode = 0
+offset_top = 20.0
+offset_right = 140.0
+offset_bottom = 36.0
+editable = false
+scrollable = false
+tick_count = 3
+ticks_on_borders = true
+script = ExtResource("2_hxp73")
+ForegroundColor = Color(0.803922, 0, 0, 1)
+BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
