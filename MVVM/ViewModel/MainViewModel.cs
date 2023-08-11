@@ -310,5 +310,19 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			return true;
 		}
+
+
+		private void OnBackCapture()
+		{
+			if (_backCapture.SaveHistory())
+				EventLogger?.LogMessage($"BackCapture INFO: Saved capture!");
+			else
+				EventLogger?.LogMessage($"BackCapture ERROR: Save failed!");
+		}
+
+		private void OnRTSPCapture()
+		{
+			CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
+		}
 	}
 }
