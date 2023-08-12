@@ -62,6 +62,7 @@ namespace RoverControlApp.MVVM.Model
 
 			if (_mqttClient != null)
 				_mqttClient.OnConnectionChanged += OnMqttConnectionChanged;
+			else MainViewModel.EventLogger?.LogMessage("RoverCommunication: Mqtt was null");
 
 			if (_mqttClient?.ConnectionState == CommunicationState.Opened)
 				RoverCommunication_OnControlStatusChanged(GenerateRoverStatus).Wait(250);
