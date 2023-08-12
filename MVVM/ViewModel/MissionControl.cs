@@ -253,7 +253,7 @@ public partial class MissionControl : Panel
 
 	public Task MissionStatusUpdatedSubscriber(MqttClasses.RoverMissionStatus? status)
 	{
-		SMissionControlVisualUpdate();
+		CallDeferred(MethodName.SMissionControlVisualUpdate);
 		return Task.CompletedTask;
 	}
 

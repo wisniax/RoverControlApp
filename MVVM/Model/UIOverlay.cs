@@ -63,7 +63,7 @@ public abstract partial class UIOverlay : Control
 		ControlMode = 0;
 	}
 
-	public void SetupAnimSwap(int from, int to)
+	private void SetupAnimSwap(int from, int to)
 	{
 		int track, key;
 		var anim = Animator.GetAnimation("local/swap");
@@ -98,17 +98,22 @@ public abstract partial class UIOverlay : Control
 		get => _controlMode;
 		set
 		{
-			SetupAnimSwap(_controlMode, value);
-			if (Animator.IsPlaying() || DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - lastChangeTimestamp < 1000)
-			{
-				Animator.Play("local/swap");
-				Animator.Seek(1);
-			}
-			else
-				Animator.Play("local/swap");
-			lastChangeTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+			CallDeferred(MethodName.OnSetControlMode, _controlMode, value);
 			_controlMode = value;
 		}
+	}
+
+	private void OnSetControlMode(int old, int @new)
+	{
+		SetupAnimSwap(old, @new);
+		if (Animator.IsPlaying() || DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - lastChangeTimestamp < 1000)
+		{
+			Animator.Play("local/swap");
+			Animator.Seek(1);
+		}
+		else
+			Animator.Play("local/swap");
+		lastChangeTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 	}
 		
 	public struct Setting
