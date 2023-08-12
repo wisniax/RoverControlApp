@@ -6,6 +6,7 @@ using RoverControlApp.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.ViewModel;
 public partial class VelMonitor : Panel
@@ -18,7 +19,7 @@ public partial class VelMonitor : Panel
 	[ExportGroup("Settings")]
 	[Export]
 	string angvelStr = "AngVel: ";
-	 string steerangStr = "SteerAng: ";
+	string steerangStr = "SteerAng: ";
 
 	[ExportGroup("Settings")]
 	[Export]
@@ -37,7 +38,7 @@ public partial class VelMonitor : Panel
 	[Export]
 	NodePath[] sliders_NodePaths = new NodePath[6];
 
-	Dictionary<int,int> idSettings = new()
+	Dictionary<int, int> idSettings = new()
 	{
 		{ 1, 1 },
 		{ 2, 0 },
@@ -51,15 +52,20 @@ public partial class VelMonitor : Panel
 	Label[] dataLabs;
 	SliderController[] sliderControllers;
 
+	private bool LenCheck()
+	{
+		return headLabs_NodePaths.Length == 6 && dataLabs_NodePaths.Length == 6 && sliders_NodePaths.Length == 6 && idSettings.Count == 6;
+	}
+
 	public override void _Ready()
 	{
-		if (headLabs_NodePaths.Length != ITEMS || dataLabs_NodePaths.Length != ITEMS || idSettings.Count != ITEMS)
+		if (!LenCheck())
 			throw new Exception("Array lenght missmath!");
 
 		headLabs = new Label[ITEMS];
 		dataLabs = new Label[ITEMS];
 		sliderControllers = new SliderController[ITEMS];
-		for (int i = 0;i< ITEMS; i++)
+		for (int i = 0; i < ITEMS; i++)
 		{
 			headLabs[i] = GetNode<Label>(headLabs_NodePaths[i]);
 			dataLabs[i] = GetNode<Label>(dataLabs_NodePaths[i]);
@@ -94,41 +100,59 @@ public partial class VelMonitor : Panel
 			byte* angleVelocityPtr = &rawdata[4];
 			byte* steerAnglePtr = &rawdata[8];
 
-			return new SingleWheel( *(UInt32*)idPtr, *(float*)angleVelocityPtr, *(float*)steerAnglePtr);
+			return new SingleWheel(*(UInt32*)idPtr, *(float*)angleVelocityPtr, *(float*)steerAnglePtr);
 		}
 	}
 
-	public System.Threading.Tasks.Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
+	public Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
 	{
-		if(MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback is null || subTopic != MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback)
-			return System.Threading.Tasks.Task.CompletedTask;
 
-		if(msg is null || msg.PayloadSegment.Count == 0)
+		if (MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback is null || subTopic != MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback)
+			return Task.CompletedTask;
+
+		if (msg is null || msg.PayloadSegment.Count == 0)
 		{
 			MainViewModel.EventLogger?.LogMessage($"VelMonitor WARNING: Empty payload!");
-			return System.Threading.Tasks.Task.CompletedTask;
+			return Task.CompletedTask;
 		}
 
-		UpdateVisual(msg!.PayloadSegment.Array!);
-		return System.Threading.Tasks.Task.CompletedTask;
+		//base64
+		//var ka = System.Text.Encoding.ASCII.GetString(msg.PayloadSegment);
+		//var iat = System.Convert.FromBase64String(ka);
+
+		try
+		{
+			UpdateVisual(iat);
+		}
+		catch (Exception e)
+		{
+			MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: Well.. Something went wrong");
+			MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: {e.Message}");
+		}
+		return Task.CompletedTask;
 	}
 
-	public unsafe void UpdateVisual(byte[] rawdata)
+	public unsafe void UpdateVisual(byte[]? rawdata)
 	{
-		if(rawdata.Length != 76)
+		if (rawdata is null)
+			throw new ArgumentNullException("rawdata is null");
+
+		if (rawdata.Length != 76)
 		{
-			MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: rawdata.Length mismatch! (!= 76)");
-			return;
+			throw new ArgumentException("rawdata.Length mismatch (!= 76)");
 		}
 
-		fixed(byte* rawdataPtr = &rawdata[0])
+		if (!LenCheck())
+			throw new Exception("Internal array lenght missmath!");
+
+		fixed (byte* rawdataPtr = &rawdata[0])
 			for (int offset = 4; offset < 76; offset += 12)
 			{
 				var wheelData = SingleWheel.FromBytes(&rawdataPtr[offset]);
+
 				var localIdx = idSettings[(int)wheelData.id];
 				dataLabs[localIdx].Text = angvelStr + $"{wheelData.angleVelocity}";
 				sliderControllers[localIdx].InputValue(wheelData.angleVelocity);
 			}
-			
 	}
 }
