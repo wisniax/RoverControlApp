@@ -117,12 +117,12 @@ public partial class VelMonitor : Panel
 		}
 
 		//base64
-		var ka = System.Text.Encoding.ASCII.GetString(msg.PayloadSegment);
-		var iat = System.Convert.FromBase64String(ka);
+		//var ka = System.Text.Encoding.ASCII.GetString(msg.PayloadSegment);
+		//var iat = System.Convert.FromBase64String(ka);
 
 		try
 		{
-			CallDeferred(MethodName.UpdateVisual, iat);
+			CallDeferred(MethodName.UpdateVisual, msg.PayloadSegment.Array);
 		}
 		catch (Exception e)
 		{
