@@ -122,7 +122,7 @@ public partial class VelMonitor : Panel
 
 		try
 		{
-			UpdateVisual(iat);
+			UpdateVisual(msg.PayloadSegment.Array);
 		}
 		catch (Exception e)
 		{
