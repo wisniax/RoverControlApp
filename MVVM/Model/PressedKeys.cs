@@ -11,6 +11,7 @@ namespace RoverControlApp.MVVM.Model
 		public event EventHandler<Vector4>? OnAbsoluteVectorChanged;
 		public event Func<MqttClasses.RoverControl, Task>? OnRoverMovementVector;
 		public event Func<MqttClasses.ManipulatorControl, Task>? OnManipulatorMovement;
+		public event Func<MqttClasses.RoverContainer, Task>? OnContainerMovement;
 		public event Func<bool, Task>? OnPadConnectionChanged;
 		public event Func<MqttClasses.ControlMode, Task>? OnControlModeChanged;
 
@@ -61,6 +62,17 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
+		private MqttClasses.RoverContainer _containerMovement;
+		public MqttClasses.RoverContainer ContainerMovement
+		{
+			get => _containerMovement;
+			private set
+			{
+				_containerMovement = value;
+				OnContainerMovement?.Invoke(value);
+			}
+		}
+
 		private RoverControllerPresets.IRoverDriveController _roverDriveControllerPreset;
 		private RoverControllerPresets.IRoverManipulatorController _roverManipulatorControllerPreset;
 
@@ -90,6 +102,15 @@ namespace RoverControlApp.MVVM.Model
 			HandleCameraInputEvent();
 			HandleMovementInputEvent();
 			HandleManipulatorInputEvent();
+			HandleContainerInputEvent();
+		}
+
+		private void HandleContainerInputEvent()
+		{
+			if (ControlMode != MqttClasses.ControlMode.Manipulator) return;
+			var axis = Input.GetAxis("camera_focus_out", "camera_focus_in");
+			if (Mathf.IsEqualApprox(axis, ContainerMovement.Axis1, 0.01f)) return;
+			ContainerMovement = new MqttClasses.RoverContainer { Axis1 = axis };
 		}
 
 		private void HandleManipulatorInputEvent()
@@ -149,6 +170,7 @@ namespace RoverControlApp.MVVM.Model
 		{
 			MainViewModel.EventLogger?.LogMessage("PressedKeys: Stopping all movement");
 			RoverMovement = new MqttClasses.RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
+			ContainerMovement = new MqttClasses.RoverContainer { Axis1 = 0f };
 			ManipulatorMovement = new MqttClasses.ManipulatorControl();
 			LastAbsoluteVector = Vector4.Zero;
 		}

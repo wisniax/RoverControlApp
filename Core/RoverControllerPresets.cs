@@ -141,10 +141,10 @@ namespace RoverControlApp.Core
 				{
 					Axis1 = Input.IsActionPressed("manipulator_axis_1") ? velocity : 0f,
 					Axis2 = Input.IsActionPressed("manipulator_axis_2") ? velocity : 0f,
-					Axis3 = Input.IsActionPressed("manipulator_axis_3") ? velocity : 0f,
-					Axis4 = Input.IsActionPressed("manipulator_axis_4") ? velocity : 0f,
-					Axis5 = Input.IsActionPressed("manipulator_axis_5") ? velocity : 0f,
-					Gripper = Input.IsActionPressed("manipulator_gripper") ? velocity : 0f
+					Axis3 = Input.IsActionPressed("manipulator_axis_3") ? -velocity : 0f,
+					Axis4 = Input.IsActionPressed("manipulator_axis_5") ? -velocity : 0f,
+					Axis5 = Input.IsActionPressed("manipulator_axis_4") ? velocity : 0f,
+					Gripper = Input.IsActionPressed("manipulator_gripper") ? -velocity : 0f
 				};
 
 				return !manipulatorControl.Equals(MainViewModel.PressedKeys?.ManipulatorMovement);

@@ -88,7 +88,7 @@ namespace RoverControlApp.Core
 
 		public class RoverContainer
 		{
-			public float Axis1 { get; set; }
+			public float Axis1 { get; set; } = 0f;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
