@@ -71,12 +71,12 @@ namespace RoverControlApp.Core
 			{
 				if (obj is not ManipulatorControl manipObj) return false;
 				bool isEqual = true;
-				isEqual &= Mathf.IsEqualApprox(Axis1, manipObj.Axis1, 0.01f);
-				isEqual &= Mathf.IsEqualApprox(Axis2, manipObj.Axis2, 0.01f);
-				isEqual &= Mathf.IsEqualApprox(Axis3, manipObj.Axis3, 0.01f);
-				isEqual &= Mathf.IsEqualApprox(Axis4, manipObj.Axis4, 0.01f);
-				isEqual &= Mathf.IsEqualApprox(Axis5, manipObj.Axis5, 0.01f);
-				isEqual &= Mathf.IsEqualApprox(Gripper, manipObj.Gripper, 0.01f);
+				isEqual &= Mathf.IsEqualApprox(Axis1, manipObj.Axis1, 0.005f);
+				isEqual &= Mathf.IsEqualApprox(Axis2, manipObj.Axis2, 0.005f);
+				isEqual &= Mathf.IsEqualApprox(Axis3, manipObj.Axis3, 0.005f);
+				isEqual &= Mathf.IsEqualApprox(Axis4, manipObj.Axis4, 0.005f);
+				isEqual &= Mathf.IsEqualApprox(Axis5, manipObj.Axis5, 0.005f);
+				isEqual &= Mathf.IsEqualApprox(Gripper, manipObj.Gripper, 0.005f);
 				return isEqual;
 			}
 
