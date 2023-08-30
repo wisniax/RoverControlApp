@@ -24,6 +24,11 @@ config/icon="res://Resources/icon.svg"
 
 OnAppLoad="*res://Core/OnAppLoad.gd"
 
+[debug]
+
+file_logging/enable_file_logging=true
+file_logging/max_log_files=50
+
 [display]
 
 window/size/viewport_width=1154
