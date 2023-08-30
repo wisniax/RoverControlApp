@@ -55,6 +55,8 @@ public class LocalSettings
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicRoverStatus { get; set; } = "RoverStatus";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+		public string TopicRoverContainer { get; set; } = "RoverContainer";
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicMissionStatus { get; set; } = "MissionStatus";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicKmlSetPoint { get; set; } = "KMLNode/SetPoint";

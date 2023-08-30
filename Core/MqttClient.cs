@@ -86,13 +86,15 @@ namespace RoverControlApp.Core
 				.WithPendingMessagesOverflowStrategy(MqttPendingMessagesOverflowStrategy.DropOldestQueuedMessage)
 				.Build();
 
-			await _managedMqttClient.StartAsync(managedMqttClientOptions);
-
-			MainViewModel.EventLogger?.LogMessage("MQTT: The managed MQTT client started.");
 			_managedMqttClient.DisconnectedAsync += HandleDisconnected;
 			_managedMqttClient.ConnectedAsync += HandleConnected;
 			_managedMqttClient.SynchronizingSubscriptionsFailedAsync += OnSynchronizingSubscriptionsFailedAsync;
 			_managedMqttClient.ApplicationMessageReceivedAsync += OnApplicationMessageReceivedAsync;
+
+			await _managedMqttClient.StartAsync(managedMqttClientOptions);
+
+			MainViewModel.EventLogger?.LogMessage("MQTT: The managed MQTT client started.");
+
 
 			await SubscribeToAllTopics();
 
@@ -209,7 +211,7 @@ namespace RoverControlApp.Core
 			//_eventsToDispose.ForEach(o => o.Dispose());
 			_cts.Cancel();
 			_mqttThread?.Join(500);
-			Thread.Sleep(250);
+			Thread.Sleep(1000);
 			_mqttThread = null;
 		}
 	}

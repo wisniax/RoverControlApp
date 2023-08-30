@@ -55,6 +55,7 @@ namespace RoverControlApp.MVVM.Model
 				MainViewModel.PressedKeys.OnPadConnectionChanged += OnPadConnectionChanged;
 				MainViewModel.PressedKeys.OnRoverMovementVector += RoverMovementVectorChanged;
 				MainViewModel.PressedKeys.OnManipulatorMovement += RoverManipulatorVectorChanged;
+				MainViewModel.PressedKeys.OnContainerMovement += PressedKeysOnOnContainerMovement;
 			}
 
 			if (MainViewModel.MissionStatus != null)
@@ -62,9 +63,17 @@ namespace RoverControlApp.MVVM.Model
 
 			if (_mqttClient != null)
 				_mqttClient.OnConnectionChanged += OnMqttConnectionChanged;
+			else MainViewModel.EventLogger?.LogMessage("RoverCommunication: Mqtt was null");
 
 			if (_mqttClient?.ConnectionState == CommunicationState.Opened)
 				RoverCommunication_OnControlStatusChanged(GenerateRoverStatus).Wait(250);
+		}
+
+		private async Task PressedKeysOnOnContainerMovement(MqttClasses.RoverContainer arg)
+		{
+			if (_mqttClient == null) return;
+			await _mqttClient.EnqueueAsync(_settingsMqtt.TopicRoverContainer,
+				JsonSerializer.Serialize(arg));
 		}
 
 		private async Task OnMqttConnectionChanged(CommunicationState? arg)
