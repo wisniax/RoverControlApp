@@ -10,11 +10,11 @@
     <None Include="api-doc.md" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MQTTnet" Version="4.2.1.781" />
-    <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.2.1.781" />
+    <PackageReference Include="MQTTnet" Version="4.3.1.873" />
+    <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.3.1.873" />
     <PackageReference Include="Onvif.Core" Version="2.2.2" />
-    <PackageReference Include="OpenCvSharp4" Version="4.7.0.20230115" />
-    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.7.0.20230115" />
-    <PackageReference Include="OpenCvSharp4_.runtime.ubuntu.20.04-x64" Version="4.7.0.20230115" />
+    <PackageReference Include="OpenCvSharp4" Version="4.8.0.20230708" />
+    <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.8.0.20230708" />
+    <PackageReference Include="OpenCvSharp4_.runtime.ubuntu.20.04-x64" Version="4.8.0.20230708" />
   </ItemGroup>
 </Project>
