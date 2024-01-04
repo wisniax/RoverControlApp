@@ -2,31 +2,24 @@
   "profiles": {
     "Godot Player": {
       "commandName": "Executable",
-      "executablePath": "Godot_v4.1.1-stable_mono_win64.exe",
+      "executablePath": "Godot_v4.2.1-stable_mono_win64.exe",
       "commandLineArgs": "--path . --verbose",
       "workingDirectory": ".",
       "nativeDebugging": true
     },
     "Godot Console": {
       "commandName": "Executable",
-      "executablePath": "Godot_v4.1.1-stable_mono_win64_console.exe",
+      "executablePath": "Godot_v4.2.1-stable_mono_win64_console.exe",
       "commandLineArgs": "--path . --verbose",
       "workingDirectory": ".",
       "nativeDebugging": true
     },
     "Godot Editor": {
       "commandName": "Executable",
-      "executablePath": "Godot_v4.1.1-stable_mono_win64.exe",
+      "executablePath": "Godot_v4.2.1-stable_mono_win64.exe",
       "commandLineArgs": "--path . --editor",
       "workingDirectory": ".",
-      "nativeDebugging": true
-    },
-    "Alv Godot Debugger": {
-      "commandName": "Executable",
-      "executablePath": "C:\\Inne Bzdety\\Godot\\Godot_v4.0.2-stable_mono_win64\\Godot_v4.0.2-stable_mono_win64.exe",
-      "commandLineArgs": "--path . --verbose",
-      "workingDirectory": ".",
-      "nativeDebugging": true
+      "nativeDebugging": false
     }
   }
 }
