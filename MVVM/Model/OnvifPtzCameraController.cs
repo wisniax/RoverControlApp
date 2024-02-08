@@ -11,6 +11,7 @@ using GodotPlugins.Game;
 using Onvif.Core.Client;
 using Onvif.Core.Client.Common;
 using RoverControlApp.MVVM.ViewModel;
+using RoverControlApp.Core;
 using DateTime = System.DateTime;
 using Mutex = System.Threading.Mutex;
 
@@ -39,7 +40,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 			private set
 			{
-				if (MainViewModel.Settings?.Settings?.VerboseDebug == true) MainViewModel.EventLogger?.LogMessage($"PTZ: CameraMotion update: {value}");
+				if (MainViewModel.Settings?.Settings?.VerboseDebug == true) EventLogger.LogMessage($"PTZ: CameraMotion update: {value}");
 				_dataMutex.WaitOne();
 				_cameraMotion = value;
 				_dataMutex.ReleaseMutex();
@@ -53,7 +54,7 @@ namespace RoverControlApp.MVVM.Model
 			get => _state;
 			private set
 			{
-				MainViewModel.EventLogger?.LogMessage($"PTZ: CommunicationState update: {value}");
+				EventLogger.LogMessage($"PTZ: CommunicationState update: {value}");
 				_state = value;
 			}
 		}
@@ -91,7 +92,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private void ThreadWork()
 		{
-			MainViewModel.EventLogger.LogMessage("PTZ: Thread started");
+			EventLogger.LogMessage("PTZ: Thread started");
 			Vector4 motionLast = _cameraMotion = Vector4.Zero;
 
 			while (!_cts.IsCancellationRequested)
@@ -112,7 +113,7 @@ namespace RoverControlApp.MVVM.Model
 
 			if (_ptzThreadError is not null)
 			{
-				MainViewModel.EventLogger.LogMessage($"PTZ: Connecting to camera failed after " +
+				EventLogger.LogMessage($"PTZ: Connecting to camera failed after " +
 													 $"{(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s with error: {_ptzThreadError}");
 				State = CommunicationState.Faulted;
 				return;
@@ -122,7 +123,7 @@ namespace RoverControlApp.MVVM.Model
 			//_camera?.Ptz.OpenAsync().Wait();
 			_camera?.Ptz.StopAsync(_camera.Profile.token, true, true).Wait();
 			State = CommunicationState.Opened;
-			MainViewModel.EventLogger.LogMessage($"PTZ: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+			EventLogger.LogMessage($"PTZ: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 
 		}
 
@@ -154,13 +155,13 @@ namespace RoverControlApp.MVVM.Model
 					}
 					catch (AggregateException e)
 					{
-						MainViewModel.EventLogger.LogMessage($"PTZ: Handled exception {e} caught");
+						EventLogger.LogMessage($"PTZ: Handled exception {e} caught");
 						errCaught = true;
 					}
 
 					if (_generalPurposeStopwatch.Elapsed.TotalSeconds > 10 || errCaught)
 					{
-						MainViewModel.EventLogger.LogMessage($"PTZ: Camera connection lost ;( Sending a move request took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+						EventLogger.LogMessage($"PTZ: Camera connection lost ;( Sending a move request took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 						State = CommunicationState.Faulted;
 						EndCamera();
 						return;

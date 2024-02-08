@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Godot;
 using OpenCvSharp;
 using RoverControlApp.MVVM.ViewModel;
+using RoverControlApp.Core;
 
 namespace RoverControlApp.MVVM.Model
 {
@@ -53,7 +54,7 @@ namespace RoverControlApp.MVVM.Model
 			get => _state;
 			private set
 			{
-				MainViewModel.EventLogger.LogMessage($"RTSP: CommunicationState update: {value}");
+				EventLogger.LogMessage($"RTSP: CommunicationState update: {value}");
 				_state = value;
 			}
 		}
@@ -78,7 +79,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private void ThreadWork()
 		{
-			MainViewModel.EventLogger.LogMessage("RTSP: Thread started");
+			EventLogger.LogMessage("RTSP: Thread started");
 			while (!_cts.IsCancellationRequested)
 			{
 				DoWork();
@@ -89,7 +90,7 @@ namespace RoverControlApp.MVVM.Model
 
 		public void Dispose()
 		{
-			MainViewModel.EventLogger.LogMessage("RTSP: Dispose called... Closing client");
+			EventLogger.LogMessage("RTSP: Dispose called... Closing client");
 			_cts.Cancel();
 			_rtspThread?.Join(1000);
 			_cts.Dispose();
@@ -114,13 +115,13 @@ namespace RoverControlApp.MVVM.Model
 			State = CommunicationState.Opening;
 			if (!task.Wait(TimeSpan.FromSeconds(15)) || Capture == null || !Capture.IsOpened())
 			{
-				MainViewModel.EventLogger?.LogMessage($"RTSP: Connecting to camera failed after {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+				EventLogger.LogMessage($"RTSP: Connecting to camera failed after {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 				State = CommunicationState.Faulted;
 				EndCapture();
 				return;
 			}
 
-			MainViewModel.EventLogger?.LogMessage($"RTSP: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+			EventLogger.LogMessage($"RTSP: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 
 			Capture?.Set(VideoCaptureProperties.XI_Timeout, 5000);
 			Capture?.Set(VideoCaptureProperties.BufferSize, 0);
@@ -145,7 +146,7 @@ namespace RoverControlApp.MVVM.Model
 
 					if (!ret || _generalPurposeStopwatch.Elapsed.TotalSeconds > 5)
 					{
-						MainViewModel.EventLogger?.LogMessage($"RTSP: Camera connection lost ;( Grabbing a frame took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+						EventLogger.LogMessage($"RTSP: Camera connection lost ;( Grabbing a frame took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 						State = CommunicationState.Faulted;
 						EndCapture();
 						return;
@@ -193,7 +194,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 			catch (Exception e)
 			{
-				MainViewModel.EventLogger?.LogMessage(e.ToString());
+				EventLogger.LogMessage(e.ToString());
 				return false;
 			}
 
@@ -216,7 +217,7 @@ namespace RoverControlApp.MVVM.Model
 			UnLockGrabbingFrames();
 
 			if (MainViewModel.Settings.Settings.VerboseDebug)
-				MainViewModel.EventLogger.LogMessage($"RTSP: Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
+				EventLogger.LogMessage($"RTSP: Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
 
 			return true;
 		}

@@ -163,7 +163,7 @@ public partial class SettingsManagerTree : Tree
 					var test = tester.Search(tested);
 					if (test is null || test.GetStart() != 0 || test.GetEnd() != tested.Length)
 					{
-						MainViewModel.EventLogger
+						EventLogger
 							.LogMessage($"SettingsManager: INFO RegEx match failed for property/field \"{itemEdited.GetMetadata(COLUMN_NAME).AsString()}\"");
 						itemEdited.SetText(COLUMN_VALUE, (string)ValueGetter(editedObj));
 						TryUpdateStatusBar($"[color=orange]\"{itemEdited.GetText(COLUMN_NAME)}\" RegEx match failed![/color]");
@@ -217,7 +217,7 @@ public partial class SettingsManagerTree : Tree
 				}
 				catch (Exception) //yourself...
 				{
-					MainViewModel.EventLogger?
+					EventLogger
 						.LogMessage(
 							$"SettingsManager: ERROR Range type is incorrectly set for property/field \"{itemEdited.GetMetadata(COLUMN_NAME).AsString()}\" (Root class: {Target})");
 					itemEdited.SetEditable(COLUMN_VALUE, false);

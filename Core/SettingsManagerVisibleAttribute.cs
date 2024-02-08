@@ -60,7 +60,7 @@ namespace RoverControlApp.Core
 					{
 						if (RegEx.CreateFromString(formatData).IsValid())
 							break;
-						MainViewModel.EventLogger
+						EventLogger
 							.LogMessage(
 								$"SettingsManagerVisibleAttribute: ERROR Invalid RegEx pattern on property/field \"{customName}\"! (using default instead)");
 					}
@@ -78,7 +78,7 @@ namespace RoverControlApp.Core
 						var tester = RegEx.CreateFromString(@"(?i)^(?:[0-9]+(?:\.|,)?[0-9]*;){3}(?:f|t);(?:i|ui|l|ul|f|d|m)$");
 						if (tester.Search(formatData) is not null)
 							break;
-						MainViewModel.EventLogger
+						EventLogger
 							.LogMessage(
 								$"SettingsManagerVisibleAttribute: ERROR Invalid format for range on property/field \"{customName}\"! (using default instead)");
 					}

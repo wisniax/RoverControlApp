@@ -1,38 +1,38 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Godot;
+
 using Environment = System.Environment;
 
 namespace RoverControlApp.Core
 {
-	public class EventLogger
+	public static class EventLogger
 	{
-		private readonly DateTime _appStartedTimestamp;
+		private static Stopwatch _appRunningTimer = Stopwatch.StartNew();
 
-		public EventLogger()
+		static EventLogger()
 		{
-			_appStartedTimestamp = DateTime.Now;
+			Thread.CurrentThread.Name = "MainUI_Thread";
 			PrintOnStartup();
 		}
 
-		private void PrintOnStartup()
+		private static void PrintOnStartup()
 		{
 			LogMessage($"{DateTime.Now.ToShortDateString()} {DateTime.Now.ToShortTimeString()} Hello on startup :)");
 			LogMessage($"Operating system:  --> {Environment.OSVersion.VersionString}");
+			LogMessage($".NET Version:      --> {System.Runtime.InteropServices.RuntimeEnvironment.GetSystemVersion()}");
 			LogMessage($"Process path:      --> {Environment.ProcessPath}");
 			LogMessage($"Program directory: --> {Environment.CurrentDirectory}");
 			LogMessage($"Config directory:  --> {OS.GetUserDataDir()}");
 		}
 
-		public void LogMessage(string str)
+		public static void LogMessage(string str)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append((DateTime.Now - _appStartedTimestamp).TotalSeconds.ToString("f4", new CultureInfo("en-US")));
+			sb.Append((_appRunningTimer.Elapsed).TotalSeconds.ToString("f4", new CultureInfo("en-US")));
 			sb.Append($" -{Thread.CurrentThread.Name ?? Environment.CurrentManagedThreadId.ToString()}- ");
 			sb.Append(str);
 			GD.Print(sb.ToString());

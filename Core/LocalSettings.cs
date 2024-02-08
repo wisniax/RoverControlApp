@@ -120,11 +120,11 @@ public class LocalSettings
 		}
 		catch (Exception e)
 		{
-			MainViewModel.EventLogger.LogMessage($"Loading local settings failed: {e}");
+			EventLogger.LogMessage($"Loading local settings failed: {e}");
 			return false;
 		}
 
-		MainViewModel.EventLogger.LogMessage("Loading local settings succeeded");
+		EventLogger.LogMessage("Loading local settings succeeded");
 		return true;
 	}
 
@@ -144,11 +144,11 @@ public class LocalSettings
 		}
 		catch (Exception e)
 		{
-			MainViewModel.EventLogger.LogMessage($"Saving settings failed with: {e}");
+			EventLogger.LogMessage($"Saving settings failed with: {e}");
 			return false;
 		}
 
-		MainViewModel.EventLogger.LogMessage("Saving settings succeeded");
+		EventLogger.LogMessage("Saving settings succeeded");
 		return true;
 	}
 

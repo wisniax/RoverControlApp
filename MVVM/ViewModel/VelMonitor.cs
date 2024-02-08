@@ -112,7 +112,7 @@ public partial class VelMonitor : Panel
 
 		if (msg is null || msg.PayloadSegment.Count == 0)
 		{
-			MainViewModel.EventLogger?.LogMessage($"VelMonitor WARNING: Empty payload!");
+			EventLogger.LogMessage($"VelMonitor WARNING: Empty payload!");
 			return Task.CompletedTask;
 		}
 
@@ -126,8 +126,8 @@ public partial class VelMonitor : Panel
 		}
 		catch (Exception e)
 		{
-			MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: Well.. Something went wrong");
-			MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: {e.Message}");
+			EventLogger.LogMessage($"VelMonitor ERROR: Well.. Something went wrong");
+			EventLogger.LogMessage($"VelMonitor ERROR: {e.Message}");
 		}
 		return Task.CompletedTask;
 	}

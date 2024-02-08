@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Rover Control App"
-run/main_scene="res://MVVM/View/MainView.tscn"
+run/main_scene="res://MVVM/View/Startup.tscn"
 config/features=PackedStringArray("4.2", "C#", "GL Compatibility")
 run/max_fps=60
 run/low_processor_mode=true
@@ -19,10 +19,6 @@ boot_splash/bg_color=Color(0, 0, 0, 1)
 boot_splash/image="res://Resources/raptors_logoHorizontal_color_nobg.png"
 boot_splash/fullsize=false
 config/icon="res://Resources/icon.svg"
-
-[autoload]
-
-OnAppLoad="*res://Core/OnAppLoad.gd"
 
 [debug]
 

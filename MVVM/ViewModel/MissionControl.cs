@@ -122,8 +122,7 @@ public partial class MissionControl : Panel
 		var request = MissionSetPoint.GenerateNewPointRequest((MqttClasses.PointType)SPoiAddTypeOpBtn.GetSelectedId(), SPoiAddTargetStrLEdit.Text, SPoiAddDescriptionStrLEdit.Text, (MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.GetSelectedId());
 		if (MainViewModel.MissionSetPoint is null)
 		{
-			if(MainViewModel.EventLogger is not null)
-				MainViewModel.EventLogger.LogMessage("ERROR: Cannot add POIs, MainViewModel.MissionSetPoint is null!");
+			EventLogger.LogMessage("ERROR: Cannot add POIs, MainViewModel.MissionSetPoint is null!");
 			return;
 		}
 
@@ -186,8 +185,7 @@ public partial class MissionControl : Panel
 	{
 		if (MainViewModel.MissionSetPoint is null || MainViewModel.MissionSetPoint.ActiveKmlObjects is null)
 		{
-			if (MainViewModel.EventLogger is not null)
-				MainViewModel.EventLogger.LogMessage("ERROR: Cannot remove POIs, MainViewModel.MissionSetPoint is null!");
+			EventLogger.LogMessage("ERROR: Cannot remove POIs, MainViewModel.MissionSetPoint is null!");
 			return;
 		}
 

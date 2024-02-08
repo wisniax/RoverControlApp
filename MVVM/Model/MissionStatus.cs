@@ -25,7 +25,7 @@ namespace RoverControlApp.MVVM.Model
 			private set
 			{
 				_status = value;
-				MainViewModel.EventLogger?.LogMessage($"Mission status set to: {value?.MissionStatus} at " +
+				EventLogger.LogMessage($"Mission status set to: {value?.MissionStatus} at " +
 													  $"{DateTimeOffset.FromUnixTimeMilliseconds(value?.Timestamp ?? 0)}");
 				OnRoverMissionStatusChanged?.Invoke(value);
 			}
@@ -42,7 +42,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private void ThreadWork()
 		{
-			MainViewModel.EventLogger?.LogMessage("MissionStatus: Retrieving status in progress");
+			EventLogger.LogMessage("MissionStatus: Retrieving status in progress");
 			string? serialized = "";
 			SpinWait.SpinUntil(() => _mqttClient?.ConnectionState == CommunicationState.Opened);
 			SpinWait.SpinUntil(() =>
@@ -59,14 +59,14 @@ namespace RoverControlApp.MVVM.Model
 			}
 			catch (Exception e)
 			{
-				MainViewModel.EventLogger?.LogMessage($"MissionStatus: Error caught {e}");
+				EventLogger.LogMessage($"MissionStatus: Error caught {e}");
 				Status = new MqttClasses.RoverMissionStatus();
 				return;
 			}
 
 			if (status == null)
 			{
-				MainViewModel.EventLogger?.LogMessage($"MissionStatus: Null reference stopping mission.");
+				EventLogger.LogMessage($"MissionStatus: Null reference stopping mission.");
 				Status = new MqttClasses.RoverMissionStatus();
 				return;
 			}
@@ -74,13 +74,13 @@ namespace RoverControlApp.MVVM.Model
 			var hoursPassed = (DateTime.Now - DateTimeOffset.FromUnixTimeMilliseconds(status.Timestamp).DateTime).TotalHours;
 			if (hoursPassed > 8)
 			{
-				MainViewModel.EventLogger?.LogMessage("MissionStatus: Retrieving status succeeded but was older than 8 hours thus mission was stopped.");
+				EventLogger.LogMessage("MissionStatus: Retrieving status succeeded but was older than 8 hours thus mission was stopped.");
 				Status = new MqttClasses.RoverMissionStatus();
 				return;
 			}
 
 			Status = status;
-			MainViewModel.EventLogger?.LogMessage("MissionStatus: Retrieving status succeeded");
+			EventLogger.LogMessage("MissionStatus: Retrieving status succeeded");
 		}
 
 		public void StopMission()

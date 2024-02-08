@@ -51,12 +51,12 @@ namespace RoverControlApp.Core
 
 		private async void ThreadWork()
 		{
-			MainViewModel.EventLogger?.LogMessage("MQTT: Thread started");
+			EventLogger.LogMessage("MQTT: Thread started");
 
 			await Connect_Client();
 			SpinWait.SpinUntil(() => _cts.IsCancellationRequested);
 
-			MainViewModel.EventLogger?.LogMessage("MQTT: Cancellation requested. Stopping.");
+			EventLogger.LogMessage("MQTT: Cancellation requested. Stopping.");
 			await StopClient();
 			_managedMqttClient!.DisconnectedAsync -= HandleDisconnected;
 			_managedMqttClient.ConnectedAsync -= HandleConnected;
@@ -93,7 +93,7 @@ namespace RoverControlApp.Core
 
 			await _managedMqttClient.StartAsync(managedMqttClientOptions);
 
-			MainViewModel.EventLogger?.LogMessage("MQTT: The managed MQTT client started.");
+			EventLogger.LogMessage("MQTT: The managed MQTT client started.");
 
 
 			await SubscribeToAllTopics();
@@ -103,7 +103,7 @@ namespace RoverControlApp.Core
 
 		private Task OnApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
 		{
-			//MainViewModel.EventLogger?.LogMessage($"MQTT: Message received on topic {arg.ApplicationMessage.Topic} with: " +
+			//EventLogger.LogMessage($"MQTT: Message received on topic {arg.ApplicationMessage.Topic} with: " +
 			//									  $"{arg.ApplicationMessage.ConvertPayloadToString()}");
 			if (_responses == null) return Task.CompletedTask;
 
@@ -113,7 +113,7 @@ namespace RoverControlApp.Core
 			if (_responses.ContainsKey(topic))
 				_responses[topic] = payload;
 			else if (!_responses.TryAdd(topic, payload))
-				MainViewModel.EventLogger?.LogMessage($"MQTT: Adding {payload} on topic {topic} to dictionary failed");
+				EventLogger.LogMessage($"MQTT: Adding {payload} on topic {topic} to dictionary failed");
 			OnMessageReceivedAsync?.Invoke(topic, payload);
 			return Task.CompletedTask;
 		}
@@ -137,13 +137,13 @@ namespace RoverControlApp.Core
 
 		private Task OnSynchronizingSubscriptionsFailedAsync(ManagedProcessFailedEventArgs arg)
 		{
-			MainViewModel.EventLogger?.LogMessage($"MQTT: Synchronizing subscriptions failed with: {arg}");
+			EventLogger.LogMessage($"MQTT: Synchronizing subscriptions failed with: {arg}");
 			return Task.CompletedTask;
 		}
 
 		private async Task SubscribeToAllTopics()
 		{
-			MainViewModel.EventLogger?.LogMessage("MQTT: Subscribing to all topics:");
+			EventLogger.LogMessage("MQTT: Subscribing to all topics:");
 			await SubscribeToTopic(_settingsMqtt.TopicRoverStatus, MqttQualityOfServiceLevel.ExactlyOnce);
 			await SubscribeToTopic(_settingsMqtt.TopicMissionStatus, MqttQualityOfServiceLevel.ExactlyOnce);
 			await SubscribeToTopic(_settingsMqtt.TopicKmlListOfActiveObj, MqttQualityOfServiceLevel.ExactlyOnce);
@@ -154,7 +154,7 @@ namespace RoverControlApp.Core
 
 		private async Task SubscribeToTopic(string subtopic, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce)
 		{
-			MainViewModel.EventLogger?.LogMessage($"MQTT: Subscribing to topic: {subtopic}");
+			EventLogger.LogMessage($"MQTT: Subscribing to topic: {subtopic}");
 			await _managedMqttClient.SubscribeAsync(_settingsMqtt.TopicMain + '/' + subtopic, qos);
 		}
 
@@ -193,14 +193,14 @@ namespace RoverControlApp.Core
 
 		private Task HandleConnected(MqttClientConnectedEventArgs arg)
 		{
-			MainViewModel.EventLogger?.LogMessage("MQTT: Connected");
+			EventLogger.LogMessage("MQTT: Connected");
 			ConnectionState = CommunicationState.Opened;
 			return Task.CompletedTask;
 		}
 
 		private Task HandleDisconnected(MqttClientDisconnectedEventArgs arg)
 		{
-			MainViewModel.EventLogger?.LogMessage("MQTT: Disconnected");
+			EventLogger.LogMessage("MQTT: Disconnected");
 			ConnectionState = CommunicationState.Faulted;
 			return Task.CompletedTask;
 		}
