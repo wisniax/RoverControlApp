@@ -9,14 +9,14 @@ using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class MissionStatus
+    public class MissionStatus
 	{
 		public event Func<MqttClasses.RoverMissionStatus?, Task>? OnRoverMissionStatusChanged;
 
 		private CancellationTokenSource _cts;
 		private Thread? _retriveMisionStatusThread;
 		private MqttClient? _mqttClient => MainViewModel.MqttClient;
-		private LocalSettings.Mqtt? _mqttSettings => MainViewModel.Settings?.Settings?.Mqtt;
+		private MqttSettings? _mqttSettings => MainViewModel.Settings?.Mqtt;
 
 		private MqttClasses.RoverMissionStatus? _status;
 		public MqttClasses.RoverMissionStatus? Status

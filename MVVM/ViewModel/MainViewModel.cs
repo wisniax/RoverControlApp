@@ -12,7 +12,7 @@ using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.MVVM.ViewModel
 {
-	public partial class MainViewModel : Control
+    public partial class MainViewModel : Control
 	{
 		public static MainViewModel? MainViewModelInstance { get; private set; } = null;
 		public static LocalSettings? Settings { get; private set; }
@@ -54,32 +54,33 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			Settings = new LocalSettings();
 			Settings.SaveSettings();
-			MqttClient = new MqttClient(Settings.Settings!.Mqtt);
+
+			MqttClient = new MqttClient(Settings!.Mqtt);
 			PressedKeys = new PressedKeys();
 			MissionStatus = new MissionStatus();
-			RoverCommunication = new RoverCommunication(Settings.Settings!.Mqtt);
+			RoverCommunication = new RoverCommunication(Settings!.Mqtt);
 			MissionSetPoint = new MissionSetPoint();
 
-			if (Settings.Settings.JoyVibrateOnModeChange)
+			if (Settings.Joystick.VibrateOnModeChange)
 			{
 				_joyVibrato = new();
 			}
 
-			if (Settings.Settings.Camera.EnablePtzControl)
+			if (Settings.Camera.EnablePtzControl)
 				_ptzClient = new OnvifPtzCameraController(
-					Settings.Settings.Camera.Ip,
-					Settings.Settings.Camera.PtzPort,
-					Settings.Settings.Camera.Login,
-					Settings.Settings.Camera.Password);
+					Settings.Camera.Ip,
+					Settings.Camera.PtzPort,
+					Settings.Camera.Login,
+					Settings.Camera.Password);
 
-			if (Settings.Settings.Camera.EnableRtspStream)
+			if (Settings.Camera.EnableRtspStream)
 				_rtspClient = new RtspStreamClient(
-								Settings.Settings.Camera.Login,
-								Settings.Settings.Camera.Password,
-								Settings.Settings.Camera.RtspStreamPath,
-								Settings.Settings.Camera.Ip,
+								Settings.Camera.Login,
+								Settings.Camera.Password,
+								Settings.Camera.RtspStreamPath,
+								Settings.Camera.Ip,
 								"rtsp",
-								Settings.Settings.Camera.RtspPort);
+								Settings.Camera.RtspPort);
 
 			_imTextureRect = GetNode<TextureRect>("CameraView");
 
@@ -96,14 +97,14 @@ namespace RoverControlApp.MVVM.ViewModel
 			//UIDis
 			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
-			GrzybUIDis.MqttSubscriber(Settings.Settings.Mqtt.TopicEStopStatus, MqttClient.GetReceivedMessageOnTopic(Settings.Settings.Mqtt.TopicEStopStatus));
+			GrzybUIDis.MqttSubscriber(Settings.Mqtt.TopicEStopStatus, MqttClient.GetReceivedMessageOnTopic(Settings.Mqtt.TopicEStopStatus));
 			MqttClient.OnMessageReceivedAsync += GrzybUIDis.MqttSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 
 			//state new mode
 			_joyVibrato?.ControlModeChangedSubscriber(PressedKeys.ControlMode);
 
-			_backCapture.HistoryLength = Settings.Settings.BackCaptureLength;
+			_backCapture.HistoryLength = Settings.General.BackCaptureLength;
 
 			
 		}

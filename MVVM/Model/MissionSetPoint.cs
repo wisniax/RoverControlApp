@@ -7,11 +7,11 @@ using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class MissionSetPoint
+    public class MissionSetPoint
 	{
 		public event Func<MqttClasses.ActiveKmlObjects?, Task>? ActiveKmlObjectsUpdated;
 		private MqttClient? _mqttClient => MainViewModel.MqttClient;
-		private LocalSettings.Vars? _localSettings => MainViewModel.Settings?.Settings;
+		private LocalSettings? _localSettings => MainViewModel.Settings;
 		public MqttClasses.ActiveKmlObjects ActiveKmlObjects { get; private set; }
 
 		public MissionSetPoint()

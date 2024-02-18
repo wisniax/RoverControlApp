@@ -107,7 +107,7 @@ public partial class VelMonitor : Panel
 	public Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
 	{
 
-		if (MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback is null || subTopic != MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback)
+		if (MainViewModel.Settings?.Mqtt.TopicWheelFeedback is null || subTopic != MainViewModel.Settings?.Mqtt.TopicWheelFeedback)
 			return Task.CompletedTask;
 
 		if (msg is null || msg.PayloadSegment.Count == 0)

@@ -216,7 +216,7 @@ namespace RoverControlApp.MVVM.Model
 			NewFrameSaved = true;
 			UnLockGrabbingFrames();
 
-			if (MainViewModel.Settings.Settings.VerboseDebug)
+			if (MainViewModel.Settings.General.VerboseDebug)
 				EventLogger.LogMessage($"RTSP: Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
 
 			return true;

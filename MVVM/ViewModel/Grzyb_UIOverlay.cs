@@ -26,7 +26,7 @@ public partial class Grzyb_UIOverlay : UIOverlay
 
 	public Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
 	{
-		if (MainViewModel.Settings?.Settings?.Mqtt.TopicEStopStatus is null || subTopic != MainViewModel.Settings?.Settings?.Mqtt.TopicEStopStatus || msg == null || msg.PayloadSegment.Count == 0)
+		if (MainViewModel.Settings?.Mqtt.TopicEStopStatus is null || subTopic != MainViewModel.Settings?.Mqtt.TopicEStopStatus || msg == null || msg.PayloadSegment.Count == 0)
 			return System.Threading.Tasks.Task.CompletedTask;
 
 		//skip first 4bytes dunno what it is

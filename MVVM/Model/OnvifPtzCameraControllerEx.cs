@@ -208,7 +208,7 @@ namespace RoverControlApp.MVVM.Model
 			//populate queue
 			if (UpdateMotion(_cameraMotionLast, CameraMotionRequest, out MoveUpdateData moveUpdateData) || _queueStopwatch.Elapsed.TotalSeconds >= 5)
 			{
-				if (MainViewModel.Settings.Settings.VerboseDebug)
+				if (MainViewModel.Settings.General.VerboseDebug)
 					EventLogger.LogMessage($"PTZ: Enqueued: Vec: {moveUpdateData.TiltAndZoom} TiltStop: {moveUpdateData.StopTilt} ZoomStop: {moveUpdateData.StopZoom}");
 				_comQueue.Enqueue(moveUpdateData);
 				_queueStopwatch.Restart();
@@ -241,7 +241,7 @@ namespace RoverControlApp.MVVM.Model
 				MoveUpdateData nextMove = _comQueue.Dequeue();
 				if (nextMove.StopTilt || nextMove.StopZoom)
 				{
-					if (MainViewModel.Settings.Settings.VerboseDebug)
+					if (MainViewModel.Settings.General.VerboseDebug)
 						EventLogger.LogMessage($"PTZ: CameraMotion send: {(nextMove.StopTilt ? "StopTilt" : string.Empty)} {(nextMove.StopZoom ? "StopZoom" : string.Empty)}");
 					_camera?.Ptz.StopAsync(_camera.Profile.token, nextMove.StopTilt, nextMove.StopZoom).Wait();
 					_generalPurposeStopwatch.Restart();
@@ -250,7 +250,7 @@ namespace RoverControlApp.MVVM.Model
 
 				if (!nextMove.TiltAndZoom.IsZeroApprox())
 				{
-					if (MainViewModel.Settings.Settings.VerboseDebug)
+					if (MainViewModel.Settings.General.VerboseDebug)
 						EventLogger.LogMessage($"PTZ: CameraMotion send: Tilt.X={nextMove.TiltAndZoom.X}, Tilt.Y={nextMove.TiltAndZoom.Y} Zoom={nextMove.TiltAndZoom.Z}");
 					_camera?.Ptz.ContinuousMoveAsync(_camera.Profile.token, (PTZSpeed)nextMove, string.Empty).Wait();
 					_generalPurposeStopwatch.Restart();
@@ -263,7 +263,7 @@ namespace RoverControlApp.MVVM.Model
 		{
 			data = new();
 
-			data.TiltAndZoom = MainViewModel.Settings.Settings.Camera.InverseAxis
+			data.TiltAndZoom = MainViewModel.Settings.Camera.InverseAxis
 				? new Vector4(-moveNew.X, -moveNew.Y, moveNew.Z, moveNew.W)
 				: moveNew;
 
@@ -301,13 +301,13 @@ namespace RoverControlApp.MVVM.Model
 			}
 			private set
 			{
-				if (MainViewModel.Settings.Settings.VerboseDebug)
+				if (MainViewModel.Settings.General.VerboseDebug)
 					EventLogger.LogMessage($"PTZ: CameraMotion update: {value}");
 				_dataMutex.WaitOne();
 				_cameraMotionRequest = value;
 				_dataMutex.ReleaseMutex();
 				bool success = _requestBarrier.SignalAndWait(100);
-				if (MainViewModel.Settings.Settings.VerboseDebug && !success)
+				if (MainViewModel.Settings.General.VerboseDebug && !success)
 					EventLogger.LogMessage($"PTZ: Barrier timeout! Last input ignored!");
 			}
 		}

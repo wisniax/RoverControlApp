@@ -40,7 +40,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 			private set
 			{
-				if (MainViewModel.Settings?.Settings?.VerboseDebug == true) EventLogger.LogMessage($"PTZ: CameraMotion update: {value}");
+				if (MainViewModel.Settings?.General.VerboseDebug == true) EventLogger.LogMessage($"PTZ: CameraMotion update: {value}");
 				_dataMutex.WaitOne();
 				_cameraMotion = value;
 				_dataMutex.ReleaseMutex();
@@ -63,7 +63,7 @@ namespace RoverControlApp.MVVM.Model
 		public double ElapsedSecondsOnCurrentState => _generalPurposeStopwatch.Elapsed.TotalSeconds;
 
 		public TimeSpan MinSpanEveryCom =>
-			TimeSpan.FromSeconds(1 / MainViewModel.Settings.Settings.Camera.PtzRequestFrequency);
+			TimeSpan.FromSeconds(1 / MainViewModel.Settings.Camera.PtzRequestFrequency);
 		public TimeSpan MaxSpanEveryCom => 1.5 * MinSpanEveryCom;
 
 
@@ -241,7 +241,7 @@ namespace RoverControlApp.MVVM.Model
 				return false;
 			}
 
-			speed = MainViewModel.Settings.Settings.Camera.InverseAxis ? new Vector4(-@new.X, -@new.Y, @new.Z, @new.W) : @new;
+			speed = MainViewModel.Settings.Camera.InverseAxis ? new Vector4(-@new.X, -@new.Y, @new.Z, @new.W) : @new;
 
 			//Have to make sure none scalar is |x| <= 0.1f bc camera treats it as a MAX SPEED
 			if (Mathf.IsEqualApprox(speed.X, 0f, 0.1f)) speed.X = 0f;

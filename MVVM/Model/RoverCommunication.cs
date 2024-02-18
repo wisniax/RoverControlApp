@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class RoverCommunication : IDisposable
+    public class RoverCommunication : IDisposable
 	{
 		public event Func<MqttClasses.RoverStatus?, Task>? OnRoverStatusChanged;
 		private MqttClasses.ControlMode ControlMode => MainViewModel.PressedKeys?.ControlMode ?? MqttClasses.ControlMode.EStop;
@@ -16,7 +16,7 @@ namespace RoverControlApp.MVVM.Model
 		private MqttClient? _mqttClient => MainViewModel.MqttClient;
 
 		//List<IDisposable> _eventsToDispose = new List<IDisposable>();
-		private LocalSettings.Mqtt _settingsMqtt;
+		private MqttSettings _settingsMqtt;
 
 		private MqttClasses.RoverStatus? _roverStatus;
 		public MqttClasses.RoverStatus? RoverStatus
@@ -45,7 +45,7 @@ namespace RoverControlApp.MVVM.Model
 		}
 
 
-		public RoverCommunication(LocalSettings.Mqtt settingsMqtt)
+		public RoverCommunication(MqttSettings settingsMqtt)
 		{
 			_settingsMqtt = settingsMqtt;
 			if (MainViewModel.PressedKeys != null)
