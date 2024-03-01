@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=12 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://crakb6uxv2yt8" path="res://MVVM/View/MissionControl.tscn" id="4_wrhi8"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionStatus_UIOverlay.cs" id="6_4tmru"]
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
+[ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -151,6 +152,11 @@ layout_mode = 2
 toggle_mode = true
 text = "VEL MONITOR"
 
+[node name="ShowZedMonitor" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+text = "GYRO"
+
 [node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 toggle_mode = true
@@ -181,13 +187,24 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
+[node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
+visible = false
+layout_mode = 0
+offset_left = 905.0
+offset_top = 453.0
+offset_right = 1154.0
+offset_bottom = 602.0
+pitchDeg = 35.47
+rollDeg = -0.505
+
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="RequestedRestart" from="SettingsManager" to="." method="VirtualRestart"]
 
 [editable path="GrzybUIDis"]

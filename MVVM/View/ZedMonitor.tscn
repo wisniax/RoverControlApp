@@ -1,0 +1,91 @@
+[gd_scene load_steps=3 format=3 uid="uid://dfsueqraoksun"]
+
+[ext_resource type="Texture2D" uid="uid://ubenmvj4p5x2" path="res://Resources/icon.svg" id="1_esmsg"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/ZedMonitor.cs" id="1_uhht3"]
+
+[node name="ZedMonitor" type="Panel" node_paths=PackedStringArray("pitchVisualisation", "rollVisualisation", "pitchDisplay", "rollDisplay")]
+offset_right = 248.0
+offset_bottom = 172.0
+script = ExtResource("1_uhht3")
+pitchDeg = -4.285
+rollDeg = -8.415
+pitchVisualisation = NodePath("DataSection/DataVisualisation/DVPitchContainer/PitchIcon")
+rollVisualisation = NodePath("DataSection/DataVisualisation/DVRollContainer/RollIcon")
+pitchDisplay = NodePath("DataSection/DataDisplay/PitchDisplay")
+rollDisplay = NodePath("DataSection/DataDisplay/RollDisplay")
+
+[node name="DataSection" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 25.0
+offset_right = 152.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Labels" type="VBoxContainer" parent="DataSection"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+
+[node name="PitchLabel" type="Label" parent="DataSection/Labels"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+text = "Pitch:"
+vertical_alignment = 1
+
+[node name="RollLabel" type="Label" parent="DataSection/Labels"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+text = "Roll:"
+vertical_alignment = 1
+
+[node name="DataVisualisation" type="VBoxContainer" parent="DataSection"]
+custom_minimum_size = Vector2(60, 55)
+layout_mode = 2
+
+[node name="DVPitchContainer" type="Label" parent="DataSection/DataVisualisation"]
+custom_minimum_size = Vector2(80, 55)
+layout_mode = 2
+
+[node name="PitchIcon" type="Sprite2D" parent="DataSection/DataVisualisation/DVPitchContainer"]
+position = Vector2(40, 30)
+scale = Vector2(0.297, 0.184)
+texture = ExtResource("1_esmsg")
+flip_h = true
+
+[node name="DVRollContainer" type="Label" parent="DataSection/DataVisualisation"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+
+[node name="RollIcon" type="Sprite2D" parent="DataSection/DataVisualisation/DVRollContainer"]
+position = Vector2(40, 30)
+scale = Vector2(0.293, 0.207)
+texture = ExtResource("1_esmsg")
+
+[node name="PlaceholderForNewGraphics" type="Sprite2D" parent="DataSection/DataVisualisation/DVRollContainer/RollIcon"]
+texture = ExtResource("1_esmsg")
+flip_h = true
+
+[node name="DataDisplay" type="VBoxContainer" parent="DataSection"]
+layout_mode = 2
+
+[node name="PitchDisplay" type="Label" parent="DataSection/DataDisplay"]
+custom_minimum_size = Vector2(200, 55)
+layout_mode = 2
+text = "(To inicialise)"
+vertical_alignment = 1
+
+[node name="RollDisplay" type="Label" parent="DataSection/DataDisplay"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+text = "(To inicialise)"
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 249.0
+offset_bottom = 23.0
+text = "GYRO MONITOR"
+horizontal_alignment = 1
