@@ -76,6 +76,11 @@ public partial class LocalSettings : GodotObject
 
 	public LocalSettings()
 	{
+		_camera = new();
+		_mqtt = new();
+		_joystick = new();
+		_general = new();
+
 		if (LoadSettings()) return;
 
 		ForceDefaultSettings();
@@ -100,16 +105,16 @@ public partial class LocalSettings : GodotObject
 				switch (element.Name)
 				{
 					case nameof(Camera):
-						Camera = element.Value.Deserialize<CameraSettings>(deserializerOptions);
+						Camera = element.Value.Deserialize<CameraSettings>(deserializerOptions) ?? new();
 						break;
 					case nameof(Mqtt):
-						Mqtt = element.Value.Deserialize<MqttSettings>(deserializerOptions);
+						Mqtt = element.Value.Deserialize<MqttSettings>(deserializerOptions) ?? new();
 						break;
 					case nameof(Joystick):
-						Joystick = element.Value.Deserialize<JoystickSettings>(deserializerOptions);
+						Joystick = element.Value.Deserialize<JoystickSettings>(deserializerOptions) ?? new();
 						break;
 					case nameof(General):
-						General = element.Value.Deserialize<GeneralSettings>(deserializerOptions);
+						General = element.Value.Deserialize<GeneralSettings>(deserializerOptions) ?? new();
 						break;
 				}
 			}
@@ -121,7 +126,7 @@ public partial class LocalSettings : GodotObject
 		}
 
 		//if any instance is same as default constructed, well its not loaded.
-		if (new List<object> { Camera, Mqtt, Joystick, General }.Exists(obj => Activator.CreateInstance(obj.GetType())!.Equals(obj)))
+		if (new List<object> { Camera, Mqtt, Joystick, General }.Exists( obj => Activator.CreateInstance(obj.GetType())!.Equals(obj)))
 		{
 			EventLogger.LogMessage($"LocalSettings: ERROR Loading settings failed: Settings corrupted!");
 			return false;
