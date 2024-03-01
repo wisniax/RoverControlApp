@@ -20,6 +20,10 @@ boot_splash/image="res://Resources/raptors_logoHorizontal_color_nobg.png"
 boot_splash/fullsize=false
 config/icon="res://Resources/icon.svg"
 
+[autoload]
+
+LocalSettings="res://MVVM/Model/LocalSettings.cs"
+
 [debug]
 
 file_logging/enable_file_logging=true

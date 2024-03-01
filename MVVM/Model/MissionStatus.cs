@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using GodotPlugins.Game;
 using RoverControlApp.Core;
-using RoverControlApp.Core.Settings;
 using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
@@ -17,7 +16,7 @@ namespace RoverControlApp.MVVM.Model
 		private CancellationTokenSource _cts;
 		private Thread? _retriveMisionStatusThread;
 		private MqttClient? _mqttClient => MainViewModel.MqttClient;
-		private Mqtt? _mqttSettings => MainViewModel.Settings?.Mqtt;
+		private Settings.Mqtt? _mqttSettings => MainViewModel.Settings?.Mqtt;
 
 		private MqttClasses.RoverMissionStatus? _status;
 		public MqttClasses.RoverMissionStatus? Status

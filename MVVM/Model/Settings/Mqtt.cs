@@ -1,7 +1,8 @@
-﻿using Godot;
+﻿using RoverControlApp.Core;
+using Godot;
 using Newtonsoft.Json;
 
-namespace RoverControlApp.Core.Settings;
+namespace RoverControlApp.MVVM.Model.Settings;
 
 [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
 public partial class Mqtt : GodotObject

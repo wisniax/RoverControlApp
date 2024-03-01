@@ -52,8 +52,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void StartUp()
 		{
-			Settings = new LocalSettings();
-			Settings.SaveSettings();
+			Settings = GetNode<LocalSettings>("/root/LocalSettings");
 
 			MqttClient = new MqttClient(Settings!.Mqtt);
 			PressedKeys = new PressedKeys();

@@ -2,24 +2,18 @@
 using Newtonsoft.Json;
 using RoverControlApp.Core;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.IO;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using FileAccess = System.IO.FileAccess;
 
 namespace RoverControlApp.MVVM.Model;
 
-public partial class LocalSettings : GodotObject
+public partial class LocalSettings : Node
 {
-	private class PackedSettings
+	private sealed class PackedSettings
 	{
-		public Core.Settings.Camera? Camera { get; set; } = null;
-		public Core.Settings.Mqtt? Mqtt { get; set; } = null;
-		public Core.Settings.Joystick? Joystick { get; set; } = null;
-		public Core.Settings.General? General { get; set; } = null;
+		public Settings.Camera? Camera { get; set; } = null;
+		public Settings.Mqtt? Mqtt { get; set; } = null;
+		public Settings.Joystick? Joystick { get; set; } = null;
+		public Settings.General? General { get; set; } = null;
 	}
 
 	private static readonly JsonSerializerSettings serializerSettings = new()
@@ -117,7 +111,7 @@ public partial class LocalSettings : GodotObject
 
 
 	[SettingsManagerVisible(customName: "Camera Settings")]
-	public Core.Settings.Camera Camera
+	public Settings.Camera Camera
 	{
 		get => _camera;
 		set
@@ -128,7 +122,7 @@ public partial class LocalSettings : GodotObject
 	}
 
 	[SettingsManagerVisible(customName: "MQTT Settings")]
-	public Core.Settings.Mqtt Mqtt
+	public Settings.Mqtt Mqtt
 	{
 		get => _mqtt;
 		set
@@ -139,7 +133,7 @@ public partial class LocalSettings : GodotObject
 	}
 
 	[SettingsManagerVisible(customName: "Joystick Settings")]
-	public Core.Settings.Joystick Joystick
+	public Settings.Joystick Joystick
 	{
 		get => _joystick;
 		set
@@ -150,7 +144,7 @@ public partial class LocalSettings : GodotObject
 	}
 
 	[SettingsManagerVisible(customName: "General Settings")]
-	public Core.Settings.General General
+	public Settings.General General
 	{
 		get => _general;
 		set
@@ -160,10 +154,10 @@ public partial class LocalSettings : GodotObject
 		}
 	}
 
-	Core.Settings.Camera _camera;
-	Core.Settings.Mqtt _mqtt;
-	Core.Settings.Joystick _joystick;
-	Core.Settings.General _general;
+	Settings.Camera _camera;
+	Settings.Mqtt _mqtt;
+	Settings.Joystick _joystick;
+	Settings.General _general;
 }
 
 

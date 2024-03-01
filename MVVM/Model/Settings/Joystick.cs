@@ -1,8 +1,8 @@
-﻿using Godot;
-using Godot.Collections;
+﻿using RoverControlApp.Core;
+using Godot;
 using Newtonsoft.Json;
 
-namespace RoverControlApp.Core.Settings;
+namespace RoverControlApp.MVVM.Model.Settings;
 
 [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
 public partial class Joystick : GodotObject
