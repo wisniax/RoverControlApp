@@ -18,7 +18,4 @@
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.8.0.20230708" />
     <PackageReference Include="OpenCvSharp4_.runtime.ubuntu.20.04-x64" Version="4.8.0.20230708" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\MemberBender\" />
-  </ItemGroup>
 </Project>
