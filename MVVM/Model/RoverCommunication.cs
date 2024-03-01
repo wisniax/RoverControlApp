@@ -1,5 +1,6 @@
 ﻿using MQTTnet.Protocol;
 using RoverControlApp.Core;
+using RoverControlApp.Core.Settings;
 using RoverControlApp.MVVM.ViewModel;
 using System;
 using System.ServiceModel;
@@ -16,7 +17,7 @@ namespace RoverControlApp.MVVM.Model
 		private MqttClient? _mqttClient => MainViewModel.MqttClient;
 
 		//List<IDisposable> _eventsToDispose = new List<IDisposable>();
-		private MqttSettings _settingsMqtt;
+		private Mqtt _settingsMqtt;
 
 		private MqttClasses.RoverStatus? _roverStatus;
 		public MqttClasses.RoverStatus? RoverStatus
@@ -45,7 +46,7 @@ namespace RoverControlApp.MVVM.Model
 		}
 
 
-		public RoverCommunication(MqttSettings settingsMqtt)
+		public RoverCommunication(Mqtt settingsMqtt)
 		{
 			_settingsMqtt = settingsMqtt;
 			if (MainViewModel.PressedKeys != null)

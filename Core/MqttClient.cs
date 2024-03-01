@@ -3,6 +3,7 @@ using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Protocol;
 using MQTTnet.Server;
+using RoverControlApp.Core.Settings;
 using RoverControlApp.MVVM.Model;
 using RoverControlApp.MVVM.ViewModel;
 using System;
@@ -21,7 +22,7 @@ namespace RoverControlApp.Core
 		public event Action? OnClientStarted;
 
 		private IManagedMqttClient? _managedMqttClient;
-		private MqttSettings _settingsMqtt;
+		private Mqtt _settingsMqtt;
 		private CancellationTokenSource _cts;
 		private Thread? _mqttThread;
 
@@ -41,7 +42,7 @@ namespace RoverControlApp.Core
 			}
 		}
 
-		public MqttClient(MqttSettings settingsMqtt)
+		public MqttClient(Mqtt settingsMqtt)
 		{
 			_settingsMqtt = settingsMqtt;
 			_cts = new CancellationTokenSource();

@@ -1,78 +1,37 @@
 ﻿using Godot;
+using Newtonsoft.Json;
 using RoverControlApp.Core;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using FileAccess = System.IO.FileAccess;
 
 namespace RoverControlApp.MVVM.Model;
 
 public partial class LocalSettings : GodotObject
 {
-	[Signal]
-	public delegate void SettingChangedEventHandler(StringName property);
-
-	CameraSettings _camera;
-	[SettingsManagerVisible(customName: "Camera Settings")]
-	public CameraSettings Camera
+	private class PackedSettings
 	{
-		get => _camera;
-		set
-		{
-			_camera = value;
-			EmitSignal(SignalName.SettingChanged, nameof(Camera));
-		}
+		public Core.Settings.Camera? Camera { get; set; } = null;
+		public Core.Settings.Mqtt? Mqtt { get; set; } = null;
+		public Core.Settings.Joystick? Joystick { get; set; } = null;
+		public Core.Settings.General? General { get; set; } = null;
 	}
 
-	MqttSettings _mqtt;
-	[SettingsManagerVisible(customName: "MQTT Settings")]
-	public MqttSettings Mqtt
+	private static readonly JsonSerializerSettings serializerSettings = new()
 	{
-		get => _mqtt;
-		set
-		{
-			_mqtt = value;
-			EmitSignal(SignalName.SettingChanged, nameof(Mqtt));
-		}
-	}
-
-	JoystickSettings _joystick;
-	[SettingsManagerVisible(customName: "Joystick Settings")]
-	public JoystickSettings Joystick
-	{
-		get => _joystick;
-		set
-		{
-			_joystick = value;
-			EmitSignal(SignalName.SettingChanged, nameof(Joystick));
-		}
-	}
-
-	GeneralSettings _general;
-	[SettingsManagerVisible(customName: "General Settings")]
-	public GeneralSettings General
-	{
-		get => _general;
-		set
-		{
-			_general = value;
-			EmitSignal(SignalName.SettingChanged, nameof(General));
-		}
-	}
-
-	static readonly JsonSerializerOptions deserializerOptions = new JsonSerializerOptions
-	{
-		UnmappedMemberHandling = JsonUnmappedMemberHandling.Disallow
+		NullValueHandling = NullValueHandling.Include,
+		Formatting = Formatting.Indented
 	};
 
+	private static readonly string _settingsPath = "user://RoverControlAppSettings.json";
 
-	private readonly string _settingsPath = Path.Join(OS.GetUserDataDir(), "RoverControlAppSettings.json");
+	[Signal]
+	public delegate void WholeSectionChangedEventHandler(StringName property);
 
 	public LocalSettings()
 	{
@@ -88,36 +47,24 @@ public partial class LocalSettings : GodotObject
 
 	public bool LoadSettings()
 	{
-		if (!Directory.Exists(OS.GetUserDataDir())) return false;
-		if (!File.Exists(_settingsPath)) return false;
 		try
 		{
-			using var fs = new FileStream(_settingsPath, FileMode.Open, FileAccess.Read);
-			using var sr = new StreamReader(fs);
-			var serializedSettings = sr.ReadToEnd();
-			sr.Close();
-			fs.Close();
+			using var settingsFileAccess = Godot.FileAccess.Open(_settingsPath, Godot.FileAccess.ModeFlags.Read);
 
-			JsonDocument jsonSettings = JsonDocument.Parse(serializedSettings);
+			if (settingsFileAccess is null)
+				throw new FieldAccessException(Godot.FileAccess.GetOpenError().ToString());
 
-			foreach (var element in jsonSettings.RootElement.EnumerateObject().AsEnumerable())
-			{
-				switch (element.Name)
-				{
-					case nameof(Camera):
-						Camera = element.Value.Deserialize<CameraSettings>(deserializerOptions) ?? new();
-						break;
-					case nameof(Mqtt):
-						Mqtt = element.Value.Deserialize<MqttSettings>(deserializerOptions) ?? new();
-						break;
-					case nameof(Joystick):
-						Joystick = element.Value.Deserialize<JoystickSettings>(deserializerOptions) ?? new();
-						break;
-					case nameof(General):
-						General = element.Value.Deserialize<GeneralSettings>(deserializerOptions) ?? new();
-						break;
-				}
-			}
+			var serializedSettings = settingsFileAccess.GetAsText(true);
+
+			var packedSettings = JsonConvert.DeserializeObject<PackedSettings>(serializedSettings);
+
+			if (packedSettings is null)
+				throw new DataException("unknown reason");
+
+			Camera = packedSettings.Camera ?? new();
+			Mqtt = packedSettings.Mqtt ?? new();
+			Joystick = packedSettings.Joystick ?? new();
+			General = packedSettings.General ?? new();
 		}
 		catch (Exception e)
 		{
@@ -125,14 +72,7 @@ public partial class LocalSettings : GodotObject
 			return false;
 		}
 
-		//if any instance is same as default constructed, well its not loaded.
-		if (new List<object> { Camera, Mqtt, Joystick, General }.Exists( obj => Activator.CreateInstance(obj.GetType())!.Equals(obj)))
-		{
-			EventLogger.LogMessage($"LocalSettings: ERROR Loading settings failed: Settings corrupted!");
-			return false;
-		}
-
-		EventLogger.LogMessage("LocalSettings: Loading settings succeeded");
+		EventLogger.LogMessage("LocalSettings: INFO Loading settings succeeded");
 		return true;
 	}
 
@@ -140,32 +80,20 @@ public partial class LocalSettings : GodotObject
 	{
 		try
 		{
-			if (!Directory.Exists(OS.GetUserDataDir())) Directory.CreateDirectory(OS.GetUserDataDir());
-			using var fs = new FileStream(_settingsPath, FileMode.Create, FileAccess.Write);
-			using var sw = new StreamWriter(fs);
+			using var settingsFileAccess = Godot.FileAccess.Open(_settingsPath, Godot.FileAccess.ModeFlags.Write);
 
-			JsonNode? cameraNode = JsonSerializer.SerializeToNode(Camera);
-			JsonNode? mqttNode = JsonSerializer.SerializeToNode(Mqtt);
-			JsonNode? joystickNode = JsonSerializer.SerializeToNode(Joystick);
-			JsonNode? generalNode = JsonSerializer.SerializeToNode(General);
+			if (settingsFileAccess is null)
+				throw new FieldAccessException(Godot.FileAccess.GetOpenError().ToString());
 
-			if (new List<object?> { Camera, Mqtt, Joystick, General }.Exists(obj => obj is null))
-				throw new JsonException("Cannot convert to JsonNode");
-
-			JsonObject jsonSettings = new()
+			PackedSettings packedSettings = new()
 			{
-				{ nameof(Camera), cameraNode },
-				{ nameof(Mqtt), mqttNode },
-				{ nameof(Joystick), joystickNode },
-				{ nameof(General), generalNode }
+				Camera = Camera,
+				Mqtt = Mqtt,
+				Joystick = Joystick,
+				General = General
 			};
 
-			jsonSettings.ToJsonString();
-
-			sw.WriteLine(jsonSettings);
-			sw.Flush();
-			sw.Close();
-			fs.Close();
+			settingsFileAccess.StoreString(JsonConvert.SerializeObject(packedSettings, serializerSettings));
 		}
 		catch (Exception e)
 		{
@@ -173,19 +101,69 @@ public partial class LocalSettings : GodotObject
 			return false;
 		}
 
-		EventLogger.LogMessage("LocalSettings: Saving settings succeeded");
+		EventLogger.LogMessage("LocalSettings: INFO Saving settings succeeded");
 		return true;
 	}
 
 	public void ForceDefaultSettings()
 	{
-		EventLogger.LogMessage("LocalSettings: Loading default settings");
-		Camera = CameraSettings.DEFAULT;
-		Mqtt = MqttSettings.DEFAULT;
-		Joystick = JoystickSettings.DEFAULT;
-		General = GeneralSettings.DEFAULT;
+		EventLogger.LogMessage("LocalSettings: INFO Loading default settings");
+		Camera = new();
+		Mqtt = new();
+		Joystick = new();
+		General = new();
 		SaveSettings();
 	}
+
+
+	[SettingsManagerVisible(customName: "Camera Settings")]
+	public Core.Settings.Camera Camera
+	{
+		get => _camera;
+		set
+		{
+			_camera = value;
+			EmitSignal(SignalName.WholeSectionChanged, nameof(Camera));
+		}
+	}
+
+	[SettingsManagerVisible(customName: "MQTT Settings")]
+	public Core.Settings.Mqtt Mqtt
+	{
+		get => _mqtt;
+		set
+		{
+			_mqtt = value;
+			EmitSignal(SignalName.WholeSectionChanged, nameof(Mqtt));
+		}
+	}
+
+	[SettingsManagerVisible(customName: "Joystick Settings")]
+	public Core.Settings.Joystick Joystick
+	{
+		get => _joystick;
+		set
+		{
+			_joystick = value;
+			EmitSignal(SignalName.WholeSectionChanged, nameof(Joystick));
+		}
+	}
+
+	[SettingsManagerVisible(customName: "General Settings")]
+	public Core.Settings.General General
+	{
+		get => _general;
+		set
+		{
+			_general = value;
+			EmitSignal(SignalName.WholeSectionChanged, nameof(General));
+		}
+	}
+
+	Core.Settings.Camera _camera;
+	Core.Settings.Mqtt _mqtt;
+	Core.Settings.Joystick _joystick;
+	Core.Settings.General _general;
 }
 
 
