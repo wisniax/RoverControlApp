@@ -1,14 +1,15 @@
 ﻿using RoverControlApp.Core;
 using Godot;
 using Newtonsoft.Json;
+using System;
 
 namespace RoverControlApp.MVVM.Model.Settings;
 
 [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-public partial class General : GodotObject
+public partial class General : GodotObject, ICloneable
 {
  	[Signal]
-    public delegate void SettingChangedEventHandler(StringName name, Variant value);
+    public delegate void SettingChangedEventHandler(StringName name, Variant oldValue, Variant newValue);
 
 	public General()
 	{
@@ -18,42 +19,61 @@ public partial class General : GodotObject
         _backCaptureLength = 15000;
 	}
 
+	public object Clone()
+	{
+		return new General()
+		{
+			VerboseDebug = _verboseDebug,
+			MissionControlPosition = _missionControlPosition,
+			MissionControlSize = _missionControlSize,
+			BackCaptureLength= _backCaptureLength
+		};
+	}
+
 	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-	public bool VerboseDebug { get => _verboseDebug;
+	public bool VerboseDebug
+	{
+		get => _verboseDebug;
 		set
 		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.VerboseDebug, value);
+			EmitSignal(SignalName.SettingChanged, PropertyName.VerboseDebug, _verboseDebug, value);
 			_verboseDebug = value;
 		}
 	}
 
 	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"-?[0-9]+;-?[0-9]+")]
-	public string MissionControlPosition { get => _missionControlPosition;
+	public string MissionControlPosition
+	{
+		get => _missionControlPosition;
 		set
 		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.MissionControlPosition, value);
+			EmitSignal(SignalName.SettingChanged, PropertyName.MissionControlPosition, _missionControlPosition, value);
 			_missionControlPosition = value;
 		}
 	}
 
 	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"-?[0-9]+;-?[0-9]+")]
-	public string MissionControlSize { get => _missionControlSize;
+	public string MissionControlSize
+	{
+		get => _missionControlSize;
 		set
 		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.MissionControlSize, value);
+			EmitSignal(SignalName.SettingChanged, PropertyName.MissionControlSize, _missionControlSize, value);
 			_missionControlSize = value;
 		}
 	}
 
 	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;60000;100;f;l", customTooltip: "How long is history [ms]")]
-	public long BackCaptureLength { get => _backCaptureLength;
+	public long BackCaptureLength
+	{
+		get => _backCaptureLength;
 		set
 		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.BackCaptureLength, value);
+			EmitSignal(SignalName.SettingChanged, PropertyName.BackCaptureLength, _backCaptureLength, value);
 			_backCaptureLength = value;
 		}
 	}
