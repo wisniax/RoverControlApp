@@ -51,6 +51,8 @@ namespace RoverControlApp.Core
 			[CallerMemberName] string customName = null
 			)
 		{
+			if (customName is null)
+				throw new ArgumentException("customName is somehow empty!");
 			CellMode = cellMode;
 
 			switch (cellMode)
@@ -96,7 +98,7 @@ namespace RoverControlApp.Core
 
 			if (!customName.Contains(' '))
 			{
-				var formatter = RegEx.CreateFromString(@"([A-Z]{2,}|[A-Z]{1}[a-z0-9]*)");
+				var formatter = RegEx.CreateFromString(@"([A-Z]+[a-z0-9]*)");
 				var @out = formatter.SearchAll(customName.ToPascalCase());
 				StringBuilder stringBuilder = new();
 				for (int i = 0; i < @out.Count; i++)
