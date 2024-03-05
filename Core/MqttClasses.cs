@@ -118,5 +118,11 @@ namespace RoverControlApp.Core
 			public List<string> poi { get; set; }
 			public long? Timestamp { get; set; }
 		}
+		public class GyroscopeSensorOutput
+		{
+			public float pitchDeg { get; set; }
+			public float rollDeg { get; set; }
+            public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        }
 	}
 }
