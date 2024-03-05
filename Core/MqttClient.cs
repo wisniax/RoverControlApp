@@ -149,7 +149,8 @@ namespace RoverControlApp.Core
 			await SubscribeToTopic(_settingsMqtt.TopicKmlListOfActiveObj, MqttQualityOfServiceLevel.ExactlyOnce);
 			await SubscribeToTopic(_settingsMqtt.TopicRoverFeedback, MqttQualityOfServiceLevel.ExactlyOnce);
 			await SubscribeToTopic(_settingsMqtt.TopicWheelFeedback);
-			await SubscribeToTopic(_settingsMqtt.TopicEStopStatus);
+            await SubscribeToTopic(_settingsMqtt.TopicGyroscopeSensorOutput);
+            await SubscribeToTopic(_settingsMqtt.TopicEStopStatus);
 		}
 
 		private async Task SubscribeToTopic(string subtopic, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce)
