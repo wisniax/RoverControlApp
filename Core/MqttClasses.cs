@@ -120,8 +120,10 @@ namespace RoverControlApp.Core
 		}
 		public class GyroscopeSensorOutput
 		{
-			public float pitchDeg { get; set; }
-			public float rollDeg { get; set; }
+			public double QuatW { get; set; }
+			public double QuatX { get; set; }
+			public double QuatY { get; set; }
+			public double QuatZ { get; set; }
             public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         }
 	}
