@@ -1,21 +1,27 @@
-﻿using RoverControlApp.Core;
-using Godot;
-using Newtonsoft.Json;
+﻿using Godot;
+using RoverControlApp.Core;
+using RoverControlApp.Core.JSONConverters;
 using System;
+using System.Text.Json.Serialization;
 
 namespace RoverControlApp.MVVM.Model.Settings;
 
-[JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-public partial class Joystick : GodotObject, ICloneable
+[JsonConverter(typeof(JoystickConverter))]
+public partial class Joystick : SettingBase, ICloneable
 {
-	[Signal]
-	public delegate void SettingChangedEventHandler(StringName name, Variant oldValue, Variant newValue);
 
 	public Joystick()
 	{
         _newFancyRoverController = false;
         _deadzone = 0.15f;
         _vibrateOnModeChange = true;
+	}
+
+	public Joystick(bool newFancyRoverController, float deadzone, bool vibrateOnModeChange)
+	{
+		_newFancyRoverController = newFancyRoverController;
+		_deadzone = deadzone;
+		_vibrateOnModeChange = vibrateOnModeChange;
 	}
 
 	public object Clone()
@@ -28,7 +34,6 @@ public partial class Joystick : GodotObject, ICloneable
 		};
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool NewFancyRoverController
 	{
@@ -40,8 +45,7 @@ public partial class Joystick : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0f;1;0.01;f;f")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
 	public float Deadzone
 	{
 		get => _deadzone;
@@ -52,7 +56,6 @@ public partial class Joystick : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool VibrateOnModeChange
 	{

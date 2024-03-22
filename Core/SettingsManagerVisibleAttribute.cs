@@ -1,9 +1,11 @@
 using Godot;
 using RoverControlApp.MVVM.ViewModel;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace RoverControlApp.Core
 {
@@ -11,7 +13,7 @@ namespace RoverControlApp.Core
 	/// <summary>
 	/// Marks setting (from LocalSettings) visible in SettingsManager
 	/// </summary>
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
 	public sealed class SettingsManagerVisibleAttribute : Attribute
 	{
 		/// <param name="cellMode">
@@ -44,16 +46,26 @@ namespace RoverControlApp.Core
 		/// Overrides property/field name on UI.<br/>
 		/// If no there is no spaces, name is converted from "PascalCase" to "Human Case"
 		/// </param>
+		/// <param name="immutableSection">
+		/// Notifies SettingsManager that whole object should be created instead of overwriting chosed properties.
+		/// </param>
+		/// <param name="allowEdit">
+		/// Notifies SettingsManager should this property be allowed to edit.
+		/// </param>
 		public SettingsManagerVisibleAttribute(
 			TreeItem.TreeCellMode cellMode = TreeItem.TreeCellMode.Custom,
-			string formatData = null,
-			string customTooltip = null,
-			[CallerMemberName] string customName = null
+			string? formatData = null,
+			string? customTooltip = null,
+			bool immutableSection = false,
+			bool allowEdit = true,
+			[CallerMemberName] string? customName = null
 			)
 		{
 			if (customName is null)
 				throw new ArgumentException("customName is somehow empty!");
+
 			CellMode = cellMode;
+			AllowEdit = allowEdit;
 
 			switch (cellMode)
 			{
@@ -113,6 +125,77 @@ namespace RoverControlApp.Core
 			else
 				CustomName = customName;
 			CustomTooltip = customTooltip ?? customName;
+
+
+			ImmutableSection = immutableSection;
+		}
+
+		public bool ValidateValue(object value)
+		{
+			switch (CellMode)
+			{
+				case TreeItem.TreeCellMode.Check:
+					return value is bool;
+
+				case TreeItem.TreeCellMode.String:
+					if (value is not string)
+						return false;
+					if (string.IsNullOrEmpty(FormatData))
+						return true;
+
+					string validatedStr = Convert.ToString(value)!;
+
+					var tester = RegEx.CreateFromString(FormatData);
+					var test = tester.Search(validatedStr);
+					if (test is null || test.GetStart() != 0 || test.GetEnd() != validatedStr.Length)
+						return false;
+					return true;
+
+				case TreeItem.TreeCellMode.Range:
+
+					decimal mValue = 0m;
+
+					var splittedFormatData = FormatData.Split(';');
+
+					try
+					{
+						mValue = Convert.ToDecimal(value);
+					}
+					catch
+					{
+						return false;
+					}
+
+
+					if (mValue < decimal.Parse(splittedFormatData[0], CultureInfo.InvariantCulture) || mValue > decimal.Parse(splittedFormatData[1], CultureInfo.InvariantCulture) || (mValue % decimal.Parse(splittedFormatData[2], CultureInfo.InvariantCulture)) != 0)
+						return false;
+
+					var typeLiteral = splittedFormatData[^1];
+					switch (typeLiteral)
+					{
+						case "i":
+							return value is int;
+						case "ui":
+							return value is uint;
+						case "l":
+							return value is long;
+						case "ul":
+							return value is ulong;
+						case "f":
+							return value is float;
+						case "d":
+							return value is double;
+						case "m":
+							return value is decimal;
+						default:
+							throw new InvalidOperationException();
+					}
+
+				case TreeItem.TreeCellMode.Custom:
+					return true;
+				default:
+					throw new InvalidOperationException();
+			}
 		}
 
 		public TreeItem.TreeCellMode CellMode { get; private set; }
@@ -120,5 +203,8 @@ namespace RoverControlApp.Core
 		public string CustomTooltip { get; private set; }
 
 		public string FormatData { get; private set; }
+		public bool ImmutableSection { get; init; }
+		public bool AllowEdit { get; init; }
+		public bool RestartNeeded { get; init; }
 	}
 }

@@ -15,7 +15,7 @@ namespace RoverControlApp.MVVM.ViewModel
     public partial class MainViewModel : Control
 	{
 		public static MainViewModel? MainViewModelInstance { get; private set; } = null;
-		public static LocalSettings? Settings { get; private set; }
+		public static LocalSettings Settings { get; private set; }
 		public static PressedKeys? PressedKeys { get; private set; }
 		public static RoverCommunication? RoverCommunication { get; private set; }
 		public static MissionStatus? MissionStatus { get; private set; }
@@ -52,7 +52,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void StartUp()
 		{
-			Settings = GetNode<LocalSettings>("/root/LocalSettings");
+			Settings = LocalSettings.Singleton;
 
 			MqttClient = new MqttClient(Settings!.Mqtt);
 			PressedKeys = new PressedKeys();
@@ -67,26 +67,26 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			if (Settings.Camera.EnablePtzControl)
 				_ptzClient = new OnvifPtzCameraController(
-					Settings.Camera.Ip,
-					Settings.Camera.PtzPort,
-					Settings.Camera.Login,
-					Settings.Camera.Password);
+					Settings.Camera.ConnectionSettings.Ip,
+					Settings.Camera.ConnectionSettings.PtzPort,
+					Settings.Camera.ConnectionSettings.Login,
+					Settings.Camera.ConnectionSettings.Password);
 
 			if (Settings.Camera.EnableRtspStream)
 				_rtspClient = new RtspStreamClient(
-								Settings.Camera.Login,
-								Settings.Camera.Password,
-								Settings.Camera.RtspStreamPath,
-								Settings.Camera.Ip,
+								Settings.Camera.ConnectionSettings.Login,
+								Settings.Camera.ConnectionSettings.Password,
+								Settings.Camera.ConnectionSettings.RtspStreamPath,
+								Settings.Camera.ConnectionSettings.Ip,
 								"rtsp",
-								Settings.Camera.RtspPort);
+								Settings.Camera.ConnectionSettings.RtspPort);
 
 			_imTextureRect = GetNode<TextureRect>("CameraView");
 
 			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
 			if (_joyVibrato is not null) PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 
-			SettingsManagerNode.Target = Settings;
+			
 
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode!.MissionStatusUpdatedSubscriber;
 			MissionControlNode.LoadSizeAndPos();
@@ -107,6 +107,11 @@ namespace RoverControlApp.MVVM.ViewModel
 			_backCapture.HistoryLength = Settings.General.BackCaptureLength;
 
 			
+		}
+
+		public override void _EnterTree()
+		{
+			SettingsManagerNode.Target = LocalSettings.Singleton;
 		}
 
 		// Called when the node enters the scene tree for the first time.

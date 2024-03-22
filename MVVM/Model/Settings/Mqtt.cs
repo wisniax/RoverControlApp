@@ -1,23 +1,20 @@
-﻿using RoverControlApp.Core;
-using Godot;
-using Newtonsoft.Json;
+﻿using Godot;
+using RoverControlApp.Core;
+using RoverControlApp.Core.JSONConverters;
 using System;
+using System.Text.Json.Serialization;
 
 namespace RoverControlApp.MVVM.Model.Settings;
 
-[JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-public partial class Mqtt : GodotObject, ICloneable
+[JsonConverter(typeof(MqttConverter))]
+public partial class Mqtt : SettingBase, ICloneable
 {
-    [Signal]
-	public delegate void SettingChangedEventHandler(StringName name, Variant oldValue, Variant newValue);
 
 	public Mqtt()
 	{
-		_brokerIp = "broker.hivemq.com";
-        _brokerPort = 1883;
-        _pingInterval = 2.5;
-        _topicMain = "RappTORS";
-        _topicRoverControl = "RoverControl";
+		_clientSettings = new();
+
+		_topicRoverControl = "RoverControl";
         _topicManipulatorControl = "ManipulatorControl";
         _topicRoverFeedback = "RoverFeedback";
         _topicRoverStatus = "RoverStatus";
@@ -29,14 +26,40 @@ public partial class Mqtt : GodotObject, ICloneable
         _topicKmlListOfActiveObj = "KMLNode/ActiveKMLObjects";
 	}
 
+	public Mqtt
+	(
+		MqttClientOptions clientSettings,
+		string topicRoverControl,
+		string topicManipulatorControl,
+		string topicRoverFeedback,
+		string topicRoverStatus,
+		string topicRoverContainer,
+		string topicMissionStatus,
+		string topicKmlSetPoint,
+		string topicWheelFeedback,
+		string topicEStopStatus,
+		string topicKmlListOfActiveObj
+	)
+	{
+		_clientSettings = clientSettings;
+		_topicRoverControl = topicRoverControl;
+		_topicManipulatorControl = topicManipulatorControl;
+		_topicRoverFeedback = topicRoverFeedback;
+		_topicRoverStatus = topicRoverStatus;
+		_topicRoverContainer = topicRoverContainer;
+		_topicMissionStatus = topicMissionStatus;
+		_topicKmlSetPoint = topicKmlSetPoint;
+		_topicWheelFeedback = topicWheelFeedback;
+		_topicEStopStatus = topicEStopStatus;
+		_topicKmlListOfActiveObj = topicKmlListOfActiveObj;
+	}
+
 	public object Clone()
 	{
 		return new Mqtt()
 		{
-			BrokerIp = _brokerIp,
-			BrokerPort = _brokerPort,
-			PingInterval = _pingInterval,
-			TopicMain = _topicMain,
+			ClientSettings = _clientSettings,
+
 			TopicRoverControl = _topicRoverControl,
 			TopicManipulatorControl = _topicManipulatorControl,
 			TopicRoverFeedback = _topicRoverFeedback,
@@ -50,55 +73,17 @@ public partial class Mqtt : GodotObject, ICloneable
 		};
 	}
 
-	[JsonProperty]
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-	public string BrokerIp
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom)]
+	public MqttClientOptions ClientSettings
 	{
-		get => _brokerIp; 
+		get => _clientSettings;
 		set
 		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.BrokerIp, _brokerIp, value);
-			_brokerIp = value;
+			EmitSignal(SignalName.SectionChanged, PropertyName.ClientSettings, _clientSettings, value);
+			_clientSettings = value;
 		}
 	}
 
-	[JsonProperty]
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
-	public int BrokerPort
-	{
-		get => _brokerPort; 
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.BrokerPort, _brokerPort, value);
-			_brokerPort = value;
-		}
-	}
-
-	[JsonProperty]
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.1;60;0.1;t;d")]
-	public double PingInterval
-	{
-		get => _pingInterval; 
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.PingInterval, _pingInterval, value);
-			_pingInterval = value;
-		}
-	}
-
-	[JsonProperty]
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-	public string TopicMain
-	{
-		get => _topicMain; 
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.TopicMain, _topicMain, value);
-			_topicMain = value;
-		}
-	}
-
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicRoverControl
 	{
@@ -110,7 +95,6 @@ public partial class Mqtt : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicManipulatorControl
 	{
@@ -122,7 +106,6 @@ public partial class Mqtt : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicRoverFeedback
 	{
@@ -134,7 +117,6 @@ public partial class Mqtt : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicRoverStatus
 	{
@@ -157,7 +139,6 @@ public partial class Mqtt : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicMissionStatus
 	{
@@ -169,7 +150,6 @@ public partial class Mqtt : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicKmlSetPoint
 	{
@@ -181,7 +161,6 @@ public partial class Mqtt : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicWheelFeedback
 	{
@@ -193,7 +172,6 @@ public partial class Mqtt : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicEStopStatus
 	{
@@ -205,7 +183,6 @@ public partial class Mqtt : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicKmlListOfActiveObj
 	{
@@ -217,12 +194,8 @@ public partial class Mqtt : GodotObject, ICloneable
 		}
 	}
 
-	
+	MqttClientOptions _clientSettings;
 
-	string _brokerIp;
-	int _brokerPort;
-	double _pingInterval;
-	string _topicMain;
 	string _topicRoverControl;
 	string _topicManipulatorControl;
 	string _topicRoverFeedback;

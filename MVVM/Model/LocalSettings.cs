@@ -1,8 +1,8 @@
 ﻿using Godot;
-using Newtonsoft.Json;
 using RoverControlApp.Core;
 using System;
 using System.Data;
+using System.Text.Json;
 
 namespace RoverControlApp.MVVM.Model;
 
@@ -16,13 +16,11 @@ public partial class LocalSettings : Node
 		public Settings.General? General { get; set; } = null;
 	}
 
-	private static readonly JsonSerializerSettings serializerSettings = new()
-	{
-		NullValueHandling = NullValueHandling.Include,
-		Formatting = Formatting.Indented
-	};
+	private JsonSerializerOptions serializerOptions = new() { WriteIndented = true };
 
 	private static readonly string _settingsPath = "user://RoverControlAppSettings.json";
+
+	public static LocalSettings Singleton { get; private set; }
 
 	[Signal]
 	public delegate void WholeSectionChangedEventHandler(StringName property);
@@ -39,6 +37,12 @@ public partial class LocalSettings : Node
 		ForceDefaultSettings();
 	}
 
+	public override void _Ready()
+	{
+		//first ever call to _Ready will be on singletone instance.
+		Singleton ??= this;
+	}
+
 	public bool LoadSettings()
 	{
 		try
@@ -50,7 +54,7 @@ public partial class LocalSettings : Node
 
 			var serializedSettings = settingsFileAccess.GetAsText(true);
 
-			var packedSettings = JsonConvert.DeserializeObject<PackedSettings>(serializedSettings);
+			var packedSettings = JsonSerializer.Deserialize<PackedSettings>(serializedSettings, serializerOptions);
 
 			if (packedSettings is null)
 				throw new DataException("unknown reason");
@@ -87,7 +91,7 @@ public partial class LocalSettings : Node
 				General = General
 			};
 
-			settingsFileAccess.StoreString(JsonConvert.SerializeObject(packedSettings, serializerSettings));
+			settingsFileAccess.StoreString(JsonSerializer.Serialize(packedSettings, serializerOptions));
 		}
 		catch (Exception e)
 		{

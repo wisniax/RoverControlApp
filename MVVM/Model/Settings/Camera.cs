@@ -1,120 +1,59 @@
-﻿using RoverControlApp.Core;
-using Godot;
-using Newtonsoft.Json;
+﻿using Godot;
+using RoverControlApp.Core;
+using RoverControlApp.Core.JSONConverters;
 using System;
+using System.Text.Json.Serialization;
 
 namespace RoverControlApp.MVVM.Model.Settings;
 
-[JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-public partial class Camera : GodotObject, ICloneable
+[JsonConverter(typeof(CameraConverter))]
+public partial class Camera : SettingBase, ICloneable
 {
-    [Signal]
-    public delegate void SettingChangedEventHandler(StringName name, Variant oldValue, Variant newValue);
 
 	public Camera()
     {
-		_ip = "192.168.1.35";
-		_rtspStreamPath = "/live/0/MAIN";
-		_rtspPort = 554;
-		_ptzPort = 80;
-		_login = "admin";
-		_password = "admin";
+		_connectionSettings = new();
+
 		_inverseAxis = false;
 		_enableRtspStream = true;
 		_enablePtzControl = true;
 		_ptzRequestFrequency = 2.69;
 	}
 
+	public Camera(CameraConnection connectionSettings, bool inverseAxis, bool enableRtspStream, bool enablePtzControl, double ptzRequestFrequency)
+	{
+		_connectionSettings = connectionSettings;
+
+		_inverseAxis = inverseAxis;
+		_enableRtspStream = enableRtspStream;
+		_enablePtzControl = enablePtzControl;
+		_ptzRequestFrequency = ptzRequestFrequency;
+	}
+
 	public object Clone()
 	{
 		return new Camera()
 		{
-			Ip  = _ip,
-			RtspStreamPath  = _rtspStreamPath,
-			RtspPort  = _rtspPort,
-			PtzPort  = _ptzPort,
-			Login = _login,
-			Password  = _password,
+			ConnectionSettings = _connectionSettings,
+
 			InverseAxis  = _inverseAxis,
-			EnableRtspStream  = _enableRtspStream ,
+			EnableRtspStream  = _enableRtspStream,
 			EnablePtzControl  = _enablePtzControl,
 			PtzRequestFrequency  = _ptzRequestFrequency
 		};
 	}
 
-	[JsonProperty]
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"(?i)(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:\d{1,3}\.){3}\d{1,3}|(?:http:\/\/|https:\/\/)\S+")]
-	public string Ip
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
+	public CameraConnection ConnectionSettings
 	{
-		get => _ip;
+		get => _connectionSettings;
 		set
 		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.Ip, _ip, value);
-			_ip = value;
+			EmitSignal(SignalName.SectionChanged, PropertyName.ConnectionSettings, _connectionSettings, value);
+			_connectionSettings = value;
 		}
 	}
 
-	[JsonProperty]
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-	public string RtspStreamPath
-	{
-		get => _rtspStreamPath;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.RtspStreamPath, _rtspStreamPath, value);
-			_rtspStreamPath = value;
-		}
-	}
-
-	[JsonProperty]
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
-	public int RtspPort
-	{
-		get => _rtspPort;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.RtspPort, _rtspPort, value);
-			_rtspPort = value;
-		}
-	}
-
-	[JsonProperty]
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
-	public int PtzPort
-	{
-		get => _ptzPort;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.PtzPort, _ptzPort, value);
-			_ptzPort = value;
-		}
-	}
-
-	[JsonProperty]
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-	public string Login
-	{
-		get => _login;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.Login, _login, value);
-			_login = value;
-		}
-	}
-
-	[JsonProperty]
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-	public string Password
-	{
-		get => _password;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.Password, _password, value);
-			_password = value;
-		}
-	}
-
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool InverseAxis
 	{
@@ -126,7 +65,6 @@ public partial class Camera : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool EnableRtspStream
 	{
@@ -138,7 +76,6 @@ public partial class Camera : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool EnablePtzControl
 	{
@@ -150,7 +87,6 @@ public partial class Camera : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "1;4;0.01;f;d")]
 	public double PtzRequestFrequency
 	{
@@ -162,12 +98,7 @@ public partial class Camera : GodotObject, ICloneable
 		}
 	}
 
-	string _ip;
-	string _rtspStreamPath;
-	int _rtspPort;
-	int _ptzPort;
-	string _login;
-	string _password;
+	CameraConnection _connectionSettings;
 	bool _inverseAxis;
 	bool _enableRtspStream;
 	bool _enablePtzControl;

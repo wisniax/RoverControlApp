@@ -1,22 +1,29 @@
-﻿using RoverControlApp.Core;
-using Godot;
-using Newtonsoft.Json;
+﻿using Godot;
+using RoverControlApp.Core;
+using RoverControlApp.Core.JSONConverters;
 using System;
+using System.Text.Json.Serialization;
 
 namespace RoverControlApp.MVVM.Model.Settings;
 
-[JsonObject(MemberSerialization = MemberSerialization.OptIn)]
-public partial class General : GodotObject, ICloneable
+[JsonConverter(typeof(GeneralConverter))]
+public partial class General : SettingBase, ICloneable
 {
- 	[Signal]
-    public delegate void SettingChangedEventHandler(StringName name, Variant oldValue, Variant newValue);
-
+	
 	public General()
 	{
         _verboseDebug = false;
         _missionControlPosition = "20;30";
         _missionControlSize = "480;360";
         _backCaptureLength = 15000;
+	}
+
+	public General(bool verboseDebug, string missionControlPosition, string missionControlSize, long backCaptureLength)
+	{
+		_verboseDebug = verboseDebug;
+		_missionControlPosition = missionControlPosition;
+		_missionControlSize = missionControlSize;
+		_backCaptureLength = backCaptureLength;
 	}
 
 	public object Clone()
@@ -26,11 +33,10 @@ public partial class General : GodotObject, ICloneable
 			VerboseDebug = _verboseDebug,
 			MissionControlPosition = _missionControlPosition,
 			MissionControlSize = _missionControlSize,
-			BackCaptureLength= _backCaptureLength
+			BackCaptureLength = _backCaptureLength,
 		};
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool VerboseDebug
 	{
@@ -42,7 +48,6 @@ public partial class General : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"-?[0-9]+;-?[0-9]+")]
 	public string MissionControlPosition
 	{
@@ -54,7 +59,6 @@ public partial class General : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"-?[0-9]+;-?[0-9]+")]
 	public string MissionControlSize
 	{
@@ -66,7 +70,6 @@ public partial class General : GodotObject, ICloneable
 		}
 	}
 
-	[JsonProperty]
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;60000;100;f;l", customTooltip: "How long is history [ms]")]
 	public long BackCaptureLength
 	{

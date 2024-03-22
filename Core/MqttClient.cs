@@ -73,9 +73,9 @@ namespace RoverControlApp.Core
 			_managedMqttClient = mqttFactory.CreateManagedMqttClient();
 
 			var mqttClientOptions = new MqttClientOptionsBuilder()
-				.WithTcpServer(_settingsMqtt.BrokerIp, _settingsMqtt.BrokerPort)
-				.WithKeepAlivePeriod(TimeSpan.FromSeconds(_settingsMqtt.PingInterval))
-				.WithWillTopic($"{_settingsMqtt.TopicMain}/{_settingsMqtt.TopicRoverStatus}")
+				.WithTcpServer(_settingsMqtt.ClientSettings.BrokerIp, _settingsMqtt.ClientSettings.BrokerPort)
+				.WithKeepAlivePeriod(TimeSpan.FromSeconds(_settingsMqtt.ClientSettings.PingInterval))
+				.WithWillTopic($"{_settingsMqtt.ClientSettings.TopicMain}/{_settingsMqtt.TopicRoverStatus}")
 				.WithWillPayload(JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Faulted }))
 				.WithWillQualityOfServiceLevel(MqttQualityOfServiceLevel.ExactlyOnce)
 				.WithWillRetain()
@@ -109,7 +109,7 @@ namespace RoverControlApp.Core
 			//									  $"{arg.ApplicationMessage.ConvertPayloadToString()}");
 			if (_responses == null) return Task.CompletedTask;
 
-			var topic = arg.ApplicationMessage.Topic[(_settingsMqtt.TopicMain.Length + 1)..];
+			var topic = arg.ApplicationMessage.Topic[(_settingsMqtt.ClientSettings.TopicMain.Length + 1)..];
 			var payload = arg.ApplicationMessage;
 
 			if (_responses.ContainsKey(topic))
@@ -157,24 +157,24 @@ namespace RoverControlApp.Core
 		private async Task SubscribeToTopic(string subtopic, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce)
 		{
 			EventLogger.LogMessage($"MQTT: Subscribing to topic: {subtopic}");
-			await _managedMqttClient.SubscribeAsync(_settingsMqtt.TopicMain + '/' + subtopic, qos);
+			await _managedMqttClient.SubscribeAsync(_settingsMqtt.ClientSettings.TopicMain + '/' + subtopic, qos);
 		}
 
 		public async Task EnqueueAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 		{
-			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{subtopic}",
+			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.ClientSettings.TopicMain}/{subtopic}",
 				arg, qos, retain);
 		}
 
 		private async Task StopClient()
 		{
-			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{_settingsMqtt.TopicRoverControl}",
+			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.ClientSettings.TopicMain}/{_settingsMqtt.TopicRoverControl}",
 				JsonSerializer.Serialize(new MqttClasses.RoverControl()));
 
-			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{_settingsMqtt.TopicManipulatorControl}",
+			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.ClientSettings.TopicMain}/{_settingsMqtt.TopicManipulatorControl}",
 				JsonSerializer.Serialize(new MqttClasses.ManipulatorControl()));
 
-			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.TopicMain}/{_settingsMqtt.TopicRoverStatus}",
+			await _managedMqttClient.EnqueueAsync($"{_settingsMqtt.ClientSettings.TopicMain}/{_settingsMqtt.TopicRoverStatus}",
 				JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Closed }),
 				MqttQualityOfServiceLevel.ExactlyOnce, true);
 
