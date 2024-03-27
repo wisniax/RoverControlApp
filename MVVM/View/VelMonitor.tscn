@@ -1,58 +1,82 @@
-[gd_scene load_steps=3 format=3 uid="uid://de8ong5scxoka"]
+[gd_scene load_steps=4 format=3 uid="uid://de8ong5scxoka"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/VelMonitor.cs" id="1_avgmw"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SliderController.cs" id="2_hxp73"]
+[ext_resource type="Texture2D" uid="uid://ubenmvj4p5x2" path="res://Resources/icon.svg" id="3_ccmjk"]
 
 [node name="VelMonitor" type="Panel"]
 custom_minimum_size = Vector2(340, 200)
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 817.0
-offset_right = 3.0
-offset_bottom = -448.0
+anchors_preset = -1
+anchor_left = -0.151646
+anchor_right = 0.992201
+anchor_bottom = 1.00154
+offset_left = 816.0
+offset_top = 2.0
+offset_right = 2.0
+offset_bottom = -446.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(1.01226, 0.993421)
+size_flags_horizontal = 0
+size_flags_vertical = 8
 script = ExtResource("1_avgmw")
 SliderMaxVal = 6.0
 SliderMinVal = -6.0
-headLabs_NodePaths = [NodePath("DataSection/ColumnA/head0Lab"), NodePath("DataSection/ColumnB/head1Lab"), NodePath("DataSection/ColumnA/head2Lab"), NodePath("DataSection/ColumnB/head3Lab"), NodePath("DataSection/ColumnA/head4Lab"), NodePath("DataSection/ColumnB/head5Lab")]
-dataLabs_NodePaths = [NodePath("DataSection/ColumnA/head0Lab/data0Lab"), NodePath("DataSection/ColumnB/head1Lab/data1Lab"), NodePath("DataSection/ColumnA/head2Lab/data2Lab"), NodePath("DataSection/ColumnB/head3Lab/data3Lab"), NodePath("DataSection/ColumnA/head4Lab/data4Lab"), NodePath("DataSection/ColumnB/head5Lab/data5Lab")]
-sliders_NodePaths = [NodePath("DataSection/ColumnA/head0Lab/data0Lab/slider0"), NodePath("DataSection/ColumnB/head1Lab/data1Lab/slider1"), NodePath("DataSection/ColumnA/head2Lab/data2Lab/slider2"), NodePath("DataSection/ColumnB/head3Lab/data3Lab/slider3"), NodePath("DataSection/ColumnA/head4Lab/data4Lab/slider4"), NodePath("DataSection/ColumnB/head5Lab/data5Lab/slider5")]
+headLabs_NodePaths = [NodePath("DataSection/ColumnA/head0Lab"), NodePath("DataSection/ColumnB/head1Lab"), NodePath("DataSection/ColumnA/head2Lab"), NodePath("DataSection/ColumnB/head3Lab"), NodePath(""), NodePath("")]
+dataLabs_NodePaths = [NodePath("DataSection/ColumnA/head0Lab/data0Lab"), NodePath("DataSection/ColumnB/head1Lab/data1Lab"), NodePath("DataSection/ColumnA/head2Lab/data2Lab"), NodePath("DataSection/ColumnB/head3Lab/data3Lab"), NodePath(""), NodePath("")]
+sliders_NodePaths = [NodePath("DataSection/ColumnA/head0Lab/data0Lab/slider0"), NodePath("DataSection/ColumnB/head1Lab/data1Lab/slider1"), NodePath("DataSection/ColumnA/head2Lab/data2Lab/slider2"), NodePath("DataSection/ColumnB/head3Lab/data3Lab/slider3"), NodePath(""), NodePath("")]
+metadata/_edit_use_anchors_ = true
 
 [node name="DataSection" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 31.0
-offset_right = -9.0
-offset_bottom = 14.0
+offset_left = 37.9995
+offset_top = 26.0
+offset_right = 37.9995
+offset_bottom = 26.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.881046, 0.819536)
 
 [node name="ColumnA" type="VBoxContainer" parent="DataSection"]
+custom_minimum_size = Vector2(200, 100)
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
 
 [node name="head0Lab" type="Label" parent="DataSection/ColumnA"]
-custom_minimum_size = Vector2(160, 50)
+custom_minimum_size = Vector2(150, 60)
 layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 1
 text = "ID0"
+vertical_alignment = 1
 
 [node name="data0Lab" type="Label" parent="DataSection/ColumnA/head0Lab"]
-layout_mode = 0
-offset_left = 6.0
-offset_top = 20.0
-offset_right = 51.0
-offset_bottom = 46.0
-text = "A"
+custom_minimum_size = Vector2(75, 50)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.00625
+anchor_top = 0.02
+anchor_right = 0.00625
+anchor_bottom = 0.02
+offset_left = 48.5893
+offset_top = 1.31549
+offset_right = 93.5893
+offset_bottom = 27.3155
+text = "MAX
+"
+horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="slider0" type="HSlider" parent="DataSection/ColumnA/head0Lab/data0Lab"]
 layout_mode = 2
-offset_top = 20.0
-offset_right = 140.0
-offset_bottom = 36.0
+offset_left = -51.1704
+offset_top = 36.7747
+offset_right = 80.8296
+offset_bottom = 56.7747
 editable = false
 scrollable = false
 tick_count = 3
@@ -61,25 +85,37 @@ script = ExtResource("2_hxp73")
 ForegroundColor = Color(0.803922, 0, 0, 1)
 BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
 
-[node name="head2Lab" type="Label" parent="DataSection/ColumnA"]
-custom_minimum_size = Vector2(100, 50)
+[node name="LastUpdate0" type="Label" parent="DataSection/ColumnA"]
 layout_mode = 2
+text = "0ms"
+
+[node name="head2Lab" type="Label" parent="DataSection/ColumnA"]
+custom_minimum_size = Vector2(150, 55)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
 text = "ID2
 "
+vertical_alignment = 1
 
 [node name="data2Lab" type="Label" parent="DataSection/ColumnA/head2Lab"]
+custom_minimum_size = Vector2(90, 30)
 layout_mode = 0
-offset_left = 6.0
-offset_top = 20.0
-offset_right = 51.0
-offset_bottom = 46.0
-text = "A"
+offset_left = 36.0
+offset_top = 7.0
+offset_right = 84.0
+offset_bottom = 43.0
+text = "MAX"
+horizontal_alignment = 2
+vertical_alignment = 1
 
 [node name="slider2" type="HSlider" parent="DataSection/ColumnA/head2Lab/data2Lab"]
 layout_mode = 0
-offset_top = 20.0
-offset_right = 140.0
-offset_bottom = 36.0
+offset_left = -37.6436
+offset_top = 34.9193
+offset_right = 102.356
+offset_bottom = 51.9193
+scale = Vector2(0.945731, 1)
 editable = false
 scrollable = false
 tick_count = 3
@@ -88,54 +124,38 @@ script = ExtResource("2_hxp73")
 ForegroundColor = Color(0.803922, 0, 0, 1)
 BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
 
-[node name="head4Lab" type="Label" parent="DataSection/ColumnA"]
-custom_minimum_size = Vector2(100, 50)
+[node name="LastUpdate2" type="Label" parent="DataSection/ColumnA"]
 layout_mode = 2
-text = "ID4
-"
-
-[node name="data4Lab" type="Label" parent="DataSection/ColumnA/head4Lab"]
-layout_mode = 0
-offset_left = 6.0
-offset_top = 20.0
-offset_right = 17.0
-offset_bottom = 46.0
-text = "A"
-
-[node name="slider4" type="HSlider" parent="DataSection/ColumnA/head4Lab/data4Lab"]
-layout_mode = 0
-offset_top = 20.0
-offset_right = 140.0
-offset_bottom = 36.0
-editable = false
-scrollable = false
-tick_count = 3
-ticks_on_borders = true
-script = ExtResource("2_hxp73")
-ForegroundColor = Color(0.803922, 0, 0, 1)
-BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
+text = "0ms"
 
 [node name="ColumnB" type="VBoxContainer" parent="DataSection"]
+custom_minimum_size = Vector2(200, 100)
 layout_mode = 2
+size_flags_vertical = 4
 
 [node name="head1Lab" type="Label" parent="DataSection/ColumnB"]
-custom_minimum_size = Vector2(160, 50)
+custom_minimum_size = Vector2(150, 65)
 layout_mode = 2
 text = "ID1"
+vertical_alignment = 1
 
 [node name="data1Lab" type="Label" parent="DataSection/ColumnB/head1Lab"]
+custom_minimum_size = Vector2(150, 45)
 layout_mode = 0
-offset_left = 6.0
-offset_top = 20.0
-offset_right = 51.0
-offset_bottom = 46.0
-text = "A"
+offset_left = -13.8878
+offset_top = 5.73591
+offset_right = 126.112
+offset_bottom = 31.7359
+text = "MAX"
+horizontal_alignment = 2
+vertical_alignment = 2
 
 [node name="slider1" type="HSlider" parent="DataSection/ColumnB/head1Lab/data1Lab"]
 layout_mode = 0
-offset_top = 20.0
-offset_right = 140.0
-offset_bottom = 36.0
+offset_left = 11.1936
+offset_top = 44.8338
+offset_right = 152.194
+offset_bottom = 61.8338
 editable = false
 scrollable = false
 tick_count = 3
@@ -144,24 +164,37 @@ script = ExtResource("2_hxp73")
 ForegroundColor = Color(0.803922, 0, 0, 1)
 BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
 
-[node name="head3Lab" type="Label" parent="DataSection/ColumnB"]
-custom_minimum_size = Vector2(100, 50)
+[node name="LastUpdate1" type="Label" parent="DataSection/ColumnB"]
 layout_mode = 2
+text = "0ms
+"
+
+[node name="head3Lab" type="Label" parent="DataSection/ColumnB"]
+custom_minimum_size = Vector2(140, 60)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 1
 text = "ID3"
+vertical_alignment = 1
 
 [node name="data3Lab" type="Label" parent="DataSection/ColumnB/head3Lab"]
+custom_minimum_size = Vector2(150, 45)
 layout_mode = 0
-offset_left = 6.0
-offset_top = 20.0
-offset_right = 51.0
-offset_bottom = 46.0
-text = "A"
+offset_left = -15.1498
+offset_top = -0.63113
+offset_right = 29.8502
+offset_bottom = 25.3689
+text = "MAX
+"
+horizontal_alignment = 2
+vertical_alignment = 2
 
 [node name="slider3" type="HSlider" parent="DataSection/ColumnB/head3Lab/data3Lab"]
 layout_mode = 0
-offset_top = 20.0
-offset_right = 140.0
-offset_bottom = 36.0
+offset_left = 12.4557
+offset_top = 47.7787
+offset_right = 152.456
+offset_bottom = 63.7787
 editable = false
 scrollable = false
 tick_count = 3
@@ -170,39 +203,24 @@ script = ExtResource("2_hxp73")
 ForegroundColor = Color(0.803922, 0, 0, 1)
 BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
 
-[node name="head5Lab" type="Label" parent="DataSection/ColumnB"]
-custom_minimum_size = Vector2(100, 50)
+[node name="LastUpdate3" type="Label" parent="DataSection/ColumnB"]
+custom_minimum_size = Vector2(0, 35)
 layout_mode = 2
-text = "ID5"
-
-[node name="data5Lab" type="Label" parent="DataSection/ColumnB/head5Lab"]
-layout_mode = 0
-offset_left = 6.0
-offset_top = 20.0
-offset_right = 51.0
-offset_bottom = 46.0
-text = "A"
-
-[node name="slider5" type="HSlider" parent="DataSection/ColumnB/head5Lab/data5Lab"]
-layout_mode = 0
-offset_top = 20.0
-offset_right = 140.0
-offset_bottom = 36.0
-editable = false
-scrollable = false
-tick_count = 3
-ticks_on_borders = true
-script = ExtResource("2_hxp73")
-ForegroundColor = Color(0.803922, 0, 0, 1)
-BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
+text = "0ms"
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 23.0
+offset_left = -62.0
+offset_top = 3.0
+offset_right = 27.0
+offset_bottom = 29.0
 grow_horizontal = 2
 text = "VelMonitor"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(474.186, 165.086)
+scale = Vector2(0.185465, 0.190271)
+texture = ExtResource("3_ccmjk")
