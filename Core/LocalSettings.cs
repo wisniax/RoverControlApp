@@ -63,7 +63,7 @@ public class LocalSettings
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicWheelFeedback { get; set; } = "wheel_feedback";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-        public string TopicGyroscopeSensorOutput { get; set; } = "GyroscopeSensorOutput";
+        public string TopicZedImuData { get; set; } = "ZedImuData";
         [SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
         public string TopicEStopStatus { get; set; } = "button_stop";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]

@@ -44,7 +44,7 @@ public partial class ZedMonitor : Panel
 
 	double QuatX, QuatY, QuatZ, QuatW;
 
-	MqttClasses.GyroscopeSensorOutput ?Gyroscope;
+	MqttClasses.ZedImuData ?Gyroscope;
 	string? msg;
 	int connected = 0;
 
@@ -58,10 +58,11 @@ public partial class ZedMonitor : Panel
 		else
 		{
 			PullGyroscope();
-			QuatW = Gyroscope.QuatW;
-			QuatX = Gyroscope.QuatX;
-			QuatY = Gyroscope.QuatY;
-			QuatZ = Gyroscope.QuatZ;
+			QuatW = Gyroscope.orientation.w;
+			QuatX = Gyroscope.orientation.x;
+			QuatY = Gyroscope.orientation.y;
+			QuatZ = Gyroscope.orientation.z;
+			GD.Print($"QuatW: {Gyroscope.orientation.w}, QuatX: {Gyroscope.orientation.x}, QuatY: {Gyroscope.orientation.y}, QuatZ: {Gyroscope.orientation.z}");
 			Roll();
 			Pitch();
 			VisualisationUpdate();
@@ -89,22 +90,24 @@ public partial class ZedMonitor : Panel
 
 	public void DisplayUpdate()
 	{
-		pitchDisplay.Text = $"{Math.Round(pitchDeg, 2)} deg";
-        rollDisplay.Text = $"{Math.Round(rollDeg, 2)} deg";
+		pitchDisplay.Text = $"{Math.Round(-pitchDeg, 0)} deg";
+        rollDisplay.Text = $"{Math.Round(rollDeg, 0)} deg";
     }
 
 	public void PullGyroscope()
 	{		
-		Gyroscope = JsonSerializer.Deserialize<MqttClasses.GyroscopeSensorOutput>(msg);
-		double[] Quat = {Gyroscope.QuatW, Gyroscope.QuatX, Gyroscope.QuatY, Gyroscope.QuatZ };
-	}
+		Gyroscope = JsonSerializer.Deserialize<MqttClasses.ZedImuData>(msg);
+		double[] Quat = {Gyroscope.orientation.w, Gyroscope.orientation.x, Gyroscope.orientation.y, Gyroscope.orientation.z };
+        msg = MainViewModel.MqttClient?.GetReceivedMessageOnTopicAsString(MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData);
+    }
 	public void ConnectionCheck()
 	{
         
-        msg = MainViewModel.MqttClient?.GetReceivedMessageOnTopicAsString(MainViewModel.Settings?.Settings?.Mqtt.TopicGyroscopeSensorOutput);
+        msg = MainViewModel.MqttClient?.GetReceivedMessageOnTopicAsString(MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData);
         if (msg != null)
 		{
 			connected = 1;
+			GD.Print($"{MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData}");
         }
     }
 

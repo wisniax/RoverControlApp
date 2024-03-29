@@ -194,8 +194,6 @@ offset_left = 905.0
 offset_top = 453.0
 offset_right = 1154.0
 offset_bottom = 602.0
-pitchDeg = 35.47
-rollDeg = -0.505
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]

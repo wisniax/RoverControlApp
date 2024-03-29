@@ -7,8 +7,6 @@
 offset_right = 248.0
 offset_bottom = 172.0
 script = ExtResource("1_uhht3")
-pitchDeg = -4.285
-rollDeg = -8.415
 pitchVisualisation = NodePath("DataSection/DataVisualisation/DVPitchContainer/PitchIcon")
 rollVisualisation = NodePath("DataSection/DataVisualisation/DVRollContainer/RollIcon")
 pitchDisplay = NodePath("DataSection/DataDisplay/PitchDisplay")
@@ -53,7 +51,6 @@ layout_mode = 2
 position = Vector2(40, 30)
 scale = Vector2(0.297, 0.184)
 texture = ExtResource("1_esmsg")
-flip_h = true
 
 [node name="DVRollContainer" type="Label" parent="DataSection/DataVisualisation"]
 custom_minimum_size = Vector2(0, 55)
