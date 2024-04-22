@@ -44,43 +44,66 @@ public partial class ZedMonitor : Panel
 
 	double QuatX, QuatY, QuatZ, QuatW;
 
+	//Events for gyro data
+	public event Func<MqttClasses.ZedImuData?, Task>? GyroscopeChanged;
+
 	MqttClasses.ZedImuData ?Gyroscope;
 	string? msg;
 	int connected = 0;
 
-	public override void _Process(double delta)
+    public override void _Ready()
+    {
+        GyroscopeChanged += OnGyroscopeChanged;
+    }
+
+	public Task OnGyroscopeChanged(MqttClasses.ZedImuData? arg)
 	{
-		//Main cycle of the program with the MQTT connection check and quaternion processing
-		if (connected == 0)
-		{
-			ConnectionCheck();
-		}
-		else
-		{
-			PullGyroscope();
-			QuatW = Gyroscope.orientation.w;
-			QuatX = Gyroscope.orientation.x;
-			QuatY = Gyroscope.orientation.y;
-			QuatZ = Gyroscope.orientation.z;
-			GD.Print($"QuatW: {Gyroscope.orientation.w}, QuatX: {Gyroscope.orientation.x}, QuatY: {Gyroscope.orientation.y}, QuatZ: {Gyroscope.orientation.z}");
-			Roll();
-			Pitch();
-			VisualisationUpdate();
-			DisplayUpdate();
-		}
+        PullGyroscope();
+        QuatW = Gyroscope.orientation.w;
+        QuatX = Gyroscope.orientation.x;
+        QuatY = Gyroscope.orientation.y;
+        QuatZ = Gyroscope.orientation.z;
+        GD.Print($"QuatW: {Gyroscope.orientation.w}, QuatX: {Gyroscope.orientation.x}, QuatY: {Gyroscope.orientation.y}, QuatZ: {Gyroscope.orientation.z}");
+        Roll();
+        Pitch();
+        VisualisationUpdate();
+        DisplayUpdate();
+        return Task.CompletedTask;
+    }
+
+	//public override void _Process(double delta)
+	//{
+	//	//Main cycle of the program with the MQTT connection check and quaternion processing
+	//	if (connected == 0)
+	//	{
+	//		ConnectionCheck();
+	//	}
+	//	else
+	//	{
+	//		PullGyroscope();
+	//		QuatW = Gyroscope.orientation.w;
+	//		QuatX = Gyroscope.orientation.x;
+	//		QuatY = Gyroscope.orientation.y;
+	//		QuatZ = Gyroscope.orientation.z;
+	//		GD.Print($"QuatW: {Gyroscope.orientation.w}, QuatX: {Gyroscope.orientation.x}, QuatY: {Gyroscope.orientation.y}, QuatZ: {Gyroscope.orientation.z}");
+	//		Roll();
+	//		Pitch();
+	//		VisualisationUpdate();
+	//		DisplayUpdate();
+	//	}
 
 
 
-		//Manual quaternion input for testing
-		//QuatW = W;
-		//QuatX = X;
-		//QuatY = Y;
-		//QuatZ = Z;
-		//Roll();
-		//Pitch();
-		//VisualisationUpdate();
-		//DisplayUpdate();
-	}
+	//	//Manual quaternion input for testing
+	//	//QuatW = W;
+	//	//QuatX = X;
+	//	//QuatY = Y;
+	//	//QuatZ = Z;
+	//	//Roll();
+	//	//Pitch();
+	//	//VisualisationUpdate();
+	//	//DisplayUpdate();
+	//}
 
 	public void VisualisationUpdate()
 	{
@@ -100,6 +123,7 @@ public partial class ZedMonitor : Panel
 		double[] Quat = {Gyroscope.orientation.w, Gyroscope.orientation.x, Gyroscope.orientation.y, Gyroscope.orientation.z };
         msg = MainViewModel.MqttClient?.GetReceivedMessageOnTopicAsString(MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData);
     }
+
 	public void ConnectionCheck()
 	{
         
@@ -120,6 +144,7 @@ public partial class ZedMonitor : Panel
 	{
         rollDeg = ConvertToDegrees(Math.Atan2(2 * (QuatW * QuatX + QuatY * QuatZ), 1 - 2 * (QuatX * QuatX + QuatY * QuatY)));
     }
+
 	public void Pitch()
 	{
         pitchDeg = ConvertToDegrees(Math.Asin(2 * (QuatW * QuatY - QuatZ * QuatX)));
