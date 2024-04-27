@@ -43,67 +43,55 @@ public partial class ZedMonitor : Panel
 	double W;
 
 	double QuatX, QuatY, QuatZ, QuatW;
+	int connected = 1;
+	string msg;
 
 	//Events for gyro data
 	public event Func<MqttClasses.ZedImuData?, Task>? GyroscopeChanged;
 
 	MqttClasses.ZedImuData ?Gyroscope;
-	string? msg;
-	int connected = 0;
 
     public override void _Ready()
     {
-        GyroscopeChanged += OnGyroscopeChanged;
+		
     }
 
-	public Task OnGyroscopeChanged(MqttClasses.ZedImuData? arg)
+
+    public Task OnGyroscopeChanged(string subTopic, MqttApplicationMessage? msg)
 	{
-        PullGyroscope();
-        QuatW = Gyroscope.orientation.w;
-        QuatX = Gyroscope.orientation.x;
-        QuatY = Gyroscope.orientation.y;
-        QuatZ = Gyroscope.orientation.z;
-        GD.Print($"QuatW: {Gyroscope.orientation.w}, QuatX: {Gyroscope.orientation.x}, QuatY: {Gyroscope.orientation.y}, QuatZ: {Gyroscope.orientation.z}");
-        Roll();
-        Pitch();
-        VisualisationUpdate();
-        DisplayUpdate();
-        return Task.CompletedTask;
+		if (MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData is null || subTopic != MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData)
+			return Task.CompletedTask;
+        if (msg is null || msg.PayloadSegment.Count == 0)
+        {
+            MainViewModel.EventLogger?.LogMessage($"ZedMonitor Error: Empty payload");
+            return Task.CompletedTask;
+        }
+
+
+        try
+		{
+            PullGyroscope(msg);
+            QuatW = Gyroscope.orientation.w;
+            QuatX = Gyroscope.orientation.x;
+            QuatY = Gyroscope.orientation.y;
+            QuatZ = Gyroscope.orientation.z;
+            GD.Print($"QuatW: {Gyroscope.orientation.w}, QuatX: {Gyroscope.orientation.x}, QuatY: {Gyroscope.orientation.y}, QuatZ: {Gyroscope.orientation.z}");
+            Roll();
+            Pitch();
+            VisualisationUpdate();
+            DisplayUpdate();
+            return Task.CompletedTask;
+        }
+		catch (Exception e)
+		{
+			MainViewModel.EventLogger?.LogMessage($"ZedMonitor Error: {e.Message}");
+			return Task.CompletedTask;
+        }
+
+       
     }
 
-	//public override void _Process(double delta)
-	//{
-	//	//Main cycle of the program with the MQTT connection check and quaternion processing
-	//	if (connected == 0)
-	//	{
-	//		ConnectionCheck();
-	//	}
-	//	else
-	//	{
-	//		PullGyroscope();
-	//		QuatW = Gyroscope.orientation.w;
-	//		QuatX = Gyroscope.orientation.x;
-	//		QuatY = Gyroscope.orientation.y;
-	//		QuatZ = Gyroscope.orientation.z;
-	//		GD.Print($"QuatW: {Gyroscope.orientation.w}, QuatX: {Gyroscope.orientation.x}, QuatY: {Gyroscope.orientation.y}, QuatZ: {Gyroscope.orientation.z}");
-	//		Roll();
-	//		Pitch();
-	//		VisualisationUpdate();
-	//		DisplayUpdate();
-	//	}
-
-
-
-	//	//Manual quaternion input for testing
-	//	//QuatW = W;
-	//	//QuatX = X;
-	//	//QuatY = Y;
-	//	//QuatZ = Z;
-	//	//Roll();
-	//	//Pitch();
-	//	//VisualisationUpdate();
-	//	//DisplayUpdate();
-	//}
+	
 
 	public void VisualisationUpdate()
 	{
@@ -117,23 +105,21 @@ public partial class ZedMonitor : Panel
         rollDisplay.Text = $"{Math.Round(rollDeg, 0)} deg";
     }
 
-	public void PullGyroscope()
-	{		
-		Gyroscope = JsonSerializer.Deserialize<MqttClasses.ZedImuData>(msg);
-		double[] Quat = {Gyroscope.orientation.w, Gyroscope.orientation.x, Gyroscope.orientation.y, Gyroscope.orientation.z };
-        msg = MainViewModel.MqttClient?.GetReceivedMessageOnTopicAsString(MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData);
-    }
-
-	public void ConnectionCheck()
+	public void PullGyroscope(MqttApplicationMessage? msg)
 	{
-        
-        msg = MainViewModel.MqttClient?.GetReceivedMessageOnTopicAsString(MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData);
-        if (msg != null)
+		try
 		{
-			connected = 1;
-			GD.Print($"{MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData}");
+			Gyroscope = JsonSerializer.Deserialize<MqttClasses.ZedImuData>(msg.ConvertPayloadToString());
+			double[] Quat = { Gyroscope.orientation.w, Gyroscope.orientation.x, Gyroscope.orientation.y, Gyroscope.orientation.z };
+			
+			//Updating the msg is no longer necessary as it is now done in the OnGyroscopeChanged method
+			//msg = MainViewModel.MqttClient?.GetReceivedMessageOnTopicAsString(MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData);
+		}
+		catch (Exception e)
+		{
+            GD.Print($"ZedMonitor Error (Something with json deserialization): {e.Message}");
         }
-    }
+	}
 
 	public double ConvertToDegrees(double radians)
 	{
