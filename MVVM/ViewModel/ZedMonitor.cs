@@ -43,8 +43,6 @@ public partial class ZedMonitor : Panel
 	double W;
 
 	double QuatX, QuatY, QuatZ, QuatW;
-	int connected = 1;
-	string msg;
 
 	//Events for gyro data
 	public event Func<MqttClasses.ZedImuData?, Task>? GyroscopeChanged;
