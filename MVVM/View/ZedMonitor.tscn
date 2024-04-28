@@ -4,8 +4,8 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/ZedMonitor.cs" id="1_uhht3"]
 
 [node name="ZedMonitor" type="Panel" node_paths=PackedStringArray("pitchVisualisation", "rollVisualisation", "pitchDisplay", "rollDisplay")]
-offset_right = 248.0
-offset_bottom = 172.0
+offset_right = 209.0
+offset_bottom = 153.0
 script = ExtResource("1_uhht3")
 pitchVisualisation = NodePath("DataSection/DataVisualisation/DVPitchContainer/PitchIcon")
 rollVisualisation = NodePath("DataSection/DataVisualisation/DVRollContainer/RollIcon")
@@ -71,18 +71,18 @@ layout_mode = 2
 [node name="PitchDisplay" type="Label" parent="DataSection/DataDisplay"]
 custom_minimum_size = Vector2(200, 55)
 layout_mode = 2
-text = "(To inicialise)"
+text = "NoData"
 vertical_alignment = 1
 
 [node name="RollDisplay" type="Label" parent="DataSection/DataDisplay"]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
-text = "(To inicialise)"
+text = "NoData"
 vertical_alignment = 1
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
-offset_right = 249.0
+offset_right = 209.0
 offset_bottom = 23.0
 text = "GYRO MONITOR"
 horizontal_alignment = 1

@@ -31,17 +31,6 @@ public partial class ZedMonitor : Panel
     [Export]
 	Label rollDisplay;
 
-	//Fake quaterion values for testing
-
-	[Export]
-	double X;
-	[Export]
-	double Y;
-	[Export]
-	double Z;
-	[Export]
-	double W;
-
 	double QuatX, QuatY, QuatZ, QuatW;
 
 	//Events for gyro data
@@ -59,15 +48,10 @@ public partial class ZedMonitor : Panel
             return Task.CompletedTask;
         }
 
-
         try
 		{
             PullGyroscope(msg);
-            QuatW = Gyroscope.orientation.w;
-            QuatX = Gyroscope.orientation.x;
-            QuatY = Gyroscope.orientation.y;
-            QuatZ = Gyroscope.orientation.z;
-            GD.Print($"QuatW: {Gyroscope.orientation.w}, QuatX: {Gyroscope.orientation.x}, QuatY: {Gyroscope.orientation.y}, QuatZ: {Gyroscope.orientation.z}");
+            //GD.Print($"QuatW: {Gyroscope.orientation.w}, QuatX: {Gyroscope.orientation.x}, QuatY: {Gyroscope.orientation.y}, QuatZ: {Gyroscope.orientation.z}");
             Roll();
             Pitch();
 			CallDeferred("VisualisationUpdate");
@@ -101,14 +85,17 @@ public partial class ZedMonitor : Panel
 		try
 		{
 			Gyroscope = JsonSerializer.Deserialize<MqttClasses.ZedImuData>(msg.ConvertPayloadToString());
-			double[] Quat = { Gyroscope.orientation.w, Gyroscope.orientation.x, Gyroscope.orientation.y, Gyroscope.orientation.z };
-			
-			//Updating the msg is no longer necessary as it is now done in the OnGyroscopeChanged method
-			//msg = MainViewModel.MqttClient?.GetReceivedMessageOnTopicAsString(MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData);
-		}
+            QuatW = Gyroscope.orientation.w;
+            QuatX = Gyroscope.orientation.x;
+            QuatY = Gyroscope.orientation.y;
+            QuatZ = Gyroscope.orientation.z;
+
+            //Updating the msg is no longer necessary as it is now done in the OnGyroscopeChanged method
+            //msg = MainViewModel.MqttClient?.GetReceivedMessageOnTopicAsString(MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData);
+        }
 		catch (Exception e)
 		{
-            GD.Print($"ZedMonitor Error (Something with json deserialization): {e.Message}");
+            GD.Print($"ZedMonitor Error (Something is wrong with json/deserialization): {e.Message}");
         }
 	}
 

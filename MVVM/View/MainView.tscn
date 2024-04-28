@@ -170,8 +170,8 @@ layout_mode = 0
 [node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
 visible = false
 layout_mode = 0
-offset_left = 905.0
-offset_top = 453.0
+offset_left = 954.0
+offset_top = 458.0
 offset_right = 1154.0
 offset_bottom = 602.0
 
