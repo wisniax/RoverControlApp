@@ -15,9 +15,9 @@ namespace RoverControlApp.MVVM.ViewModel;
 public partial class ZedMonitor : Panel
 {
 	//[Export]
-	double pitchDeg;
+	double pitchDeg = 0;
 	//[Export]
-	double rollDeg;
+	double rollDeg = 0;
 
     //Sprites for gyro visualisation
     [Export]
@@ -49,12 +49,6 @@ public partial class ZedMonitor : Panel
 
 	MqttClasses.ZedImuData ?Gyroscope;
 
-    public override void _Ready()
-    {
-		
-    }
-
-
     public Task OnGyroscopeChanged(string subTopic, MqttApplicationMessage? msg)
 	{
 		if (MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData is null || subTopic != MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData)
@@ -76,8 +70,9 @@ public partial class ZedMonitor : Panel
             GD.Print($"QuatW: {Gyroscope.orientation.w}, QuatX: {Gyroscope.orientation.x}, QuatY: {Gyroscope.orientation.y}, QuatZ: {Gyroscope.orientation.z}");
             Roll();
             Pitch();
-            VisualisationUpdate();
-            DisplayUpdate();
+			CallDeferred("VisualisationUpdate");
+			CallDeferred("DisplayUpdate");
+
             return Task.CompletedTask;
         }
 		catch (Exception e)
@@ -88,20 +83,18 @@ public partial class ZedMonitor : Panel
 
        
     }
-
-	
-
-	public void VisualisationUpdate()
+	private void VisualisationUpdate()
 	{
 		pitchVisualisation.RotationDegrees = -(float)pitchDeg;
 		rollVisualisation.RotationDegrees = (float)rollDeg;
+
 	}
 
-	public void DisplayUpdate()
+	private void DisplayUpdate()
 	{
 		pitchDisplay.Text = $"{Math.Round(-pitchDeg, 0)} deg";
-        rollDisplay.Text = $"{Math.Round(rollDeg, 0)} deg";
-    }
+		rollDisplay.Text = $"{Math.Round(rollDeg, 0)} deg";
+	}
 
 	public void PullGyroscope(MqttApplicationMessage? msg)
 	{
