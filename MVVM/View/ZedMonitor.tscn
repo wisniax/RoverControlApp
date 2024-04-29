@@ -3,14 +3,15 @@
 [ext_resource type="Texture2D" uid="uid://ubenmvj4p5x2" path="res://Resources/icon.svg" id="1_esmsg"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/ZedMonitor.cs" id="1_uhht3"]
 
-[node name="ZedMonitor" type="Panel" node_paths=PackedStringArray("pitchVisualisation", "rollVisualisation", "pitchDisplay", "rollDisplay")]
+[node name="ZedMonitor" type="Panel" node_paths=PackedStringArray("pitchVisualisation", "rollVisualisation", "pitchDisplay", "rollDisplay", "errorDisplay")]
 offset_right = 209.0
-offset_bottom = 153.0
+offset_bottom = 163.0
 script = ExtResource("1_uhht3")
 pitchVisualisation = NodePath("DataSection/DataVisualisation/DVPitchContainer/PitchIcon")
 rollVisualisation = NodePath("DataSection/DataVisualisation/DVRollContainer/RollIcon")
 pitchDisplay = NodePath("DataSection/DataDisplay/PitchDisplay")
 rollDisplay = NodePath("DataSection/DataDisplay/RollDisplay")
+errorDisplay = NodePath("ErrorDisplay")
 
 [node name="DataSection" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -86,3 +87,20 @@ offset_right = 209.0
 offset_bottom = 23.0
 text = "GYRO MONITOR"
 horizontal_alignment = 1
+
+[node name="ErrorDisplay" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_top = -104.0
+offset_right = 209.0
+offset_bottom = -1.0
+
+[node name="ErrorWarning" type="Label" parent="ErrorDisplay"]
+self_modulate = Color(1, 0, 0, 1)
+layout_mode = 0
+offset_left = -1.0
+offset_right = 209.0
+offset_bottom = 101.0
+text = "ERROR: GYRO INFO MAY BE OUTDATED AND MISSLEADING. LAST KNOWN ORIENTATION:"
+horizontal_alignment = 1
+autowrap_mode = 3

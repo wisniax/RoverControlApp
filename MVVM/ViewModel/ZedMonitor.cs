@@ -14,12 +14,7 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class ZedMonitor : Panel
 {
-	//[Export]
-	double pitchDeg = 0;
-	//[Export]
-	double rollDeg = 0;
-
-    //Sprites for gyro visualisation
+	//Sprites for gyro visualisation
     [Export]
 	Sprite2D pitchVisualisation;
     [Export]
@@ -30,11 +25,10 @@ public partial class ZedMonitor : Panel
 	Label pitchDisplay;
     [Export]
 	Label rollDisplay;
+    [Export]
+	Panel errorDisplay;
 
-	double QuatX, QuatY, QuatZ, QuatW;
-
-	//Events for gyro data
-	public event Func<MqttClasses.ZedImuData?, Task>? GyroscopeChanged;
+    public event Func<MqttClasses.ZedImuData?, Task>? GyroscopeChanged;
 
 	MqttClasses.ZedImuData ?Gyroscope;
 
@@ -50,12 +44,8 @@ public partial class ZedMonitor : Panel
 
         try
 		{
-            PullGyroscope(msg);
-            //GD.Print($"QuatW: {Gyroscope.orientation.w}, QuatX: {Gyroscope.orientation.x}, QuatY: {Gyroscope.orientation.y}, QuatZ: {Gyroscope.orientation.z}");
-            Roll();
-            Pitch();
-			CallDeferred("VisualisationUpdate");
-			CallDeferred("DisplayUpdate");
+			Quaternion Quat = PullGyroscope(msg);
+			AngleUpdate(Quat);
 
             return Task.CompletedTask;
         }
@@ -63,55 +53,39 @@ public partial class ZedMonitor : Panel
 		{
 			MainViewModel.EventLogger?.LogMessage($"ZedMonitor Error: {e.Message}");
 			return Task.CompletedTask;
-        }
-
-       
+        }  
     }
-	private void VisualisationUpdate()
+    public Quaternion PullGyroscope(MqttApplicationMessage? msg)
+    {
+        try
+        {
+            Gyroscope = JsonSerializer.Deserialize<MqttClasses.ZedImuData>(msg.ConvertPayloadToString());
+            Quaternion Quat = new Quaternion((float)Gyroscope.orientation.x, (float)Gyroscope.orientation.y, (float)Gyroscope.orientation.z, (float)Gyroscope.orientation.w);
+            return Quat;
+        }
+        catch (Exception e)
+        {
+            GD.Print($"ZedMonitor Error (Something is wrong with json/deserialization): {e.Message}");
+            return new Quaternion();
+        }
+    }
+    public void AngleUpdate(Quaternion Quat)
+    {
+        double rollDeg = (180.0 / Math.PI) * Math.Atan2(2 * (Quat.W * Quat.X + Quat.Y * Quat.Z), 1 - 2 * (Quat.X * Quat.X + Quat.Y * Quat.Y));
+        double pitchDeg = (180.0 / Math.PI) * Math.Asin(2 * (Quat.W * Quat.Y - Quat.Z * Quat.X));
+        CallDeferred("DisplayUpdate", rollDeg, pitchDeg);
+    }
+    private void DisplayUpdate(double rollDeg, double pitchDeg)
 	{
-		pitchVisualisation.RotationDegrees = -(float)pitchDeg;
-		rollVisualisation.RotationDegrees = (float)rollDeg;
-
-	}
-
-	private void DisplayUpdate()
-	{
-		pitchDisplay.Text = $"{Math.Round(-pitchDeg, 0)} deg";
+        if(rollDeg == 0 && pitchDeg == 0)
+        {
+            errorDisplay.Visible = true;
+            return;
+        }
+        errorDisplay.Visible = false;
+        pitchVisualisation.RotationDegrees = -(float)pitchDeg;
+        rollVisualisation.RotationDegrees = (float)rollDeg;
+        pitchDisplay.Text = $"{Math.Round(-pitchDeg, 0)} deg";
 		rollDisplay.Text = $"{Math.Round(rollDeg, 0)} deg";
 	}
-
-	public void PullGyroscope(MqttApplicationMessage? msg)
-	{
-		try
-		{
-			Gyroscope = JsonSerializer.Deserialize<MqttClasses.ZedImuData>(msg.ConvertPayloadToString());
-            QuatW = Gyroscope.orientation.w;
-            QuatX = Gyroscope.orientation.x;
-            QuatY = Gyroscope.orientation.y;
-            QuatZ = Gyroscope.orientation.z;
-
-            //Updating the msg is no longer necessary as it is now done in the OnGyroscopeChanged method
-            //msg = MainViewModel.MqttClient?.GetReceivedMessageOnTopicAsString(MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData);
-        }
-		catch (Exception e)
-		{
-            GD.Print($"ZedMonitor Error (Something is wrong with json/deserialization): {e.Message}");
-        }
-	}
-
-	public double ConvertToDegrees(double radians)
-	{
-		return radians * (180.0 / (float)Math.PI);
-	}
-
-	public void Roll()
-	{
-        rollDeg = ConvertToDegrees(Math.Atan2(2 * (QuatW * QuatX + QuatY * QuatZ), 1 - 2 * (QuatX * QuatX + QuatY * QuatY)));
-    }
-
-	public void Pitch()
-	{
-        pitchDeg = ConvertToDegrees(Math.Asin(2 * (QuatW * QuatY - QuatZ * QuatX)));
-	}
-
 }
