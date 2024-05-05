@@ -44,16 +44,16 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(60, 55)
 layout_mode = 2
 
-[node name="DVPitchContainer" type="Label" parent="DataSection/DataVisualisation"]
+[node name="DVPitchContainer" type="Control" parent="DataSection/DataVisualisation"]
 custom_minimum_size = Vector2(80, 55)
 layout_mode = 2
 
 [node name="PitchIcon" type="Sprite2D" parent="DataSection/DataVisualisation/DVPitchContainer"]
-position = Vector2(40, 30)
+position = Vector2(40, 34)
 scale = Vector2(0.297, 0.184)
 texture = ExtResource("1_esmsg")
 
-[node name="DVRollContainer" type="Label" parent="DataSection/DataVisualisation"]
+[node name="DVRollContainer" type="Control" parent="DataSection/DataVisualisation"]
 custom_minimum_size = Vector2(0, 55)
 layout_mode = 2
 
