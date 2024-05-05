@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://ubenmvj4p5x2" path="res://Resources/icon.svg" id="1_esmsg"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/ZedMonitor.cs" id="1_uhht3"]
 
-[node name="ZedMonitor" type="Panel" node_paths=PackedStringArray("pitchVisualisation", "rollVisualisation", "pitchDisplay", "rollDisplay", "errorDisplay")]
+[node name="ZedMonitor" type="Panel" node_paths=PackedStringArray("pitchVisualisation", "rollVisualisation", "pitchDisplay", "rollDisplay", "errorDisplay", "timer", "timerDisplay")]
 offset_right = 209.0
 offset_bottom = 163.0
 script = ExtResource("1_uhht3")
@@ -12,6 +12,8 @@ rollVisualisation = NodePath("DataSection/DataVisualisation/DVRollContainer/Roll
 pitchDisplay = NodePath("DataSection/DataDisplay/PitchDisplay")
 rollDisplay = NodePath("DataSection/DataDisplay/RollDisplay")
 errorDisplay = NodePath("ErrorDisplay")
+timer = NodePath("Timer")
+timerDisplay = NodePath("TimePassed")
 
 [node name="DataSection" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -104,3 +106,16 @@ offset_bottom = 101.0
 text = "ERROR: GYRO INFO MAY BE OUTDATED AND MISSLEADING. LAST KNOWN ORIENTATION:"
 horizontal_alignment = 1
 autowrap_mode = 3
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 1.267
+
+[node name="TimePassed" type="Label" parent="."]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 136.0
+offset_right = 206.0
+offset_bottom = 159.0
+text = "Data is <N/A seconds old."
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

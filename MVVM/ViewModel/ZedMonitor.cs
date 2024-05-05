@@ -28,7 +28,23 @@ public partial class ZedMonitor : Panel
     [Export]
 	Panel errorDisplay;
 
+    [Export]
+    Timer timer;
+    [Export]
+    Label timerDisplay;
+
+    //Every {timerInterval} seconds, timer will trigger _on_timer_timeout and timeSLU will be updated. timeSLU will later be displayed in timerDisplay. Can easily be changed in Godot editor.
+    [Export]
+    int timerInterval = 1;
+    
+    //If time between messages is greater than errorTime, error message is displayed. Can easily be changed in Godot editor.
+    [Export]
+    int errorTime = 5;
+
+
     bool error = false;
+    //time since last update
+    int timeSLU = 0;   
 
     public event Func<MqttClasses.ZedImuData?, Task>? GyroscopeChanged;
 
@@ -48,7 +64,8 @@ public partial class ZedMonitor : Panel
 		{
 			Quaternion Quat = PullGyroscope(msg);
 			AngleUpdate(Quat);
-
+            timeSLU = 0;
+            CallDeferred("TimeUpdate", timeSLU);
             return Task.CompletedTask;
         }
 		catch (Exception e)
@@ -57,6 +74,23 @@ public partial class ZedMonitor : Panel
 			return Task.CompletedTask;
         }  
     }
+
+    public void _on_timer_timeout()
+    {
+        timeSLU += timerInterval;
+
+        if (timeSLU == errorTime)
+        {
+            GD.Print($"ZedMonitor Error: gyro data >{errorTime} seconds old.");
+
+        }
+        if (timeSLU >= errorTime)
+        {
+            errorDisplay.Visible = true;
+        }
+        TimeUpdate(timeSLU);
+    }
+
     public Quaternion PullGyroscope(MqttApplicationMessage? msg)
     {
         try
@@ -64,6 +98,7 @@ public partial class ZedMonitor : Panel
             Gyroscope = JsonSerializer.Deserialize<MqttClasses.ZedImuData>(msg.ConvertPayloadToString());
             Quaternion Quat = new Quaternion((float)Gyroscope.orientation.x, (float)Gyroscope.orientation.y, (float)Gyroscope.orientation.z, (float)Gyroscope.orientation.w);
             error = false;
+
             return Quat;
         }
         catch (Exception e)
@@ -81,7 +116,7 @@ public partial class ZedMonitor : Panel
     }
     private void DisplayUpdate(double rollDeg, double pitchDeg)
 	{
-        if(error == true)
+        if (error == true)
         {
             errorDisplay.Visible = true;
             return;
@@ -91,5 +126,11 @@ public partial class ZedMonitor : Panel
         rollVisualisation.RotationDegrees = (float)rollDeg;
         pitchDisplay.Text = $"{Math.Round(-pitchDeg, 0)} deg";
 		rollDisplay.Text = $"{Math.Round(rollDeg, 0)} deg";
-	}
+        timer.Start(timerInterval);
+    }
+
+    private void TimeUpdate(float time)
+    {
+        timerDisplay.Text = $"Data is >{time} seconds old.";
+    }
 }

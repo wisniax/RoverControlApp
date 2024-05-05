@@ -170,10 +170,10 @@ layout_mode = 0
 [node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
 visible = false
 layout_mode = 0
-offset_left = 954.0
-offset_top = 458.0
-offset_right = 1154.0
-offset_bottom = 602.0
+offset_left = 950.0
+offset_top = 439.0
+offset_right = 1150.0
+offset_bottom = 604.0
 
 [node name="VelMonitor" parent="." instance=ExtResource("6_wqihy")]
 visible = false
@@ -202,8 +202,8 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="RequestedRestart" from="SettingsManager" to="." method="VirtualRestart"]
 
 [editable path="GrzybUIDis"]
