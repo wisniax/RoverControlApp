@@ -81,7 +81,7 @@ public partial class ZedMonitor : Panel
 
         if (timeSLU == errorTime)
         {
-            GD.Print($"ZedMonitor Error: gyro data >{errorTime} seconds old.");
+            MainViewModel.EventLogger?.LogMessage($"ZedMonitor Error: gyro data >{errorTime} seconds old.");
 
         }
         if (timeSLU >= errorTime)
@@ -103,7 +103,7 @@ public partial class ZedMonitor : Panel
         }
         catch (Exception e)
         {
-            GD.Print($"ZedMonitor Error (Something is wrong with json/deserialization): {e.Message}");
+            MainViewModel.EventLogger?.LogMessage($"ZedMonitor Error (Something is wrong with json/deserialization): {e.Message}");
             error = true;
             return new Quaternion((float)Gyroscope.orientation.x, (float)Gyroscope.orientation.y, (float)Gyroscope.orientation.z, (float)Gyroscope.orientation.w);
         }
