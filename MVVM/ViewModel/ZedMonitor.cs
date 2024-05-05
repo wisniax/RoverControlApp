@@ -28,6 +28,8 @@ public partial class ZedMonitor : Panel
     [Export]
 	Panel errorDisplay;
 
+    bool error = false;
+
     public event Func<MqttClasses.ZedImuData?, Task>? GyroscopeChanged;
 
 	MqttClasses.ZedImuData ?Gyroscope;
@@ -61,12 +63,14 @@ public partial class ZedMonitor : Panel
         {
             Gyroscope = JsonSerializer.Deserialize<MqttClasses.ZedImuData>(msg.ConvertPayloadToString());
             Quaternion Quat = new Quaternion((float)Gyroscope.orientation.x, (float)Gyroscope.orientation.y, (float)Gyroscope.orientation.z, (float)Gyroscope.orientation.w);
+            error = false;
             return Quat;
         }
         catch (Exception e)
         {
             GD.Print($"ZedMonitor Error (Something is wrong with json/deserialization): {e.Message}");
-            return new Quaternion();
+            error = true;
+            return new Quaternion((float)Gyroscope.orientation.x, (float)Gyroscope.orientation.y, (float)Gyroscope.orientation.z, (float)Gyroscope.orientation.w);
         }
     }
     public void AngleUpdate(Quaternion Quat)
@@ -77,7 +81,7 @@ public partial class ZedMonitor : Panel
     }
     private void DisplayUpdate(double rollDeg, double pitchDeg)
 	{
-        if(rollDeg == 0 && pitchDeg == 0)
+        if(error == true)
         {
             errorDisplay.Visible = true;
             return;
