@@ -110,8 +110,9 @@ public partial class ZedMonitor : Panel
     }
     public void AngleUpdate(Quaternion Quat)
     {
-        double rollDeg = (180.0 / Math.PI) * Math.Atan2(2 * (Quat.W * Quat.X + Quat.Y * Quat.Z), 1 - 2 * (Quat.X * Quat.X + Quat.Y * Quat.Y));
-        double pitchDeg = (180.0 / Math.PI) * Math.Asin(2 * (Quat.W * Quat.Y - Quat.Z * Quat.X));
+        var eulerZYX = Quat.Normalized().GetEuler(EulerOrder.Zyx);
+        double rollDeg = Mathf.RadToDeg(eulerZYX.X);
+        double pitchDeg = Mathf.RadToDeg(eulerZYX.Y);
         CallDeferred("DisplayUpdate", rollDeg, pitchDeg);
     }
     private void DisplayUpdate(double rollDeg, double pitchDeg)
