@@ -5,7 +5,7 @@
 
 [node name="ZedMonitor" type="Panel" node_paths=PackedStringArray("pitchVisualisation", "rollVisualisation", "pitchDisplay", "rollDisplay", "errorDisplay", "timer", "timerDisplay")]
 offset_right = 209.0
-offset_bottom = 163.0
+offset_bottom = 153.0
 script = ExtResource("1_uhht3")
 pitchVisualisation = NodePath("DataSection/DataVisualisation/DVPitchContainer/PitchIcon")
 rollVisualisation = NodePath("DataSection/DataVisualisation/DVRollContainer/RollIcon")
@@ -21,7 +21,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 3.0
-offset_top = 25.0
+offset_top = 18.0
 offset_right = 152.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -51,7 +51,7 @@ custom_minimum_size = Vector2(80, 55)
 layout_mode = 2
 
 [node name="PitchIcon" type="Sprite2D" parent="DataSection/DataVisualisation/DVPitchContainer"]
-position = Vector2(40, 34)
+position = Vector2(40, 30)
 scale = Vector2(0.297, 0.184)
 texture = ExtResource("1_esmsg")
 
@@ -112,10 +112,11 @@ wait_time = 1.267
 
 [node name="TimePassed" type="Label" parent="."]
 layout_mode = 0
-offset_left = 2.0
-offset_top = 136.0
-offset_right = 206.0
-offset_bottom = 159.0
+offset_top = 128.0
+offset_right = 209.0
+offset_bottom = 151.0
 text = "Data is <N/A seconds old."
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
