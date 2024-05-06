@@ -105,7 +105,7 @@ public partial class ZedMonitor : Panel
         {
             MainViewModel.EventLogger?.LogMessage($"ZedMonitor Error (Something is wrong with json/deserialization): {e.Message}");
             error = true;
-            return new Quaternion((float)Gyroscope.orientation.x, (float)Gyroscope.orientation.y, (float)Gyroscope.orientation.z, (float)Gyroscope.orientation.w);
+            return Quaternion.Identity;
         }
     }
     public void AngleUpdate(Quaternion Quat)
