@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=12 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -9,11 +9,12 @@
 [ext_resource type="PackedScene" uid="uid://crakb6uxv2yt8" path="res://MVVM/View/MissionControl.tscn" id="4_wrhi8"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionStatus_UIOverlay.cs" id="6_4tmru"]
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
+[ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,6 +32,7 @@ SettingsManagerNode = NodePath("SettingsManager")
 MissionControlNode = NodePath("MissionControl")
 FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 VelMonitor = NodePath("VelMonitor")
+ZedMonitor = NodePath("ZedMonitor")
 
 [node name="CameraView" type="TextureRect" parent="."]
 layout_mode = 1
@@ -151,6 +153,11 @@ layout_mode = 2
 toggle_mode = true
 text = "VEL MONITOR"
 
+[node name="ShowZedMonitor" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+text = "GYRO"
+
 [node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 toggle_mode = true
@@ -159,6 +166,21 @@ text = "SETINGS"
 [node name="MissionControl" parent="." instance=ExtResource("4_wrhi8")]
 visible = false
 layout_mode = 0
+
+[node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -213.41
+offset_top = -204.38
+offset_right = -5.40991
+offset_bottom = -45.38
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="VelMonitor" parent="." instance=ExtResource("6_wqihy")]
 visible = false
@@ -186,8 +208,9 @@ offset_bottom = -40.0
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="RequestedRestart" from="SettingsManager" to="." method="VirtualRestart"]
 
 [editable path="GrzybUIDis"]

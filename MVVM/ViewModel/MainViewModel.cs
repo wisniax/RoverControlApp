@@ -51,6 +51,9 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private VelMonitor VelMonitor = null!;
 
+		[Export]
+		private ZedMonitor ZedMonitor = null!;
+
 		private void StartUp()
 		{
 			EventLogger = new EventLogger();
@@ -94,9 +97,10 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionControlNode.SMissionControlVisualUpdate();
 
 			MqttClient.OnMessageReceivedAsync += VelMonitor.MqttSubscriber;
+            MqttClient.OnMessageReceivedAsync += ZedMonitor.OnGyroscopeChanged;
 
-			//UIDis
-			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
+            //UIDis
+            RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
 			GrzybUIDis.MqttSubscriber(Settings.Settings.Mqtt.TopicEStopStatus, MqttClient.GetReceivedMessageOnTopic(Settings.Settings.Mqtt.TopicEStopStatus));
 			MqttClient.OnMessageReceivedAsync += GrzybUIDis.MqttSubscriber;
@@ -127,6 +131,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MqttClient.OnMessageReceivedAsync -= GrzybUIDis.MqttSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MqttClient!.OnMessageReceivedAsync -= VelMonitor.MqttSubscriber;
+			MqttClient!.OnMessageReceivedAsync -= ZedMonitor.OnGyroscopeChanged;
 
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 			if (_ptzClient != null)
