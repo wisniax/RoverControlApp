@@ -48,7 +48,7 @@ namespace RoverControlApp.Core
 
 				roverControl.ZRotAxis = vec.X;
 				roverControl.XVelAxis = vec.Y;
-				if(_settings.SafeMode) roverControl.XVelAxis *= _settings.SpeedLimiter;
+				if(_settings.ShowMode.SafeMode) roverControl.XVelAxis *= _settings.ShowMode.SpeedLimiter;
 				return true;
 			}
 		}
