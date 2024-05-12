@@ -80,7 +80,11 @@ public class LocalSettings
 		public Mqtt Mqtt { get; set; } = new();
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool VerboseDebug { get; set; } = false;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
+        [SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+        public bool SafeMode { get; set; } = false;
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.2;1;0.05;f;f", customName: "Speed Limiter (fraction of max, requires Safe Mode)")]
+		public double SpeedLimiter { get; set; } = 0.5;
+        [SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
 		public float JoyPadDeadzone { get; set; } = 0.15f;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool NewFancyRoverController { get; set; } = true;

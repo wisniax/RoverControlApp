@@ -21,6 +21,7 @@ namespace RoverControlApp.Core
 			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl)
 			{
 				roverControl = new MqttClasses.RoverControl();
+				var _settings = MainViewModel.Settings?.Settings;
 
 				float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
 				velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
@@ -47,6 +48,7 @@ namespace RoverControlApp.Core
 
 				roverControl.ZRotAxis = vec.X;
 				roverControl.XVelAxis = vec.Y;
+				if(_settings.SafeMode) roverControl.XVelAxis *= _settings.SpeedLimiter;
 				return true;
 			}
 		}
