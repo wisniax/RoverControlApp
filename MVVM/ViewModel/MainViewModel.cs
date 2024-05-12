@@ -53,6 +53,8 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		[Export]
 		private ZedMonitor ZedMonitor = null!;
+		[Export]
+		private Label SafeModeIndicator = null!;
 
 		private void StartUp()
 		{
@@ -132,6 +134,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MqttClient!.OnMessageReceivedAsync -= VelMonitor.MqttSubscriber;
 			MqttClient!.OnMessageReceivedAsync -= ZedMonitor.OnGyroscopeChanged;
+			SafeModeIndicator.Visible = false;
 
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 			if (_ptzClient != null)
