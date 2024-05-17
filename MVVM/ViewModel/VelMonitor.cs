@@ -105,11 +105,11 @@ public Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
 			return Task.CompletedTask;
 		}
 			int id = Wheels.VescId;
-			int power =(int) (Wheels.VoltsIn * Wheels.CurrentIn);
+			int power =(int) (Wheels.VoltsIn * Wheels.Current);
 			long delay = Wheels.Timestamp;
 
-		 CallDeferred("UpdateVisual", 61, power, delay);
-		 CallDeferred("UpdateVisual", 60, power, delay);
+		 CallDeferred("UpdateVisual", id, power, delay);
+		 
 		}
 	catch (Exception e)
 	{
