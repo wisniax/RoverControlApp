@@ -8,7 +8,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Godot;
-using OpenCvSharp;
+//using OpenCvSharp;
+using Emgu.CV;
 using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
