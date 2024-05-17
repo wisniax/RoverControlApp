@@ -6,21 +6,26 @@ using RoverControlApp.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace RoverControlApp.MVVM.ViewModel;
 public partial class VelMonitor : Panel
 {
-	const int ITEMS = 6;
-
+	private MqttClient? _mqttClient => MainViewModel.MqttClient;
+	const int ITEMS = 4;
+	[Export]
+	Label Test;
 	[ExportGroup("Settings")]
 	[Export]
 	string headStr = "ID ";
 	[ExportGroup("Settings")]
 	[Export]
-	string angvelStr = "AngVel: ";
-	string steerangStr = "SteerAng: ";
-
+	string powerStr = "Power: ";
+	[ExportGroup("Settings")]
+	[Export]
+	string timestr = "Delay: ";
 	[ExportGroup("Settings")]
 	[Export]
 	float SliderMaxVal = 5;
@@ -30,14 +35,17 @@ public partial class VelMonitor : Panel
 
 	[ExportGroup("NodePaths")]
 	[Export]
-	NodePath[] headLabs_NodePaths = new NodePath[6];
+	NodePath[] headLabs_NodePaths = new NodePath[ITEMS];
 	[ExportGroup("NodePaths")]
 	[Export]
-	NodePath[] dataLabs_NodePaths = new NodePath[6];
+	NodePath[] dataLabs_NodePaths = new NodePath[ITEMS];
 	[ExportGroup("NodePaths")]
 	[Export]
-	NodePath[] sliders_NodePaths = new NodePath[6];
-
+	NodePath[] sliders_NodePaths = new NodePath[ITEMS];
+	[ExportGroup("NodePaths")]
+	[Export]
+	NodePath[] timestampLabelNodePaths = new NodePath[ITEMS];
+	
 	Dictionary<int, int> idSettings = new()
 	{
 		{ 1, 1 },
@@ -50,109 +58,123 @@ public partial class VelMonitor : Panel
 
 	Label[] headLabs;
 	Label[] dataLabs;
+	Label[] timestampLabels;
 	SliderController[] sliderControllers;
-
+	MqttClasses.WheelControl ?Wheels;
+	int[] ?IdTab;
+	
 	private bool LenCheck()
 	{
-		return headLabs_NodePaths.Length == 6 && dataLabs_NodePaths.Length == 6 && sliders_NodePaths.Length == 6 && idSettings.Count == 6;
+		return headLabs_NodePaths.Length == 4 && dataLabs_NodePaths.Length == 4 && sliders_NodePaths.Length == 4 && idSettings.Count == 4;
 	}
 
 	public override void _Ready()
 	{
+		GD.Print("test");
+		Test.Text = $"dzialaj";
 		if (!LenCheck())
 			throw new Exception("Array lenght missmath!");
 
 		headLabs = new Label[ITEMS];
 		dataLabs = new Label[ITEMS];
+		timestampLabels = new Label[ITEMS];
 		sliderControllers = new SliderController[ITEMS];
 		for (int i = 0; i < ITEMS; i++)
 		{
 			headLabs[i] = GetNode<Label>(headLabs_NodePaths[i]);
 			dataLabs[i] = GetNode<Label>(dataLabs_NodePaths[i]);
+			timestampLabels[i] = GetNode<Label>(timestampLabelNodePaths[i]);
 
 			var keyOfValue = idSettings.First(kvp => kvp.Value == i).Key;
 
 			headLabs[i].Text = headStr + keyOfValue.ToString();
-			dataLabs[i].Text = angvelStr + "N/A";
+			dataLabs[i].Text = powerStr + "N/A";
+			timestampLabels[i].Text = timestr + "0ms";
 
 			sliderControllers[i] = GetNode<SliderController>(sliders_NodePaths[i]);
 			sliderControllers[i].InputMinValue(SliderMinVal);
 			sliderControllers[i].InputMaxValue(SliderMaxVal);
 		}
+
+
 	}
 
-	struct SingleWheel
+public Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
+{
+	if (MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback is null ||
+		subTopic != MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback)
+		return Task.CompletedTask;
+
+	if (msg is null || msg?.PayloadSegment is null)
 	{
-		public UInt32 id;
-		public float angleVelocity;
-		public float steerAngle;
-
-		public SingleWheel(uint id, float angleVelocity, float steerAngle)
-		{
-			this.id = id;
-			this.angleVelocity = angleVelocity;
-			this.steerAngle = steerAngle;
-		}
-
-		public static unsafe SingleWheel FromBytes(byte* rawdata)
-		{
-			byte* idPtr = &rawdata[0];
-			byte* angleVelocityPtr = &rawdata[4];
-			byte* steerAnglePtr = &rawdata[8];
-
-			return new SingleWheel(*(UInt32*)idPtr, *(float*)angleVelocityPtr, *(float*)steerAnglePtr);
-		}
-	}
-
-	public Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
-	{
-
-		if (MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback is null || subTopic != MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback)
-			return Task.CompletedTask;
-
-		if (msg is null || msg.PayloadSegment.Count == 0)
-		{
-			MainViewModel.EventLogger?.LogMessage($"VelMonitor WARNING: Empty payload!");
-			return Task.CompletedTask;
-		}
-
-		//base64
-		//var ka = System.Text.Encoding.ASCII.GetString(msg.PayloadSegment);
-		//var iat = System.Convert.FromBase64String(ka);
-
-		try
-		{
-			CallDeferred(MethodName.UpdateVisual, msg.PayloadSegment.Array);
-		}
-		catch (Exception e)
-		{
-			MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: Well.. Something went wrong");
-			MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: {e.Message}");
-		}
+		MainViewModel.EventLogger?.LogMessage($"VelMonitor WARNING: Empty payload!");
 		return Task.CompletedTask;
 	}
 
-	public unsafe void UpdateVisual(byte[]? rawdata)
+	try
 	{
-		if (rawdata is null)
-			throw new ArgumentNullException("rawdata is null");
+		
+		Wheels = JsonSerializer.Deserialize<MqttClasses.WheelControl>(msg.ConvertPayloadToString());
 
-		if (rawdata.Length != 76)
+		if (Wheels is null)
 		{
-			throw new ArgumentException("rawdata.Length mismatch (!= 76)");
+			MainViewModel.EventLogger?.LogMessage($"VelMonitor WARNING: Failed to deserialize payload!");
+			return Task.CompletedTask;
 		}
+		
+		UpdateVisual(Wheels);
+	}
+	catch (Exception e)
+	{
+		MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: Something went wrong: {e.Message}");
+	}
 
-		if (!LenCheck())
-			throw new Exception("Internal array lenght missmath!");
+	return Task.CompletedTask;
+}
 
-		fixed (byte* rawdataPtr = &rawdata[0])
-			for (int offset = 4; offset < 76; offset += 12)
+
+
+public void UpdateVisual(MqttClasses.WheelControl wheelData)
+{
+	try
+	{
+			if (IdTab == null)
 			{
-				var wheelData = SingleWheel.FromBytes(&rawdataPtr[offset]);
-
-				var localIdx = idSettings[(int)wheelData.id];
-				dataLabs[localIdx].Text = angvelStr + $"{wheelData.angleVelocity}";
-				sliderControllers[localIdx].InputValue(wheelData.angleVelocity);
+				IdTab = new int[0];
 			}
+			var localIdx = wheelData.VescId;
+			if (IdTab.Contains(localIdx))
+			{
+				var index = Array.IndexOf(IdTab, localIdx);
+				dataLabs[index].Text = $"{powerStr} {wheelData.CurrentIn * wheelData.VoltsIn}";
+				sliderControllers[index].InputValue((float)(wheelData.CurrentIn * wheelData.VoltsIn));
+				long time = ConvertToMMs(wheelData.Timestamp);
+				timestampLabels[index].Text = $"{timestr}: {time}";
+			}
+		else {
+				if (IdTab.Length >= ITEMS)
+				{
+					MainViewModel.EventLogger?.LogMessage("Invalid wheel ID");
+				}
+				else {
+					IdTab.Append(localIdx);
+					var index = 0;
+					dataLabs[index].Text = $"{powerStr} {wheelData.CurrentIn * wheelData.VoltsIn}";
+					sliderControllers[index].InputValue((float)(wheelData.CurrentIn * wheelData.VoltsIn));
+					long time = ConvertToMMs(wheelData.Timestamp);
+					timestampLabels[index].Text = $"{timestr}: {time}";
+				}
+		}
+		
+	}
+	catch (Exception e)
+	{
+		MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: Failed to update visual: {e.Message}");
+	}
+}
+
+
+	public long ConvertToMMs(long timestamp) { 
+		return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - timestamp;
 	}
 }

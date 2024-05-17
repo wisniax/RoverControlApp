@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -61,7 +61,7 @@ public class LocalSettings
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicKmlSetPoint { get; set; } = "KMLNode/SetPoint";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicWheelFeedback { get; set; } = "wheel_feedback";
+		public string TopicWheelFeedback { get; set; } = "WheelsFeedback";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicEStopStatus { get; set; } = "button_stop";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]

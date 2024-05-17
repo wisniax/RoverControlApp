@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 using Godot;
@@ -8,7 +8,7 @@ using MQTTnet.Server;
 // ReSharper disable UnusedMember.Global
 
 namespace RoverControlApp.Core
-{
+{	
 	public abstract class MqttClasses
 	{
 		public enum ControlMode
@@ -57,6 +57,28 @@ namespace RoverControlApp.Core
 			public double ZRotAxis { get; set; }
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
+		public class WheelControl
+		{
+			public int VescId { get; set; }
+			public int ERPM { get; set; }
+			public double Current { get; set; }
+			public double DutyCycle { get; set; }
+			public double AhUsed { get; set; }
+			public double AhCharged { get; set; }
+			public double WhUsed { get; set; }
+			public double WhCharged { get; set; }
+			public double TempFet { get; set; }
+			public double TempMotor { get; set; }
+			public double CurrentIn { get; set; }
+			public double PidPos { get; set; }
+			public double Tachometer { get; set; }
+			public double VoltsIn { get; set; }
+			public double ADC1 { get; set; }
+			public double ADC2 { get; set; }
+			public double ADC3 { get; set; }
+			public double PPM { get; set; }
+			public long Timestamp { get; set; }
+	}
 
 		public class ManipulatorControl
 		{
