@@ -77,121 +77,77 @@ public partial class Mqtt : SettingBase, ICloneable
 	public MqttClientOptions ClientSettings
 	{
 		get => _clientSettings;
-		set
-		{
-			EmitSignal(SignalName.SectionChanged, PropertyName.ClientSettings, _clientSettings, value);
-			_clientSettings = value;
-		}
+		set => EmitSignal_SectionChanged(ref _clientSettings, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicRoverControl
 	{
 		get => _topicRoverControl; 
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.TopicRoverControl, _topicRoverControl, value);
-			_topicRoverControl = value;
-		}
+		set => EmitSignal_SettingChanged(ref _topicRoverControl, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicManipulatorControl
 	{
 		get => _topicManipulatorControl;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.TopicManipulatorControl, _topicManipulatorControl, value);
-			_topicManipulatorControl = value;
-		}
+		set => EmitSignal_SettingChanged(ref _topicManipulatorControl, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicRoverFeedback
 	{
 		get => _topicRoverFeedback;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.TopicRoverFeedback, _topicRoverFeedback, value);
-			_topicRoverFeedback = value;
-		}
+		set => EmitSignal_SettingChanged(ref _topicRoverFeedback, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicRoverStatus
 	{
 		get => _topicRoverStatus;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.TopicRoverStatus, _topicRoverStatus, value);
-			_topicRoverStatus = value;
-		}
+		set => EmitSignal_SettingChanged(ref _topicRoverStatus, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicRoverContainer
 	{
 		get => _topicRoverContainer;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.TopicRoverContainer, _topicRoverContainer, value);
-			_topicRoverContainer = value;
-		}
+		set => EmitSignal_SettingChanged(ref _topicRoverContainer, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicMissionStatus
 	{
 		get => _topicMissionStatus;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.TopicMissionStatus, _topicMissionStatus, value);
-			_topicMissionStatus = value;
-		}
+		set => EmitSignal_SettingChanged(ref _topicMissionStatus, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicKmlSetPoint
 	{
 		get => _topicKmlSetPoint;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.TopicKmlSetPoint, _topicKmlSetPoint, value);
-			_topicKmlSetPoint = value;
-		}
+		set => EmitSignal_SettingChanged(ref _topicKmlSetPoint, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicWheelFeedback
 	{
 		get => _topicWheelFeedback;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.TopicWheelFeedback, _topicWheelFeedback, value);
-			_topicWheelFeedback = value;
-		}
+		set => EmitSignal_SettingChanged(ref _topicWheelFeedback, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicEStopStatus
 	{
 		get => _topicEStopStatus;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.TopicEStopStatus, _topicEStopStatus, value);
-			_topicEStopStatus = value;
-		}
+		set => EmitSignal_SettingChanged(ref _topicEStopStatus, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicKmlListOfActiveObj
 	{
 		get => _topicKmlListOfActiveObj;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.TopicKmlListOfActiveObj, _topicKmlListOfActiveObj, value);
-			_topicKmlListOfActiveObj = value;
-		}
+		set => EmitSignal_SettingChanged(ref _topicKmlListOfActiveObj, value);
 	}
 
 	MqttClientOptions _clientSettings;

@@ -38,33 +38,21 @@ public partial class Joystick : SettingBase, ICloneable
 	public bool NewFancyRoverController
 	{
 		get => _newFancyRoverController;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.NewFancyRoverController, _newFancyRoverController, value);
-			_newFancyRoverController = value;
-		}
+		set => EmitSignal_SettingChanged(ref _newFancyRoverController, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
 	public float Deadzone
 	{
 		get => _deadzone;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.Deadzone, _deadzone, value);
-			_deadzone = value;
-		}
+		set => EmitSignal_SettingChanged(ref _deadzone, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool VibrateOnModeChange
 	{
 		get => _vibrateOnModeChange;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.VibrateOnModeChange, _vibrateOnModeChange, value);
-			_vibrateOnModeChange = value;
-		}
+		set => EmitSignal_SettingChanged(ref _vibrateOnModeChange, value);
 	}
 
 	bool _newFancyRoverController;

@@ -47,55 +47,35 @@ public partial class Camera : SettingBase, ICloneable
 	public CameraConnection ConnectionSettings
 	{
 		get => _connectionSettings;
-		set
-		{
-			EmitSignal(SignalName.SectionChanged, PropertyName.ConnectionSettings, _connectionSettings, value);
-			_connectionSettings = value;
-		}
+		set => EmitSignal_SectionChanged(ref _connectionSettings, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool InverseAxis
 	{
 		get => _inverseAxis;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.InverseAxis, _inverseAxis, value);
-			_inverseAxis = value;
-		}
+		set => EmitSignal_SettingChanged(ref _inverseAxis,value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool EnableRtspStream
 	{
 		get => _enableRtspStream;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.EnableRtspStream, _enableRtspStream, value);
-			_enableRtspStream = value;
-		}
+		set => EmitSignal_SettingChanged(ref _enableRtspStream, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool EnablePtzControl
 	{
 		get => _enablePtzControl;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.EnablePtzControl, _enablePtzControl, value);
-			_enablePtzControl = value;
-		}
+		set => EmitSignal_SettingChanged(ref _enablePtzControl, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "1;4;0.01;f;d")]
 	public double PtzRequestFrequency
 	{
 		get => _ptzRequestFrequency;
-		set
-		{
-			EmitSignal(SignalName.SettingChanged, PropertyName.PtzRequestFrequency, _ptzRequestFrequency, value);
-			_ptzRequestFrequency = value;
-		}
+		set => EmitSignal_SettingChanged(ref _ptzRequestFrequency, value);
 	}
 
 	CameraConnection _connectionSettings;
