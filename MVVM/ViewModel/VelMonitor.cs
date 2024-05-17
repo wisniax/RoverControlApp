@@ -46,16 +46,6 @@ public partial class VelMonitor : Panel
 	[Export]
 	NodePath[] timestampLabelNodePaths = new NodePath[ITEMS];
 	
-	Dictionary<int, int> idSettings = new()
-	{
-		{ 1, 1 },
-		{ 2, 0 },
-		{ 3, 3 },
-		{ 4, 2 },
-		{ 5, 5 },
-		{ 6, 4 },
-	};
-
 	Label[] headLabs;
 	Label[] dataLabs;
 	Label[] timestampLabels;
@@ -63,17 +53,11 @@ public partial class VelMonitor : Panel
 	MqttClasses.WheelControl ?Wheels;
 	int[] ?IdTab;
 	
-	private bool LenCheck()
-	{
-		return headLabs_NodePaths.Length == 4 && dataLabs_NodePaths.Length == 4 && sliders_NodePaths.Length == 4 && idSettings.Count == 4;
-	}
+	
 
 	public override void _Ready()
 	{
-		GD.Print("test");
-		Test.Text = $"dzialaj";
-		if (!LenCheck())
-			throw new Exception("Array lenght missmath!");
+		
 
 		headLabs = new Label[ITEMS];
 		dataLabs = new Label[ITEMS];
@@ -85,9 +69,8 @@ public partial class VelMonitor : Panel
 			dataLabs[i] = GetNode<Label>(dataLabs_NodePaths[i]);
 			timestampLabels[i] = GetNode<Label>(timestampLabelNodePaths[i]);
 
-			var keyOfValue = idSettings.First(kvp => kvp.Value == i).Key;
 
-			headLabs[i].Text = headStr + keyOfValue.ToString();
+			headLabs[i].Text = headStr;
 			dataLabs[i].Text = powerStr + "N/A";
 			timestampLabels[i].Text = timestr + "0ms";
 
@@ -121,9 +104,13 @@ public Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
 			MainViewModel.EventLogger?.LogMessage($"VelMonitor WARNING: Failed to deserialize payload!");
 			return Task.CompletedTask;
 		}
-		
-		UpdateVisual(Wheels);
-	}
+			int id = Wheels.VescId;
+			int power =(int) (Wheels.VoltsIn * Wheels.CurrentIn);
+			long delay = Wheels.Timestamp;
+
+		 CallDeferred("UpdateVisual", 61, power, delay);
+		 CallDeferred("UpdateVisual", 60, power, delay);
+		}
 	catch (Exception e)
 	{
 		MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: Something went wrong: {e.Message}");
@@ -134,7 +121,7 @@ public Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
 
 
 
-public void UpdateVisual(MqttClasses.WheelControl wheelData)
+public void UpdateVisual(int id, int pow, long timestamp)
 {
 	try
 	{
@@ -142,13 +129,13 @@ public void UpdateVisual(MqttClasses.WheelControl wheelData)
 			{
 				IdTab = new int[0];
 			}
-			var localIdx = wheelData.VescId;
+			var localIdx = id;
 			if (IdTab.Contains(localIdx))
 			{
 				var index = Array.IndexOf(IdTab, localIdx);
-				dataLabs[index].Text = $"{powerStr} {wheelData.CurrentIn * wheelData.VoltsIn}";
-				sliderControllers[index].InputValue((float)(wheelData.CurrentIn * wheelData.VoltsIn));
-				long time = ConvertToMMs(wheelData.Timestamp);
+				dataLabs[index].Text = $"{powerStr} {pow}";
+				sliderControllers[index].InputValue((pow));
+				long time = ConvertToMMs(timestamp);
 				timestampLabels[index].Text = $"{timestr}: {time}";
 			}
 		else {
@@ -159,9 +146,9 @@ public void UpdateVisual(MqttClasses.WheelControl wheelData)
 				else {
 					IdTab.Append(localIdx);
 					var index = 0;
-					dataLabs[index].Text = $"{powerStr} {wheelData.CurrentIn * wheelData.VoltsIn}";
-					sliderControllers[index].InputValue((float)(wheelData.CurrentIn * wheelData.VoltsIn));
-					long time = ConvertToMMs(wheelData.Timestamp);
+					dataLabs[index].Text = $"{powerStr} {pow}";
+					sliderControllers[index].InputValue(pow);
+					long time = ConvertToMMs(timestamp);
 					timestampLabels[index].Text = $"{timestr}: {time}";
 				}
 		}

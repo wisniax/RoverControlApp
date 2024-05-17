@@ -20,13 +20,13 @@ scale = Vector2(1.01226, 0.993421)
 size_flags_horizontal = 0
 size_flags_vertical = 8
 script = ExtResource("1_avgmw")
-Test = NodePath("DataSection/ColumnB/head3Lab/Test")
+Test = NodePath("")
 SliderMaxVal = 6.0
 SliderMinVal = -6.0
 headLabs_NodePaths = [NodePath("DataSection/ColumnA/head0Lab"), NodePath("DataSection/ColumnB/head1Lab"), NodePath("DataSection/ColumnA/head2Lab"), NodePath("DataSection/ColumnB/head3Lab")]
 dataLabs_NodePaths = [NodePath("DataSection/ColumnA/head0Lab/data0Lab"), NodePath("DataSection/ColumnB/head1Lab/data1Lab"), NodePath("DataSection/ColumnA/head2Lab/data2Lab"), NodePath("DataSection/ColumnB/head3Lab/data3Lab")]
-sliders_NodePaths = [NodePath("DataSection/ColumnA/head0Lab/data0Lab/slider0"), NodePath("DataSection/ColumnB/head1Lab/data1Lab/slider1"), NodePath("DataSection/ColumnA/head2Lab/data2Lab/slider2"), NodePath("DataSection/ColumnB/head3Lab/data3Lab/slider3"), NodePath(""), NodePath("")]
-timestampLabelNodePaths = [NodePath("DataSection/ColumnA/LastUpdate0"), null, null, null]
+sliders_NodePaths = [NodePath("DataSection/ColumnA/head0Lab/data0Lab/slider0"), NodePath("DataSection/ColumnB/head1Lab/data1Lab/slider1"), NodePath("DataSection/ColumnA/head2Lab/data2Lab/slider2"), NodePath("DataSection/ColumnB/head3Lab/data3Lab/slider3")]
+timestampLabelNodePaths = [NodePath("DataSection/ColumnA/LastUpdate0"), NodePath("DataSection/ColumnB/LastUpdate1"), NodePath("DataSection/ColumnA/LastUpdate2"), NodePath("DataSection/ColumnB/LastUpdate3")]
 metadata/_edit_use_anchors_ = true
 
 [node name="DataSection" type="HBoxContainer" parent="."]
@@ -204,13 +204,6 @@ ticks_on_borders = true
 script = ExtResource("2_hxp73")
 ForegroundColor = Color(0.803922, 0, 0, 1)
 BackgroundColor = Color(0.345098, 0.345098, 0.345098, 1)
-
-[node name="Test" type="Label" parent="DataSection/ColumnB/head3Lab"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-offset_top = 103.0
-offset_right = 200.0
-offset_bottom = 126.0
 
 [node name="LastUpdate3" type="Label" parent="DataSection/ColumnB"]
 custom_minimum_size = Vector2(0, 35)
