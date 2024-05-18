@@ -99,10 +99,10 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionControlNode.SMissionControlVisualUpdate();
 
 			MqttClient.OnMessageReceivedAsync += VelMonitor.MqttSubscriber;
-            MqttClient.OnMessageReceivedAsync += ZedMonitor.OnGyroscopeChanged;
+			MqttClient.OnMessageReceivedAsync += ZedMonitor.OnGyroscopeChanged;
 
-            //UIDis
-            RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
+			//UIDis
+			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
 			GrzybUIDis.MqttSubscriber(Settings.Settings.Mqtt.TopicEStopStatus, MqttClient.GetReceivedMessageOnTopic(Settings.Settings.Mqtt.TopicEStopStatus));
 			MqttClient.OnMessageReceivedAsync += GrzybUIDis.MqttSubscriber;
