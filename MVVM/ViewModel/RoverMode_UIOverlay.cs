@@ -22,10 +22,10 @@ public partial class RoverMode_UIOverlay : UIOverlay
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
         ControlMode = (int)newMode;
-		if(ControlMode == 1 && MainViewModel.Settings?.Settings.ShowMode.SafeMode == true && MainViewModel.Settings?.Settings.ShowMode.SpeedLimiter < 1)
+		if(ControlMode == 1 && MainViewModel.Settings?.Settings.SpeedLimiter.Enabled == true && MainViewModel.Settings?.Settings.SpeedLimiter.MaxSpeed < 1)
 		{
 			SafeModeIndicator.Visible = true;
-			SafeModeIndicator.Text = $"Safe Mode ON - {Mathf.Round((double)MainViewModel.Settings?.Settings.ShowMode.SpeedLimiter * 100)}%";//Rounding may seem unnecessary, but without it numbers higher than 80 would be displayed as 79.99999999999999
+			SafeModeIndicator.Text = $"Safe Mode ON - {Mathf.Round((double)MainViewModel.Settings?.Settings.SpeedLimiter.MaxSpeed * 100)}%";//Rounding may seem unnecessary, but without it numbers higher than 80 would be displayed as 79.99999999999999
 		}
 		else
 		{

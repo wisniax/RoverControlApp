@@ -63,31 +63,31 @@ public class LocalSettings
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicWheelFeedback { get; set; } = "wheel_feedback";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-        public string TopicZedImuData { get; set; } = "ZedImuData";
-        [SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-        public string TopicEStopStatus { get; set; } = "button_stop";
+		public string TopicZedImuData { get; set; } = "ZedImuData";
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+		public string TopicEStopStatus { get; set; } = "button_stop";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicKmlListOfActiveObj { get; set; } = "KMLNode/ActiveKMLObjects";
 
 	}
-	public class ShowMode
+	public class SpeedLimiter
 	{
-        [SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-        public bool SafeMode { get; set; } = false;
-        [SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.2;1;0.05;f;f", customName: "Speed Limiter (fraction of max, requires Safe Mode)")]
-        public double SpeedLimiter { get; set; } = 0.5;
-    }
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+		public bool Enabled { get; set; } = false;
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.2;1;0.05;f;f", customName: "MaxSpeed (multiplier)")]
+		public double MaxSpeed { get; set; } = 0.5;
+	}
 	public class Vars
 	{
 		[SettingsManagerVisible(customName: "Camera Settings")]
 		public Camera Camera { get; set; } = new();
 		[SettingsManagerVisible(customName: "MQTT Settings")]
 		public Mqtt Mqtt { get; set; } = new();
-		[SettingsManagerVisible(customName: "ShowMode Settings")]
-		public ShowMode ShowMode { get; set; } = new();
-        [SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-        public bool VerboseDebug { get; set; } = false;
-        [SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
+		[SettingsManagerVisible(customName: "SpeedLimiter Settings")]
+		public SpeedLimiter SpeedLimiter { get; set; } = new();
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+		public bool VerboseDebug { get; set; } = false;
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
 		public float JoyPadDeadzone { get; set; } = 0.15f;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool NewFancyRoverController { get; set; } = true;
