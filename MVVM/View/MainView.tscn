@@ -182,7 +182,7 @@ text = "GYRO"
 [node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 toggle_mode = true
-text = "SETINGS"
+text = "SETTINGS"
 
 [node name="MissionControl" parent="." instance=ExtResource("4_wrhi8")]
 visible = false
@@ -230,8 +230,8 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="RequestedRestart" from="SettingsManager" to="." method="VirtualRestart"]
 
 [editable path="GrzybUIDis"]
