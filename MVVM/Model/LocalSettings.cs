@@ -118,7 +118,7 @@ public partial class LocalSettings : Node
 
 	private void EmitSignalWholeSectionChanged(string sectionName)
 	{
-		EmitSignal(SignalName.WholeSectionChanged, nameof(Camera));
+		EmitSignal(SignalName.WholeSectionChanged, sectionName);
 		EventLogger.LogMessageDebug("LocalSettings", EventLogger.LogLevel.Verbose, $"Section \"{sectionName}\" was overwritten");
 	}
 
