@@ -1,4 +1,5 @@
 ﻿using Godot;
+using Microsoft.VisualBasic.FileIO;
 using RoverControlApp.Core;
 using System;
 using System.Data;
@@ -20,7 +21,9 @@ public partial class LocalSettings : Node
 
 	private static readonly string _settingsPath = "user://RoverControlAppSettings.json";
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 	public static LocalSettings Singleton { get; private set; }
+#pragma warning restore CS8618 
 
 	[Signal]
 	public delegate void WholeSectionChangedEventHandler(StringName property);
@@ -66,11 +69,11 @@ public partial class LocalSettings : Node
 		}
 		catch (Exception e)
 		{
-			EventLogger.LogMessage($"LocalSettings: ERROR Loading settings failed:\n\t{e}");
+			EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Error, $"Loading settings failed:\n\t{e}");
 			return false;
 		}
 
-		EventLogger.LogMessage("LocalSettings: INFO Loading settings succeeded");
+		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Info, "Loading settings succeeded");
 		return true;
 	}
 
@@ -95,22 +98,28 @@ public partial class LocalSettings : Node
 		}
 		catch (Exception e)
 		{
-			EventLogger.LogMessage($"LocalSettings: ERROR Saving settings failed with:\n\t{e}");
+			EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Error, $"Saving settings failed with:\n\t{e}");
 			return false;
 		}
 
-		EventLogger.LogMessage("LocalSettings: INFO Saving settings succeeded");
+		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Info, "Saving settings succeeded");
 		return true;
 	}
 
 	public void ForceDefaultSettings()
 	{
-		EventLogger.LogMessage("LocalSettings: INFO Loading default settings");
+		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Info, "Loading default settings");
 		Camera = new();
 		Mqtt = new();
 		Joystick = new();
 		General = new();
 		SaveSettings();
+	}
+
+	private void EmitSignalWholeSectionChanged(string sectionName)
+	{
+		EmitSignal(SignalName.WholeSectionChanged, nameof(Camera));
+		EventLogger.LogMessageDebug("LocalSettings", EventLogger.LogLevel.Verbose, $"Section \"{sectionName}\" was overwritten");
 	}
 
 
@@ -121,7 +130,7 @@ public partial class LocalSettings : Node
 		set
 		{
 			_camera = value;
-			EmitSignal(SignalName.WholeSectionChanged, nameof(Camera));
+			EmitSignalWholeSectionChanged(nameof(Camera));
 		}
 	}
 
@@ -132,7 +141,7 @@ public partial class LocalSettings : Node
 		set
 		{
 			_mqtt = value;
-			EmitSignal(SignalName.WholeSectionChanged, nameof(Mqtt));
+			EmitSignalWholeSectionChanged(nameof(Mqtt));
 		}
 	}
 
@@ -143,7 +152,7 @@ public partial class LocalSettings : Node
 		set
 		{
 			_joystick = value;
-			EmitSignal(SignalName.WholeSectionChanged, nameof(Joystick));
+			EmitSignalWholeSectionChanged(nameof(Joystick));
 		}
 	}
 
@@ -154,7 +163,7 @@ public partial class LocalSettings : Node
 		set
 		{
 			_general = value;
-			EmitSignal(SignalName.WholeSectionChanged, nameof(General));
+			EmitSignalWholeSectionChanged(nameof(General));
 		}
 	}
 
