@@ -63,21 +63,28 @@ public class LocalSettings
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicWheelFeedback { get; set; } = "wheel_feedback";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-        public string TopicZedImuData { get; set; } = "ZedImuData";
-        [SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-        public string TopicEStopStatus { get; set; } = "button_stop";
+		public string TopicZedImuData { get; set; } = "ZedImuData";
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+		public string TopicEStopStatus { get; set; } = "button_stop";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string TopicKmlListOfActiveObj { get; set; } = "KMLNode/ActiveKMLObjects";
 
 	}
-
-
+	public class SpeedLimiter
+	{
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+		public bool Enabled { get; set; } = false;
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.2;1;0.05;f;f", customName: "MaxSpeed (multiplier)")]
+		public float MaxSpeed { get; set; } = 0.5f;
+	}
 	public class Vars
 	{
 		[SettingsManagerVisible(customName: "Camera Settings")]
 		public Camera Camera { get; set; } = new();
 		[SettingsManagerVisible(customName: "MQTT Settings")]
 		public Mqtt Mqtt { get; set; } = new();
+		[SettingsManagerVisible(customName: "SpeedLimiter Settings")]
+		public SpeedLimiter SpeedLimiter { get; set; } = new();
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool VerboseDebug { get; set; } = false;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]

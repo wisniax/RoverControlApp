@@ -9,6 +9,8 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class RoverMode_UIOverlay : UIOverlay
 {
+	[Export]
+	Label SafeModeIndicator;
 	public override Dictionary<int, Setting> Presets { get; } = new()
 	{
 		{ 0, new(Colors.DarkRed, Colors.Orange, "Rover: E-STOP", "Rover: ") },
@@ -20,6 +22,17 @@ public partial class RoverMode_UIOverlay : UIOverlay
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
 		ControlMode = (int)newMode;
+		if(ControlMode == 1 && MainViewModel.Settings?.Settings.SpeedLimiter.Enabled == true && MainViewModel.Settings?.Settings.SpeedLimiter.MaxSpeed < 1)
+		{
+			SafeModeIndicator.Visible = true;
+			SafeModeIndicator.Text = $"Safe Mode ON - {Mathf.Round(MainViewModel.Settings!.Settings.SpeedLimiter.MaxSpeed * 100.0)}%";//Rounding may seem unnecessary, but without it numbers higher than 80 would be displayed as 79.99999999999999
+		}
+		else
+		{
+			SafeModeIndicator.Visible = false;
+		}
 		return Task.CompletedTask;
 	}
+
+
 }
