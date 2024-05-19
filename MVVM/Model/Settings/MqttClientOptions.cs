@@ -1,6 +1,7 @@
 ﻿using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.Core.JSONConverters;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace RoverControlApp.MVVM.Model.Settings;
@@ -28,6 +29,11 @@ public partial class MqttClientOptions : RefCounted
 		TopicWill = topicWill;
 		WillPayloadType = willPayloadType;
 		WillPayloadSerializedJson = willPayloadSerializedJson;
+	}
+
+	public override string ToString()
+	{
+		return JsonSerializer.Serialize(this);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]

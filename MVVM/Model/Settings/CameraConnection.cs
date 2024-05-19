@@ -1,6 +1,7 @@
 ﻿using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.Core.JSONConverters;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace RoverControlApp.MVVM.Model.Settings;
@@ -26,6 +27,11 @@ public partial class CameraConnection : RefCounted
 		RtspStreamPath = streamPath;
 		RtspPort = rtspPort;
 		PtzPort = ptzPort;
+	}
+
+	public override string ToString()
+	{
+		return JsonSerializer.Serialize(this);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"(?i)(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:\d{1,3}\.){3}\d{1,3}|(?:http:\/\/|https:\/\/)\S+")]
