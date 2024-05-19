@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace RoverControlApp.MVVM.Model.Settings;
 
 [JsonConverter(typeof(MqttClientOptionsConverter))]
-public partial class MqttClientOptions : GodotObject
+public partial class MqttClientOptions : RefCounted
 {
 	public MqttClientOptions()
 	{

@@ -6,7 +6,7 @@ using System.Text.Json.Serialization;
 namespace RoverControlApp.MVVM.Model.Settings;
 
 [JsonConverter(typeof(CameraConnectionConverter))]
-public partial class CameraConnection : GodotObject
+public partial class CameraConnection : RefCounted
 {
 	public CameraConnection()
 	{
