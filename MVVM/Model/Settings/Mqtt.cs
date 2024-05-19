@@ -73,7 +73,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		};
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom)]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
 	public MqttClientOptions ClientSettings
 	{
 		get => _clientSettings;
