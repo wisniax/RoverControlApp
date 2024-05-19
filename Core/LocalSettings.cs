@@ -75,7 +75,7 @@ public class LocalSettings
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool Enabled { get; set; } = false;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.2;1;0.05;f;f", customName: "MaxSpeed (multiplier)")]
-		public double MaxSpeed { get; set; } = 0.5;
+		public float MaxSpeed { get; set; } = 0.5f;
 	}
 	public class Vars
 	{
