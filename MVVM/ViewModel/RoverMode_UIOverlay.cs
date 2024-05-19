@@ -9,9 +9,9 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class RoverMode_UIOverlay : UIOverlay
 {
-    [Export]
-    Label SafeModeIndicator;
-    public override Dictionary<int, Setting> Presets { get; } = new()
+	[Export]
+	Label SafeModeIndicator;
+	public override Dictionary<int, Setting> Presets { get; } = new()
 	{
 		{ 0, new(Colors.DarkRed, Colors.Orange, "Rover: E-STOP", "Rover: ") },
 		{ 1, new(Colors.DarkGreen, Colors.LightGreen, "Rover: Driving","Rover: ") },
@@ -21,7 +21,7 @@ public partial class RoverMode_UIOverlay : UIOverlay
 
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
-        ControlMode = (int)newMode;
+		ControlMode = (int)newMode;
 		if(ControlMode == 1 && MainViewModel.Settings?.Settings.SpeedLimiter.Enabled == true && MainViewModel.Settings?.Settings.SpeedLimiter.MaxSpeed < 1)
 		{
 			SafeModeIndicator.Visible = true;
@@ -29,8 +29,8 @@ public partial class RoverMode_UIOverlay : UIOverlay
 		}
 		else
 		{
-            SafeModeIndicator.Visible = false;
-        }
+			SafeModeIndicator.Visible = false;
+		}
 		return Task.CompletedTask;
 	}
 
