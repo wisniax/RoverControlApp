@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.Model.Settings
 {
-	public abstract partial class SettingBase : GodotObject
+	public abstract partial class SettingBase : RefCounted
 	{
 		[Signal]
 		public delegate void SettingChangedEventHandler(StringName name, Variant oldValue, Variant newValue);
