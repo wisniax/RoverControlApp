@@ -1,4 +1,5 @@
-﻿using MQTTnet.Protocol;
+﻿using Godot;
+using MQTTnet.Protocol;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.ViewModel;
 using System;
@@ -12,8 +13,6 @@ namespace RoverControlApp.MVVM.Model
 	{
 		public event Func<MqttClasses.RoverStatus?, Task>? OnRoverStatusChanged;
 		private MqttClasses.ControlMode ControlMode => MainViewModel.PressedKeys?.ControlMode ?? MqttClasses.ControlMode.EStop;
-
-		private MqttClient? _mqttClient => MainViewModel.MqttClient;
 
 		//List<IDisposable> _eventsToDispose = new List<IDisposable>();
 		private Settings.Mqtt _settingsMqtt;
@@ -35,7 +34,7 @@ namespace RoverControlApp.MVVM.Model
 			{
 				var obj = new MqttClasses.RoverStatus
 				{
-					CommunicationState = MainViewModel.MqttClient?.ConnectionState ?? CommunicationState.Closed,
+					CommunicationState = MqttNode.Singleton.ConnectionState,
 					ControlMode = ControlMode,
 					PadConnected = MainViewModel.PressedKeys?.PadConnected ?? false
 				};
@@ -61,24 +60,22 @@ namespace RoverControlApp.MVVM.Model
 			if (MainViewModel.MissionStatus != null)
 				MainViewModel.MissionStatus.OnRoverMissionStatusChanged += OnRoverMissionStatusChanged;
 
-			if (_mqttClient != null)
-				_mqttClient.OnConnectionChanged += OnMqttConnectionChanged;
-			else EventLogger.LogMessage("RoverCommunication: Mqtt was null");
+			MqttNode.Singleton.Connect(MqttNode.SignalName.ConnectionChanged, Callable.From<CommunicationState>(OnMqttConnectionChanged));
 
-			if (_mqttClient?.ConnectionState == CommunicationState.Opened)
+
+			if (MqttNode.Singleton.ConnectionState == CommunicationState.Opened)
 				RoverCommunication_OnControlStatusChanged(GenerateRoverStatus).Wait(250);
 		}
 
 		private async Task PressedKeysOnOnContainerMovement(MqttClasses.RoverContainer arg)
 		{
-			if (_mqttClient == null) return;
-			await _mqttClient.EnqueueAsync(_settingsMqtt.TopicRoverContainer,
+			await MqttNode.Singleton.EnqueueMessageAsync(_settingsMqtt.TopicRoverContainer,
 				JsonSerializer.Serialize(arg));
 		}
 
-		private async Task OnMqttConnectionChanged(CommunicationState? arg)
+		private void OnMqttConnectionChanged(CommunicationState arg)
 		{
-			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus);
+			Task.Run( async () => await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus) );
 		}
 
 		private async Task OnPadConnectionChanged(bool arg)
@@ -89,8 +86,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private async Task OnRoverMissionStatusChanged(MqttClasses.RoverMissionStatus? arg)
 		{
-			if (_mqttClient == null) return;
-			await _mqttClient.EnqueueAsync(_settingsMqtt.TopicMissionStatus,
+			await MqttNode.Singleton.EnqueueMessageAsync(_settingsMqtt.TopicMissionStatus,
 				JsonSerializer.Serialize(arg), MqttQualityOfServiceLevel.ExactlyOnce, true);
 		}
 
@@ -101,21 +97,18 @@ namespace RoverControlApp.MVVM.Model
 
 		private async Task RoverCommunication_OnControlStatusChanged(MqttClasses.RoverStatus roverStatus)
 		{
-			if (_mqttClient == null) return;
-			await _mqttClient.EnqueueAsync(_settingsMqtt.TopicRoverStatus,
+			await MqttNode.Singleton.EnqueueMessageAsync(_settingsMqtt.TopicRoverStatus,
 				JsonSerializer.Serialize(roverStatus), MqttQualityOfServiceLevel.ExactlyOnce, true);
 		}
 
 		private async Task RoverMovementVectorChanged(MqttClasses.RoverControl roverControl)
 		{
-			if (_mqttClient == null) return;
-			await _mqttClient.EnqueueAsync(_settingsMqtt.TopicRoverControl,
+			await MqttNode.Singleton.EnqueueMessageAsync(_settingsMqtt.TopicRoverControl,
 				JsonSerializer.Serialize(roverControl));
 		}
 		private async Task RoverManipulatorVectorChanged(MqttClasses.ManipulatorControl manipulatorControl)
 		{
-			if (_mqttClient == null) return;
-			await _mqttClient.EnqueueAsync(_settingsMqtt.TopicManipulatorControl,
+			await MqttNode.Singleton.EnqueueMessageAsync(_settingsMqtt.TopicManipulatorControl,
 				JsonSerializer.Serialize(manipulatorControl));
 		}
 

@@ -19,7 +19,6 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static PressedKeys? PressedKeys { get; private set; }
 		public static RoverCommunication? RoverCommunication { get; private set; }
 		public static MissionStatus? MissionStatus { get; private set; }
-		public static MqttClient? MqttClient { get; private set; }
 		public static MissionSetPoint? MissionSetPoint { get; private set; }
 
 		private RtspStreamClient? _rtspClient;
@@ -54,7 +53,6 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			Settings = LocalSettings.Singleton;
 
-			MqttClient = new MqttClient(Settings!.Mqtt);
 			PressedKeys = new PressedKeys();
 			MissionStatus = new MissionStatus();
 			RoverCommunication = new RoverCommunication(Settings!.Mqtt);
@@ -92,13 +90,14 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionControlNode.LoadSizeAndPos();
 			MissionControlNode.SMissionControlVisualUpdate();
 
-			MqttClient.OnMessageReceivedAsync += VelMonitor.MqttSubscriber;
+			MqttNode.Singleton.Connect(MqttNode.SignalName.MessageReceived, Callable.From<string, MqttNodeMessage>(VelMonitor.MqttSubscriber));
 
 			//UIDis
 			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
-			GrzybUIDis.MqttSubscriber(Settings.Mqtt.TopicEStopStatus, MqttClient.GetReceivedMessageOnTopic(Settings.Mqtt.TopicEStopStatus));
-			MqttClient.OnMessageReceivedAsync += GrzybUIDis.MqttSubscriber;
+
+			MqttNode.Singleton.Connect(MqttNode.SignalName.MessageReceived, Callable.From<string, MqttNodeMessage>(GrzybUIDis.MqttSubscriber));
+		
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 
 			//state new mode
@@ -128,9 +127,6 @@ namespace RoverControlApp.MVVM.ViewModel
 		private void VirtualRestart()
 		{
 			//UIDis
-			MqttClient.OnMessageReceivedAsync -= GrzybUIDis.MqttSubscriber;
-			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
-			MqttClient!.OnMessageReceivedAsync -= VelMonitor.MqttSubscriber;
 
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 			if (_ptzClient != null)
@@ -148,14 +144,12 @@ namespace RoverControlApp.MVVM.ViewModel
 			_joyVibrato = null;
 			MissionStatus!.OnRoverMissionStatusChanged -= MissionControlNode!.MissionStatusUpdatedSubscriber;
 			RoverCommunication?.Dispose();
-			MqttClient?.Dispose();
 			StartUp();
 		}
 
 		protected override void Dispose(bool disposing)
 		{
 			RoverCommunication?.Dispose();
-			MqttClient?.Dispose();
 			_rtspClient?.Dispose();
 			_ptzClient?.Dispose();
 			base.Dispose(disposing);
@@ -197,8 +191,6 @@ namespace RoverControlApp.MVVM.ViewModel
 				_rtspClient.NewFrameSaved = false;
 			}
 			UpdateLabel();
-
-			GrzybUIDis.MqttSubscriber("", null);
 		}
 
 		private Color GetColorForCommunicationState(CommunicationState? state)

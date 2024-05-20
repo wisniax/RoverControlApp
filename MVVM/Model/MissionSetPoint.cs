@@ -10,13 +10,12 @@ namespace RoverControlApp.MVVM.Model
     public class MissionSetPoint
 	{
 		public event Func<MqttClasses.ActiveKmlObjects?, Task>? ActiveKmlObjectsUpdated;
-		private MqttClient? _mqttClient => MainViewModel.MqttClient;
 		private LocalSettings? _localSettings => MainViewModel.Settings;
 		public MqttClasses.ActiveKmlObjects ActiveKmlObjects { get; private set; }
 
 		public MissionSetPoint()
 		{
-			_mqttClient.OnMessageReceivedAsync += OnMessageReceivedAsync;
+			MqttNode.Singleton.MessageReceivedAsync += OnMessageReceivedAsync;
 			UpdateActiveKmlObjects();
 		}
 
@@ -35,7 +34,7 @@ namespace RoverControlApp.MVVM.Model
 			MqttClasses.ActiveKmlObjects? activeKmlObjects;
 			try
 			{ 
-				msg = _mqttClient?.GetReceivedMessageOnTopicAsString(_localSettings?.Mqtt.TopicKmlListOfActiveObj);
+				msg = MqttNode.Singleton.GetReceivedMessageOnTopicAsString(_localSettings?.Mqtt.TopicKmlListOfActiveObj);
 				activeKmlObjects = JsonSerializer.Deserialize<MqttClasses.ActiveKmlObjects>(msg);
 			}
 			catch (Exception e)
@@ -61,9 +60,11 @@ namespace RoverControlApp.MVVM.Model
 
 		public async Task SendNewPointRequest(MqttClasses.RoverSetPoint pointReq)
 		{
-			if (_mqttClient == null || _localSettings?.Mqtt == null) return;
-			await _mqttClient.EnqueueAsync(_localSettings.Mqtt.TopicKmlSetPoint,
-				JsonSerializer.Serialize(pointReq));
+			await MqttNode.Singleton.EnqueueMessageAsync
+			(
+				LocalSettings.Singleton.Mqtt.TopicKmlSetPoint,
+				JsonSerializer.Serialize(pointReq)
+			);
 		}
 
 

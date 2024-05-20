@@ -23,6 +23,7 @@ config/icon="res://Resources/icon.svg"
 [autoload]
 
 LocalSettings="res://MVVM/Model/LocalSettings.cs"
+MqttNode="res://MVVM/Model/MqttNode.cs"
 
 [debug]
 
