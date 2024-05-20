@@ -56,7 +56,7 @@ namespace RoverControlApp.Core
 
 		public static void LogMessage(string source, LogLevel level, string message)
 		{
-			if (LocalSettings.Singleton?.General.VerboseDebug == false) return;
+			if (level == LogLevel.Verbose && LocalSettings.Singleton?.General.VerboseDebug == false) return;
 
 			StringBuilder sb = new StringBuilder();
 			sb.Append($"<{(_appRunningTimer.Elapsed).TotalSeconds.ToString("f4", new CultureInfo("en-US"))}>");
