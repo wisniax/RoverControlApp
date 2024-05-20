@@ -205,14 +205,16 @@ namespace RoverControlApp.MVVM.Model
 			}
 
 
-			Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
+			CvInvoke.CvtColor(m, m, Emgu.CV.CvEnum.ColorConversion.Bgr2Rgb);
+			//Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
 
-			if (_arr?.Length != m.Total() * m.Channels())
-				_arr = new byte[m.Total() * m.Channels()];
+			if (_arr?.Length != m.Total * m.NumberOfChannels)
+				_arr = new byte[m.Total * m.NumberOfChannels];
+			//if (_arr?.Length != m.Total() * m.Channels())
+			//	_arr = new byte[m.Total() * m.Channels()];
 
-
-
-			Marshal.Copy(m.Data, _arr, 0, (int)m.Total() * m.Channels());
+			Marshal.Copy(m.DataPointer, _arr, 0, (int)m.Total * m.NumberOfChannels);
+			//Marshal.Copy(m.Data, _arr, 0, (int)m.Total() * m.Channels());
 
 			LockGrabbingFrames();
 			if (LatestImage?.GetWidth() != m.Width && LatestImage?.GetHeight() != m.Height)
