@@ -44,7 +44,7 @@ namespace RoverControlApp.Core
 		{
 			if (_history.Count == 0)
 			{
-				EventLogger.LogMessage($"BackCapture ERROR: Save failed, no data in history!");
+				EventLogger.LogMessage("BackCapture", EventLogger.LogLevel.Error, "Save failed, no data in history!");
 				return false;
 			}
 
@@ -55,7 +55,7 @@ namespace RoverControlApp.Core
 				var err = DirAccess.MakeDirAbsolute(path);
 				if (err != Error.Ok)
 				{
-					EventLogger.LogMessage($"BackCapture ERROR: Creating folder \"{path}\" failed. ({err.ToString()})");
+					EventLogger.LogMessage("BackCapture", EventLogger.LogLevel.Error, $"Creating folder \"{path}\" failed. ({err})");
 					return false;
 				}
 			}
@@ -67,7 +67,7 @@ namespace RoverControlApp.Core
 				var err = DirAccess.MakeDirAbsolute(path);
 				if (err != Error.Ok)
 				{
-					EventLogger.LogMessage($"BackCapture ERROR: Creating folder \"{path}\" failed. ({err.ToString()})");
+					EventLogger.LogMessage("BackCapture", EventLogger.LogLevel.Error, $"Creating folder \"{path}\" failed. ({err})");
 					return false;
 				}
 			}
@@ -77,7 +77,7 @@ namespace RoverControlApp.Core
 				var singleFrame = _history.Dequeue();
 				var err = singleFrame.Frame.SaveJpg($"{path}/{singleFrame.Timestamp}.jpg");
 				if (err != Error.Ok)
-					EventLogger.LogMessage($"BackCapture ERROR: Saving frame \"{singleFrame.Timestamp}\" failed. ({err.ToString()})");
+					EventLogger.LogMessage("BackCapture", EventLogger.LogLevel.Error, $"Saving frame \"{singleFrame.Timestamp}\" failed. ({err})");
 			}
 
 			return true;

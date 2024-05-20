@@ -115,10 +115,8 @@ namespace RoverControlApp.MVVM.Model
 
 			if (_ptzThreadError is not null)
 			{
-				EventLogger
-					.LogMessage(
-						$"PTZ: Connecting to camera failed after " +
-							$"{(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s with error: {_ptzThreadError}");
+				EventLogger.LogMessage("OnvifPtzCameraControllerEx", EventLogger.LogLevel.Error, $"Connecting to camera failed after " 
+					+ $"{(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s with error: {_ptzThreadError}");
 				State = CommunicationState.Faulted;
 				return;
 			}
@@ -126,9 +124,7 @@ namespace RoverControlApp.MVVM.Model
 			State = CommunicationState.Opening;
 			_camera?.Ptz.StopAsync(_camera.Profile.token, true, true).Wait();
 			State = CommunicationState.Opened;
-			EventLogger
-				.LogMessage(
-					$"PTZ: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+			EventLogger.LogMessage("OnvifPtzCameraControllerEx", EventLogger.LogLevel.Info, $"Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 		}
 
 		private void EndCamera()
@@ -139,7 +135,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private void ThreadWork()
 		{
-			EventLogger.LogMessage("PTZ: Thread started");
+			EventLogger.LogMessage("OnvifPtzCameraControllerEx", EventLogger.LogLevel.Verbose, "Thread started");
 
 			while (!_cts.IsCancellationRequested)
 			{
@@ -163,15 +159,13 @@ namespace RoverControlApp.MVVM.Model
 					}
 					catch (AggregateException e)
 					{
-						EventLogger.LogMessage($"PTZ: Handled exception {e} caught");
+						EventLogger.LogMessage("OnvifPtzCameraControllerEx", EventLogger.LogLevel.Error, $"Handled exception {e} caught");
 						errCaught = true;
 					}
 
 					if (_generalPurposeStopwatch.Elapsed.TotalSeconds > 10 || errCaught)
 					{
-						EventLogger
-							.LogMessage(
-								$"PTZ: Camera connection lost ;( Sending a move request took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+						EventLogger.LogMessage("OnvifPtzCameraControllerEx", EventLogger.LogLevel.Error, $"Camera connection lost ;( Sending a move request took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 						State = CommunicationState.Faulted;
 						EndCamera();
 						return;
@@ -208,8 +202,7 @@ namespace RoverControlApp.MVVM.Model
 			//populate queue
 			if (UpdateMotion(_cameraMotionLast, CameraMotionRequest, out MoveUpdateData moveUpdateData) || _queueStopwatch.Elapsed.TotalSeconds >= 5)
 			{
-				if (MainViewModel.Settings.General.VerboseDebug)
-					EventLogger.LogMessage($"PTZ: Enqueued: Vec: {moveUpdateData.TiltAndZoom} TiltStop: {moveUpdateData.StopTilt} ZoomStop: {moveUpdateData.StopZoom}");
+				EventLogger.LogMessage("OnvifPtzCameraControllerEx", EventLogger.LogLevel.Verbose, $"Enqueued: Vec: {moveUpdateData.TiltAndZoom} TiltStop: {moveUpdateData.StopTilt} ZoomStop: {moveUpdateData.StopZoom}");
 				_comQueue.Enqueue(moveUpdateData);
 				_queueStopwatch.Restart();
 			}
@@ -241,8 +234,7 @@ namespace RoverControlApp.MVVM.Model
 				MoveUpdateData nextMove = _comQueue.Dequeue();
 				if (nextMove.StopTilt || nextMove.StopZoom)
 				{
-					if (MainViewModel.Settings.General.VerboseDebug)
-						EventLogger.LogMessage($"PTZ: CameraMotion send: {(nextMove.StopTilt ? "StopTilt" : string.Empty)} {(nextMove.StopZoom ? "StopZoom" : string.Empty)}");
+					EventLogger.LogMessage("OnvifPtzCameraControllerEx", EventLogger.LogLevel.Verbose, $"CameraMotion send: {(nextMove.StopTilt ? "StopTilt" : string.Empty)} {(nextMove.StopZoom ? "StopZoom" : string.Empty)}");
 					_camera?.Ptz.StopAsync(_camera.Profile.token, nextMove.StopTilt, nextMove.StopZoom).Wait();
 					_generalPurposeStopwatch.Restart();
 					_comHistory.Add(DateTimeOffset.Now);
@@ -250,8 +242,7 @@ namespace RoverControlApp.MVVM.Model
 
 				if (!nextMove.TiltAndZoom.IsZeroApprox())
 				{
-					if (MainViewModel.Settings.General.VerboseDebug)
-						EventLogger.LogMessage($"PTZ: CameraMotion send: Tilt.X={nextMove.TiltAndZoom.X}, Tilt.Y={nextMove.TiltAndZoom.Y} Zoom={nextMove.TiltAndZoom.Z}");
+					EventLogger.LogMessage("OnvifPtzCameraControllerEx", EventLogger.LogLevel.Verbose, $"CameraMotion send: Tilt.X={nextMove.TiltAndZoom.X}, Tilt.Y={nextMove.TiltAndZoom.Y} Zoom={nextMove.TiltAndZoom.Z}");
 					_camera?.Ptz.ContinuousMoveAsync(_camera.Profile.token, (PTZSpeed)nextMove, string.Empty).Wait();
 					_generalPurposeStopwatch.Restart();
 					_comHistory.Add(DateTimeOffset.Now);
@@ -301,14 +292,13 @@ namespace RoverControlApp.MVVM.Model
 			}
 			private set
 			{
-				if (MainViewModel.Settings.General.VerboseDebug)
-					EventLogger.LogMessage($"PTZ: CameraMotion update: {value}");
+				EventLogger.LogMessage("OnvifPtzCameraControllerEx", EventLogger.LogLevel.Verbose, $"CameraMotion update: {value}");
 				_dataMutex.WaitOne();
 				_cameraMotionRequest = value;
 				_dataMutex.ReleaseMutex();
 				bool success = _requestBarrier.SignalAndWait(100);
-				if (MainViewModel.Settings.General.VerboseDebug && !success)
-					EventLogger.LogMessage($"PTZ: Barrier timeout! Last input ignored!");
+				if (!success)
+					EventLogger.LogMessage("OnvifPtzCameraControllerEx", EventLogger.LogLevel.Warning, $"Barrier timeout! Last input ignored!");
 			}
 		}
 
@@ -319,7 +309,7 @@ namespace RoverControlApp.MVVM.Model
 			get => _state;
 			private set
 			{
-				EventLogger.LogMessage($"PTZ: CommunicationState update: {value}");
+				EventLogger.LogMessage("OnvifPtzCameraControllerEx", EventLogger.LogLevel.Verbose, $"CommunicationState update: {value}");
 				_state = value;
 			}
 		}

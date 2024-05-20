@@ -39,7 +39,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 			catch (Exception e)
 			{
-				EventLogger.LogMessage($"MissionSetPoint: Deserializing failed with error: {e} while trying to deserialize message {msg}");
+				EventLogger.LogMessage("MissionSetPoint", EventLogger.LogLevel.Error, $"Deserializing failed with error: {e} while trying to deserialize message {msg}");
 				return;
 			}
 			if (activeKmlObjects == null) return;

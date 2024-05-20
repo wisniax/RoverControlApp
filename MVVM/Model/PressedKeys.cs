@@ -22,7 +22,7 @@ namespace RoverControlApp.MVVM.Model
 			private set
 			{
 				_controlMode = value;
-				EventLogger.LogMessage($"PressedKeys: Control Mode changed {value}");
+				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Control Mode changed {value}");
 				OnControlModeChanged?.Invoke(value);
 			}
 		}
@@ -91,7 +91,7 @@ namespace RoverControlApp.MVVM.Model
 		private void InputOnJoyConnectionChanged(long device, bool connected)
 		{
 			var status = connected ? "connected" : "disconnected";
-			EventLogger.LogMessage($"PressedKeys: Pad {status}");
+			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Pad {status}");
 			OnPadConnectionChanged?.Invoke(PadConnected);
 			StopAll();
 		}
@@ -168,7 +168,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private void StopAll()
 		{
-			EventLogger.LogMessage("PressedKeys: Stopping all movement");
+			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
 			RoverMovement = new MqttClasses.RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
 			ContainerMovement = new MqttClasses.RoverContainer { Axis1 = 0f };
 			ManipulatorMovement = new MqttClasses.ManipulatorControl();

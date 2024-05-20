@@ -83,7 +83,7 @@ public partial class SettingsManagerTree : Tree
 
 			if (memberObject is null)
 			{
-				EventLogger.LogMessage($"SettingsManagerTree: WARNING Could not fetch member (parent:\"{basedOnType.Name}\")\"{member.Name}\" value");
+				EventLogger.LogMessage("SettingsManagerTree", EventLogger.LogLevel.Warning, $"SettingsManagerTree: WARNING Could not fetch member (parent:\"{basedOnType.Name}\")\"{member.Name}\" value");
 				continue;
 			}
 
@@ -191,7 +191,7 @@ public partial class SettingsManagerTree : Tree
 
 				if (!targetMemberClone.VadilateValue(editedVarName, newValue))
 				{
-					EventLogger.LogMessage($"SettingsManager: INFO RegEx match failed for property \"{editedVarName}\"");
+					EventLogger.LogMessage("SettingsManagerTree", EventLogger.LogLevel.Info, $"RegEx match failed for property \"{editedVarName}\"");
 					itemEdited.SetText(COLUMN_VALUE, (string?)oldValue ?? "null");
 					TryUpdateStatusBar($"[color=orange]\"{newValue}\" RegEx match failed![/color]");
 					break;
@@ -210,7 +210,7 @@ public partial class SettingsManagerTree : Tree
 
 				if (!targetMemberClone.VadilateValue(editedVarName, newValue))
 				{
-					EventLogger.LogMessage($"SettingsManager: ERROR Cannot update property \"{editedVarName}\"");
+					EventLogger.LogMessage("SettingsManagerTree", EventLogger.LogLevel.Error, $"Cannot update property \"{editedVarName}\"");
 					itemEdited.SetChecked(COLUMN_VALUE, (bool?)oldValue ?? false);
 					TryUpdateStatusBar($"[color=red]\"{editedVarName}\" Can not update for unknown reason! [/color]");
 					break;
@@ -256,9 +256,7 @@ public partial class SettingsManagerTree : Tree
 
 				if (!targetMemberClone.VadilateValue(editedVarName, newValue))
 				{
-					EventLogger
-						.LogMessage(
-							$"SettingsManager: ERROR Range type is incorrectly set for property \"{editedVarName}\" (Class: {targetMemberClone.HoldingType.FullName})");
+					EventLogger.LogMessage("SettingsManagerTree", EventLogger.LogLevel.CriticalError, $"Range type is incorrectly set for property \"{editedVarName}\" (Class: {targetMemberClone.HoldingType.FullName})");
 					itemEdited.SetEditable(COLUMN_VALUE, false);
 					itemEdited.SetRange(COLUMN_VALUE, Convert.ToDouble(oldValue));
 					itemEdited.SetText(COLUMN_NAME, $"{editedVarName} # ERROR formatData.type is incorrectly set! #");

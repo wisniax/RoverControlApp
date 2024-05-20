@@ -163,9 +163,9 @@ namespace RoverControlApp.MVVM.ViewModel
 			if (@event.IsActionPressed("app_backcapture_save"))
 			{
 				if (_backCapture.SaveHistory())
-					EventLogger.LogMessage($"BackCapture INFO: Saved capture!");
+					EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Info, "Saved capture!");
 				else
-					EventLogger.LogMessage($"BackCapture ERROR: Save failed!");
+					EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Error, "Save failed!");
 			}
 		}
 
@@ -275,7 +275,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			if (img.IsEmpty())
 			{
-				EventLogger.LogMessage($"CaptureCameraImage ERROR: No image to capture!");
+				EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Error, $"No image to capture!");
 				return false;
 			}
 
@@ -286,7 +286,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				saveAsJpg = false;
 			else
 			{
-				EventLogger.LogMessage($"CaptureCameraImage ERROR: \"{fileExtension}\" is not valid extension! (png or jpg)");
+				EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Error, $"\"{fileExtension}\" is not valid extension! (png or jpg)");
 				return false;
 			}
 
@@ -295,11 +295,11 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			if (!DirAccess.DirExistsAbsolute(pathToFile))
 			{
-				EventLogger.LogMessage($"CaptureCameraImage INFO: Subfolder \"{pathToFile}\" not exists yet, creating.");
+				EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Info, $"Subfolder \"{pathToFile}\" not exists yet, creating.");
 				var err = DirAccess.MakeDirAbsolute(pathToFile);
 				if (err != Error.Ok)
 				{
-					EventLogger.LogMessage($"CaptureCameraImage ERROR: Creating subfolder \"{pathToFile}\" failed. ({err.ToString()})");
+					EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Error, $"Creating subfolder \"{pathToFile}\" failed. ({err})");
 					return false;
 				}
 			}
@@ -307,7 +307,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			pathToFile += $"/{fileName}.{fileExtension}";
 
 			if (FileAccess.FileExists(pathToFile))
-				EventLogger.LogMessage($"CaptureCameraImage WARNING: \"{pathToFile}\" already exists and will be overwrited!");
+				EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Warning, $"\"{pathToFile}\" already exists and will be overwrited!");
 
 			Error imgSaveErr;
 			if (saveAsJpg)
@@ -317,7 +317,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			if (imgSaveErr != Error.Ok)
 			{
-				EventLogger.LogMessage($"CaptureCameraImage ERROR: Creating subfolder \"{pathToFile}\" failed. ({imgSaveErr.ToString()})");
+				EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Error, $"Creating subfolder \"{pathToFile}\" failed. ({imgSaveErr.ToString()})");
 				return false;
 			}
 
@@ -328,9 +328,9 @@ namespace RoverControlApp.MVVM.ViewModel
 		private void OnBackCapture()
 		{
 			if (_backCapture.SaveHistory())
-				EventLogger.LogMessage($"BackCapture INFO: Saved capture!");
+				EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Info, "Saved capture!");
 			else
-				EventLogger.LogMessage($"BackCapture ERROR: Save failed!");
+				EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Error, "Save capture failed!");
 		}
 
 		private void OnRTSPCapture()
