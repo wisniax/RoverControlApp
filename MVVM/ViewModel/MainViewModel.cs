@@ -188,7 +188,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				_backCapture.CleanUpHistory();
 
 				_rtspClient.LockGrabbingFrames();
-				if (_imTexture == null) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
+				if (_imTexture == null || _imTexture._GetHeight() != _rtspClient.LatestImage.GetHeight() || _imTexture._GetWidth() != _rtspClient.LatestImage.GetWidth()) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
 				else _imTexture.Update(_rtspClient.LatestImage);
 
 				_backCapture.FrameFeed(_rtspClient.LatestImage);

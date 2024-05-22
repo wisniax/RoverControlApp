@@ -12,6 +12,7 @@
   <ItemGroup>
     <PackageReference Include="Emgu.CV" Version="4.9.0.5494" />
     <PackageReference Include="Emgu.CV.Bitmap" Version="4.9.0.5494" />
+    <PackageReference Include="Emgu.CV.runtime.ubuntu-x64" Version="4.9.0.5494" />
     <PackageReference Include="Emgu.CV.runtime.windows" Version="4.9.0.5494" />
     <PackageReference Include="MQTTnet" Version="4.3.3.952" />
     <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.3.3.952" />

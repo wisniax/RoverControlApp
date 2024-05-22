@@ -109,8 +109,8 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
-			//var task = Task.Run(() => Capture = new VideoCapture($"{_protocol}://{_login}:{_password}@{_ip}:{_port}{_pathToStream}"));
-			var task = Task.Run(() => Capture = new VideoCapture($"http://158.58.130.148:80/mjpg/video.mjpg"));
+			var task = Task.Run(() => Capture = new VideoCapture($"{_protocol}://{_login}:{_password}@{_ip}:{_port}{_pathToStream}"));
+			//var task = Task.Run(() => Capture = new VideoCapture($"http://158.58.130.148:80/mjpg/video.mjpg"));
 
 			m = new Mat();
 			_generalPurposeStopwatch.Restart();
