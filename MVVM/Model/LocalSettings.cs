@@ -113,7 +113,6 @@ public partial class LocalSettings : Node
 		Mqtt = new();
 		Joystick = new();
 		General = new();
-		SaveSettings();
 	}
 
 	private void EmitSignalWholeSectionChanged(string sectionName)

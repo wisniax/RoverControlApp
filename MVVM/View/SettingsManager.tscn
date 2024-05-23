@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://em10imnbie42"]
+[gd_scene load_steps=6 format=3 uid="uid://em10imnbie42"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/SettingsManager.cs" id="1_pihm0"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SettingsManagerTree.cs" id="2_mu20m"]
@@ -6,18 +6,13 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sy7lu"]
 bg_color = Color(0, 0.45098, 0.545098, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p2q24"]
-content_margin_left = 8.0
-content_margin_top = 0.0
-content_margin_right = 8.0
-content_margin_bottom = 0.0
-bg_color = Color(1, 0.501961, 0, 0.498039)
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.823529, 0, 0, 1)
-border_blend = true
+[sub_resource type="InputEventKey" id="InputEventKey_1iepe"]
+device = -1
+ctrl_pressed = true
+keycode = 83
+
+[sub_resource type="Shortcut" id="Shortcut_vgxpl"]
+events = [SubResource("InputEventKey_1iepe")]
 
 [node name="SettingsManager" type="Panel" node_paths=PackedStringArray("smTree", "statusBar")]
 anchors_preset = 15
@@ -66,60 +61,39 @@ bbcode_enabled = true
 scroll_active = false
 shortcut_keys_enabled = false
 
-[node name="PanelContainer" type="PanelContainer" parent="StatusBar"]
-layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_p2q24")
-
-[node name="VBoxContainer" type="VBoxContainer" parent="StatusBar/PanelContainer"]
+[node name="FileIO" type="VBoxContainer" parent="StatusBar"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 
-[node name="ExperimentalFeaturesLabel" type="Label" parent="StatusBar/PanelContainer/VBoxContainer"]
+[node name="SaveSettings" type="Button" parent="StatusBar/FileIO"]
 layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 0, 1)
-text = "!!! EXPERIMANTAL FEATURES !!!"
-horizontal_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="StatusBar/PanelContainer/VBoxContainer"]
-layout_mode = 2
-alignment = 1
-
-[node name="RevertSettings" type="Button" parent="StatusBar/PanelContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "REVERT"
-
-[node name="ApplySettings" type="Button" parent="StatusBar/PanelContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-text = "APPLY"
-
-[node name="SaveSettings" type="Button" parent="StatusBar/PanelContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
+shortcut = SubResource("Shortcut_vgxpl")
 text = "SAVE"
 
-[node name="LoadSettings" type="Button" parent="StatusBar/PanelContainer/VBoxContainer/HBoxContainer"]
+[node name="LoadSettings" type="Button" parent="StatusBar/FileIO"]
 layout_mode = 2
 text = "LOAD"
 
-[node name="Loaders" type="VBoxContainer" parent="StatusBar"]
+[node name="Reverters" type="VBoxContainer" parent="StatusBar"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 
-[node name="LoadSettings" type="Button" parent="StatusBar/Loaders"]
+[node name="RevertSettings" type="Button" parent="StatusBar/Reverters"]
 layout_mode = 2
-text = "RESET"
+text = "REVERT"
 
-[node name="ForceDefaultSettings" type="Button" parent="StatusBar/Loaders"]
+[node name="ForceDefaultSettings" type="Button" parent="StatusBar/Reverters"]
 layout_mode = 2
 text = "DEFAULTS"
 
-[node name="SaveSettings" type="Button" parent="StatusBar"]
-custom_minimum_size = Vector2(120, 0)
+[node name="ApplySettings" type="Button" parent="StatusBar"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
-text = "SAVE AND
-RESTART APP"
+text = "APPLY
+WITHOUT SAVE"
 
-[connection signal="pressed" from="StatusBar/PanelContainer/VBoxContainer/HBoxContainer/RevertSettings" to="." method="OnRevertSettingsExpPressed"]
-[connection signal="pressed" from="StatusBar/PanelContainer/VBoxContainer/HBoxContainer/ApplySettings" to="." method="OnApplySettingsExpPressed"]
-[connection signal="pressed" from="StatusBar/PanelContainer/VBoxContainer/HBoxContainer/SaveSettings" to="." method="OnSaveSettingsExpPressed"]
-[connection signal="pressed" from="StatusBar/PanelContainer/VBoxContainer/HBoxContainer/LoadSettings" to="." method="OnLoadSettingsExpPressed"]
-[connection signal="pressed" from="StatusBar/Loaders/LoadSettings" to="." method="OnLoadSettingsPressed"]
-[connection signal="pressed" from="StatusBar/Loaders/ForceDefaultSettings" to="." method="OnForceDefaultSettingsPressed"]
-[connection signal="pressed" from="StatusBar/SaveSettings" to="." method="OnSaveSettingsPressed"]
+[connection signal="pressed" from="StatusBar/FileIO/SaveSettings" to="." method="OnSaveSettingsPressed"]
+[connection signal="pressed" from="StatusBar/FileIO/LoadSettings" to="." method="OnLoadSettingsPressed"]
+[connection signal="pressed" from="StatusBar/Reverters/RevertSettings" to="." method="OnRevertSettingsPressed"]
+[connection signal="pressed" from="StatusBar/Reverters/ForceDefaultSettings" to="." method="OnForceDefaultSettingsPressed"]
+[connection signal="pressed" from="StatusBar/ApplySettings" to="." method="OnApplySettingsPressed"]

@@ -5,10 +5,6 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class SettingsManager : Panel
 {
-
-	[Signal]
-	public delegate void RequestedRestartEventHandler();
-
 	[Export]
 	private SettingsManagerTree smTree;
 
@@ -20,58 +16,45 @@ public partial class SettingsManager : Panel
 		smTree.Connect(SettingsManagerTree.SignalName.UpdateStatusBar, Callable.From<string>(OnUpdateStatusBar));
 	}
 
-	public void OnForceDefaultSettingsPressed()
-	{
-		LocalSettings.Singleton.ForceDefaultSettings();
-		smTree.Reconstruct();
-		statusBar.Text = "[color=lightgreen]Default settings loaded![/color]";
-	}
 	public void OnLoadSettingsPressed()
 	{
-		LocalSettings.Singleton.LoadSettings();
+		if (!LocalSettings.Singleton.LoadSettings())
+		{
+			statusBar.Text = "[color=orangered]Settings loading error! Check log for more information.[/color]";
+			return;
+		}
 		smTree.Reconstruct();
 		statusBar.Text = "[color=lightgreen]Settings loaded![/color]";
 	}
 
 	public void OnSaveSettingsPressed()
 	{
-		LocalSettings.Singleton.SaveSettings();
+		smTree.ApplySettings();
+		if (!LocalSettings.Singleton.SaveSettings())
+		{
+			statusBar.Text = "[color=orangered]Settings saving error! Check log for more information.[/color]";
+			return;
+		}
 		statusBar.Text = "[color=lightgreen]Settings saved![/color]";
-		EmitSignal(SignalName.RequestedRestart, null);
 	}
 
-	public void OnRevertSettingsExpPressed()
+	public void OnForceDefaultSettingsPressed()
+	{
+		LocalSettings.Singleton.ForceDefaultSettings();
+		smTree.Reconstruct();
+		statusBar.Text = "[color=lightgreen]Default settings loaded![/color]";
+	}
+
+	public void OnRevertSettingsPressed()
 	{
 		smTree.RevertSettings();
-		statusBar.Text = "[color=lightgreen]Settings reverted! (Experimental)[/color]";
+		statusBar.Text = "[color=lightgreen]Settings reverted![/color]";
 	}
 
-	public void OnApplySettingsExpPressed()
+	public void OnApplySettingsPressed()
 	{
 		smTree.ApplySettings();
-		statusBar.Text = "[color=lightgreen]Settings applied! (Experimental)[/color]";
-	}
-
-	public void OnSaveSettingsExpPressed()
-	{
-		smTree.ApplySettings();
-		if(!LocalSettings.Singleton.SaveSettings())
-		{
-			statusBar.Text = "[color=orangered]Settings saving error! Check log for more information. (Experimental)[/color]";
-			return;
-		}
-		statusBar.Text = "[color=lightgreen]Settings saved! (Experimental)[/color]";
-	}
-
-	public void OnLoadSettingsExpPressed()
-	{
-		if (!LocalSettings.Singleton.LoadSettings())
-		{
-			statusBar.Text = "[color=orangered]Settings loading error! Check log for more information. (Experimental)[/color]";
-			return;
-		}
-		smTree.Reconstruct();
-		statusBar.Text = "[color=lightgreen]Settings loaded! (Experimental)[/color]";
+		statusBar.Text = "[color=lightgreen]Settings applied![/color]";
 	}
 
 	private void OnUpdateStatusBar(string text)

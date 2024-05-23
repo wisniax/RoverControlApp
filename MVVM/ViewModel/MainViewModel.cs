@@ -52,8 +52,18 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private VelMonitor VelMonitor = null!;
 
-		private void StartUp()
+		public override void _EnterTree()
 		{
+			SettingsManagerNode.Target = LocalSettings.Singleton;
+		}
+
+		// Called when the node enters the scene tree for the first time.
+		public override void _Ready()
+		{
+			if (MainViewModelInstance is not null)
+				throw new Exception("MainViewModel must have single instance!!!");
+			MainViewModelInstance = this;
+
 			PressedKeys = new PressedKeys();
 			MissionStatus = new MissionStatus();
 			RoverCommunication = new RoverCommunication();
@@ -69,22 +79,6 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
 
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
-		}
-
-		public override void _EnterTree()
-		{
-			SettingsManagerNode.Target = LocalSettings.Singleton;
-		}
-
-		// Called when the node enters the scene tree for the first time.
-		public override void _Ready()
-		{
-			if (MainViewModelInstance is not null)
-				throw new Exception("MainViewModel must have single instance!!!");
-			MainViewModelInstance = this;
-
-			
-			StartUp();
 
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
 			PressedKeys!.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
@@ -98,15 +92,11 @@ namespace RoverControlApp.MVVM.ViewModel
 			LocalSettings.Singleton.Camera.Connect(SettingBase.SignalName.SettingChanged, Callable.From<StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		}
 
-		private void VirtualRestart()
+		public override void _ExitTree()
 		{
-			//UIDis
-
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 			PressedKeys.OnControlModeChanged -= RoverModeUIDis!.ControlModeChangedSubscriber;
 			MissionStatus!.OnRoverMissionStatusChanged -= MissionControlNode!.MissionStatusUpdatedSubscriber;
-			RoverCommunication?.Dispose();
-			StartUp();
 		}
 
 		protected override void Dispose(bool disposing)
