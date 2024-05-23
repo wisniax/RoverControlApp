@@ -9,21 +9,24 @@ using System.Threading.Tasks;
 using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
+using RoverControlApp.MVVM.Model.Settings;
 
 namespace RoverControlApp.MVVM.ViewModel
 {
     public partial class MainViewModel : Control
 	{
 		public static MainViewModel? MainViewModelInstance { get; private set; } = null;
-		public static LocalSettings Settings { get; private set; }
 		public static PressedKeys? PressedKeys { get; private set; }
 		public static RoverCommunication? RoverCommunication { get; private set; }
 		public static MissionStatus? MissionStatus { get; private set; }
 		public static MissionSetPoint? MissionSetPoint { get; private set; }
 
+		private WeakReference<RtspStreamClient>? _rtspClientWeak;
+		private WeakReference<OnvifPtzCameraController>? _ptzClientWeak;
+
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
-		private JoyVibrato? _joyVibrato;
+		private JoyVibrato _joyVibrato = new();
 		private BackCapture _backCapture = new();
 
 		private TextureRect? _imTextureRect;
@@ -51,61 +54,21 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void StartUp()
 		{
-			Settings = LocalSettings.Singleton;
-
 			PressedKeys = new PressedKeys();
 			MissionStatus = new MissionStatus();
-			RoverCommunication = new RoverCommunication(Settings!.Mqtt);
+			RoverCommunication = new RoverCommunication();
 			MissionSetPoint = new MissionSetPoint();
 
-			if (Settings.Joystick.VibrateOnModeChange)
-			{
-				_joyVibrato = new();
-			}
-
-			if (Settings.Camera.EnablePtzControl)
-				_ptzClient = new OnvifPtzCameraController(
-					Settings.Camera.ConnectionSettings.Ip,
-					Settings.Camera.ConnectionSettings.PtzPort,
-					Settings.Camera.ConnectionSettings.Login,
-					Settings.Camera.ConnectionSettings.Password);
-
-			if (Settings.Camera.EnableRtspStream)
-				_rtspClient = new RtspStreamClient(
-								Settings.Camera.ConnectionSettings.Login,
-								Settings.Camera.ConnectionSettings.Password,
-								Settings.Camera.ConnectionSettings.RtspStreamPath,
-								Settings.Camera.ConnectionSettings.Ip,
-								"rtsp",
-								Settings.Camera.ConnectionSettings.RtspPort);
-
 			_imTextureRect = GetNode<TextureRect>("CameraView");
-
-			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
-			if (_joyVibrato is not null) PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
-
-			
 
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode!.MissionStatusUpdatedSubscriber;
 			MissionControlNode.LoadSizeAndPos();
 			MissionControlNode.SMissionControlVisualUpdate();
 
-			MqttNode.Singleton.Connect(MqttNode.SignalName.MessageReceived, Callable.From<string, MqttNodeMessage>(VelMonitor.MqttSubscriber));
-
-			//UIDis
 			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
 
-			MqttNode.Singleton.Connect(MqttNode.SignalName.MessageReceived, Callable.From<string, MqttNodeMessage>(GrzybUIDis.MqttSubscriber));
-		
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
-
-			//state new mode
-			_joyVibrato?.ControlModeChangedSubscriber(PressedKeys.ControlMode);
-
-			_backCapture.HistoryLength = Settings.General.BackCaptureLength;
-
-			
 		}
 
 		public override void _EnterTree()
@@ -122,6 +85,17 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			
 			StartUp();
+
+			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
+			PressedKeys!.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
+
+			ManagePtzStatus();
+			ManageRtspStatus();
+
+			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
+
+			LocalSettings.Singleton.Connect(LocalSettings.SignalName.WholeSectionChanged, Callable.From<StringName>(OnSettingsWholeSectionChanged));
+			LocalSettings.Singleton.Camera.Connect(SettingBase.SignalName.SettingChanged, Callable.From<StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		}
 
 		private void VirtualRestart()
@@ -129,19 +103,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			//UIDis
 
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
-			if (_ptzClient != null)
-			{
-				if (PressedKeys != null) PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
-				_ptzClient?.Dispose();
-			}
 			PressedKeys.OnControlModeChanged -= RoverModeUIDis!.ControlModeChangedSubscriber;
-			_ptzClient = null;
-			_rtspClient?.Dispose();
-			_rtspClient = null;
-			if (PressedKeys is not null && _joyVibrato is not null)
-				PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
-			_joyVibrato?.Dispose();
-			_joyVibrato = null;
 			MissionStatus!.OnRoverMissionStatusChanged -= MissionControlNode!.MissionStatusUpdatedSubscriber;
 			RoverCommunication?.Dispose();
 			StartUp();
@@ -169,10 +131,6 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 		}
 
-		
-
-		
-
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
 		{
@@ -191,6 +149,67 @@ namespace RoverControlApp.MVVM.ViewModel
 				_rtspClient.NewFrameSaved = false;
 			}
 			UpdateLabel();
+		}
+
+		/*
+		 * Settings event handlers
+		 */
+
+		void OnSettingsWholeSectionChanged(StringName property)
+		{
+			if (property != nameof(LocalSettings.Camera)) return;
+
+			ManagePtzStatus();
+			ManageRtspStatus();
+
+			LocalSettings.Singleton.Camera.Connect(SettingBase.SignalName.SettingChanged, Callable.From<StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		}
+
+		void OnSettingsPropertyChanged(StringName name, Variant oldValue, Variant newValue)
+		{
+			switch(name)
+			{
+				case nameof(LocalSettings.Camera.EnablePtzControl):
+					ManagePtzStatus();
+					break;
+				case nameof(LocalSettings.Camera.EnableRtspStream):
+					ManageRtspStatus();
+					break;
+			}
+		}
+
+		/*
+		 * 
+		 */
+
+		private void ManageRtspStatus()
+		{
+			switch (LocalSettings.Singleton.Camera.EnableRtspStream)
+			{
+				case true when _rtspClient is null:
+					_rtspClient = new();
+					_rtspClientWeak = new(_rtspClient);
+					break;
+				case false when _rtspClient is not null:
+					_rtspClient.Dispose();
+					_rtspClient = null;
+					break;
+			}
+		}
+
+		private void ManagePtzStatus()
+		{
+			switch (LocalSettings.Singleton.Camera.EnablePtzControl)
+			{
+				case true when _ptzClient is null:
+					_ptzClient = new OnvifPtzCameraController();
+					_ptzClientWeak = new(_ptzClient);
+					break;
+				case false when _ptzClient is not null:
+					_ptzClient.Dispose();
+					_ptzClient = null;
+					break;
+			}
 		}
 
 		private Color GetColorForCommunicationState(CommunicationState? state)
@@ -217,20 +236,26 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			FancyDebugViewRLab.Clear();
 
+			RtspStreamClient? rtspClient = null;
+			OnvifPtzCameraController? ptzClient = null;
+
+			_rtspClientWeak?.TryGetTarget(out rtspClient);
+			_ptzClientWeak?.TryGetTarget(out ptzClient);
+
 			Color mqttStatusColor = GetColorForCommunicationState(RoverCommunication?.RoverStatus?.CommunicationState);
 
-			Color rtspStatusColor = GetColorForCommunicationState(_rtspClient?.State);
+			Color rtspStatusColor = GetColorForCommunicationState(rtspClient?.State);
 
-			Color ptzStatusColor = GetColorForCommunicationState(_ptzClient?.State);
+			Color ptzStatusColor = GetColorForCommunicationState(ptzClient?.State);
 
 			Color rtspAgeColor;
-			if (_rtspClient?.ElapsedSecondsOnCurrentState < 1.0f)
+			if (rtspClient?.ElapsedSecondsOnCurrentState < 1.0f)
 				rtspAgeColor = Colors.LightGreen;
 			else
 				rtspAgeColor = Colors.Orange;
 
-			string? rtspAge = _rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
-			string? ptzAge = _ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			string? rtspAge = rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			string? ptzAge = ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
 			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode},\t" +
 						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication?.RoverStatus?.CommunicationState}[/color],\t" +
@@ -248,18 +273,18 @@ namespace RoverControlApp.MVVM.ViewModel
 					break;
 			}
 
-			if (_rtspClient?.State == CommunicationState.Opened)
+			if (rtspClient?.State == CommunicationState.Opened)
 				FancyDebugViewRLab.AppendText($"RTSP: Frame is [color={rtspAgeColor.ToHtml(false)}]{rtspAge}s[/color] old\n");
 			else
-				FancyDebugViewRLab.AppendText($"RTSP: [color={rtspStatusColor.ToHtml(false)}]{_rtspClient?.State ?? CommunicationState.Closed}[/color], Time: {rtspAge ?? "N/A "}s\n");
+				FancyDebugViewRLab.AppendText($"RTSP: [color={rtspStatusColor.ToHtml(false)}]{rtspClient?.State ?? CommunicationState.Closed}[/color], Time: {rtspAge ?? "N/A "}s\n");
 
-			if (_ptzClient?.State == CommunicationState.Opened)
+			if (ptzClient?.State == CommunicationState.Opened)
 			{
 				FancyDebugViewRLab.AppendText($"PTZ: Since last move request: {ptzAge}s\n");
-				FancyDebugViewRLab.AppendText($"PTZ: Move vector: {_ptzClient.CameraMotion}\n");
+				FancyDebugViewRLab.AppendText($"PTZ: Move vector: {ptzClient.CameraMotion}\n");
 			}
 			else
-				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{_ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
+				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
 		}
 
 		public async Task<bool> CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")

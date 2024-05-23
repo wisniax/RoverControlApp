@@ -70,10 +70,6 @@ namespace RoverControlApp.MVVM.Model
 
 		private volatile Stopwatch _generalPurposeStopwatch;
 		private volatile Stopwatch _queueStopwatch;
-		private string _ip;
-		private string _login;
-		private string _password;
-		private int _port;
 
 
 		private Thread _ptzThread;
@@ -86,12 +82,8 @@ namespace RoverControlApp.MVVM.Model
 			CameraMotionRequest = vector;
 		}
 
-		public OnvifPtzCameraControllerEx(string ip, int port, string login, string password)
+		public OnvifPtzCameraControllerEx()
 		{
-			_ip = ip;
-			_port = port;
-			_login = login;
-			_password = password;
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_queueStopwatch =  Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
@@ -110,7 +102,12 @@ namespace RoverControlApp.MVVM.Model
 				EndCamera();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Created;
-			var acc = new Account(_ip + ':' + _port.ToString(), _login, _password);
+			var acc = new Account
+			(
+				LocalSettings.Singleton.Camera.ConnectionSettings.Ip + ':' + LocalSettings.Singleton.Camera.ConnectionSettings.PtzPort,
+				LocalSettings.Singleton.Camera.ConnectionSettings.Login,
+				LocalSettings.Singleton.Camera.ConnectionSettings.Password
+			);
 			_camera = Camera.Create(acc, (e) => _ptzThreadError = e);
 
 			if (_ptzThreadError is not null)
@@ -254,7 +251,7 @@ namespace RoverControlApp.MVVM.Model
 		{
 			data = new();
 
-			data.TiltAndZoom = MainViewModel.Settings.Camera.InverseAxis
+			data.TiltAndZoom = LocalSettings.Singleton.Camera.InverseAxis
 				? new Vector4(-moveNew.X, -moveNew.Y, moveNew.Z, moveNew.W)
 				: moveNew;
 

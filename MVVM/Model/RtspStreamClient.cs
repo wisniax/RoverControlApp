@@ -42,13 +42,6 @@ namespace RoverControlApp.MVVM.Model
 
 		private Thread? _rtspThread;
 
-		private string _ip;
-		private int _port;
-		private string _protocol;
-		private string _login;
-		private string _password;
-		private string _pathToStream;
-
 		public CommunicationState State
 		{
 			get => _state;
@@ -63,14 +56,8 @@ namespace RoverControlApp.MVVM.Model
 
 		private CancellationTokenSource _cts;
 
-		public RtspStreamClient(string login, string password, string pathToStream, string ip, string protocol = "rtsp", int port = 554)
+		public RtspStreamClient()
 		{
-			this._ip = ip;
-			this._port = port;
-			this._protocol = protocol;
-			this._login = login;
-			this._password = password;
-			this._pathToStream = pathToStream;
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
 			_rtspThread = new Thread(ThreadWork) { IsBackground = true, Name = "RtspStream_Thread", Priority = ThreadPriority.BelowNormal };
@@ -109,7 +96,12 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
-			var task = Task.Run(() => Capture = new VideoCapture($"{_protocol}://{_login}:{_password}@{_ip}:{_port}{_pathToStream}"));
+			var task = 
+				Task.Run(() => Capture = new VideoCapture
+				(
+					$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Login}"
+					+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
+				);
 			m = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;

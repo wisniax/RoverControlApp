@@ -19,11 +19,6 @@ namespace RoverControlApp.MVVM.Model
 {
 	public class OnvifPtzCameraController : IDisposable
 	{
-		private string _ip;
-		private int _port;
-		private string _login;
-		private string _password;
-
 		private Camera? _camera = null;
 
 		private Vector4 _cameraMotion = Vector4.Zero;
@@ -63,7 +58,7 @@ namespace RoverControlApp.MVVM.Model
 		public double ElapsedSecondsOnCurrentState => _generalPurposeStopwatch.Elapsed.TotalSeconds;
 
 		public TimeSpan MinSpanEveryCom =>
-			TimeSpan.FromSeconds(1 / MainViewModel.Settings.Camera.PtzRequestFrequency);
+			TimeSpan.FromSeconds(1 / LocalSettings.Singleton.Camera.PtzRequestFrequency);
 		public TimeSpan MaxSpanEveryCom => 1.5 * MinSpanEveryCom;
 
 
@@ -78,12 +73,8 @@ namespace RoverControlApp.MVVM.Model
 			CameraMotion = vector;
 		}
 
-		public OnvifPtzCameraController(string ip, int port, string login, string password)
+		public OnvifPtzCameraController()
 		{
-			_ip = ip;
-			_port = port;
-			_login = login;
-			_password = password;
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
 			_ptzThread = new Thread(ThreadWork) { IsBackground = true, Name = "PtzController_Thread", Priority = ThreadPriority.AboveNormal };
@@ -108,7 +99,12 @@ namespace RoverControlApp.MVVM.Model
 			if (_camera != null) EndCamera();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Created;
-			var acc = new Account(_ip + ':' + _port, _login, _password);
+			var acc = new Account
+			(
+				LocalSettings.Singleton.Camera.ConnectionSettings.Ip + ':' + LocalSettings.Singleton.Camera.ConnectionSettings.PtzPort,
+				LocalSettings.Singleton.Camera.ConnectionSettings.Login,
+				LocalSettings.Singleton.Camera.ConnectionSettings.Password
+			);
 			_camera = Camera.Create(acc, (e) => _ptzThreadError = e);
 
 			if (_ptzThreadError is not null)
@@ -240,7 +236,7 @@ namespace RoverControlApp.MVVM.Model
 				return false;
 			}
 
-			speed = MainViewModel.Settings.Camera.InverseAxis ? new Vector4(-@new.X, -@new.Y, @new.Z, @new.W) : @new;
+			speed = LocalSettings.Singleton.Camera.InverseAxis ? new Vector4(-@new.X, -@new.Y, @new.Z, @new.W) : @new;
 
 			//Have to make sure none scalar is |x| <= 0.1f bc camera treats it as a MAX SPEED
 			if (Mathf.IsEqualApprox(speed.X, 0f, 0.1f)) speed.X = 0f;

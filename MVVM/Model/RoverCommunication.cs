@@ -15,7 +15,6 @@ namespace RoverControlApp.MVVM.Model
 		private MqttClasses.ControlMode ControlMode => MainViewModel.PressedKeys?.ControlMode ?? MqttClasses.ControlMode.EStop;
 
 		//List<IDisposable> _eventsToDispose = new List<IDisposable>();
-		private Settings.Mqtt _settingsMqtt;
 
 		private MqttClasses.RoverStatus? _roverStatus;
 		public MqttClasses.RoverStatus? RoverStatus
@@ -44,9 +43,8 @@ namespace RoverControlApp.MVVM.Model
 		}
 
 
-		public RoverCommunication(Settings.Mqtt settingsMqtt)
+		public RoverCommunication()
 		{
-			_settingsMqtt = settingsMqtt;
 			if (MainViewModel.PressedKeys != null)
 				MainViewModel.PressedKeys.OnControlModeChanged += PressedKeys_OnControlModeChanged;
 			if (MainViewModel.PressedKeys != null)
@@ -69,7 +67,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private async Task PressedKeysOnOnContainerMovement(MqttClasses.RoverContainer arg)
 		{
-			await MqttNode.Singleton.EnqueueMessageAsync(_settingsMqtt.TopicRoverContainer,
+			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicRoverContainer,
 				JsonSerializer.Serialize(arg));
 		}
 
@@ -86,7 +84,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private async Task OnRoverMissionStatusChanged(MqttClasses.RoverMissionStatus? arg)
 		{
-			await MqttNode.Singleton.EnqueueMessageAsync(_settingsMqtt.TopicMissionStatus,
+			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicMissionStatus,
 				JsonSerializer.Serialize(arg), MqttQualityOfServiceLevel.ExactlyOnce, true);
 		}
 
@@ -97,18 +95,18 @@ namespace RoverControlApp.MVVM.Model
 
 		private async Task RoverCommunication_OnControlStatusChanged(MqttClasses.RoverStatus roverStatus)
 		{
-			await MqttNode.Singleton.EnqueueMessageAsync(_settingsMqtt.TopicRoverStatus,
+			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicRoverStatus,
 				JsonSerializer.Serialize(roverStatus), MqttQualityOfServiceLevel.ExactlyOnce, true);
 		}
 
 		private async Task RoverMovementVectorChanged(MqttClasses.RoverControl roverControl)
 		{
-			await MqttNode.Singleton.EnqueueMessageAsync(_settingsMqtt.TopicRoverControl,
+			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicRoverControl,
 				JsonSerializer.Serialize(roverControl));
 		}
 		private async Task RoverManipulatorVectorChanged(MqttClasses.ManipulatorControl manipulatorControl)
 		{
-			await MqttNode.Singleton.EnqueueMessageAsync(_settingsMqtt.TopicManipulatorControl,
+			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicManipulatorControl,
 				JsonSerializer.Serialize(manipulatorControl));
 		}
 

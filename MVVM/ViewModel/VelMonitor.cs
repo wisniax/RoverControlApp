@@ -80,6 +80,8 @@ public partial class VelMonitor : Panel
 			sliderControllers[i].InputMinValue(SliderMinVal);
 			sliderControllers[i].InputMaxValue(SliderMaxVal);
 		}
+
+		MqttNode.Singleton.Connect(MqttNode.SignalName.MessageReceived, Callable.From<string, MqttNodeMessage>(MqttSubscriber));
 	}
 
 	struct SingleWheel
@@ -108,7 +110,7 @@ public partial class VelMonitor : Panel
 	public void MqttSubscriber(string subTopic, MqttNodeMessage msg)
 	{
 
-		if (MainViewModel.Settings?.Mqtt.TopicWheelFeedback is null || subTopic != MainViewModel.Settings?.Mqtt.TopicWheelFeedback)
+		if (LocalSettings.Singleton.Mqtt.TopicWheelFeedback is null || subTopic != LocalSettings.Singleton.Mqtt.TopicWheelFeedback)
 			return;
 
 		if (msg is null || msg.Message.PayloadSegment.Count == 0)

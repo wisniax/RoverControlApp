@@ -4,6 +4,7 @@ using System.Linq;
 using Godot;
 using System.Threading.Tasks;
 using RoverControlApp.MVVM.ViewModel;
+using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.Core
 {
@@ -16,7 +17,7 @@ namespace RoverControlApp.Core
 		/// <summary>
 		/// How long frame remains in memory [ms]. 
 		/// </summary>
-		public long HistoryLength { get; set; } = 15000;
+		public long HistoryLength { get => LocalSettings.Singleton.General.BackCaptureLength; }
 		/// <summary>
 		/// Remove all frames from memory on save?
 		/// </summary>

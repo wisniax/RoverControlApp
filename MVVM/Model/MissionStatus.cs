@@ -15,7 +15,6 @@ namespace RoverControlApp.MVVM.Model
 
 		private CancellationTokenSource _cts;
 		private Thread? _retriveMisionStatusThread;
-		private Settings.Mqtt? _mqttSettings => MainViewModel.Settings?.Mqtt;
 
 		private MqttClasses.RoverMissionStatus? _status;
 		public MqttClasses.RoverMissionStatus? Status
@@ -46,7 +45,7 @@ namespace RoverControlApp.MVVM.Model
 			SpinWait.SpinUntil(() => MqttNode.Singleton.ConnectionState == CommunicationState.Opened);
 			SpinWait.SpinUntil(() =>
 			{
-				serialized = MqttNode.Singleton.GetReceivedMessageOnTopicAsString(_mqttSettings?.TopicMissionStatus);
+				serialized = MqttNode.Singleton.GetReceivedMessageOnTopicAsString(LocalSettings.Singleton.Mqtt.TopicMissionStatus);
 				return serialized != null;
 			}, 5000);
 

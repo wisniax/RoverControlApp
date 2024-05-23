@@ -10,7 +10,6 @@ namespace RoverControlApp.MVVM.Model
     public class MissionSetPoint
 	{
 		public event Func<MqttClasses.ActiveKmlObjects?, Task>? ActiveKmlObjectsUpdated;
-		private LocalSettings? _localSettings => MainViewModel.Settings;
 		public MqttClasses.ActiveKmlObjects ActiveKmlObjects { get; private set; }
 
 		public MissionSetPoint()
@@ -21,7 +20,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private Task OnMessageReceivedAsync(string subtopic, MqttApplicationMessage? content)
 		{
-			if (subtopic != _localSettings?.Mqtt.TopicKmlListOfActiveObj || content == null)
+			if (subtopic != LocalSettings.Singleton.Mqtt.TopicKmlListOfActiveObj || content == null)
 				return Task.CompletedTask;
 
 			UpdateActiveKmlObjects();
@@ -34,7 +33,7 @@ namespace RoverControlApp.MVVM.Model
 			MqttClasses.ActiveKmlObjects? activeKmlObjects;
 			try
 			{ 
-				msg = MqttNode.Singleton.GetReceivedMessageOnTopicAsString(_localSettings?.Mqtt.TopicKmlListOfActiveObj);
+				msg = MqttNode.Singleton.GetReceivedMessageOnTopicAsString(LocalSettings.Singleton.Mqtt.TopicKmlListOfActiveObj);
 				activeKmlObjects = JsonSerializer.Deserialize<MqttClasses.ActiveKmlObjects>(msg);
 			}
 			catch (Exception e)

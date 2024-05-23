@@ -1,5 +1,6 @@
 ﻿using System;
 using Godot;
+using RoverControlApp.MVVM.Model;
 using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.Core
@@ -26,7 +27,7 @@ namespace RoverControlApp.Core
 				velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
 
 				float turn = Input.GetAxis("rover_move_right", "rover_move_left");
-				turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToInt32(MainViewModel.Settings?.Joystick.Deadzone))) ? 0 : turn;
+				turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToInt32(LocalSettings.Singleton.Joystick.Deadzone))) ? 0 : turn;
 
 				turn *= velocity; // Max turn angle: 45 deg.
 
@@ -62,7 +63,7 @@ namespace RoverControlApp.Core
 				velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
 
 				float turn = Input.GetAxis("rover_move_right", "rover_move_left");
-				turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToSingle(MainViewModel.Settings?.Joystick.Deadzone))) ? 0 : turn;
+				turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToSingle(LocalSettings.Singleton.Joystick.Deadzone))) ? 0 : turn;
 
 				// turn *= velocity * TURN_COEFF; // Max turn angle: 45 deg.
 
@@ -106,7 +107,7 @@ namespace RoverControlApp.Core
 			{
 				roverControl = new MqttClasses.RoverControl();
 
-				var joyDeadZone = Convert.ToSingle(MainViewModel.Settings?.Joystick.Deadzone);
+				var joyDeadZone = Convert.ToSingle(LocalSettings.Singleton.Joystick.Deadzone);
 
 				Vector2 velocity = Input.GetVector("rover_move_right", "rover_move_left", "rover_move_down",
 					"rover_move_up", Mathf.Max(0.1f, joyDeadZone));

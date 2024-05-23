@@ -22,20 +22,20 @@ public partial class SettingsManager : Panel
 
 	public void OnForceDefaultSettingsPressed()
 	{
-		MainViewModel.Settings?.ForceDefaultSettings();
+		LocalSettings.Singleton.ForceDefaultSettings();
 		smTree.Reconstruct();
 		statusBar.Text = "[color=lightgreen]Default settings loaded![/color]";
 	}
 	public void OnLoadSettingsPressed()
 	{
-		MainViewModel.Settings?.LoadSettings();
+		LocalSettings.Singleton.LoadSettings();
 		smTree.Reconstruct();
 		statusBar.Text = "[color=lightgreen]Settings loaded![/color]";
 	}
 
 	public void OnSaveSettingsPressed()
 	{
-		MainViewModel.Settings?.SaveSettings();
+		LocalSettings.Singleton.SaveSettings();
 		statusBar.Text = "[color=lightgreen]Settings saved![/color]";
 		EmitSignal(SignalName.RequestedRestart, null);
 	}

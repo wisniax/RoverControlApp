@@ -88,7 +88,9 @@ public class JoyVibrato : IDisposable
 			ctSource = new();
 			ctToken = ctSource.Token;
 		}
-		taskVibrato = Task.Run(async () => await Vibrate(newMode), ctToken);
+
+		if(LocalSettings.Singleton.Joystick.VibrateOnModeChange)
+			taskVibrato = Task.Run(async () => await Vibrate(newMode), ctToken);
 	}
 
 	private Task taskVibrato;

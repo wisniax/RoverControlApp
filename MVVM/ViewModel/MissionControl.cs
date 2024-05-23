@@ -232,9 +232,9 @@ public partial class MissionControl : Panel
 
 	public void LoadSizeAndPos()
 	{
-		var vec2String = MainViewModel.Settings!.General.MissionControlSize.Split(';');
+		var vec2String = LocalSettings.Singleton.General.MissionControlSize.Split(';');
 		Size = new Vector2I(Convert.ToInt32(vec2String[0]), Convert.ToInt32(vec2String[1]));
-		vec2String = MainViewModel.Settings!.General.MissionControlPosition.Split(';');
+		vec2String = LocalSettings.Singleton.General.MissionControlPosition.Split(';');
 		Position = new Vector2I(Convert.ToInt32(vec2String[0]), Convert.ToInt32(vec2String[1]));
 	}
 
@@ -245,13 +245,8 @@ public partial class MissionControl : Panel
 		Size = new Vector2(Math.Clamp(Size.X, CustomMinimumSize.X,maxSize.X), Size.Y);
 		Position = new Vector2(Math.Clamp(Position.X, 0, maxSize.X - Size.X), Math.Clamp(Position.Y, 30, maxSize.Y - Size.Y));
 
-		//TODO use signals, do not change directly!
-		var settings = MainViewModel.Settings!.General;
-
-		settings.MissionControlSize = Size.X.ToString() + ';' + Size.Y.ToString();
-		settings.MissionControlPosition = Position.X.ToString() + ';' + Position.Y.ToString();
-
-		MainViewModel.Settings!.General = settings;
+		LocalSettings.Singleton.General.MissionControlSize = Size.X.ToString() + ';' + Size.Y.ToString();
+		LocalSettings.Singleton.General.MissionControlPosition = Position.X.ToString() + ';' + Position.Y.ToString();
 	}
 
 	public Task MissionStatusUpdatedSubscriber(MqttClasses.RoverMissionStatus? status)
