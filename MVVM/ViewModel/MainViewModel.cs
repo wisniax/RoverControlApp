@@ -24,12 +24,23 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static MissionSetPoint? MissionSetPoint { get; private set; }
 
 		private RtspStreamClient? _rtspClient;
+
+
 		private OnvifPtzCameraController? _ptzClient;
 		private JoyVibrato? _joyVibrato;
 		private BackCapture _backCapture = new();
 
-		private TextureRect? _imTextureRect;
-		private ImageTexture? _imTexture;
+		private TextureRect? _imTextureRectHD;
+		private TextureRect? _imTextureRectA;
+		private TextureRect? _imTextureRectB;
+		private TextureRect? _imTextureRectC;
+		private TextureRect? _imTextureRectD;
+		
+		private ImageTexture? _imTextureHD;
+		private ImageTexture? _imTextureA;
+		private ImageTexture? _imTextureB;
+		private ImageTexture? _imTextureC;
+		private ImageTexture? _imTextureD;
 
 		[Export]
 		private RoverMode_UIOverlay RoverModeUIDis = null!;
@@ -86,7 +97,12 @@ namespace RoverControlApp.MVVM.ViewModel
 								"rtsp",
 								Settings.Settings.Camera.RtspPort);
 
-			_imTextureRect = GetNode<TextureRect>("CameraView");
+			_imTextureRectHD = GetNode<TextureRect>("CameraHD");
+			_imTextureRectA = GetNode<TextureRect>("CameraA");
+			_imTextureRectB = GetNode<TextureRect>("CameraB");
+			_imTextureRectC = GetNode<TextureRect>("CameraC");
+			_imTextureRectD = GetNode<TextureRect>("CameraD");
+
 
 			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
 			if (_joyVibrato is not null) PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
@@ -157,25 +173,6 @@ namespace RoverControlApp.MVVM.ViewModel
 			MqttClient?.Dispose();
 			StartUp();
 		}
-
-		private void _rtspClient_OnFrameReceived()
-		{
-			if (_rtspClient is { NewFrameSaved: true })
-			{
-				_backCapture.CleanUpHistory();
-
-				_rtspClient.LockGrabbingFrames();
-				if (_imTexture == null || _imTexture._GetHeight() != _rtspClient.LatestImage.GetHeight() || _imTexture._GetWidth() != _rtspClient.LatestImage.GetWidth()) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
-				else _imTexture.Update(_rtspClient.LatestImage);
-
-				_backCapture.FrameFeed(_rtspClient.LatestImage);
-
-				_rtspClient.UnLockGrabbingFrames();
-				_imTextureRect!.Texture = _imTexture;
-				_rtspClient.NewFrameSaved = false;
-			}
-		}
-
 		protected override void Dispose(bool disposing)
 		{
 			RoverCommunication?.Dispose();
@@ -359,10 +356,14 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		void IsRtspOkWrapper()
 		{
-			CallDeferred(MethodName.IsRtspResOk);
+			CallDeferred(MethodName.IsRtspResOk, _imTextureHD, _imTextureRectHD);
+			CallDeferred(MethodName.IsRtspResOk, _imTextureA, _imTextureRectA);
+			CallDeferred(MethodName.IsRtspResOk, _imTextureB, _imTextureRectB);
+			CallDeferred(MethodName.IsRtspResOk, _imTextureC, _imTextureRectC);
+			CallDeferred(MethodName.IsRtspResOk, _imTextureD, _imTextureRectD);
 		}
 
-		public void IsRtspResOk()
+		public void IsRtspResOk(ImageTexture _imTexture, TextureRect _imTextureRect)
 		{
 			if (_rtspClient is { NewFrameSaved: true })
 			{

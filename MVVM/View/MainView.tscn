@@ -34,15 +34,45 @@ FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
 
-[node name="CameraView" type="TextureRect" parent="."]
+[node name="CameraHD" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -190.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_1llr5")
 expand_mode = 2
+
+[node name="CameraA" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 964.0
+offset_top = 34.0
+offset_right = 1154.0
+offset_bottom = 181.0
+
+[node name="CameraB" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 964.0
+offset_top = 181.0
+offset_right = 1154.0
+offset_bottom = 328.0
+
+[node name="CameraC" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 964.0
+offset_top = 328.0
+offset_right = 1154.0
+offset_bottom = 470.0
+
+[node name="CameraD" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 964.0
+offset_top = 470.0
+offset_right = 1154.0
+offset_bottom = 604.0
 
 [node name="FancyDebugViewRLab" type="RichTextLabel" parent="."]
 layout_mode = 1
