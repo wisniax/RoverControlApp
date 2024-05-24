@@ -158,23 +158,6 @@ namespace RoverControlApp.MVVM.ViewModel
 			StartUp();
 		}
 
-		private void _rtspClient_OnFrameReceived()
-		{
-			if (_rtspClient is { NewFrameSaved: true })
-			{
-				_backCapture.CleanUpHistory();
-
-				_rtspClient.LockGrabbingFrames();
-				if (_imTexture == null || _imTexture._GetHeight() != _rtspClient.LatestImage.GetHeight() || _imTexture._GetWidth() != _rtspClient.LatestImage.GetWidth()) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
-				else _imTexture.Update(_rtspClient.LatestImage);
-
-				_backCapture.FrameFeed(_rtspClient.LatestImage);
-
-				_rtspClient.UnLockGrabbingFrames();
-				_imTextureRect!.Texture = _imTexture;
-				_rtspClient.NewFrameSaved = false;
-			}
-		}
 
 		protected override void Dispose(bool disposing)
 		{
