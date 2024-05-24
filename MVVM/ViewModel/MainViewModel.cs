@@ -99,6 +99,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			MqttClient.OnMessageReceivedAsync += VelMonitor.MqttSubscriber;
             MqttClient.OnMessageReceivedAsync += ZedMonitor.OnGyroscopeChanged;
 
+			_rtspClient.OnFrameReceived += IsRtspOkWrapper;
+
             //UIDis
             RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
@@ -133,6 +135,9 @@ namespace RoverControlApp.MVVM.ViewModel
 			MqttClient!.OnMessageReceivedAsync -= VelMonitor.MqttSubscriber;
 			MqttClient!.OnMessageReceivedAsync -= ZedMonitor.OnGyroscopeChanged;
 
+			_rtspClient.OnFrameReceived -= IsRtspOkWrapper;
+			
+
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 			if (_ptzClient != null)
 			{
@@ -151,6 +156,24 @@ namespace RoverControlApp.MVVM.ViewModel
 			RoverCommunication?.Dispose();
 			MqttClient?.Dispose();
 			StartUp();
+		}
+
+		private void _rtspClient_OnFrameReceived()
+		{
+			if (_rtspClient is { NewFrameSaved: true })
+			{
+				_backCapture.CleanUpHistory();
+
+				_rtspClient.LockGrabbingFrames();
+				if (_imTexture == null || _imTexture._GetHeight() != _rtspClient.LatestImage.GetHeight() || _imTexture._GetWidth() != _rtspClient.LatestImage.GetWidth()) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
+				else _imTexture.Update(_rtspClient.LatestImage);
+
+				_backCapture.FrameFeed(_rtspClient.LatestImage);
+
+				_rtspClient.UnLockGrabbingFrames();
+				_imTextureRect!.Texture = _imTexture;
+				_rtspClient.NewFrameSaved = false;
+			}
 		}
 
 		protected override void Dispose(bool disposing)
@@ -183,20 +206,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
 		{
-			if (_rtspClient is { NewFrameSaved: true })
-			{
-				_backCapture.CleanUpHistory();
-
-				_rtspClient.LockGrabbingFrames();
-				if (_imTexture == null || _imTexture._GetHeight() != _rtspClient.LatestImage.GetHeight() || _imTexture._GetWidth() != _rtspClient.LatestImage.GetWidth()) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
-				else _imTexture.Update(_rtspClient.LatestImage);
-
-				_backCapture.FrameFeed(_rtspClient.LatestImage);
-
-				_rtspClient.UnLockGrabbingFrames();
-				_imTextureRect!.Texture = _imTexture;
-				_rtspClient.NewFrameSaved = false;
-			}
+			//IsRtspResOk();
 			UpdateLabel();
 
 			GrzybUIDis.MqttSubscriber("", null);
@@ -345,6 +355,29 @@ namespace RoverControlApp.MVVM.ViewModel
 		private void OnRTSPCapture()
 		{
 			CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
+		}
+
+		void IsRtspOkWrapper()
+		{
+			CallDeferred(MethodName.IsRtspResOk);
+		}
+
+		public void IsRtspResOk()
+		{
+			if (_rtspClient is { NewFrameSaved: true })
+			{
+				_backCapture.CleanUpHistory();
+
+				_rtspClient.LockGrabbingFrames();
+				if (_imTexture == null || _imTexture._GetHeight() != _rtspClient.LatestImage.GetHeight() || _imTexture._GetWidth() != _rtspClient.LatestImage.GetWidth()) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
+				else _imTexture.Update(_rtspClient.LatestImage);
+
+				_backCapture.FrameFeed(_rtspClient.LatestImage);
+
+				_rtspClient.UnLockGrabbingFrames();
+				_imTextureRect!.Texture = _imTexture;
+				_rtspClient.NewFrameSaved = false;
+			}
 		}
 	}
 }

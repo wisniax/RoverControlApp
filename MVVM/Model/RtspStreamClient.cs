@@ -11,6 +11,8 @@ using Godot;
 //using OpenCvSharp;
 using Emgu.CV;
 using RoverControlApp.MVVM.ViewModel;
+using RoverControlApp.Core;
+using System.Collections.Specialized;
 
 namespace RoverControlApp.MVVM.Model
 {
@@ -20,6 +22,7 @@ namespace RoverControlApp.MVVM.Model
 		private Image? _latestImage;
 		private Mat? m;
 
+		public event Action? OnFrameReceived;
 
 		public Image LatestImage
 		{
@@ -107,6 +110,8 @@ namespace RoverControlApp.MVVM.Model
 
 		private void CreateCapture()
 		{
+			//OnFrameReceived?.Invoke();
+			
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
 			var task = Task.Run(() => Capture = new VideoCapture($"{_protocol}://{_login}:{_password}@{_ip}:{_port}{_pathToStream}"));
@@ -229,7 +234,11 @@ namespace RoverControlApp.MVVM.Model
 			if (MainViewModel.Settings.Settings.VerboseDebug)
 				MainViewModel.EventLogger.LogMessage($"RTSP: Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
 
+			OnFrameReceived?.Invoke();
+
 			return true;
 		}
+
+
 	}
 }
