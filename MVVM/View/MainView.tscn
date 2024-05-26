@@ -77,6 +77,12 @@ layout_mode = 2
 texture = ExtResource("3_y884c")
 expand_mode = 2
 
+[node name="CameraE" type="TextureRect" parent="PreviewCameras"]
+custom_minimum_size = Vector2(0, 158.96)
+layout_mode = 2
+texture = ExtResource("3_y884c")
+expand_mode = 2
+
 [node name="FancyDebugViewRLab" type="RichTextLabel" parent="."]
 layout_mode = 1
 anchors_preset = 2

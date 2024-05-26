@@ -23,25 +23,19 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static MqttClient? MqttClient { get; private set; }
 		public static MissionSetPoint? MissionSetPoint { get; private set; }
 
-		private RtspStreamClient? _rtspClient;
-		private RtspStreamClient? _rtspClient1;
+		//Main camera + 5 preview cameras 
+		private const int numCameras = 6;
+
+		private RtspStreamClient[]? _rtspClient = new RtspStreamClient[numCameras];
 
 
 		private OnvifPtzCameraController? _ptzClient;
 		private JoyVibrato? _joyVibrato;
 		private BackCapture _backCapture = new();
 
-		private TextureRect? _imTextureRectHD;
-		private TextureRect? _imTextureRectA;
-		private TextureRect? _imTextureRectB;
-		private TextureRect? _imTextureRectC;
-		private TextureRect? _imTextureRectD;
+		private TextureRect[]? _imTextureRect = new TextureRect[numCameras];
 		
-		private ImageTexture? _imTextureHD;
-		private ImageTexture? _imTextureA;
-		private ImageTexture? _imTextureB;
-		private ImageTexture? _imTextureC;
-		private ImageTexture? _imTextureD;
+		private ImageTexture[]? _imTexture = new ImageTexture[numCameras];
 
 		[Export]
 		private RoverMode_UIOverlay RoverModeUIDis = null!;
@@ -90,7 +84,7 @@ namespace RoverControlApp.MVVM.ViewModel
 					Settings.Settings.Camera0.Password);
 
 			if (Settings.Settings.Camera0.EnableRtspStream)
-				_rtspClient = new RtspStreamClient(
+				_rtspClient[0] = new RtspStreamClient(
 								0,				
 								Settings.Settings.Camera0.Login,
 								Settings.Settings.Camera0.Password,
@@ -101,7 +95,7 @@ namespace RoverControlApp.MVVM.ViewModel
 								Settings.Settings.Camera0.RtspPort);
 			
 			if (Settings.Settings.Camera1.EnableRtspStream)
-				_rtspClient1 = new RtspStreamClient(
+				_rtspClient[1] = new RtspStreamClient(
 								1,				
 								Settings.Settings.Camera1.Login,
 								Settings.Settings.Camera1.Password,
@@ -110,12 +104,26 @@ namespace RoverControlApp.MVVM.ViewModel
 								Settings.Settings.Camera1.Ip,
 								"rtsp",
 								Settings.Settings.Camera1.RtspPort);
-
-			_imTextureRectHD = GetNode<TextureRect>("CameraHD");
-			_imTextureRectA = GetNode<TextureRect>("PreviewCameras/CameraA");
-			_imTextureRectB = GetNode<TextureRect>("PreviewCameras/CameraB");
-			_imTextureRectC = GetNode<TextureRect>("PreviewCameras/CameraC");
-			_imTextureRectD = GetNode<TextureRect>("PreviewCameras/CameraD");
+			
+			for(int i = 0; i < numCameras; i++)
+			{
+				_rtspClient[i] = new RtspStreamClient(
+								i,
+								Settings.Settings.Camera1.Login,
+								Settings.Settings.Camera1.Password,
+								Settings.Settings.Camera1.RtspStreamPathHQ,
+								Settings.Settings.Camera1.RtspStreamPathLQ,
+								Settings.Settings.Camera1.Ip,
+								"rtsp",
+								Settings.Settings.Camera1.RtspPort);
+			}
+					
+			_imTextureRect[0] = GetNode<TextureRect>("CameraHD");
+			_imTextureRect[1] = GetNode<TextureRect>("PreviewCameras/CameraA");
+			_imTextureRect[2] = GetNode<TextureRect>("PreviewCameras/CameraB");
+			_imTextureRect[3] = GetNode<TextureRect>("PreviewCameras/CameraC");
+			_imTextureRect[4] = GetNode<TextureRect>("PreviewCameras/CameraD");
+			_imTextureRect[5] = GetNode<TextureRect>("PreviewCameras/CameraE");
 
 
 			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
@@ -129,7 +137,12 @@ namespace RoverControlApp.MVVM.ViewModel
 			MqttClient.OnMessageReceivedAsync += VelMonitor.MqttSubscriber;
             MqttClient.OnMessageReceivedAsync += ZedMonitor.OnGyroscopeChanged;
 
-			_rtspClient.OnFrameReceived += IsRtspOkWrapper;
+			_rtspClient[0].OnFrameReceived += MainRtspWrapper;
+			_rtspClient[1].OnFrameReceived += PreviewARtspWrapper;
+			_rtspClient[2].OnFrameReceived += PreviewBRtspWrapper;
+			_rtspClient[3].OnFrameReceived += PreviewCRtspWrapper;
+			_rtspClient[4].OnFrameReceived += PreviewDRtspWrapper;
+			_rtspClient[5].OnFrameReceived += PreviewERtspWrapper;
 
             //UIDis
             RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
@@ -165,8 +178,13 @@ namespace RoverControlApp.MVVM.ViewModel
 			MqttClient!.OnMessageReceivedAsync -= VelMonitor.MqttSubscriber;
 			MqttClient!.OnMessageReceivedAsync -= ZedMonitor.OnGyroscopeChanged;
 
-			_rtspClient.OnFrameReceived -= IsRtspOkWrapper;
-			
+			_rtspClient[0].OnFrameReceived -= MainRtspWrapper;
+			_rtspClient[1].OnFrameReceived -= PreviewARtspWrapper;
+			_rtspClient[2].OnFrameReceived -= PreviewBRtspWrapper;
+			_rtspClient[3].OnFrameReceived -= PreviewCRtspWrapper;
+			_rtspClient[4].OnFrameReceived -= PreviewDRtspWrapper;
+			_rtspClient[5].OnFrameReceived -= PreviewERtspWrapper;
+
 
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 			if (_ptzClient != null)
@@ -176,8 +194,11 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			PressedKeys.OnControlModeChanged -= RoverModeUIDis!.ControlModeChangedSubscriber;
 			_ptzClient = null;
-			_rtspClient?.Dispose();
-			_rtspClient = null;
+			for (int i = 0; i < numCameras; i++)
+			{
+				_rtspClient[i]?.Dispose();
+				_rtspClient[i] = null;
+			}
 			if (PressedKeys is not null && _joyVibrato is not null)
 				PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			_joyVibrato?.Dispose();
@@ -191,7 +212,10 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			RoverCommunication?.Dispose();
 			MqttClient?.Dispose();
-			_rtspClient?.Dispose();
+
+			for(int i = 0; i < numCameras; i++)
+				_rtspClient[i]?.Dispose();
+
 			_ptzClient?.Dispose();
 			base.Dispose(disposing);
 		}
@@ -249,17 +273,17 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			Color mqttStatusColor = GetColorForCommunicationState(RoverCommunication?.RoverStatus?.CommunicationState);
 
-			Color rtspStatusColor = GetColorForCommunicationState(_rtspClient?.State);
+			Color rtspStatusColor = GetColorForCommunicationState(_rtspClient[0]?.State);
 
 			Color ptzStatusColor = GetColorForCommunicationState(_ptzClient?.State);
 
 			Color rtspAgeColor;
-			if (_rtspClient?.ElapsedSecondsOnCurrentState < 1.0f)
+			if (_rtspClient[0]?.ElapsedSecondsOnCurrentState < 1.0f)
 				rtspAgeColor = Colors.LightGreen;
 			else
 				rtspAgeColor = Colors.Orange;
 
-			string? rtspAge = _rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			string? rtspAge = _rtspClient[0]?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 			string? ptzAge = _ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
 			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode},\t" +
@@ -278,10 +302,10 @@ namespace RoverControlApp.MVVM.ViewModel
 					break;
 			}
 
-			if (_rtspClient?.State == CommunicationState.Opened)
+			if (_rtspClient[0]?.State == CommunicationState.Opened)
 				FancyDebugViewRLab.AppendText($"RTSP: Frame is [color={rtspAgeColor.ToHtml(false)}]{rtspAge}s[/color] old\n");
 			else
-				FancyDebugViewRLab.AppendText($"RTSP: [color={rtspStatusColor.ToHtml(false)}]{_rtspClient?.State ?? CommunicationState.Closed}[/color], Time: {rtspAge ?? "N/A "}s\n");
+				FancyDebugViewRLab.AppendText($"RTSP: [color={rtspStatusColor.ToHtml(false)}]{_rtspClient[0]?.State ?? CommunicationState.Closed}[/color], Time: {rtspAge ?? "N/A "}s\n");
 
 			if (_ptzClient?.State == CommunicationState.Opened)
 			{
@@ -298,10 +322,10 @@ namespace RoverControlApp.MVVM.ViewModel
 				return false;
 
 			Image img = new();
-			_rtspClient.LockGrabbingFrames();
-			if (_rtspClient.LatestImage is not null && !_rtspClient.LatestImage.IsEmpty())
-				img.CopyFrom(_rtspClient.LatestImage);
-			_rtspClient.UnLockGrabbingFrames();
+			_rtspClient[0].LockGrabbingFrames();
+			if (_rtspClient[0].LatestImage is not null && !_rtspClient[0].LatestImage.IsEmpty())
+				img.CopyFrom(_rtspClient[0].LatestImage);
+			_rtspClient[0].UnLockGrabbingFrames();
 
 			if (img.IsEmpty())
 			{
@@ -368,43 +392,29 @@ namespace RoverControlApp.MVVM.ViewModel
 			CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
 		}
 
-		void IsRtspOkWrapper()
-		{
-			CallDeferred(MethodName.RtspUpdate, _imTextureHD, _imTextureRectHD);
-			CallDeferred(MethodName.RtspUpdate1, _imTextureA, _imTextureRectA);
-			//CallDeferred(MethodName.RtspUpdate2, _imTextureB, _imTextureRectB);
-			//CallDeferred(MethodName.RtspUpdate3, _imTextureC, _imTextureRectC);
-			//CallDeferred(MethodName.RtspUpdate4, _imTextureD, _imTextureRectD);
-		}
+		void MainRtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[0], _imTextureRect[0], 0);}
+		void PreviewARtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[1], _imTextureRect[1], 1);}
+		void PreviewBRtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[2], _imTextureRect[2], 2);}
+		void PreviewCRtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[3], _imTextureRect[3], 3);}
+		void PreviewDRtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[4], _imTextureRect[4], 4);}
+		void PreviewERtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[5], _imTextureRect[5], 5);}
 
-		public void RtspUpdate(ImageTexture _imTexture, TextureRect _imTextureRect)
+
+		public void RtspUpdate(ImageTexture _imTexture, TextureRect _imTextureRect, int i)
 		{
-			if (_rtspClient is { NewFrameSaved: true })
+			if (_rtspClient[i] is { NewFrameSaved: true })
 			{
 				_backCapture.CleanUpHistory();
 
-				_rtspClient.LockGrabbingFrames();
-				if (_imTexture == null || _imTexture._GetHeight() != _rtspClient.LatestImage.GetHeight() || _imTexture._GetWidth() != _rtspClient.LatestImage.GetWidth()) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
-				else _imTexture.Update(_rtspClient.LatestImage);
+				_rtspClient[i].LockGrabbingFrames();
+				if (_imTexture == null || _imTexture._GetHeight() != _rtspClient[i].LatestImage.GetHeight() || _imTexture._GetWidth() != _rtspClient[i].LatestImage.GetWidth()) _imTexture = ImageTexture.CreateFromImage(_rtspClient[i].LatestImage);
+				else _imTexture.Update(_rtspClient[i].LatestImage);
 
-				_backCapture.FrameFeed(_rtspClient.LatestImage);
+				_backCapture.FrameFeed(_rtspClient[i].LatestImage);
 
-				_rtspClient.UnLockGrabbingFrames();
+				_rtspClient[i].UnLockGrabbingFrames();
 				_imTextureRect!.Texture = _imTexture;
-				_rtspClient.NewFrameSaved = false;
-			}
-		}
-
-		public void RtspUpdate1(ImageTexture _imTexture, TextureRect _imTextureRect)
-		{
-			if (_rtspClient1 is { NewFrameSaved: true })
-			{
-				_rtspClient1.LockGrabbingFrames();
-				if (_imTexture == null || _imTexture._GetHeight() != _rtspClient1.LatestImage.GetHeight() || _imTexture._GetWidth() != _rtspClient.LatestImage.GetWidth()) _imTexture = ImageTexture.CreateFromImage(_rtspClient1.LatestImage);
-				else _imTexture.Update(_rtspClient1.LatestImage);
-				_rtspClient1.UnLockGrabbingFrames();
-				_imTextureRect!.Texture = _imTexture;
-				_rtspClient1.NewFrameSaved = false;
+				_rtspClient[i].NewFrameSaved = false;
 			}
 		}
 	}
