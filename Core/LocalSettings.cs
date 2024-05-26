@@ -15,9 +15,11 @@ public class LocalSettings
 	public class Camera
 	{
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"(?i)(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:\d{1,3}\.){3}\d{1,3}|(?:http:\/\/|https:\/\/)\S+")]
-		public string Ip { get; set; } = "192.168.1.35";
+		public string Ip { get; set; } = "192.168.10.69";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string RtspStreamPath { get; set; } = "/live/0/MAIN";
+		public string RtspStreamPathHQ { get; set; } = "/1/1";
+		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+		public string RtspStreamPathLQ { get; set; } = "/1/2";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
 		public int RtspPort { get; set; } = 554;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
@@ -25,7 +27,7 @@ public class LocalSettings
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 		public string Login { get; set; } = "admin";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string Password { get; set; } = "admin";
+		public string Password { get; set; } = "Faptors69";
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 		public bool InverseAxis { get; set; } = false;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
@@ -34,6 +36,7 @@ public class LocalSettings
 		public bool EnablePtzControl { get; set; } = true;
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "1;4;0.01;f;d")]
 		public double PtzRequestFrequency { get; set; } = 2.69;
+		public bool IsCameraBig { get; set; } = false;
 	}
 
 	public class Mqtt
@@ -74,8 +77,16 @@ public class LocalSettings
 
 	public class Vars
 	{
-		[SettingsManagerVisible(customName: "Camera Settings")]
-		public Camera Camera { get; set; } = new();
+		[SettingsManagerVisible(customName: "Camera0 Settings")]
+		public Camera Camera0 { get; set; } = new();
+		[SettingsManagerVisible(customName: "Camera1 Settings")]
+		public Camera Camera1 { get; set; } = new();
+		//[SettingsManagerVisible(customName: "Camera2 Settings")]
+		//public Camera Camera2 { get; set; } = new();
+		//[SettingsManagerVisible(customName: "Camera3 Settings")]
+		//public Camera Camera3 { get; set; } = new();
+		//[SettingsManagerVisible(customName: "Camera4 Settings")]
+		//public Camera Camera4 { get; set; } = new();
 		[SettingsManagerVisible(customName: "MQTT Settings")]
 		public Mqtt Mqtt { get; set; } = new();
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]

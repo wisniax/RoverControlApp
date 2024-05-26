@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=13 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
 [ext_resource type="PackedScene" uid="uid://bpm7uiv1e6n8i" path="res://MVVM/View/UIOverlayTemplate.tscn" id="3_mtbtk"]
+[ext_resource type="Texture2D" uid="uid://ubenmvj4p5x2" path="res://Resources/icon.svg" id="3_y884c"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/Grzyb_UIOverlay.cs" id="4_2nwr4"]
 [ext_resource type="PackedScene" uid="uid://em10imnbie42" path="res://MVVM/View/SettingsManager.tscn" id="4_b20oh"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/RoverMode_UIOverlay.cs" id="4_bwker"]
@@ -39,40 +40,42 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -190.0
+offset_right = -236.0
 offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_1llr5")
 expand_mode = 2
 
-[node name="CameraA" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 964.0
-offset_top = 34.0
+[node name="PreviewCameras" type="VBoxContainer" parent="."]
+layout_mode = 2
+offset_left = 920.0
 offset_right = 1154.0
-offset_bottom = 181.0
+offset_bottom = 648.0
 
-[node name="CameraB" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 964.0
-offset_top = 181.0
-offset_right = 1154.0
-offset_bottom = 328.0
+[node name="CameraA" type="TextureRect" parent="PreviewCameras"]
+custom_minimum_size = Vector2(200, 158.96)
+layout_mode = 2
+texture = ExtResource("3_y884c")
+expand_mode = 2
 
-[node name="CameraC" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 964.0
-offset_top = 328.0
-offset_right = 1154.0
-offset_bottom = 470.0
+[node name="CameraB" type="TextureRect" parent="PreviewCameras"]
+custom_minimum_size = Vector2(0, 158.96)
+layout_mode = 2
+texture = ExtResource("3_y884c")
+expand_mode = 2
 
-[node name="CameraD" type="TextureRect" parent="."]
-layout_mode = 0
-offset_left = 964.0
-offset_top = 470.0
-offset_right = 1154.0
-offset_bottom = 604.0
+[node name="CameraC" type="TextureRect" parent="PreviewCameras"]
+custom_minimum_size = Vector2(0, 158.96)
+layout_mode = 2
+texture = ExtResource("3_y884c")
+expand_mode = 2
+
+[node name="CameraD" type="TextureRect" parent="PreviewCameras"]
+custom_minimum_size = Vector2(0, 158.96)
+layout_mode = 2
+texture = ExtResource("3_y884c")
+expand_mode = 2
 
 [node name="FancyDebugViewRLab" type="RichTextLabel" parent="."]
 layout_mode = 1

@@ -24,6 +24,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static MissionSetPoint? MissionSetPoint { get; private set; }
 
 		private RtspStreamClient? _rtspClient;
+		private RtspStreamClient? _rtspClient1;
 
 
 		private OnvifPtzCameraController? _ptzClient;
@@ -81,27 +82,40 @@ namespace RoverControlApp.MVVM.ViewModel
 				_joyVibrato = new();
 			}
 
-			if (Settings.Settings.Camera.EnablePtzControl)
+			if (Settings.Settings.Camera0.EnablePtzControl)
 				_ptzClient = new OnvifPtzCameraController(
-					Settings.Settings.Camera.Ip,
-					Settings.Settings.Camera.PtzPort,
-					Settings.Settings.Camera.Login,
-					Settings.Settings.Camera.Password);
+					Settings.Settings.Camera0.Ip,
+					Settings.Settings.Camera0.PtzPort,
+					Settings.Settings.Camera0.Login,
+					Settings.Settings.Camera0.Password);
 
-			if (Settings.Settings.Camera.EnableRtspStream)
+			if (Settings.Settings.Camera0.EnableRtspStream)
 				_rtspClient = new RtspStreamClient(
-								Settings.Settings.Camera.Login,
-								Settings.Settings.Camera.Password,
-								Settings.Settings.Camera.RtspStreamPath,
-								Settings.Settings.Camera.Ip,
+								0,				
+								Settings.Settings.Camera0.Login,
+								Settings.Settings.Camera0.Password,
+								Settings.Settings.Camera0.RtspStreamPathHQ,
+								Settings.Settings.Camera0.RtspStreamPathLQ,
+								Settings.Settings.Camera0.Ip,
 								"rtsp",
-								Settings.Settings.Camera.RtspPort);
+								Settings.Settings.Camera0.RtspPort);
+			
+			if (Settings.Settings.Camera1.EnableRtspStream)
+				_rtspClient1 = new RtspStreamClient(
+								1,				
+								Settings.Settings.Camera1.Login,
+								Settings.Settings.Camera1.Password,
+								Settings.Settings.Camera1.RtspStreamPathHQ,
+								Settings.Settings.Camera1.RtspStreamPathLQ,
+								Settings.Settings.Camera1.Ip,
+								"rtsp",
+								Settings.Settings.Camera1.RtspPort);
 
 			_imTextureRectHD = GetNode<TextureRect>("CameraHD");
-			_imTextureRectA = GetNode<TextureRect>("CameraA");
-			_imTextureRectB = GetNode<TextureRect>("CameraB");
-			_imTextureRectC = GetNode<TextureRect>("CameraC");
-			_imTextureRectD = GetNode<TextureRect>("CameraD");
+			_imTextureRectA = GetNode<TextureRect>("PreviewCameras/CameraA");
+			_imTextureRectB = GetNode<TextureRect>("PreviewCameras/CameraB");
+			_imTextureRectC = GetNode<TextureRect>("PreviewCameras/CameraC");
+			_imTextureRectD = GetNode<TextureRect>("PreviewCameras/CameraD");
 
 
 			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
@@ -356,14 +370,14 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		void IsRtspOkWrapper()
 		{
-			CallDeferred(MethodName.IsRtspResOk, _imTextureHD, _imTextureRectHD);
-			CallDeferred(MethodName.IsRtspResOk, _imTextureA, _imTextureRectA);
-			CallDeferred(MethodName.IsRtspResOk, _imTextureB, _imTextureRectB);
-			CallDeferred(MethodName.IsRtspResOk, _imTextureC, _imTextureRectC);
-			CallDeferred(MethodName.IsRtspResOk, _imTextureD, _imTextureRectD);
+			CallDeferred(MethodName.RtspUpdate, _imTextureHD, _imTextureRectHD);
+			CallDeferred(MethodName.RtspUpdate1, _imTextureA, _imTextureRectA);
+			//CallDeferred(MethodName.RtspUpdate2, _imTextureB, _imTextureRectB);
+			//CallDeferred(MethodName.RtspUpdate3, _imTextureC, _imTextureRectC);
+			//CallDeferred(MethodName.RtspUpdate4, _imTextureD, _imTextureRectD);
 		}
 
-		public void IsRtspResOk(ImageTexture _imTexture, TextureRect _imTextureRect)
+		public void RtspUpdate(ImageTexture _imTexture, TextureRect _imTextureRect)
 		{
 			if (_rtspClient is { NewFrameSaved: true })
 			{
@@ -378,6 +392,19 @@ namespace RoverControlApp.MVVM.ViewModel
 				_rtspClient.UnLockGrabbingFrames();
 				_imTextureRect!.Texture = _imTexture;
 				_rtspClient.NewFrameSaved = false;
+			}
+		}
+
+		public void RtspUpdate1(ImageTexture _imTexture, TextureRect _imTextureRect)
+		{
+			if (_rtspClient1 is { NewFrameSaved: true })
+			{
+				_rtspClient1.LockGrabbingFrames();
+				if (_imTexture == null || _imTexture._GetHeight() != _rtspClient1.LatestImage.GetHeight() || _imTexture._GetWidth() != _rtspClient.LatestImage.GetWidth()) _imTexture = ImageTexture.CreateFromImage(_rtspClient1.LatestImage);
+				else _imTexture.Update(_rtspClient1.LatestImage);
+				_rtspClient1.UnLockGrabbingFrames();
+				_imTextureRect!.Texture = _imTexture;
+				_rtspClient1.NewFrameSaved = false;
 			}
 		}
 	}

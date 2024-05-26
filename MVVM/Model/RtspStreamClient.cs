@@ -50,7 +50,9 @@ namespace RoverControlApp.MVVM.Model
 		private string _protocol;
 		private string _login;
 		private string _password;
-		private string _pathToStream;
+		private string _pathToStreamHQ;
+		private string _pathToStreamLQ;
+		private int _id;
 
 		public CommunicationState State
 		{
@@ -66,17 +68,19 @@ namespace RoverControlApp.MVVM.Model
 
 		private CancellationTokenSource _cts;
 
-		public RtspStreamClient(string login, string password, string pathToStream, string ip, string protocol = "rtsp", int port = 554)
+		public RtspStreamClient(int id, string login, string password, string pathToStreamHQ, string pathToStreamLQ, string ip, string protocol = "rtsp", int port = 554)
 		{
 			this._ip = ip;
 			this._port = port;
 			this._protocol = protocol;
 			this._login = login;
 			this._password = password;
-			this._pathToStream = pathToStream;
+			this._pathToStreamHQ = pathToStreamHQ;
+			this._pathToStreamLQ = pathToStreamLQ;
+			this._id = id;
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
-			_rtspThread = new Thread(ThreadWork) { IsBackground = true, Name = "RtspStream_Thread", Priority = ThreadPriority.BelowNormal };
+			_rtspThread = new Thread(ThreadWork) { IsBackground = true, Name = "RtspStream_Thread" + _id, Priority = ThreadPriority.BelowNormal };
 			_rtspThread.Start();
 		}
 
@@ -114,8 +118,8 @@ namespace RoverControlApp.MVVM.Model
 			
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
-			var task = Task.Run(() => Capture = new VideoCapture($"{_protocol}://{_login}:{_password}@{_ip}:{_port}{_pathToStream}"));
-			//var task = Task.Run(() => Capture = new VideoCapture($"http://158.58.130.148:80/mjpg/video.mjpg"));
+			//var task = Task.Run(() => Capture = new VideoCapture($"{_protocol}://{_login}:{_password}@{_ip}:{_port}{_pathToStreamHQ}"));
+			var task = Task.Run(() => Capture = new VideoCapture($"http://158.58.130.148:80/mjpg/video.mjpg"));
 
 			m = new Mat();
 			_generalPurposeStopwatch.Restart();
