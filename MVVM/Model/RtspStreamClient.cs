@@ -8,8 +8,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Godot;
-using OpenCvSharp;
+//using OpenCvSharp;
+using Emgu.CV;
 using RoverControlApp.MVVM.ViewModel;
+using RoverControlApp.Core;
+using System.Collections.Specialized;
 
 namespace RoverControlApp.MVVM.Model
 {
@@ -19,6 +22,7 @@ namespace RoverControlApp.MVVM.Model
 		private Image? _latestImage;
 		private Mat? m;
 
+		public event Action? OnFrameReceived;
 
 		public Image LatestImage
 		{
@@ -106,13 +110,17 @@ namespace RoverControlApp.MVVM.Model
 
 		private void CreateCapture()
 		{
+			//OnFrameReceived?.Invoke();
+			
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
 			var task = Task.Run(() => Capture = new VideoCapture($"{_protocol}://{_login}:{_password}@{_ip}:{_port}{_pathToStream}"));
+			//var task = Task.Run(() => Capture = new VideoCapture($"http://158.58.130.148:80/mjpg/video.mjpg"));
+
 			m = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;
-			if (!task.Wait(TimeSpan.FromSeconds(15)) || Capture == null || !Capture.IsOpened())
+			if (!task.Wait(TimeSpan.FromSeconds(15)) || Capture == null || !Capture.IsOpened)// || !Capture.IsOpened())
 			{
 				MainViewModel.EventLogger?.LogMessage($"RTSP: Connecting to camera failed after {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 				State = CommunicationState.Faulted;
@@ -122,9 +130,15 @@ namespace RoverControlApp.MVVM.Model
 
 			MainViewModel.EventLogger?.LogMessage($"RTSP: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 
-			Capture?.Set(VideoCaptureProperties.XI_Timeout, 5000);
-			Capture?.Set(VideoCaptureProperties.BufferSize, 0);
-			Capture?.SetExceptionMode(false);
+			Capture?.Set(Emgu.CV.CvEnum.CapProp.XiTimeout, 5000);
+			//Capture?.Set(VideoCaptureProperties.XI_Timeout, 5000);
+			
+			Capture?.Set(Emgu.CV.CvEnum.CapProp.Buffersize, 0);
+			//Capture?.Set(VideoCaptureProperties.BufferSize, 0);
+			
+			if(Capture != null) Capture.ExceptionMode = false; 
+			//Capture?.SetExceptionMode(false);
+
 			State = CommunicationState.Opened;
 		}
 
@@ -198,14 +212,16 @@ namespace RoverControlApp.MVVM.Model
 			}
 
 
-			Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
+			CvInvoke.CvtColor(m, m, Emgu.CV.CvEnum.ColorConversion.Bgr2Rgb);
+			//Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
 
-			if (_arr?.Length != m.Total() * m.Channels())
-				_arr = new byte[m.Total() * m.Channels()];
+			if (_arr?.Length != m.Total * m.NumberOfChannels)
+				_arr = new byte[m.Total * m.NumberOfChannels];
+			//if (_arr?.Length != m.Total() * m.Channels())
+			//	_arr = new byte[m.Total() * m.Channels()];
 
-
-
-			Marshal.Copy(m.Data, _arr, 0, (int)m.Total() * m.Channels());
+			Marshal.Copy(m.DataPointer, _arr, 0, (int)m.Total * m.NumberOfChannels);
+			//Marshal.Copy(m.Data, _arr, 0, (int)m.Total() * m.Channels());
 
 			LockGrabbingFrames();
 			if (LatestImage?.GetWidth() != m.Width && LatestImage?.GetHeight() != m.Height)
@@ -218,7 +234,11 @@ namespace RoverControlApp.MVVM.Model
 			if (MainViewModel.Settings.Settings.VerboseDebug)
 				MainViewModel.EventLogger.LogMessage($"RTSP: Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
 
+			OnFrameReceived?.Invoke();
+
 			return true;
 		}
+
+
 	}
 }
