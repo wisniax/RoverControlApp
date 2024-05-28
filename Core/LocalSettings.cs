@@ -81,12 +81,14 @@ public class LocalSettings
 		public Camera Camera0 { get; set; } = new();
 		[SettingsManagerVisible(customName: "Camera1 Settings")]
 		public Camera Camera1 { get; set; } = new();
-		//[SettingsManagerVisible(customName: "Camera2 Settings")]
-		//public Camera Camera2 { get; set; } = new();
-		//[SettingsManagerVisible(customName: "Camera3 Settings")]
-		//public Camera Camera3 { get; set; } = new();
-		//[SettingsManagerVisible(customName: "Camera4 Settings")]
-		//public Camera Camera4 { get; set; } = new();
+		[SettingsManagerVisible(customName: "Camera2 Settings")]
+		public Camera Camera2 { get; set; } = new();
+		[SettingsManagerVisible(customName: "Camera3 Settings")]
+		public Camera Camera3 { get; set; } = new();
+		[SettingsManagerVisible(customName: "Camera4 Settings")]
+		public Camera Camera4 { get; set; } = new();
+		[SettingsManagerVisible(customName: "Camera5 Settings")]
+		public Camera Camera5 { get; set; } = new();
 		[SettingsManagerVisible(customName: "MQTT Settings")]
 		public Mqtt Mqtt { get; set; } = new();
 		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]

@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Godot;
+using Onvif.Core.Client;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
 
@@ -83,6 +84,12 @@ namespace RoverControlApp.MVVM.ViewModel
 					Settings.Settings.Camera0.Login,
 					Settings.Settings.Camera0.Password);
 
+			Dictionary<string, RtspStreamClient> cameras = new Dictionary<string, RtspStreamClient>
+			{
+				
+			};
+
+
 			if (Settings.Settings.Camera0.EnableRtspStream)
 				_rtspClient[0] = new RtspStreamClient(
 								0,				
@@ -105,18 +112,49 @@ namespace RoverControlApp.MVVM.ViewModel
 								"rtsp",
 								Settings.Settings.Camera1.RtspPort);
 			
-			for(int i = 0; i < numCameras; i++)
-			{
-				_rtspClient[i] = new RtspStreamClient(
-								i,
-								Settings.Settings.Camera1.Login,
-								Settings.Settings.Camera1.Password,
-								Settings.Settings.Camera1.RtspStreamPathHQ,
-								Settings.Settings.Camera1.RtspStreamPathLQ,
-								Settings.Settings.Camera1.Ip,
+			if (Settings.Settings.Camera2.EnableRtspStream)
+				_rtspClient[2] = new RtspStreamClient(
+								2,				
+								Settings.Settings.Camera2.Login,
+								Settings.Settings.Camera2.Password,
+								Settings.Settings.Camera2.RtspStreamPathHQ,
+								Settings.Settings.Camera2.RtspStreamPathLQ,
+								Settings.Settings.Camera2.Ip,
 								"rtsp",
-								Settings.Settings.Camera1.RtspPort);
-			}
+								Settings.Settings.Camera2.RtspPort);
+			
+			if (Settings.Settings.Camera3.EnableRtspStream)
+				_rtspClient[3] = new RtspStreamClient(
+								3,				
+								Settings.Settings.Camera3.Login,
+								Settings.Settings.Camera3.Password,
+								Settings.Settings.Camera3.RtspStreamPathHQ,
+								Settings.Settings.Camera3.RtspStreamPathLQ,
+								Settings.Settings.Camera3.Ip,
+								"rtsp",
+								Settings.Settings.Camera3.RtspPort);
+			
+			if (Settings.Settings.Camera4.EnableRtspStream)
+				_rtspClient[4] = new RtspStreamClient(
+								4,				
+								Settings.Settings.Camera4.Login,
+								Settings.Settings.Camera4.Password,
+								Settings.Settings.Camera4.RtspStreamPathHQ,
+								Settings.Settings.Camera4.RtspStreamPathLQ,
+								Settings.Settings.Camera4.Ip,
+								"rtsp",
+								Settings.Settings.Camera4.RtspPort);
+			if (Settings.Settings.Camera5.EnableRtspStream)
+				_rtspClient[5] = new RtspStreamClient(
+								5,				
+								Settings.Settings.Camera5.Login,
+								Settings.Settings.Camera5.Password,
+								Settings.Settings.Camera5.RtspStreamPathHQ,
+								Settings.Settings.Camera5.RtspStreamPathLQ,
+								Settings.Settings.Camera5.Ip,
+								"rtsp",
+								Settings.Settings.Camera5.RtspPort);
+			
 					
 			_imTextureRect[0] = GetNode<TextureRect>("CameraHD");
 			_imTextureRect[1] = GetNode<TextureRect>("PreviewCameras/CameraA");
