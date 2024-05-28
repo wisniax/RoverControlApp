@@ -262,7 +262,7 @@ namespace RoverControlApp.MVVM.Model
 		{
 			data = new();
 
-			data.TiltAndZoom = MainViewModel.Settings.Settings.Camera.InverseAxis
+			data.TiltAndZoom = MainViewModel.Settings.Settings.Camera0.InverseAxis
 				? new Vector4(-moveNew.X, -moveNew.Y, moveNew.Z, moveNew.W)
 				: moveNew;
 
