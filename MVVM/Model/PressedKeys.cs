@@ -3,10 +3,11 @@ using System;
 using System.Threading.Tasks;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.ViewModel;
+using RoverControlApp.MVVM.Model.Settings;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class PressedKeys
+	public class PressedKeys : IDisposable
 	{
 		public event EventHandler<Vector4>? OnAbsoluteVectorChanged;
 		public event Func<MqttClasses.RoverControl, Task>? OnRoverMovementVector;
@@ -73,20 +74,58 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		private RoverControllerPresets.IRoverDriveController _roverDriveControllerPreset;
-		private RoverControllerPresets.IRoverManipulatorController _roverManipulatorControllerPreset;
+		private RoverControllerPresets.IRoverDriveController _roverDriveControllerPreset = null!;
+		private RoverControllerPresets.IRoverManipulatorController _roverManipulatorControllerPreset = null!;
+		private bool disposedValue;
 
 		public PressedKeys()
 		{
 			Input.JoyConnectionChanged += InputOnJoyConnectionChanged;
 			_lastAbsoluteVector = Vector4.Zero;
-			_roverMovement = new MqttClasses.RoverControl();
+			_roverMovement = new();
+			_manipulatorMovement = new();
+			_containerMovement = new();
+			SetupControllerPresets();
+
+			LocalSettings.Singleton.WholeSectionChanged += OnSettingsWholeSectionChanged;
+			LocalSettings.Singleton.Joystick.SettingChanged += OnSettingsPropertyChanged;
+		}
+
+		void SetupControllerPresets()
+		{
 			_manipulatorMovement = new MqttClasses.ManipulatorControl();
 			_roverDriveControllerPreset = LocalSettings.Singleton.Joystick.NewFancyRoverController
 				? new RoverControllerPresets.ForzaLikeController()
 				: new RoverControllerPresets.EricSOnController();
 			_roverManipulatorControllerPreset = new RoverControllerPresets.SingleAxisManipulatorController();
 		}
+
+		/*
+		* Settings event handlers
+		*/
+
+		void OnSettingsWholeSectionChanged(StringName property)
+		{
+			if (property != nameof(LocalSettings.Joystick)) return;
+
+			SetupControllerPresets();
+
+			LocalSettings.Singleton.Joystick.SettingChanged += OnSettingsPropertyChanged;
+		}
+
+		void OnSettingsPropertyChanged(StringName name, Variant oldValue, Variant newValue)
+		{
+			switch (name)
+			{
+				case nameof(LocalSettings.Joystick.NewFancyRoverController):
+					SetupControllerPresets();
+					break;
+			}
+		}
+
+		/*
+		 * settings handlers end
+		 */
 
 		private void InputOnJoyConnectionChanged(long device, bool connected)
 		{
@@ -173,6 +212,26 @@ namespace RoverControlApp.MVVM.Model
 			ContainerMovement = new MqttClasses.RoverContainer { Axis1 = 0f };
 			ManipulatorMovement = new MqttClasses.ManipulatorControl();
 			LastAbsoluteVector = Vector4.Zero;
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!disposedValue)
+			{
+				if (disposing)
+				{
+					LocalSettings.Singleton.WholeSectionChanged -= OnSettingsWholeSectionChanged;
+					LocalSettings.Singleton.Joystick.SettingChanged -= OnSettingsPropertyChanged;
+				}
+
+				disposedValue = true;
+			}
+		}
+
+		public void Dispose()
+		{
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
 		}
 	}
 }
