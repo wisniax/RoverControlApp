@@ -116,7 +116,7 @@ namespace RoverControlApp.MVVM.Model
 		private void HandleManipulatorInputEvent()
 		{
 			if (ControlMode != MqttClasses.ControlMode.Manipulator) return;
-			if (!_roverManipulatorControllerPreset.CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl)) return;
+			if (!_roverManipulatorControllerPreset.CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl, ManipulatorMovement)) return;
 			ManipulatorMovement = manipulatorControl;
 		}
 
@@ -147,7 +147,7 @@ namespace RoverControlApp.MVVM.Model
 		private void HandleMovementInputEvent()
 		{
 			if (ControlMode != MqttClasses.ControlMode.Rover) return;
-			if (!_roverDriveControllerPreset.CalculateMoveVector(out MqttClasses.RoverControl roverControl)) return;
+			if (!_roverDriveControllerPreset.CalculateMoveVector(out MqttClasses.RoverControl roverControl, RoverMovement)) return;
 			RoverMovement = roverControl;
 		}
 		private void HandleFunctionInputEvent()

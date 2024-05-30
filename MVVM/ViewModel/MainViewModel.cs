@@ -15,11 +15,10 @@ namespace RoverControlApp.MVVM.ViewModel
 {
     public partial class MainViewModel : Control
 	{
-		public static MainViewModel? MainViewModelInstance { get; private set; } = null;
-		public static PressedKeys? PressedKeys { get; private set; }
-		public static RoverCommunication? RoverCommunication { get; private set; }
-		public static MissionStatus? MissionStatus { get; private set; }
-		public static MissionSetPoint? MissionSetPoint { get; private set; }
+		public PressedKeys PressedKeys { get; private set; }
+		public RoverCommunication RoverCommunication { get; private set; }
+		public MissionStatus MissionStatus { get; private set; }
+		public MissionSetPoint MissionSetPoint { get; private set; }
 
 		private WeakReference<RtspStreamClient>? _rtspClientWeak;
 		private WeakReference<OnvifPtzCameraController>? _ptzClientWeak;
@@ -52,9 +51,24 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private VelMonitor VelMonitor = null!;
 
+		public MainViewModel()
+		{
+			PressedKeys = new PressedKeys();
+			MissionStatus = new MissionStatus();
+			RoverCommunication = new RoverCommunication(PressedKeys, MissionStatus);
+			MissionSetPoint = new MissionSetPoint();
+		}
+
 		public override void _EnterTree()
 		{
 			SettingsManagerNode.Target = LocalSettings.Singleton;
+
+			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
+			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
+			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
+
+			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
 		}
 
 		// Called when the node enters the scene tree for the first time.
@@ -95,8 +109,11 @@ namespace RoverControlApp.MVVM.ViewModel
 		public override void _ExitTree()
 		{
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
-			PressedKeys.OnControlModeChanged -= RoverModeUIDis!.ControlModeChangedSubscriber;
-			MissionStatus!.OnRoverMissionStatusChanged -= MissionControlNode!.MissionStatusUpdatedSubscriber;
+
+			PressedKeys.OnControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
+			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
+			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 		}
 
 		protected override void Dispose(bool disposing)

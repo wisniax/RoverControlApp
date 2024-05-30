@@ -2,6 +2,7 @@
 using Godot;
 using RoverControlApp.MVVM.Model;
 using RoverControlApp.MVVM.ViewModel;
+using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core
 {
@@ -9,17 +10,17 @@ namespace RoverControlApp.Core
 	{
 		public interface IRoverDriveController
 		{
-			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl);
+			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, RoverControl input);
 		}
 
 		public interface IRoverManipulatorController
 		{
-			public bool CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl);
+			public bool CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl, ManipulatorControl input);
 		}
 
 		public class ForzaLikeController : IRoverDriveController
 		{
-			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl)
+			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, RoverControl input)
 			{
 				roverControl = new MqttClasses.RoverControl();
 
@@ -41,8 +42,8 @@ namespace RoverControlApp.Core
 					vec.Y /= 8f;
 				}
 
-				var oldVelocity = new Vector2(Convert.ToSingle(MainViewModel.PressedKeys?.RoverMovement.ZRotAxis),
-					Convert.ToSingle(MainViewModel.PressedKeys?.RoverMovement.XVelAxis));
+				var oldVelocity = new Vector2(Convert.ToSingle(input.ZRotAxis),
+					Convert.ToSingle(input.XVelAxis));
 				if (oldVelocity.IsEqualApprox(vec)) return false;
 
 
@@ -55,7 +56,7 @@ namespace RoverControlApp.Core
 		public class EricSOnController : IRoverDriveController
 		{
 			private const float TURN_ANGLE = 89;
-			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl)
+			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, RoverControl input)
 			{
 				roverControl = new MqttClasses.RoverControl();
 
@@ -89,8 +90,8 @@ namespace RoverControlApp.Core
 					vec.Y /= 8f;
 				}
 
-				var oldVelocity = new Vector2(Convert.ToSingle(MainViewModel.PressedKeys?.RoverMovement.ZRotAxis),
-					Convert.ToSingle(MainViewModel.PressedKeys?.RoverMovement.XVelAxis));
+				var oldVelocity = new Vector2(Convert.ToSingle(input.ZRotAxis),
+					Convert.ToSingle(input.XVelAxis));
 				if (oldVelocity.IsEqualApprox(vec)) return false;
 
 
@@ -103,7 +104,7 @@ namespace RoverControlApp.Core
 
 		public class GoodOldGamesLikeController : IRoverDriveController
 		{
-			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl)
+			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, RoverControl input)
 			{
 				roverControl = new MqttClasses.RoverControl();
 
@@ -119,8 +120,8 @@ namespace RoverControlApp.Core
 					velocity.X /= 8f;
 					velocity.Y /= 8f;
 				}
-				if (new Vector2(Convert.ToSingle(MainViewModel.PressedKeys?.RoverMovement.ZRotAxis),
-						Convert.ToSingle(MainViewModel.PressedKeys?.RoverMovement.XVelAxis))
+				if (new Vector2(Convert.ToSingle(input.ZRotAxis),
+						Convert.ToSingle(input.XVelAxis))
 					.IsEqualApprox(velocity)) return false;
 
 
@@ -132,7 +133,7 @@ namespace RoverControlApp.Core
 
 		public class SingleAxisManipulatorController : IRoverManipulatorController
 		{
-			public bool CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl)
+			public bool CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl, ManipulatorControl input)
 			{
 				manipulatorControl = new();
 
@@ -150,7 +151,7 @@ namespace RoverControlApp.Core
 					Gripper = Input.IsActionPressed("manipulator_axis_4") ? velocity : 0f
 				};
 
-				return !manipulatorControl.Equals(MainViewModel.PressedKeys?.ManipulatorMovement);
+				return !manipulatorControl.Equals(input);
 			}
 		}
 	}

@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 namespace RoverControlApp.MVVM.ViewModel;
 public partial class MissionControl : Panel
 {
+	private MainViewModel mainView = null!;
+
 	private const string TEXT_START = "Start";
 	private const string TEXT_RESUME = "Resume";
 	private const string TEXT_PAUSE = "Pause";
@@ -63,6 +65,7 @@ public partial class MissionControl : Panel
 
 	public override void _Ready()
 	{
+		mainView = GetNode<MainViewModel>("/root/MainView");
 		SMissionControlVisualUpdate();
 		SPoiAddReset();
 		SPoiRemoveReset();
@@ -71,18 +74,18 @@ public partial class MissionControl : Panel
 	private void OnSMissionControlRefreshBtn()
 	{
 		SPoiRemoveReset();
-		MainViewModel.MissionSetPoint?.GetAvailableTargets();
+		mainView.MissionSetPoint.GetAvailableTargets();
 		SMissionControlVisualUpdate();
 	}
 
 	private void OnSMissionControlStartBtn()
 	{
-		switch (MainViewModel.MissionStatus?.Status?.MissionStatus)
+		switch (mainView.MissionStatus.Status?.MissionStatus)
 		{
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Created:
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Stopped:
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Interrupted:
-				MainViewModel.MissionStatus!.StartMission();
+				mainView.MissionStatus!.StartMission();
 				break;
 		}
 	}
@@ -90,13 +93,13 @@ public partial class MissionControl : Panel
 
 	private void OnSMissionControlStopBtn()
 	{
-		switch (MainViewModel.MissionStatus?.Status?.MissionStatus)
+		switch (mainView.MissionStatus.Status?.MissionStatus)
 		{
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Started:
-				MainViewModel.MissionStatus!.PauseMission();
+				mainView.MissionStatus.PauseMission();
 				break;
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Interrupted:
-				MainViewModel.MissionStatus!.StopMission();
+				mainView.MissionStatus.StopMission();
 				break;
 		}
 	}
@@ -120,22 +123,19 @@ public partial class MissionControl : Panel
 	private async void OnSPoiAddConfirmPressed()
 	{
 		var request = MissionSetPoint.GenerateNewPointRequest((MqttClasses.PointType)SPoiAddTypeOpBtn.GetSelectedId(), SPoiAddTargetStrLEdit.Text, SPoiAddDescriptionStrLEdit.Text, (MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.GetSelectedId());
-		if (MainViewModel.MissionSetPoint is null)
+		if (mainView.MissionSetPoint is null)
 		{
-			EventLogger.LogMessage("MissionControl", EventLogger.LogLevel.Error, "Cannot add POIs, MainViewModel.MissionSetPoint is null!");
+			EventLogger.LogMessage("MissionControl", EventLogger.LogLevel.Error, "Cannot add POIs, mainView.MissionSetPoint is null!");
 			return;
 		}
 
-		if (
-			MainViewModel.MainViewModelInstance is not null
-			&& (MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.GetSelectedId() != MqttClasses.PhotoType.None
-		)
+		if ( (MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.GetSelectedId() != MqttClasses.PhotoType.None	)
 		{
-			await MainViewModel.MainViewModelInstance.CaptureCameraImage("POIImages", SPoiAddTargetStrLEdit.Text, "jpg");
+			await mainView.CaptureCameraImage("POIImages", SPoiAddTargetStrLEdit.Text, "jpg");
 		}
 
 		PendingSend = true;
-		await MainViewModel.MissionSetPoint.SendNewPointRequest(request);
+		await mainView.MissionSetPoint.SendNewPointRequest(request);
 		PendingSend = false;
 
 		SPoiAddReset();
@@ -159,10 +159,10 @@ public partial class MissionControl : Panel
 	{
 		SPoiRemoveTargetOpBtn.Clear();
 
-		if (MainViewModel.MissionSetPoint is null || MainViewModel.MissionSetPoint.ActiveKmlObjects is null)
+		if (mainView.MissionSetPoint.ActiveKmlObjects is null)
 			return;
 
-		var KmlList = MainViewModel.MissionSetPoint.ActiveKmlObjects;
+		var KmlList = mainView.MissionSetPoint.ActiveKmlObjects;
 
 		switch((MqttClasses.PointType)SPoiRemoveTypeOpBtn.GetItemId(index))
 		{
@@ -183,13 +183,13 @@ public partial class MissionControl : Panel
 
 	private async void OnSPoiRemoveConfirmPressed()
 	{
-		if (MainViewModel.MissionSetPoint is null || MainViewModel.MissionSetPoint.ActiveKmlObjects is null)
+		if (mainView.MissionSetPoint.ActiveKmlObjects is null)
 		{
-			EventLogger.LogMessage("MissionControl", EventLogger.LogLevel.Error, "Cannot remove POIs, MainViewModel.MissionSetPoint is null!");
+			EventLogger.LogMessage("MissionControl", EventLogger.LogLevel.Error, "Cannot remove POIs, mainView.MissionSetPoint is null!");
 			return;
 		}
 
-		var KmlList = MainViewModel.MissionSetPoint.ActiveKmlObjects;
+		var KmlList = mainView.MissionSetPoint.ActiveKmlObjects;
 		string targetStr = null!;
 		switch ((MqttClasses.PointType)SPoiRemoveTypeOpBtn.GetSelectedId())
 		{
@@ -204,7 +204,7 @@ public partial class MissionControl : Panel
 		var request = MissionSetPoint.GenerateNewPointRequest((MqttClasses.PointType)SPoiRemoveTypeOpBtn.GetSelectedId(), targetStr, string.Empty, MqttClasses.PhotoType.None);
 
 		PendingSend = true;
-		await MainViewModel.MissionSetPoint.SendNewPointRequest(request);
+		await mainView.MissionSetPoint.SendNewPointRequest(request);
 		PendingSend = false;
 
 		OnSMissionControlRefreshBtn();
@@ -257,8 +257,8 @@ public partial class MissionControl : Panel
 
 	public void SMissionControlVisualUpdate()
 	{
-		SMissionControlStatusLabel.Text = $"Status: {MainViewModel.MissionStatus?.Status?.MissionStatus.ToString() ?? "N/A"}";
-		switch (MainViewModel.MissionStatus?.Status?.MissionStatus)
+		SMissionControlStatusLabel.Text = $"Status: {mainView.MissionStatus.Status?.MissionStatus.ToString() ?? "N/A"}";
+		switch (mainView.MissionStatus?.Status?.MissionStatus)
 		{
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Created:
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Stopped:
@@ -294,11 +294,11 @@ public partial class MissionControl : Panel
 				break;
 		}
 
-		SMissionControlRefreshBtn.Disabled = MainViewModel.MissionSetPoint is null;
+		SMissionControlRefreshBtn.Disabled = mainView.MissionSetPoint is null;
 		string? timestampStr = 
-			MainViewModel.MissionSetPoint?.ActiveKmlObjects?.Timestamp is null 
+			mainView.MissionSetPoint?.ActiveKmlObjects?.Timestamp is null 
 			? null 
-			: DateTimeOffset.FromUnixTimeSeconds(MainViewModel.MissionSetPoint!.ActiveKmlObjects!.Timestamp ?? 0).ToLocalTime().ToString("s");
+			: DateTimeOffset.FromUnixTimeSeconds(mainView.MissionSetPoint!.ActiveKmlObjects!.Timestamp ?? 0).ToLocalTime().ToString("s");
 		SMissionControlPOITimestampLab.Text = $"ActiveKmlObject Timestamp: {timestampStr ?? "N/A"}";
 	}
 }
