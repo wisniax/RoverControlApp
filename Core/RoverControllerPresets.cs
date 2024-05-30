@@ -71,11 +71,9 @@ namespace RoverControlApp.Core
 				// (Mathf.Abs(turn) >= 1f)
 				//	velocity /= Mathf.Abs(turn);
 
-				Vector2 vec = new Vector2(velocity, turn);
-
 				turn *= TURN_ANGLE * Mathf.Pi / 180;
 
-				vec = new Vector2(velocity, 0f).Rotated(turn);
+				Vector2 vec = new Vector2(velocity, 0f).Rotated(turn);
 
 				var maxVal = -0.0069f * Mathf.Abs(turn * 180 / Mathf.Pi) + 1;
 

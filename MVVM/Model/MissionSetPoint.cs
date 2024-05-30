@@ -10,7 +10,7 @@ namespace RoverControlApp.MVVM.Model
     public class MissionSetPoint
 	{
 		public event Func<MqttClasses.ActiveKmlObjects?, Task>? ActiveKmlObjectsUpdated;
-		public MqttClasses.ActiveKmlObjects ActiveKmlObjects { get; private set; }
+		public MqttClasses.ActiveKmlObjects? ActiveKmlObjects { get; private set; }
 
 		public MissionSetPoint()
 		{
@@ -34,6 +34,7 @@ namespace RoverControlApp.MVVM.Model
 			try
 			{ 
 				msg = MqttNode.Singleton.GetReceivedMessageOnTopicAsString(LocalSettings.Singleton.Mqtt.TopicKmlListOfActiveObj);
+				if (string.IsNullOrEmpty(msg)) return;
 				activeKmlObjects = JsonSerializer.Deserialize<MqttClasses.ActiveKmlObjects>(msg);
 			}
 			catch (Exception e)
@@ -64,28 +65,6 @@ namespace RoverControlApp.MVVM.Model
 				LocalSettings.Singleton.Mqtt.TopicKmlSetPoint,
 				JsonSerializer.Serialize(pointReq)
 			);
-		}
-
-
-		[Obsolete("Use property ActiveKmlObjects instead")]
-		public MqttClasses.ActiveKmlObjects GetAvailableTargets()
-		{
-			return ActiveKmlObjects;
-			//var cos = new MqttClasses.ActiveKmlObjects();
-			//cos.area = new()
-			//{
-			//	"Area1",
-			//	"Area2"
-			//};
-			//cos.poi = new()
-			//{
-			//	"Point1",
-			//	"Obstacle1"
-			//};
-			//cos.Timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-
-			//ActiveKmlObjects = cos;
-			//return cos;
 		}
 	}
 }

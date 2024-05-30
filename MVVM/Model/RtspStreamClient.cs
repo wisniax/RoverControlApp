@@ -54,7 +54,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private volatile CommunicationState _state = CommunicationState.Closed;
 
-		private CancellationTokenSource _cts;
+		private readonly CancellationTokenSource _cts;
 
 		public RtspStreamClient()
 		{
@@ -161,7 +161,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		private System.Threading.Mutex _grabFrameMutex = new();
+		private readonly System.Threading.Mutex _grabFrameMutex = new();
 
 		public void LockGrabbingFrames()
 		{

@@ -296,7 +296,7 @@ public partial class SettingsManagerTree : Tree
 
 	private int tabIndexTracker = 0;
 
-	public object Target { get; set; }
+	public object Target { get; set; } = null!;
 
 	//NOTE applying should be done from end to begin. (to make children propagate changes to parents)
 	private readonly List<TargetObjectMirror> targetMembersClones = new();

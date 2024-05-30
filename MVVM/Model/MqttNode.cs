@@ -65,7 +65,7 @@ public partial class MqttNode : Node
 		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.WholeSectionChanged, Callable.From<StringName>(OnSettingsWholeSectionChanged));
 		LocalSettings.Singleton.Mqtt.Disconnect(Mqtt.SignalName.SettingChanged, Callable.From<StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		LocalSettings.Singleton.Mqtt.Disconnect(Mqtt.SignalName.SectionChanged, Callable.From<StringName, Variant, Variant>(OnSettingsSectionChanged));
-		MqStop(true);
+		MqStop();
 		RequestReady();
 	}
 
@@ -192,7 +192,7 @@ public partial class MqttNode : Node
 			return true;
 		}
 
-		if (_mqttThread!.Join(3000))
+		if (_mqttThread!.Join(200))
 			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
 		else
 			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, "Thread stop not confirmed. Proceeding");

@@ -114,8 +114,8 @@ namespace RoverControlApp.Core
 		}
 		public class ActiveKmlObjects
 		{
-			public List<string> area { get; set; }
-			public List<string> poi { get; set; }
+			public List<string> area { get; set; } = [];
+			public List<string> poi { get; set; } = [];
 			public long? Timestamp { get; set; }
 		}
 	}

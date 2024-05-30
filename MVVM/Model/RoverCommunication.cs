@@ -18,6 +18,8 @@ namespace RoverControlApp.MVVM.Model
 		private readonly MissionStatus missionStatus;
 
 		private MqttClasses.RoverStatus? _roverStatus;
+		private bool disposedValue;
+
 		public MqttClasses.RoverStatus? RoverStatus
 		{
 			get => _roverStatus;
@@ -109,20 +111,29 @@ namespace RoverControlApp.MVVM.Model
 				JsonSerializer.Serialize(manipulatorControl));
 		}
 
+		protected virtual void Dispose(bool disposing)
+		{
+			if (!disposedValue)
+			{
+				if (disposing)
+				{
+					pressedKeys.OnControlModeChanged -= PressedKeys_OnControlModeChanged;
+
+					pressedKeys.OnPadConnectionChanged -= OnPadConnectionChanged;
+					pressedKeys.OnRoverMovementVector -= RoverMovementVectorChanged;
+					pressedKeys.OnManipulatorMovement -= RoverManipulatorVectorChanged;
+
+					missionStatus.OnRoverMissionStatusChanged -= OnRoverMissionStatusChanged;
+				}
+
+				disposedValue = true;
+			}
+		}
+
 		public void Dispose()
 		{
-			pressedKeys.OnControlModeChanged -= PressedKeys_OnControlModeChanged;
-
-			pressedKeys.OnPadConnectionChanged -= OnPadConnectionChanged;
-			pressedKeys.OnRoverMovementVector -= RoverMovementVectorChanged;
-			pressedKeys.OnManipulatorMovement -= RoverManipulatorVectorChanged;
-
-			missionStatus.OnRoverMissionStatusChanged -= OnRoverMissionStatusChanged;
-
-			//_eventsToDispose.ForEach(o => o.Dispose());
-			//_cts.Cancel();
-			//_mqttThread?.Join();
-			//_mqttThread = null;
+			Dispose(disposing: true);
+			GC.SuppressFinalize(this);
 		}
 	}
 }

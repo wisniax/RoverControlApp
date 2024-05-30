@@ -13,7 +13,7 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,6 +21,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_84vv0")
+imTextureRect = NodePath("CameraView")
 RoverModeUIDis = NodePath("RoverModeUIDis")
 GrzybUIDis = NodePath("GrzybUIDis")
 MissionStatusUIDis = NodePath("MissonStatusUIDis")
@@ -131,10 +132,12 @@ grow_vertical = 0
 
 [node name="BackCapture" type="Button" parent="HBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 text = "BackCapture"
 
 [node name="RTSPCapture" type="Button" parent="HBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 text = "RTSP Capture"
 
 [node name="Separator" type="Control" parent="HBoxContainer"]
@@ -143,16 +146,19 @@ layout_mode = 2
 
 [node name="ShowMissionControl" type="Button" parent="HBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 toggle_mode = true
 text = "MISSION CONTROL"
 
 [node name="ShowVelMonitor" type="Button" parent="HBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 toggle_mode = true
 text = "VEL MONITOR"
 
 [node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
 layout_mode = 2
+focus_mode = 0
 toggle_mode = true
 text = "SETINGS"
 

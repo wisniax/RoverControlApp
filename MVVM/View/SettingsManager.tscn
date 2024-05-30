@@ -67,11 +67,13 @@ layout_mode = 2
 
 [node name="SaveSettings" type="Button" parent="StatusBar/FileIO"]
 layout_mode = 2
+focus_mode = 0
 shortcut = SubResource("Shortcut_vgxpl")
 text = "SAVE"
 
 [node name="LoadSettings" type="Button" parent="StatusBar/FileIO"]
 layout_mode = 2
+focus_mode = 0
 text = "LOAD"
 
 [node name="Reverters" type="VBoxContainer" parent="StatusBar"]
@@ -80,15 +82,18 @@ layout_mode = 2
 
 [node name="RevertSettings" type="Button" parent="StatusBar/Reverters"]
 layout_mode = 2
+focus_mode = 0
 text = "REVERT"
 
 [node name="ForceDefaultSettings" type="Button" parent="StatusBar/Reverters"]
 layout_mode = 2
+focus_mode = 0
 text = "DEFAULTS"
 
 [node name="ApplySettings" type="Button" parent="StatusBar"]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
+focus_mode = 0
 text = "APPLY
 WITHOUT SAVE"
 

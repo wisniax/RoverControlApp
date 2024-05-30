@@ -74,7 +74,6 @@ public partial class MissionControl : Panel
 	private void OnSMissionControlRefreshBtn()
 	{
 		SPoiRemoveReset();
-		mainView.MissionSetPoint.GetAvailableTargets();
 		SMissionControlVisualUpdate();
 	}
 

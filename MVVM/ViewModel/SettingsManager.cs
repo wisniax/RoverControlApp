@@ -6,10 +6,10 @@ namespace RoverControlApp.MVVM.ViewModel;
 public partial class SettingsManager : Panel
 {
 	[Export]
-	private SettingsManagerTree smTree;
+	private SettingsManagerTree smTree = null!;
 
 	[Export]
-	private RichTextLabel statusBar;
+	private RichTextLabel statusBar = null!;
 
 	public override void _Ready()
 	{

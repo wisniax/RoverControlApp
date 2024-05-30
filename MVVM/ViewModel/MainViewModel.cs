@@ -28,9 +28,10 @@ namespace RoverControlApp.MVVM.ViewModel
 		private JoyVibrato _joyVibrato = new();
 		private BackCapture _backCapture = new();
 
-		private TextureRect? _imTextureRect;
-		private ImageTexture? _imTexture;
+		private ImageTexture? imTexture;
 
+		[Export]
+		private TextureRect imTextureRect = null!;
 		[Export]
 		private RoverMode_UIOverlay RoverModeUIDis = null!;
 		[Export]
@@ -74,33 +75,13 @@ namespace RoverControlApp.MVVM.ViewModel
 		// Called when the node enters the scene tree for the first time.
 		public override void _Ready()
 		{
-			if (MainViewModelInstance is not null)
-				throw new Exception("MainViewModel must have single instance!!!");
-			MainViewModelInstance = this;
-
-			PressedKeys = new PressedKeys();
-			MissionStatus = new MissionStatus();
-			RoverCommunication = new RoverCommunication();
-			MissionSetPoint = new MissionSetPoint();
-
-			_imTextureRect = GetNode<TextureRect>("CameraView");
-
-			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode!.MissionStatusUpdatedSubscriber;
 			MissionControlNode.LoadSizeAndPos();
 			MissionControlNode.SMissionControlVisualUpdate();
 
 			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
-			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
-
-			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
-
-			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
-			PressedKeys!.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 
 			ManagePtzStatus();
 			ManageRtspStatus();
-
-			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
 
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.WholeSectionChanged, Callable.From<StringName>(OnSettingsWholeSectionChanged));
 			LocalSettings.Singleton.Camera.Connect(SettingBase.SignalName.SettingChanged, Callable.From<StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -119,7 +100,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		protected override void Dispose(bool disposing)
 		{
 			PressedKeys.Dispose();
-			RoverCommunication?.Dispose();
+			RoverCommunication.Dispose();
 			_rtspClient?.Dispose();
 			_ptzClient?.Dispose();
 			base.Dispose(disposing);
@@ -147,13 +128,13 @@ namespace RoverControlApp.MVVM.ViewModel
 				_backCapture.CleanUpHistory();
 
 				_rtspClient.LockGrabbingFrames();
-				if (_imTexture == null) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
-				else _imTexture.Update(_rtspClient.LatestImage);
+				if (imTexture == null) imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
+				else imTexture.Update(_rtspClient.LatestImage);
 
 				_backCapture.FrameFeed(_rtspClient.LatestImage);
 
 				_rtspClient.UnLockGrabbingFrames();
-				_imTextureRect!.Texture = _imTexture;
+				imTextureRect.Texture = imTexture;
 				_rtspClient.NewFrameSaved = false;
 			}
 			UpdateLabel();
@@ -187,7 +168,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		}
 
 		/*
-		 * 
+		 * settings handlers end
 		 */
 
 		private void ManageRtspStatus()
@@ -212,8 +193,10 @@ namespace RoverControlApp.MVVM.ViewModel
 				case true when _ptzClient is null:
 					_ptzClient = new OnvifPtzCameraController();
 					_ptzClientWeak = new(_ptzClient);
+					PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
 					break;
 				case false when _ptzClient is not null:
+					PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
 					_ptzClient.Dispose();
 					_ptzClient = null;
 					break;
