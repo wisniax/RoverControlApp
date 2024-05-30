@@ -3,6 +3,7 @@ using MQTTnet;
 using MQTTnet.Internal;
 using OpenCvSharp;
 using RoverControlApp.Core;
+using RoverControlApp.MVVM.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,6 +80,8 @@ public partial class VelMonitor : Panel
 			sliderControllers[i].InputMinValue(SliderMinVal);
 			sliderControllers[i].InputMaxValue(SliderMaxVal);
 		}
+
+		MqttNode.Singleton.Connect(MqttNode.SignalName.MessageReceived, Callable.From<string, MqttNodeMessage>(MqttSubscriber));
 	}
 
 	struct SingleWheel
@@ -104,16 +107,16 @@ public partial class VelMonitor : Panel
 		}
 	}
 
-	public Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
+	public void MqttSubscriber(string subTopic, MqttNodeMessage msg)
 	{
 
-		if (MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback is null || subTopic != MainViewModel.Settings?.Settings?.Mqtt.TopicWheelFeedback)
-			return Task.CompletedTask;
+		if (LocalSettings.Singleton.Mqtt.TopicWheelFeedback is null || subTopic != LocalSettings.Singleton.Mqtt.TopicWheelFeedback)
+			return;
 
-		if (msg is null || msg.PayloadSegment.Count == 0)
+		if (msg is null || msg.Message.PayloadSegment.Count == 0)
 		{
-			MainViewModel.EventLogger?.LogMessage($"VelMonitor WARNING: Empty payload!");
-			return Task.CompletedTask;
+			EventLogger.LogMessage("VelMonitor", EventLogger.LogLevel.Warning, $"Empty payload!");
+			return;
 		}
 
 		//base64
@@ -122,14 +125,12 @@ public partial class VelMonitor : Panel
 
 		try
 		{
-			CallDeferred(MethodName.UpdateVisual, msg.PayloadSegment.Array);
+			CallDeferred(MethodName.UpdateVisual, msg.Message.PayloadSegment.Array);
 		}
 		catch (Exception e)
 		{
-			MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: Well.. Something went wrong");
-			MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: {e.Message}");
+			EventLogger.LogMessage("VelMonitor", EventLogger.LogLevel.Error, $"VelMonitor ERROR: Well.. Something went wrong:\n{e.Message}");
 		}
-		return Task.CompletedTask;
 	}
 
 	public unsafe void UpdateVisual(byte[]? rawdata)

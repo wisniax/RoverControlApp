@@ -72,6 +72,11 @@ public class JoyVibrato : IDisposable
 		}
 	}
 
+	private Task? taskVibrato;
+	private CancellationTokenSource ctSource;
+	private CancellationToken ctToken;
+	private bool disposedValue;
+
 	public JoyVibrato()
 	{
 		ctSource = new CancellationTokenSource();
@@ -88,13 +93,10 @@ public class JoyVibrato : IDisposable
 			ctSource = new();
 			ctToken = ctSource.Token;
 		}
-		taskVibrato = Task.Run(async () => await Vibrate(newMode), ctToken);
-	}
 
-	private Task taskVibrato;
-	private CancellationTokenSource ctSource;
-	private CancellationToken ctToken;
-	
+		if(LocalSettings.Singleton.Joystick.VibrateOnModeChange)
+			taskVibrato = Task.Run(async () => await Vibrate(newMode), ctToken);
+	}
 
 	private async Task Vibrate(MqttClasses.ControlMode controlMode)
 	{
@@ -121,12 +123,20 @@ public class JoyVibrato : IDisposable
 		}
 	}
 
+	protected virtual void Dispose(bool disposing)
+	{
+		if (!disposedValue)
+		{
+			if (disposing && (taskVibrato?.IsCompleted == false))
+				ctSource.Cancel();
+
+			disposedValue = true;
+		}
+	}
+
 	public void Dispose()
 	{
-		if (taskVibrato?.IsCompleted == false)
-		{
-			ctSource.Cancel();
-		}
+		Dispose(disposing: true);
 		GC.SuppressFinalize(this);
 	}
 }

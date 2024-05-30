@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Text.Json;
 using RoverControlApp.MVVM.ViewModel;
+using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
@@ -16,22 +17,22 @@ public partial class ZedMonitor : Panel
 {
 	//Sprites for gyro visualisation
     [Export]
-	Sprite2D pitchVisualisation;
+	Sprite2D pitchVisualisation = null!;
     [Export]
-    Sprite2D rollVisualisation;
+    Sprite2D rollVisualisation = null!;
 
 	//Labels for gyro display
 	[Export]
-	Label pitchDisplay;
+	Label pitchDisplay = null!;
     [Export]
-	Label rollDisplay;
-    [Export]
-	Panel errorDisplay;
+	Label rollDisplay = null!;
+	[Export]
+	Panel errorDisplay = null!;
 
+	[Export]
+    Timer timer = null!;
     [Export]
-    Timer timer;
-    [Export]
-    Label timerDisplay;
+    Label timerDisplay = null!;
 
     //Every {timerInterval} seconds, timer will trigger _on_timer_timeout and timeSLU will be updated. timeSLU will later be displayed in timerDisplay. Can easily be changed in Godot editor.
     [Export]
@@ -50,13 +51,23 @@ public partial class ZedMonitor : Panel
 
 	MqttClasses.ZedImuData ?Gyroscope;
 
-    public Task OnGyroscopeChanged(string subTopic, MqttApplicationMessage? msg)
+	public override void _EnterTree()
 	{
-		if (MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData is null || subTopic != MainViewModel.Settings?.Settings?.Mqtt.TopicZedImuData)
+		MqttNode.Singleton.MessageReceivedAsync += OnGyroscopeChanged;
+	}
+
+	public override void _ExitTree()
+	{
+		MqttNode.Singleton.MessageReceivedAsync -= OnGyroscopeChanged;
+	}
+
+	public Task OnGyroscopeChanged(string subTopic, MqttApplicationMessage? msg)
+	{
+		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicZedImuData) || subTopic != LocalSettings.Singleton.Mqtt.TopicZedImuData)
 			return Task.CompletedTask;
         if (msg is null || msg.PayloadSegment.Count == 0)
         {
-            MainViewModel.EventLogger?.LogMessage($"ZedMonitor Error: Empty payload");
+            EventLogger.LogMessage("ZedMonitor", EventLogger.LogLevel.Error, "Empty payload");
             return Task.CompletedTask;
         }
 
@@ -70,7 +81,7 @@ public partial class ZedMonitor : Panel
         }
 		catch (Exception e)
 		{
-			MainViewModel.EventLogger?.LogMessage($"ZedMonitor Error: {e.Message}");
+			EventLogger.LogMessage("ZedMonitor", EventLogger.LogLevel.Error, $"{e.Message}");
 			return Task.CompletedTask;
         }  
     }
@@ -79,16 +90,11 @@ public partial class ZedMonitor : Panel
     {
         timeSLU += timerInterval;
 
-        if (timeSLU == errorTime)
-        {
-            MainViewModel.EventLogger?.LogMessage($"ZedMonitor Error: gyro data >{errorTime} seconds old.");
-
-        }
-        if (timeSLU >= errorTime)
-        {
-            errorDisplay.Visible = true;
-        }
-        TimeUpdate(timeSLU);
+		if (timeSLU == errorTime)
+			EventLogger.LogMessage("ZedMonitor", EventLogger.LogLevel.Error, $"gyro data >{errorTime} seconds old.");
+		if (timeSLU >= errorTime)
+			errorDisplay.Visible = true;
+		TimeUpdate(timeSLU);
     }
 
     public Quaternion PullGyroscope(MqttApplicationMessage? msg)
@@ -103,7 +109,7 @@ public partial class ZedMonitor : Panel
         }
         catch (Exception e)
         {
-            MainViewModel.EventLogger?.LogMessage($"ZedMonitor Error (Something is wrong with json/deserialization): {e.Message}");
+			EventLogger.LogMessage("ZedMonitor", EventLogger.LogLevel.Error, $"Something is wrong with json/deserialization: {e.Message}");
             error = true;
             return Quaternion.Identity;
         }
@@ -117,7 +123,7 @@ public partial class ZedMonitor : Panel
     }
     private void DisplayUpdate(double rollDeg, double pitchDeg)
 	{
-        if (error == true)
+        if (error)
         {
             errorDisplay.Visible = true;
             return;
