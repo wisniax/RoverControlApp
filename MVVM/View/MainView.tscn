@@ -160,7 +160,7 @@ text = "VEL MONITOR"
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
-text = "SETINGS"
+text = "SETTINGS"
 
 [node name="MissionControl" parent="." instance=ExtResource("4_wrhi8")]
 visible = false
