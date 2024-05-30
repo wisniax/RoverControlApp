@@ -23,7 +23,8 @@ public partial class Mqtt : SettingBase, ICloneable
         _topicKmlSetPoint = "KMLNode/SetPoint";
         _topicWheelFeedback = "wheel_feedback";
         _topicEStopStatus = "button_stop";
-        _topicKmlListOfActiveObj = "KMLNode/ActiveKMLObjects";
+		_topicZedImuData = "TopicZedImuData";
+		_topicKmlListOfActiveObj = "KMLNode/ActiveKMLObjects";
 	}
 
 	public Mqtt
@@ -38,6 +39,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicKmlSetPoint,
 		string topicWheelFeedback,
 		string topicEStopStatus,
+		string topicZedImuData,
 		string topicKmlListOfActiveObj
 	)
 	{
@@ -51,6 +53,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicKmlSetPoint = topicKmlSetPoint;
 		_topicWheelFeedback = topicWheelFeedback;
 		_topicEStopStatus = topicEStopStatus;
+		_topicZedImuData = topicZedImuData;
 		_topicKmlListOfActiveObj = topicKmlListOfActiveObj;
 	}
 
@@ -68,6 +71,7 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicMissionStatus = _topicMissionStatus,
 			TopicKmlSetPoint = _topicKmlSetPoint,
 			TopicWheelFeedback = _topicWheelFeedback,
+			TopicZedImuData = _topicZedImuData,
 			TopicEStopStatus = _topicEStopStatus,
 			TopicKmlListOfActiveObj = _topicKmlListOfActiveObj
 		};
@@ -137,6 +141,13 @@ public partial class Mqtt : SettingBase, ICloneable
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicZedImuData
+	{
+		get => _topicZedImuData;
+		set => EmitSignal_SettingChanged(ref _topicZedImuData, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicEStopStatus
 	{
 		get => _topicEStopStatus;
@@ -161,6 +172,7 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicKmlSetPoint;
 	string _topicWheelFeedback;
 	string _topicEStopStatus;
+	string _topicZedImuData;
 	string _topicKmlListOfActiveObj;
 }
 

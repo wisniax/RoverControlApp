@@ -18,6 +18,7 @@ namespace RoverControlApp.MVVM.Model.Settings
 				( mqttSettings.TopicRoverFeedback, MqttQualityOfServiceLevel.ExactlyOnce ),
 
 				( mqttSettings.TopicWheelFeedback, MqttQualityOfServiceLevel.AtMostOnce ),
+				( mqttSettings.TopicZedImuData, MqttQualityOfServiceLevel.AtMostOnce ),
 				( mqttSettings.TopicEStopStatus, MqttQualityOfServiceLevel.AtMostOnce ),
 			];
 		

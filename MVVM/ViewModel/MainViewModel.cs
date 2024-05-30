@@ -52,6 +52,8 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private VelMonitor VelMonitor = null!;
 
+		[Export]
+		private ZedMonitor ZedMonitor = null!;
 		public MainViewModel()
 		{
 			PressedKeys = new PressedKeys();
