@@ -25,18 +25,18 @@ namespace RoverControlApp.MVVM.ViewModel
 		public static MissionSetPoint? MissionSetPoint { get; private set; }
 
 		//Main camera + 5 preview cameras 
-		private const int numCameras = 6;
+		public const int numStreams = 6;
 
-		private RtspStreamClient[]? _rtspClient = new RtspStreamClient[numCameras];
+		private RtspStreamClient[]? _rtspClient = new RtspStreamClient[numStreams];
 
 
 		private OnvifPtzCameraController? _ptzClient;
 		private JoyVibrato? _joyVibrato;
 		private BackCapture _backCapture = new();
 
-		private TextureRect[]? _imTextureRect = new TextureRect[numCameras];
+		private TextureRect[]? _imTextureRect = new TextureRect[numStreams];
 		
-		private ImageTexture[]? _imTexture = new ImageTexture[numCameras];
+		private ImageTexture[]? _imTexture = new ImageTexture[numStreams];
 
 		[Export]
 		private RoverMode_UIOverlay RoverModeUIDis = null!;
@@ -232,7 +232,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			PressedKeys.OnControlModeChanged -= RoverModeUIDis!.ControlModeChangedSubscriber;
 			_ptzClient = null;
-			for (int i = 0; i < numCameras; i++)
+			for (int i = 0; i < numStreams; i++)
 			{
 				_rtspClient[i]?.Dispose();
 				_rtspClient[i] = null;
@@ -251,7 +251,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			RoverCommunication?.Dispose();
 			MqttClient?.Dispose();
 
-			for(int i = 0; i < numCameras; i++)
+			for(int i = 0; i < numStreams; i++)
 				_rtspClient[i]?.Dispose();
 
 			_ptzClient?.Dispose();

@@ -215,7 +215,6 @@ namespace RoverControlApp.MVVM.Model
 				return false;
 			}
 
-
 			CvInvoke.CvtColor(m, m, Emgu.CV.CvEnum.ColorConversion.Bgr2Rgb);
 			//Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
 
