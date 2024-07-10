@@ -27,7 +27,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		//Main camera + 5 preview cameras 
 		public const int numStreams = 6;
 
-		private RtspStreamClient[]? _rtspClient = new RtspStreamClient[numStreams];
+		public RtspStreamClient[]? _rtspClient = new RtspStreamClient[numStreams];
 
 
 		private OnvifPtzCameraController? _ptzClient;
@@ -430,15 +430,16 @@ namespace RoverControlApp.MVVM.ViewModel
 			CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
 		}
 
-		void MainRtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[0], _imTextureRect[0], 0);}
-		void PreviewARtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[1], _imTextureRect[1], 1);}
-		void PreviewBRtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[2], _imTextureRect[2], 2);}
-		void PreviewCRtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[3], _imTextureRect[3], 3);}
-		void PreviewDRtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[4], _imTextureRect[4], 4);}
-		void PreviewERtspWrapper(){CallDeferred(MethodName.RtspUpdate, _imTexture[5], _imTextureRect[5], 5);}
+		void MainRtspWrapper(){ try { CallDeferred(MethodName.RtspUpdate, _imTexture[0], _imTextureRect[0], 0); } catch (Exception e) { GD.Print("Shit itself"); } }
+		void PreviewARtspWrapper() { try { CallDeferred(MethodName.RtspUpdate, _imTexture[1], _imTextureRect[1], 1); } catch (Exception e) { GD.Print("Shit itself"); } }
+		void PreviewBRtspWrapper(){try{CallDeferred(MethodName.RtspUpdate, _imTexture[2], _imTextureRect[2], 2);} catch (Exception e) { GD.Print("Shit itself"); } }
+		void PreviewCRtspWrapper(){try{CallDeferred(MethodName.RtspUpdate, _imTexture[3], _imTextureRect[3], 3);} catch (Exception e) { GD.Print("Shit itself"); } }
+		void PreviewDRtspWrapper(){try{CallDeferred(MethodName.RtspUpdate, _imTexture[4], _imTextureRect[4], 4);} catch (Exception e) { GD.Print("Shit itself"); } }
+		void PreviewERtspWrapper(){try{CallDeferred(MethodName.RtspUpdate, _imTexture[5], _imTextureRect[5], 5); }catch (Exception e) { GD.Print("Shit itself"); }
+}
 
 
-		public void RtspUpdate(ImageTexture _imTexture, TextureRect _imTextureRect, int i)
+public void RtspUpdate(ImageTexture _imTexture, TextureRect _imTextureRect, int i)
 		{
 			if (_rtspClient[i] is { NewFrameSaved: true })
 			{
