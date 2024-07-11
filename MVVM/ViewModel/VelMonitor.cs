@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Text;
 
+
 namespace RoverControlApp.MVVM.ViewModel;
 public partial class VelMonitor : Panel
 {
@@ -121,47 +122,74 @@ public Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
 
 
 
-public void UpdateVisual(int id, int pow, long timestamp)
-{
-	try
-	{
-			if (IdTab == null)
-			{
-				IdTab = new int[0];
-			}
-			var localIdx = id;
-			if (IdTab.Contains(localIdx))
-			{
-				var index = Array.IndexOf(IdTab, localIdx);
-				dataLabs[index].Text = $"{powerStr} {pow}";
-				sliderControllers[index].InputValue((pow));
-				long time = ConvertToMMs(timestamp);
-				timestampLabels[index].Text = $"{timestr}: {time}";
-			}
-		else {
-				if (IdTab.Length >= ITEMS)
-				{
-					MainViewModel.EventLogger?.LogMessage("Invalid wheel ID");
-				}
-				else {
-					IdTab.Append(localIdx);
-					var index = 0;
-					dataLabs[index].Text = $"{powerStr} {pow}";
-					sliderControllers[index].InputValue(pow);
-					long time = ConvertToMMs(timestamp);
-					timestampLabels[index].Text = $"{timestr}: {time}";
-				}
-		}
-		
-	}
-	catch (Exception e)
-	{
-		MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: Failed to update visual: {e.Message}");
-	}
-}
+    public void UpdateVisual(int id, int pow, long timestamp)
+    {
+        try
+        {
+            if (IdTab == null)
+            {
+                IdTab = new int[0];
+            }
+            var localIdx = id;
+            if (IdTab.Contains(localIdx))
+            {
+                var index = Array.IndexOf(IdTab, localIdx);
+                dataLabs[index].Text = $"{powerStr} {pow}";
+                sliderControllers[index].InputValue(pow);
+                long time = ConvertToMMs(timestamp);
+                timestampLabels[index].Text = $"{timestr}: {time}";
+                if (time < 30)
+                {
+                    timestampLabels[index].Modulate = new Color(0, 1, 0);
+                }
+                else if (time >= 30 && time < 100)
+                {
+                    timestampLabels[index].Modulate = new Color(1, 1, 0);
+                }
+                else
+                {
+                    timestampLabels[index].Modulate = new Color(1, 0, 0);
+                }
+            }
+            else
+            {
+                if (IdTab.Length >= ITEMS)
+                {
+                    MainViewModel.EventLogger?.LogMessage("Invalid wheel ID");
+                }
+                else
+                {
+                    IdTab = IdTab.Append(localIdx).ToArray(); 
+                    var index = IdTab.Length - 1; 
+                    dataLabs[index].Text = $"{powerStr} {pow}";
+                    sliderControllers[index].InputValue(pow);
+                    long time = ConvertToMMs(timestamp);
+                    timestampLabels[index].Text = $"{timestr}: {time}";
+
+                    if (time < 30)
+                    {
+                        timestampLabels[index].Modulate = new Color(0, 1, 0);
+                    }
+                    else if (time >= 30 && time < 100)
+                    {
+                        timestampLabels[index].Modulate = new Color(1, 1, 0);
+                    }
+                    else
+                    {
+                        timestampLabels[index].Modulate = new Color(1, 0, 0);
+                    }
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            MainViewModel.EventLogger?.LogMessage($"VelMonitor ERROR: Failed to update visual: {e.Message}");
+        }
+    }
 
 
-	public long ConvertToMMs(long timestamp) { 
+
+    public long ConvertToMMs(long timestamp) { 
 		return DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - timestamp;
 	}
 }
