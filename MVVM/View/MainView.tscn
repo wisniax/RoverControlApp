@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=20 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -13,6 +13,38 @@
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
+
+[sub_resource type="InputEventKey" id="InputEventKey_ab7qa"]
+device = -1
+alt_pressed = true
+keycode = 77
+
+[sub_resource type="Shortcut" id="Shortcut_psw5f"]
+events = [SubResource("InputEventKey_ab7qa")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_ku78j"]
+device = -1
+alt_pressed = true
+keycode = 86
+
+[sub_resource type="Shortcut" id="Shortcut_x20sx"]
+events = [SubResource("InputEventKey_ku78j")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_57mg7"]
+device = -1
+alt_pressed = true
+keycode = 71
+
+[sub_resource type="Shortcut" id="Shortcut_nofgb"]
+events = [SubResource("InputEventKey_57mg7")]
+
+[sub_resource type="InputEventKey" id="InputEventKey_ywgy7"]
+device = -1
+alt_pressed = true
+keycode = 83
+
+[sub_resource type="Shortcut" id="Shortcut_gr50h"]
+events = [SubResource("InputEventKey_ywgy7")]
 
 [node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor")]
 layout_mode = 3
@@ -150,24 +182,28 @@ layout_mode = 2
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
+shortcut = SubResource("Shortcut_psw5f")
 text = "MISSION CONTROL"
 
 [node name="ShowVelMonitor" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
+shortcut = SubResource("Shortcut_x20sx")
 text = "VEL MONITOR"
 
 [node name="ShowZedMonitor" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
+shortcut = SubResource("Shortcut_nofgb")
 text = "GYRO"
 
 [node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
+shortcut = SubResource("Shortcut_gr50h")
 text = "SETTINGS"
 
 [node name="MissionControl" parent="." instance=ExtResource("4_wrhi8")]
