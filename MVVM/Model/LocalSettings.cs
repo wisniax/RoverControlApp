@@ -7,6 +7,9 @@ using System.Text.Json;
 
 namespace RoverControlApp.MVVM.Model;
 
+/// <summary>
+/// Master class for settings storage. Can be fetched by LocalSettings.Singleton<br/> 
+/// </summary>
 public partial class LocalSettings : Node
 {
 	private sealed class PackedSettings
@@ -25,12 +28,21 @@ public partial class LocalSettings : Node
 	public static LocalSettings Singleton { get; private set; }
 #pragma warning restore CS8618 
 
+	/// <summary>
+	/// Signal stating that one of categories was overwritten (reference changed)
+	/// </summary>
 	[Signal]
 	public delegate void CategoryChangedEventHandler(StringName category);
 
+	/// <summary>
+	/// Signal SubcategoryChanged propagated from one of categories. Prefer this over SettingBase.SubcategoryChanged
+	/// </summary>
 	[Signal]
 	public delegate void PropagatedSubcategoryChangedEventHandler(StringName category, StringName subcategory, Variant oldValue, Variant newValue);
 
+	/// <summary>
+	/// Signal PropertyChanged propagated from one of categories. Prefer this over SettingBase.PropertyChanged
+	/// </summary>
 	[Signal]
 	public delegate void PropagatedPropertyChangedEventHandler(StringName category, StringName property, Variant oldValue, Variant newValue);
 
@@ -52,21 +64,22 @@ public partial class LocalSettings : Node
 		Singleton ??= this;
 	}
 
+	/// <summary>
+	/// Load settings form file
+	/// </summary>
+	/// <exception cref="FieldAccessException"/>
+	/// <exception cref="JsonException"/>
+	/// <exception cref="DataException"/>
+	/// <returns>true on success</returns>
 	public bool LoadSettings()
 	{
 		try
 		{
-			using var settingsFileAccess = Godot.FileAccess.Open(_settingsPath, Godot.FileAccess.ModeFlags.Read);
-
-			if (settingsFileAccess is null)
-				throw new FieldAccessException(Godot.FileAccess.GetOpenError().ToString());
+			using var settingsFileAccess = FileAccess.Open(_settingsPath, FileAccess.ModeFlags.Read) ?? throw new FieldAccessException(FileAccess.GetOpenError().ToString());
 
 			var serializedSettings = settingsFileAccess.GetAsText(true);
 
-			var packedSettings = JsonSerializer.Deserialize<PackedSettings>(serializedSettings, serializerOptions);
-
-			if (packedSettings is null)
-				throw new DataException("unknown reason");
+			var packedSettings = JsonSerializer.Deserialize<PackedSettings>(serializedSettings, serializerOptions) ?? throw new DataException("unknown reason");
 
 			Camera = packedSettings.Camera ?? new();
 			Mqtt = packedSettings.Mqtt ?? new();
@@ -83,15 +96,18 @@ public partial class LocalSettings : Node
 		return true;
 	}
 
+	/// <summary>
+	/// Save settings to file
+	/// </summary>
+	///	<exception cref="FieldAccessException"/>
+	///	<exception cref="JsonException"/>
+	/// <returns>true on success</returns>
 	public bool SaveSettings()
 	{
 		try
 		{
-			using var settingsFileAccess = Godot.FileAccess.Open(_settingsPath, Godot.FileAccess.ModeFlags.Write);
-
-			if (settingsFileAccess is null)
-				throw new FieldAccessException(Godot.FileAccess.GetOpenError().ToString());
-
+			using var settingsFileAccess = FileAccess.Open(_settingsPath, FileAccess.ModeFlags.Write) ?? throw new FieldAccessException(FileAccess.GetOpenError().ToString());
+			
 			PackedSettings packedSettings = new()
 			{
 				Camera = Camera,
@@ -112,6 +128,9 @@ public partial class LocalSettings : Node
 		return true;
 	}
 
+	/// <summary>
+	/// Reset settings to default state
+	/// </summary>
 	public void ForceDefaultSettings()
 	{
 		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Info, "Loading default settings");
@@ -139,6 +158,12 @@ public partial class LocalSettings : Node
 		EmitSignal(signal, combined);
 	}
 
+	/// <summary>
+	/// Fany pants lambda creator for propagator
+	/// </summary>
+	/// <param name="signal">SignalName.PropagatedPropertyChanged or SignalName.PropagatedSubcategoryChanged</param>
+	/// <param name="category">name of category (when used in Property setter should be empty)</param>
+	/// <returns></returns>
 	private Action<StringName, Variant, Variant> CreatePropagator(StringName signal, [CallerMemberName] string category = "")
 	{
 		return (field, oldVal, newVal) => PropagateSignal(signal, category, field, oldVal, newVal);
