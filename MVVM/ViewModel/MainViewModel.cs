@@ -82,8 +82,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			ManagePtzStatus();
 			ManageRtspStatus();
 
-			LocalSettings.Singleton.Connect(LocalSettings.SignalName.WholeSectionChanged, Callable.From<StringName>(OnSettingsWholeSectionChanged));
-			LocalSettings.Singleton.Camera.Connect(SettingBase.SignalName.SettingChanged, Callable.From<StringName, Variant, Variant>(OnSettingsPropertyChanged));
+			LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
+			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		}
 
 		public override void _ExitTree()
@@ -94,6 +94,9 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
+
+			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
+			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		}
 
 		protected override void Dispose(bool disposing)
@@ -143,19 +146,19 @@ namespace RoverControlApp.MVVM.ViewModel
 		 * Settings event handlers
 		 */
 
-		void OnSettingsWholeSectionChanged(StringName property)
+		void OnSettingsCategoryChanged(StringName property)
 		{
 			if (property != nameof(LocalSettings.Camera)) return;
 
 			ManagePtzStatus();
 			ManageRtspStatus();
-
-			LocalSettings.Singleton.Camera.Connect(SettingBase.SignalName.SettingChanged, Callable.From<StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		}
 
-		void OnSettingsPropertyChanged(StringName name, Variant oldValue, Variant newValue)
+		void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 		{
-			switch(name)
+			if (category != nameof(LocalSettings.Camera)) return;
+
+			switch (name)
 			{
 				case nameof(LocalSettings.Camera.EnablePtzControl):
 					ManagePtzStatus();

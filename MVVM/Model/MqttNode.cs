@@ -52,17 +52,17 @@ public partial class MqttNode : Node
 	public override void _Ready()
 	{
 		Singleton ??= this;
-		LocalSettings.Singleton.Connect(LocalSettings.SignalName.WholeSectionChanged, Callable.From<StringName>(OnSettingsWholeSectionChanged));
-		LocalSettings.Singleton.Mqtt.Connect(Mqtt.SignalName.SettingChanged, Callable.From<StringName, Variant, Variant>(OnSettingsPropertyChanged));
-		LocalSettings.Singleton.Mqtt.Connect(Mqtt.SignalName.SectionChanged, Callable.From<StringName, Variant, Variant>(OnSettingsSectionChanged));
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategotyChanged));
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedSubcategoryChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsSubcategoryChanged));
 		MqStart();
 	}
 
 	public override void _ExitTree()
 	{
-		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.WholeSectionChanged, Callable.From<StringName>(OnSettingsWholeSectionChanged));
-		LocalSettings.Singleton.Mqtt.Disconnect(Mqtt.SignalName.SettingChanged, Callable.From<StringName, Variant, Variant>(OnSettingsPropertyChanged));
-		LocalSettings.Singleton.Mqtt.Disconnect(Mqtt.SignalName.SectionChanged, Callable.From<StringName, Variant, Variant>(OnSettingsSectionChanged));
+		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategotyChanged));
+		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedSubcategoryChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsSubcategoryChanged));
 		MqStop();
 		RequestReady();
 	}
@@ -71,18 +71,17 @@ public partial class MqttNode : Node
 	 * Settings handlers
 	 */ 
 
-	void OnSettingsWholeSectionChanged(StringName property)
+	void OnSettingsCategotyChanged(StringName property)
 	{
 		if (property != nameof(LocalSettings.Mqtt)) return;
 
 		MqRestart();
-
-		LocalSettings.Singleton.Mqtt.Connect(Mqtt.SignalName.SettingChanged, Callable.From<StringName, Variant, Variant>(OnSettingsPropertyChanged));
-		LocalSettings.Singleton.Mqtt.Connect(Mqtt.SignalName.SectionChanged, Callable.From<StringName, Variant, Variant>(OnSettingsSectionChanged));
 	}
 
-	void OnSettingsPropertyChanged(StringName name, Variant oldValue, Variant newValue)
+	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 	{
+		if (category != nameof(Settings.Mqtt)) return;
+
 		var (newTopic, newQos) =
 			(from entry in LocalSettings.Singleton.Mqtt.GetAllTopicsToSubscribe()
 			 where entry.Item1 == newValue.AsString()
@@ -95,9 +94,9 @@ public partial class MqttNode : Node
 		MqSubscribeTopic(newTopic, newQos);
 	}
 
-	void OnSettingsSectionChanged(StringName name, Variant oldValue, Variant newValue)
+	void OnSettingsSubcategoryChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 	{
-		if (name != nameof(Mqtt.ClientSettings)) return;
+		if (category != nameof(Settings.Mqtt) || name != nameof(Mqtt.ClientSettings)) return;
 
 		MqRestart();		
 	}

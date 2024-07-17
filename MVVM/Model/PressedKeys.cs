@@ -85,8 +85,8 @@ namespace RoverControlApp.MVVM.Model
 			_containerMovement = new();
 			SetupControllerPresets();
 
-			LocalSettings.Singleton.WholeSectionChanged += OnSettingsWholeSectionChanged;
-			LocalSettings.Singleton.Joystick.SettingChanged += OnSettingsPropertyChanged;
+			LocalSettings.Singleton.CategoryChanged += OnSettingsCategoryChanged;
+			LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
 		}
 
 		void SetupControllerPresets()
@@ -102,17 +102,17 @@ namespace RoverControlApp.MVVM.Model
 		* Settings event handlers
 		*/
 
-		void OnSettingsWholeSectionChanged(StringName property)
+		void OnSettingsCategoryChanged(StringName property)
 		{
 			if (property != nameof(LocalSettings.Joystick)) return;
 
 			SetupControllerPresets();
-
-			LocalSettings.Singleton.Joystick.SettingChanged += OnSettingsPropertyChanged;
 		}
 
-		void OnSettingsPropertyChanged(StringName name, Variant oldValue, Variant newValue)
+		void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 		{
+			if(category != nameof(LocalSettings.Joystick)) return;
+
 			switch (name)
 			{
 				case nameof(LocalSettings.Joystick.NewFancyRoverController):
@@ -218,8 +218,8 @@ namespace RoverControlApp.MVVM.Model
 			{
 				if (disposing)
 				{
-					LocalSettings.Singleton.WholeSectionChanged -= OnSettingsWholeSectionChanged;
-					LocalSettings.Singleton.Joystick.SettingChanged -= OnSettingsPropertyChanged;
+					LocalSettings.Singleton.CategoryChanged -= OnSettingsCategoryChanged;
+					LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
 				}
 
 				disposedValue = true;
