@@ -61,44 +61,49 @@ bbcode_enabled = true
 scroll_active = false
 shortcut_keys_enabled = false
 
-[node name="FileIO" type="VBoxContainer" parent="StatusBar"]
-custom_minimum_size = Vector2(100, 0)
-layout_mode = 2
-
-[node name="SaveSettings" type="Button" parent="StatusBar/FileIO"]
-layout_mode = 2
-focus_mode = 0
-shortcut = SubResource("Shortcut_vgxpl")
-text = "SAVE"
-
-[node name="LoadSettings" type="Button" parent="StatusBar/FileIO"]
-layout_mode = 2
-focus_mode = 0
-text = "LOAD"
-
 [node name="Reverters" type="VBoxContainer" parent="StatusBar"]
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 
 [node name="RevertSettings" type="Button" parent="StatusBar/Reverters"]
 layout_mode = 2
+tooltip_text = "Reverts current changes to settings (marked with yellow border)."
 focus_mode = 0
 text = "REVERT"
 
 [node name="ForceDefaultSettings" type="Button" parent="StatusBar/Reverters"]
 layout_mode = 2
+tooltip_text = "Reverts settings to build-in defaults. Settings are NOT automaticly saved to file. Changes will be lost after closing application."
 focus_mode = 0
 text = "DEFAULTS"
 
-[node name="ApplySettings" type="Button" parent="StatusBar"]
-custom_minimum_size = Vector2(140, 0)
+[node name="LoadSettings" type="Button" parent="StatusBar"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+tooltip_text = "Load settings from file. Simple as that."
+focus_mode = 0
+text = "LOAD
+FROM FILE"
+
+[node name="ApplySettings" type="Button" parent="StatusBar"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+tooltip_text = "Applies current changes to settings without writing them to settings file. Changes will be lost after closing application."
 focus_mode = 0
 text = "APPLY
-WITHOUT SAVE"
+"
 
-[connection signal="pressed" from="StatusBar/FileIO/SaveSettings" to="." method="OnSaveSettingsPressed"]
-[connection signal="pressed" from="StatusBar/FileIO/LoadSettings" to="." method="OnLoadSettingsPressed"]
+[node name="SaveSettings" type="Button" parent="StatusBar"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+tooltip_text = "Applies current changes to settings and writes them to settings file."
+focus_mode = 0
+shortcut = SubResource("Shortcut_vgxpl")
+text = "SAVE
+TO FILE"
+
 [connection signal="pressed" from="StatusBar/Reverters/RevertSettings" to="." method="OnRevertSettingsPressed"]
 [connection signal="pressed" from="StatusBar/Reverters/ForceDefaultSettings" to="." method="OnForceDefaultSettingsPressed"]
+[connection signal="pressed" from="StatusBar/LoadSettings" to="." method="OnLoadSettingsPressed"]
 [connection signal="pressed" from="StatusBar/ApplySettings" to="." method="OnApplySettingsPressed"]
+[connection signal="pressed" from="StatusBar/SaveSettings" to="." method="OnSaveSettingsPressed"]
