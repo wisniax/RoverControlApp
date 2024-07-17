@@ -1,9 +1,7 @@
 ﻿using Godot;
+using RoverControlApp.Core;
 using System;
 using System.Threading.Tasks;
-using RoverControlApp.Core;
-using RoverControlApp.MVVM.ViewModel;
-using RoverControlApp.MVVM.Model.Settings;
 
 namespace RoverControlApp.MVVM.Model
 {

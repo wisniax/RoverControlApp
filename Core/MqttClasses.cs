@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Godot;
+using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-using Godot;
-using MQTTnet.Server;
 
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
 // ReSharper disable UnusedMember.Global

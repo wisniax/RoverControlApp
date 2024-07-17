@@ -1,11 +1,9 @@
-﻿using System;
+﻿using RoverControlApp.Core;
+using System;
 using System.ServiceModel;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using GodotPlugins.Game;
-using RoverControlApp.Core;
-using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
 {

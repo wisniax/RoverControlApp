@@ -1,8 +1,6 @@
-﻿using System;
-using Godot;
+﻿using Godot;
 using RoverControlApp.MVVM.Model;
-using RoverControlApp.MVVM.ViewModel;
-using static RoverControlApp.Core.MqttClasses;
+using System;
 
 namespace RoverControlApp.Core
 {
@@ -10,17 +8,17 @@ namespace RoverControlApp.Core
 	{
 		public interface IRoverDriveController
 		{
-			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, RoverControl input);
+			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, MqttClasses.RoverControl input);
 		}
 
 		public interface IRoverManipulatorController
 		{
-			public bool CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl, ManipulatorControl input);
+			public bool CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl, MqttClasses.ManipulatorControl input);
 		}
 
 		public class ForzaLikeController : IRoverDriveController
 		{
-			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, RoverControl input)
+			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, MqttClasses.RoverControl input)
 			{
 				roverControl = new MqttClasses.RoverControl();
 
@@ -56,7 +54,7 @@ namespace RoverControlApp.Core
 		public class EricSOnController : IRoverDriveController
 		{
 			private const float TURN_ANGLE = 89;
-			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, RoverControl input)
+			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, MqttClasses.RoverControl input)
 			{
 				roverControl = new MqttClasses.RoverControl();
 
@@ -102,7 +100,7 @@ namespace RoverControlApp.Core
 
 		public class GoodOldGamesLikeController : IRoverDriveController
 		{
-			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, RoverControl input)
+			public bool CalculateMoveVector(out MqttClasses.RoverControl roverControl, MqttClasses.RoverControl input)
 			{
 				roverControl = new MqttClasses.RoverControl();
 
@@ -131,7 +129,7 @@ namespace RoverControlApp.Core
 
 		public class SingleAxisManipulatorController : IRoverManipulatorController
 		{
-			public bool CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl, ManipulatorControl input)
+			public bool CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl, MqttClasses.ManipulatorControl input)
 			{
 				manipulatorControl = new();
 

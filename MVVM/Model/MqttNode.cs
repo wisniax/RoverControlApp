@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
-using System.Text;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
-using Godot;
+﻿using Godot;
 using MQTTnet;
 using MQTTnet.Client;
 using MQTTnet.Extensions.ManagedClient;
@@ -16,6 +6,14 @@ using MQTTnet.Protocol;
 using MQTTnet.Server;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model.Settings;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.ServiceModel;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.Model;
 

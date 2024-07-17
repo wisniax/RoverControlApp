@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.ServiceModel;
-using System.Text;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
 using RoverControlApp.MVVM.Model.Settings;
+using System;
+using System.Globalization;
+using System.ServiceModel;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.ViewModel
 {

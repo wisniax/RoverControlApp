@@ -1,7 +1,6 @@
 ﻿using Godot;
 using MQTTnet.Protocol;
 using RoverControlApp.Core;
-using RoverControlApp.MVVM.ViewModel;
 using System;
 using System.ServiceModel;
 using System.Text.Json;

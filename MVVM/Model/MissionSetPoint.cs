@@ -1,9 +1,8 @@
-﻿using System;
+﻿using MQTTnet;
+using RoverControlApp.Core;
+using System;
 using System.Text.Json;
 using System.Threading.Tasks;
-using MQTTnet;
-using RoverControlApp.Core;
-using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
 {
