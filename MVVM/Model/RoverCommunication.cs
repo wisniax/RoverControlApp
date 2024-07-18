@@ -112,21 +112,20 @@ namespace RoverControlApp.MVVM.Model
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!disposedValue)
+			if (disposedValue) return;
+
+			if (disposing)
 			{
-				if (disposing)
-				{
-					pressedKeys.OnControlModeChanged -= PressedKeys_OnControlModeChanged;
+				pressedKeys.OnControlModeChanged -= PressedKeys_OnControlModeChanged;
 
-					pressedKeys.OnPadConnectionChanged -= OnPadConnectionChanged;
-					pressedKeys.OnRoverMovementVector -= RoverMovementVectorChanged;
-					pressedKeys.OnManipulatorMovement -= RoverManipulatorVectorChanged;
+				pressedKeys.OnPadConnectionChanged -= OnPadConnectionChanged;
+				pressedKeys.OnRoverMovementVector -= RoverMovementVectorChanged;
+				pressedKeys.OnManipulatorMovement -= RoverManipulatorVectorChanged;
 
-					missionStatus.OnRoverMissionStatusChanged -= OnRoverMissionStatusChanged;
-				}
-
-				disposedValue = true;
+				missionStatus.OnRoverMissionStatusChanged -= OnRoverMissionStatusChanged;
 			}
+
+			disposedValue = true;
 		}
 
 		public void Dispose()
