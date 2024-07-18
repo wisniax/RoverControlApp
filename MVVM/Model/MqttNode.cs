@@ -216,8 +216,6 @@ public partial class MqttNode : Node
 		var topic = TopicFull(subtopic);
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, $"Unsubscribing from topic: \"{topic}\"");
 		await _managedMqttClient.UnsubscribeAsync(topic);
-
-		//_responses.Remove(subtopic); /* should i remove it? */
 	}
 
 	private void MqUnsubscribeTopic(string subtopic)
