@@ -83,9 +83,7 @@ public partial class MqttNode : Node
 		if (category != nameof(Settings.Mqtt)) return;
 
 		var (newTopic, newQos) =
-			(from entry in LocalSettings.Singleton.Mqtt.GetAllTopicsToSubscribe()
-			 where entry.Item1 == newValue.AsString()
-			 select entry).FirstOrDefault();
+			(LocalSettings.Singleton.Mqtt.GetAllTopicsToSubscribe().Where(entry => entry.Item1 == newValue.AsString())).FirstOrDefault();
 
 		if (string.IsNullOrEmpty(newTopic))
 			return;
