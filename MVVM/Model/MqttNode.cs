@@ -227,12 +227,12 @@ public partial class MqttNode : Node
 	{
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, $"Subscribing to ALL topics.");
 
-		List<Task> subTasks = new();
+		List<Task> subTasks = [];
 
 		foreach(var (topic, qos) in LocalSettings.Singleton.Mqtt.GetAllTopicsToSubscribe())
 			subTasks.Add(MqSubscribeTopicAsync(topic, qos));
 
-		await Task.WhenAll();
+		await Task.WhenAll(subTasks);
 	}
 
 	/*
