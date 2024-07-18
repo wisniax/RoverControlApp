@@ -1,7 +1,6 @@
 using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
-using RoverControlApp.MVVM.Model.Settings;
 using System;
 using System.Globalization;
 using System.ServiceModel;

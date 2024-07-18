@@ -1,10 +1,9 @@
 ﻿using Godot;
-using RoverControlApp.Core;
 using RoverControlApp.Core.JSONConverters;
 using System;
 using System.Text.Json.Serialization;
 
-namespace RoverControlApp.MVVM.Model.Settings;
+namespace RoverControlApp.Core.Settings;
 
 [JsonConverter(typeof(GeneralConverter))]
 public partial class General : SettingBase, ICloneable

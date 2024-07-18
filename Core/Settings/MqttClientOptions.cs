@@ -1,14 +1,14 @@
 ﻿using Godot;
-using RoverControlApp.Core;
 using RoverControlApp.Core.JSONConverters;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace RoverControlApp.MVVM.Model.Settings;
+namespace RoverControlApp.Core.Settings;
 
 [JsonConverter(typeof(MqttClientOptionsConverter))]
 public partial class MqttClientOptions : RefCounted
 {
+
 	public MqttClientOptions()
 	{
 		BrokerIp = "broker.hivemq.com";

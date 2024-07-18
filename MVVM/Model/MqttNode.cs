@@ -5,7 +5,7 @@ using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Protocol;
 using MQTTnet.Server;
 using RoverControlApp.Core;
-using RoverControlApp.MVVM.Model.Settings;
+using RoverControlApp.Core.Settings;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -80,7 +80,7 @@ public partial class MqttNode : Node
 
 	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 	{
-		if (category != nameof(Settings.Mqtt)) return;
+		if (category != nameof(Mqtt)) return;
 
 		var (newTopic, newQos) =
 			(LocalSettings.Singleton.Mqtt.GetAllTopicsToSubscribe().Where(entry => entry.Item1 == newValue.AsString())).FirstOrDefault();
@@ -94,7 +94,7 @@ public partial class MqttNode : Node
 
 	void OnSettingsSubcategoryChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 	{
-		if (category != nameof(Settings.Mqtt) || name != nameof(Mqtt.ClientSettings)) return;
+		if (category != nameof(Mqtt) || name != nameof(Mqtt.ClientSettings)) return;
 
 		MqRestart();		
 	}

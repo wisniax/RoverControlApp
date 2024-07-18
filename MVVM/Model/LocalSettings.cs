@@ -5,7 +5,7 @@ using System.Data;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 
-namespace RoverControlApp.MVVM.Model;
+namespace RoverControlApp.Core;
 
 /// <summary>
 /// Master class for settings storage. Can be fetched by LocalSettings.Singleton<br/> 
