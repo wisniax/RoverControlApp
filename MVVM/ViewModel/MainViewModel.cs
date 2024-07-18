@@ -136,7 +136,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 				_rtspClient.UnLockGrabbingFrames();
 				imTextureRect.Texture = _imTexture;
-				_rtspClient.NewFrameSaved = false;
+				_rtspClient.MarkFrameOld();
 			}
 			UpdateLabel();
 		}

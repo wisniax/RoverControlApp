@@ -7,6 +7,15 @@ namespace RoverControlApp.MVVM.Model
 {
 	public class PressedKeys : IDisposable
 	{
+		private volatile MqttClasses.ControlMode _controlMode;
+		private Vector4 _lastAbsoluteVector;
+		private MqttClasses.RoverControl _roverMovement;
+		private MqttClasses.ManipulatorControl _manipulatorMovement;
+		private MqttClasses.RoverContainer _containerMovement;
+		private RoverControllerPresets.IRoverDriveController _roverDriveControllerPreset = null!;
+		private RoverControllerPresets.IRoverManipulatorController _roverManipulatorControllerPreset = null!;
+		private bool _disposedValue;
+
 		public event EventHandler<Vector4>? OnAbsoluteVectorChanged;
 		public event Func<MqttClasses.RoverControl, Task>? OnRoverMovementVector;
 		public event Func<MqttClasses.ManipulatorControl, Task>? OnManipulatorMovement;
@@ -14,7 +23,6 @@ namespace RoverControlApp.MVVM.Model
 		public event Func<bool, Task>? OnPadConnectionChanged;
 		public event Func<MqttClasses.ControlMode, Task>? OnControlModeChanged;
 
-		private volatile MqttClasses.ControlMode _controlMode;
 		public MqttClasses.ControlMode ControlMode
 		{
 			get => _controlMode;
@@ -28,7 +36,6 @@ namespace RoverControlApp.MVVM.Model
 
 		public bool PadConnected => Input.GetConnectedJoypads().Count > 0;
 
-		private Vector4 _lastAbsoluteVector;
 		public Vector4 LastAbsoluteVector
 		{
 			get => _lastAbsoluteVector;
@@ -39,7 +46,6 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		private MqttClasses.RoverControl _roverMovement;
 		public MqttClasses.RoverControl RoverMovement
 		{
 			get => _roverMovement;
@@ -50,7 +56,6 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		private MqttClasses.ManipulatorControl _manipulatorMovement;
 		public MqttClasses.ManipulatorControl ManipulatorMovement
 		{
 			get => _manipulatorMovement;
@@ -61,7 +66,6 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		private MqttClasses.RoverContainer _containerMovement;
 		public MqttClasses.RoverContainer ContainerMovement
 		{
 			get => _containerMovement;
@@ -71,10 +75,6 @@ namespace RoverControlApp.MVVM.Model
 				OnContainerMovement?.Invoke(value);
 			}
 		}
-
-		private RoverControllerPresets.IRoverDriveController _roverDriveControllerPreset = null!;
-		private RoverControllerPresets.IRoverManipulatorController _roverManipulatorControllerPreset = null!;
-		private bool disposedValue;
 
 		public PressedKeys()
 		{
@@ -214,16 +214,15 @@ namespace RoverControlApp.MVVM.Model
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!disposedValue)
-			{
-				if (disposing)
-				{
-					LocalSettings.Singleton.CategoryChanged -= OnSettingsCategoryChanged;
-					LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
-				}
+			if (_disposedValue)	return;
 
-				disposedValue = true;
+			if (disposing)
+			{
+				LocalSettings.Singleton.CategoryChanged -= OnSettingsCategoryChanged;
+				LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
 			}
+
+			_disposedValue = true;
 		}
 
 		public void Dispose()

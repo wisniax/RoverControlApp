@@ -12,31 +12,35 @@ namespace RoverControlApp.MVVM.Model
 {
 	public class RtspStreamClient : IDisposable
 	{
-		public VideoCapture? Capture { get; private set; }
-		private Image? _latestImage;
-		private Mat? m;
+		private readonly CancellationTokenSource _cts;
 
+		private volatile Stopwatch _generalPurposeStopwatch;
+		private volatile bool _newFrameSaved;
+		private volatile CommunicationState _state = CommunicationState.Closed;
+
+		private Image? _latestImage;
+		private Mat? _matrix;
+		private Thread? _rtspThread;
+
+		public VideoCapture? Capture { get; private set; }
 
 		public Image LatestImage
 		{
 			get
 			{
-				NewFrameSaved = false;
+				_newFrameSaved = false;
 				return _latestImage;
 			}
 			private set
 			{
-				NewFrameSaved = true;
+				_newFrameSaved = true;
 				_latestImage = value;
 			}
 		}
 
-		private volatile Stopwatch _generalPurposeStopwatch;
 		public double ElapsedSecondsOnCurrentState => _generalPurposeStopwatch.Elapsed.TotalSeconds;
-
-		public volatile bool NewFrameSaved;
-
-		private Thread? _rtspThread;
+		
+		public bool NewFrameSaved => _newFrameSaved;
 
 		public CommunicationState State
 		{
@@ -47,10 +51,6 @@ namespace RoverControlApp.MVVM.Model
 				_state = value;
 			}
 		}
-
-		private volatile CommunicationState _state = CommunicationState.Closed;
-
-		private readonly CancellationTokenSource _cts;
 
 		public RtspStreamClient()
 		{
@@ -85,7 +85,7 @@ namespace RoverControlApp.MVVM.Model
 			Capture?.Release();
 			Capture?.Dispose();
 			Capture = null;
-			m?.Dispose();
+			_matrix?.Dispose();
 		}
 
 		private void CreateCapture()
@@ -98,7 +98,7 @@ namespace RoverControlApp.MVVM.Model
 					$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Login}"
 					+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
 				);
-			m = new Mat();
+			_matrix = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;
 			if (!task.Wait(TimeSpan.FromSeconds(15)) || Capture == null || !Capture.IsOpened())
@@ -173,12 +173,12 @@ namespace RoverControlApp.MVVM.Model
 
 		private bool TryGrabImage()
 		{
-			if (Capture == null || m == null) return false;
+			if (Capture == null || _matrix == null) return false;
 
 			try
 			{
 				if (!Capture.Grab()) return false;
-				if (!Capture.Retrieve(m)) return false;
+				if (!Capture.Retrieve(_matrix)) return false;
 			}
 			catch (Exception e)
 			{
@@ -187,26 +187,31 @@ namespace RoverControlApp.MVVM.Model
 			}
 
 
-			Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
+			Cv2.CvtColor(_matrix, _matrix, ColorConversionCodes.BGR2RGB);
 
-			if (_arr?.Length != m.Total() * m.Channels())
-				_arr = new byte[m.Total() * m.Channels()];
+			if (_arr?.Length != _matrix.Total() * _matrix.Channels())
+				_arr = new byte[_matrix.Total() * _matrix.Channels()];
 
 
 
-			Marshal.Copy(m.Data, _arr, 0, (int)m.Total() * m.Channels());
+			Marshal.Copy(_matrix.Data, _arr, 0, (int)_matrix.Total() * _matrix.Channels());
 
 			LockGrabbingFrames();
-			if (LatestImage?.GetWidth() != m.Width && LatestImage?.GetHeight() != m.Height)
-				LatestImage = Image.CreateFromData(m.Width, m.Height, false, Image.Format.Rgb8, _arr);
+			if (LatestImage?.GetWidth() != _matrix.Width && LatestImage?.GetHeight() != _matrix.Height)
+				LatestImage = Image.CreateFromData(_matrix.Width, _matrix.Height, false, Image.Format.Rgb8, _arr);
 			else
-				LatestImage.SetData(m.Width, m.Height, false, Image.Format.Rgb8, _arr);
-			NewFrameSaved = true;
+				LatestImage.SetData(_matrix.Width, _matrix.Height, false, Image.Format.Rgb8, _arr);
+			_newFrameSaved = true;
 			UnLockGrabbingFrames();
 
 			EventLogger.LogMessageDebug("RtspStreamClient", EventLogger.LogLevel.Verbose, $"Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
 
 			return true;
+		}
+
+		public void MarkFrameOld()
+		{
+			_newFrameSaved = false;
 		}
 	}
 }
