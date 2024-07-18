@@ -144,17 +144,17 @@ public partial class MqttNode : Node
 	{
 		if (ConnectionState == CommunicationState.Created)
 		{
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is already starting!");
+			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is already starting!");
 			return false;
 		}
 
 		if (ConnectionState != CommunicationState.Closed)
 		{
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is not fully closed!");
+			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is not fully closed!");
 			return false;
 		}
 
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, "Starting mqtt");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Starting mqtt");
 		ConnectionState = CommunicationState.Created;
 
 		_cts = new CancellationTokenSource();
@@ -169,24 +169,24 @@ public partial class MqttNode : Node
 		switch (ConnectionState)
 		{
 			case CommunicationState.Closed:
-				EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is stopped!");
+				EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is stopped!");
 				return false;
 			case CommunicationState.Closing:
-				EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is already stopping!");
+				EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is already stopping!");
 				return false;
 		}
 
-		EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, "Requesting thread stop");
+		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, "Requesting thread stop");
 		_cts!.Cancel();
 
 		if(awaitFullStop)
 		{
 			_mqttThread!.Join();
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
+			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
 			return true;
 		}
 
-		EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose,
+		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose,
 			_mqttThread!.Join(200) ? "Thread stop confirmed!" : "Thread stop not confirmed. Proceeding");
 
 		return true;
@@ -201,7 +201,7 @@ public partial class MqttNode : Node
 	{
 		if (string.IsNullOrEmpty(subtopic)) return;
 		var topic = TopicFull(subtopic);
-		EventLogger.LogMessage(_logSource,EventLogger.LogLevel.Verbose, $"Subscribing to topic: \"{topic}\"");
+		EventLogger.LogMessage(LogSource,EventLogger.LogLevel.Verbose, $"Subscribing to topic: \"{topic}\"");
 		await _managedMqttClient.SubscribeAsync(topic, qos);
 	}
 
@@ -214,7 +214,7 @@ public partial class MqttNode : Node
 	{
 		if (string.IsNullOrEmpty(subtopic)) return;
 		var topic = TopicFull(subtopic);
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, $"Unsubscribing from topic: \"{topic}\"");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, $"Unsubscribing from topic: \"{topic}\"");
 		await _managedMqttClient.UnsubscribeAsync(topic);
 
 		//_responses.Remove(subtopic); /* should i remove it? */
@@ -227,7 +227,7 @@ public partial class MqttNode : Node
 
 	private async Task MqSubscribeAllAsync()
 	{
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, $"Subscribing to ALL topics.");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, $"Subscribing to ALL topics.");
 
 		List<Task> subTasks = new();
 
@@ -243,19 +243,19 @@ public partial class MqttNode : Node
 
 	private void ThWork()
 	{
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, "Thread started");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread started");
 		ConnectionState = CommunicationState.Opening;
 		
 		//kind of worried about this one
 		ThClientConnect().Wait();
 		SpinWait.SpinUntil(() => _cts!.IsCancellationRequested);
 
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, "Thread stopping");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread stopping");
 		ConnectionState = CommunicationState.Closing;
 
 		//and this
 		ThClientDisconnect().Wait();
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, "Thread quit");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread quit");
 		ConnectionState = CommunicationState.Closed;
 	}
 
@@ -342,27 +342,27 @@ public partial class MqttNode : Node
 
 	private Task ThOnConnectedAsync(MqttClientConnectedEventArgs arg)
 	{
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Info, "Mqtt is now Connected!");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Info, "Mqtt is now Connected!");
 		ConnectionState = CommunicationState.Opened;
 		return Task.CompletedTask;
 	}
 
 	private Task ThOnDisconnectedAsync(MqttClientDisconnectedEventArgs arg)
 	{
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Info, "Mqtt is now Disconnected!");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Info, "Mqtt is now Disconnected!");
 		ConnectionState = CommunicationState.Faulted;
 		return Task.CompletedTask;
 	}
 
 	private Task ThOnSynchronizingSubscriptionsFailedAsync(ManagedProcessFailedEventArgs arg)
 	{
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Error, $"Synchronizing subscriptions failed with: {arg}");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Error, $"Synchronizing subscriptions failed with: {arg}");
 		return Task.CompletedTask;
 	}
 
 	private Task ThOnApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
 	{
-		EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, $"Message received on topic {arg.ApplicationMessage.Topic} with:\n   {arg.ApplicationMessage.ConvertPayloadToString()}");
+		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, $"Message received on topic {arg.ApplicationMessage.Topic} with:\n   {arg.ApplicationMessage.ConvertPayloadToString()}");
 
 		if (_responses == null) return Task.CompletedTask;
 
@@ -372,7 +372,7 @@ public partial class MqttNode : Node
 		if (_responses.ContainsKey(topic))
 			_responses[topic] = payload;
 		else if (!_responses.TryAdd(topic, payload))
-			EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Error, $"Adding {payload} on topic {topic} to dictionary failed");
+			EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Error, $"Adding {payload} on topic {topic} to dictionary failed");
 
 		CallDeferred(MethodName.EmitSignal, SignalName.MessageReceived, topic, new MqttNodeMessage(payload));
 		MessageReceivedAsync?.Invoke(topic, payload);
@@ -392,5 +392,5 @@ public partial class MqttNode : Node
 
 	private CommunicationState _connectionState = CommunicationState.Closed;
 
-	const string _logSource = "MqttNode";
+	const string LogSource = "MqttNode";
 }
