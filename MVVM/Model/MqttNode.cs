@@ -137,7 +137,7 @@ public partial class MqttNode : Node
 	}
 
 	/*
-	 * Methods for Mqtt managment
+	 * Methods for Mqtt control
 	 */
 
 	private bool MqStart()
