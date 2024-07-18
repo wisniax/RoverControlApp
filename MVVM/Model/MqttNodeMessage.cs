@@ -3,12 +3,7 @@ using MQTTnet;
 
 namespace RoverControlApp.MVVM.Model;
 
-public partial class MqttNodeMessage : RefCounted
+public partial class MqttNodeMessage(MqttApplicationMessage message) : RefCounted
 {
-	public MqttNodeMessage(MqttApplicationMessage message)
-	{
-		Message = message;
-	}
-
-	public MqttApplicationMessage Message { get; }
+	public MqttApplicationMessage Message { get; } = message;
 }
