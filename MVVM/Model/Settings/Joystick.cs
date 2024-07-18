@@ -12,16 +12,20 @@ public partial class Joystick : SettingBase, ICloneable
 
 	public Joystick()
 	{
-        _newFancyRoverController = false;
-        _deadzone = 0.15f;
-        _vibrateOnModeChange = true;
+		_newFancyRoverController = false;
+		_deadzone = 0.15f;
+		_vibrateOnModeChange = true;
+		_enabled = false;
+		_maxSpeed = .5f;
 	}
 
-	public Joystick(bool newFancyRoverController, float deadzone, bool vibrateOnModeChange)
+	public Joystick(bool newFancyRoverController, float deadzone, bool vibrateOnModeChange, bool enabled, float maxSpeed)
 	{
 		_newFancyRoverController = newFancyRoverController;
 		_deadzone = deadzone;
 		_vibrateOnModeChange = vibrateOnModeChange;
+		_enabled = enabled;
+		_maxSpeed = maxSpeed;
 	}
 
 	public object Clone()
@@ -30,7 +34,9 @@ public partial class Joystick : SettingBase, ICloneable
 		{
 			NewFancyRoverController = _newFancyRoverController,
 			Deadzone = _deadzone,
-			VibrateOnModeChange = _vibrateOnModeChange
+			VibrateOnModeChange = _vibrateOnModeChange,
+			Enabled = _enabled,
+			MaxSpeed = _maxSpeed
 		};
 	}
 
@@ -55,9 +61,25 @@ public partial class Joystick : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _vibrateOnModeChange, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+	public bool Enabled
+	{
+		get => _enabled;
+		set => EmitSignal_SettingChanged(ref _enabled, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.2;1;0.05;f;f", customName: "MaxSpeed (multiplier)")]
+	public float MaxSpeed
+	{
+		get => _maxSpeed;
+		set => EmitSignal_SettingChanged(ref _maxSpeed, value);
+	}
+
 	bool _newFancyRoverController;
 	float _deadzone;
 	bool _vibrateOnModeChange;
+	bool _enabled;
+	float _maxSpeed;
 }
 
 
