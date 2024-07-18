@@ -7,7 +7,7 @@ namespace RoverControlApp.Core.JSONConverters;
 
 public class MqttClientOptionsConverter : JsonConverter<MqttClientOptions>
 {
-	static readonly MqttClientOptions @default = new();
+	private static readonly MqttClientOptions Default = new();
 
 	public override MqttClientOptions Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
@@ -64,13 +64,13 @@ public class MqttClientOptionsConverter : JsonConverter<MqttClientOptions>
 
 		return new MqttClientOptions
 		(
-			brokerIp ?? @default.BrokerIp,
-			brokerPort ?? @default.BrokerPort,
-			pingInterval ?? @default.PingInterval,
-			topicMain ?? @default.TopicMain,
-			topicWill ?? @default.TopicWill,
-			willPayloadType ?? @default.WillPayloadType,
-			willPayloadSerializedJson ?? @default.WillPayloadSerializedJson
+			brokerIp ?? Default.BrokerIp,
+			brokerPort ?? Default.BrokerPort,
+			pingInterval ?? Default.PingInterval,
+			topicMain ?? Default.TopicMain,
+			topicWill ?? Default.TopicWill,
+			willPayloadType ?? Default.WillPayloadType,
+			willPayloadSerializedJson ?? Default.WillPayloadSerializedJson
 		);
 	}
 

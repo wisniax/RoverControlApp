@@ -7,7 +7,7 @@ namespace RoverControlApp.Core.JSONConverters;
 
 public class GeneralConverter : JsonConverter<General>
 {
-	static readonly General @default = new();
+	private static readonly General Default = new();
 
 	public override General Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
@@ -52,10 +52,10 @@ public class GeneralConverter : JsonConverter<General>
 
 		return new General
 		(
-			verboseDebug ?? @default.VerboseDebug,
-			missionControlPosition ?? @default.MissionControlPosition,
-			missionControlSize ?? @default.MissionControlSize,
-			backCaptureLength ?? @default.BackCaptureLength
+			verboseDebug ?? Default.VerboseDebug,
+			missionControlPosition ?? Default.MissionControlPosition,
+			missionControlSize ?? Default.MissionControlSize,
+			backCaptureLength ?? Default.BackCaptureLength
 		);
 	}
 

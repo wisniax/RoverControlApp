@@ -7,7 +7,7 @@ namespace RoverControlApp.Core.JSONConverters;
 
 public class CameraConverter : JsonConverter<Camera>
 {
-	static readonly Camera @default = new();
+	private static readonly Camera Default = new();
 
 	public override Camera Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
@@ -56,11 +56,11 @@ public class CameraConverter : JsonConverter<Camera>
 
 		return new Camera
 		(
-			connectionSettings ?? @default.ConnectionSettings,
-			inverseAxis ?? @default.InverseAxis,
-			enableRtspStream ?? @default.EnableRtspStream,
-			enablePtzControl ?? @default.EnablePtzControl,
-			ptzRequestFrequency ?? @default.PtzRequestFrequency
+			connectionSettings ?? Default.ConnectionSettings,
+			inverseAxis ?? Default.InverseAxis,
+			enableRtspStream ?? Default.EnableRtspStream,
+			enablePtzControl ?? Default.EnablePtzControl,
+			ptzRequestFrequency ?? Default.PtzRequestFrequency
 		);
 	}
 

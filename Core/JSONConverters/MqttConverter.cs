@@ -7,7 +7,7 @@ namespace RoverControlApp.Core.JSONConverters;
 
 public class MqttConverter : JsonConverter<Mqtt>
 {
-	static readonly Mqtt @default = new();
+	private static readonly Mqtt Default = new();
 
 	public override Mqtt Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
@@ -84,18 +84,18 @@ public class MqttConverter : JsonConverter<Mqtt>
 
 		return new Mqtt
 		(
-			clientSettings ?? @default.ClientSettings,
-			topicRoverControl ?? @default.TopicRoverControl,
-			topicManipulatorControl ?? @default.TopicManipulatorControl,
-			topicRoverFeedback ?? @default.TopicRoverFeedback,
-			topicRoverStatus ?? @default.TopicRoverStatus,
-			topicRoverContainer ?? @default.TopicRoverContainer,
-			topicMissionStatus ?? @default.TopicMissionStatus,
-			topicKmlSetPoint ?? @default.TopicKmlSetPoint,
-			topicWheelFeedback ?? @default.TopicWheelFeedback,
-			topicEStopStatus ?? @default.TopicEStopStatus,
-			topicZedImuData ?? @default.TopicZedImuData,
-			topicKmlListOfActiveObj ?? @default.TopicKmlListOfActiveObj
+			clientSettings ?? Default.ClientSettings,
+			topicRoverControl ?? Default.TopicRoverControl,
+			topicManipulatorControl ?? Default.TopicManipulatorControl,
+			topicRoverFeedback ?? Default.TopicRoverFeedback,
+			topicRoverStatus ?? Default.TopicRoverStatus,
+			topicRoverContainer ?? Default.TopicRoverContainer,
+			topicMissionStatus ?? Default.TopicMissionStatus,
+			topicKmlSetPoint ?? Default.TopicKmlSetPoint,
+			topicWheelFeedback ?? Default.TopicWheelFeedback,
+			topicEStopStatus ?? Default.TopicEStopStatus,
+			topicZedImuData ?? Default.TopicZedImuData,
+			topicKmlListOfActiveObj ?? Default.TopicKmlListOfActiveObj
 		);
 	}
 

@@ -7,7 +7,7 @@ namespace RoverControlApp.Core.JSONConverters;
 
 public class JoystickConverter : JsonConverter<Joystick>
 {
-	static readonly Joystick @default = new();
+	private static readonly Joystick Default = new();
 
 	public override Joystick Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
@@ -48,9 +48,9 @@ public class JoystickConverter : JsonConverter<Joystick>
 
 		return new Joystick
 		(
-			newFancyRoverController ?? @default.NewFancyRoverController,
-			deadzone ?? @default.Deadzone,
-			vibrateOnModeChange ?? @default.VibrateOnModeChange
+			newFancyRoverController ?? Default.NewFancyRoverController,
+			deadzone ?? Default.Deadzone,
+			vibrateOnModeChange ?? Default.VibrateOnModeChange
 		);
 	}
 
