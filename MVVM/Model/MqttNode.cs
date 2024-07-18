@@ -166,15 +166,14 @@ public partial class MqttNode : Node
 
 	private bool MqStop(bool awaitFullStop = false)
 	{
-		if(ConnectionState == CommunicationState.Closed)
+		switch (ConnectionState)
 		{
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is stopped!");
-			return false;
-		}
-		if (ConnectionState == CommunicationState.Closing)
-		{
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is already stopping!");
-			return false;
+			case CommunicationState.Closed:
+				EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is stopped!");
+				return false;
+			case CommunicationState.Closing:
+				EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is already stopping!");
+				return false;
 		}
 
 		EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, "Requesting thread stop");
@@ -187,10 +186,9 @@ public partial class MqttNode : Node
 			return true;
 		}
 
-		if (_mqttThread!.Join(200))
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
-		else
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, "Thread stop not confirmed. Proceeding");
+		EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose,
+			_mqttThread!.Join(200) ? "Thread stop confirmed!" : "Thread stop not confirmed. Proceeding");
+
 		return true;
 	}
 
