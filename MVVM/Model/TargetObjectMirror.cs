@@ -6,24 +6,21 @@ using System.Reflection;
 
 namespace RoverControlApp.MVVM.Model;
 
-public class TargetObjectMirror
+public class TargetObjectMirror(object parent, object original, string memberName, SettingsManagerVisibleAttribute attribute)
 {
-	public TargetObjectMirror(object parent, object original, string memberName, SettingsManagerVisibleAttribute attribute)
-	{
-		HoldingType = original.GetType();
+	private readonly object _parent = parent;
+	private readonly object _original = original;
+	private readonly string _memberName = memberName;
+	private readonly Dictionary<string, object> _changes = [];
+	private readonly bool _immutableSection = attribute.ImmutableSection;
 
-		immutableSection = attribute.ImmutableSection;
+	public Type HoldingType { get; init; } = original.GetType();
 
-		this.parent = parent;
-		this.original = original;
-		this.memberName = memberName;
-
-		changes = new();
-	}
+	private object Original => _parent is TargetObjectMirror parentObjectMirror ? parentObjectMirror.GetOriginalValue(_memberName)! : _original;
 
 	public IEnumerable<string> GetChangedProperties()
 	{
-		return changes.Keys.AsEnumerable();
+		return _changes.Keys.AsEnumerable();
 	}
 
 	public bool VadilateValue(string propertyName, object value)
@@ -51,10 +48,10 @@ public class TargetObjectMirror
 			return false;
 
 		//if new == original then it is reverted, not modified anymore.
-		if (changes.Remove(propertyName) && GetOriginalValue(propertyName)!.Equals(newValue))
+		if (_changes.Remove(propertyName) && GetOriginalValue(propertyName)!.Equals(newValue))
 			return true;
 
-		changes.Add(propertyName, newValue);
+		_changes.Add(propertyName, newValue);
 		return true;
 	}
 
@@ -65,7 +62,7 @@ public class TargetObjectMirror
 		if (propertyInfo is null)
 			return null;
 
-		changes.TryGetValue(propertyName, out object? value);
+		_changes.TryGetValue(propertyName, out object? value);
 		if (value is not null)
 			return value;
 		else
@@ -86,11 +83,11 @@ public class TargetObjectMirror
 	{
 		if (string.IsNullOrEmpty(propertyName))
 		{
-			changes.Clear();
+			_changes.Clear();
 			return;
 		}
 
-		changes.Remove(propertyName);
+		_changes.Remove(propertyName);
 	}
 
 	public void Apply()
@@ -98,17 +95,17 @@ public class TargetObjectMirror
 		if (!GetChangedProperties().Any())
 			return;
 
-		if (immutableSection)
+		if (_immutableSection)
 			Apply_UpdateWholeSection();
 		else
 			Apply_ChangesOnly();
 
-		changes.Clear();
+		_changes.Clear();
 	}
 
 	private void Apply_ChangesOnly()
 	{
-		foreach ((string propertyName, object newValue) in changes)
+		foreach ((string propertyName, object newValue) in _changes)
 		{
 			var propertyInfo = HoldingType.GetProperty(propertyName)!;
 			propertyInfo.SetValue(Original, newValue);
@@ -124,7 +121,7 @@ public class TargetObjectMirror
 			if (propertyInfo.Name.Equals("NativeInstance"))
 				continue;
 
-			if (changes.TryGetValue(propertyInfo.Name, out object? newValue))
+			if (_changes.TryGetValue(propertyInfo.Name, out object? newValue))
 				newObjectValues.Add(propertyInfo.Name, newValue);
 			else
 				newObjectValues.Add(propertyInfo.Name, propertyInfo.GetValue(Original)!);
@@ -133,26 +130,14 @@ public class TargetObjectMirror
 		//if u see this, KEEP PARAMETERS IN SAME ORDER AS OF MEMBER DECLARATION, INSIDE CTOR. IT'S NICE THAT WAY YA KNOW?
 		object theNewObject = Activator.CreateInstance(HoldingType, [..newObjectValues.Values])!;
 
-		if (parent is TargetObjectMirror parentObjectMirror)
+		if (_parent is TargetObjectMirror parentObjectMirror)
 		{
-			parentObjectMirror.SetCloneValue(memberName, theNewObject);
+			parentObjectMirror.SetCloneValue(_memberName, theNewObject);
 		}
 		else
 		{
-			var parentOriginalProperty = parent.GetType().GetProperty(memberName)!;
-			parentOriginalProperty.SetValue(parent, theNewObject);
+			var parentOriginalProperty = _parent.GetType().GetProperty(_memberName)!;
+			parentOriginalProperty.SetValue(_parent, theNewObject);
 		}
 	}
-
-	public Type HoldingType { get; init; }
-
-	private object Original => parent is TargetObjectMirror parentObjectMirror ? parentObjectMirror.GetOriginalValue(memberName)! : original;
-
-	private readonly object parent;
-	private readonly object original;
-	private readonly string memberName;
-
-	private readonly Dictionary<string, object> changes;
-
-	private readonly bool immutableSection;
 }
