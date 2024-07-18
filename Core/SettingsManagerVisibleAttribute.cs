@@ -196,8 +196,7 @@ namespace RoverControlApp.Core
 		public string CustomTooltip { get; private set; }
 
 		public string FormatData { get; private set; }
-		public bool ImmutableSection { get; init; }
-		public bool AllowEdit { get; init; }
-		public bool RestartNeeded { get; init; }
+		public bool ImmutableSection { get; }
+		public bool AllowEdit { get; }
 	}
 }
