@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.ServiceModel;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Godot;
-using GodotPlugins.Game;
+﻿using Godot;
 using Onvif.Core.Client;
 using Onvif.Core.Client.Common;
-using RoverControlApp.MVVM.ViewModel;
+using RoverControlApp.Core;
+using System;
+using System.Diagnostics;
+using System.ServiceModel;
+using System.Threading;
 using DateTime = System.DateTime;
 using Mutex = System.Threading.Mutex;
 
@@ -18,11 +13,6 @@ namespace RoverControlApp.MVVM.Model
 {
 	public class OnvifPtzCameraController : IDisposable
 	{
-		private string _ip;
-		private int _port;
-		private string _login;
-		private string _password;
-
 		private Camera? _camera = null;
 
 		private Vector4 _cameraMotion = Vector4.Zero;
@@ -39,7 +29,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 			private set
 			{
-				if (MainViewModel.Settings?.Settings?.VerboseDebug == true) MainViewModel.EventLogger?.LogMessage($"PTZ: CameraMotion update: {value}");
+				EventLogger.LogMessageDebug("OnvifPtzCameraController",EventLogger.LogLevel.Verbose, $"CameraMotion update: {value}");
 				_dataMutex.WaitOne();
 				_cameraMotion = value;
 				_dataMutex.ReleaseMutex();
@@ -53,7 +43,7 @@ namespace RoverControlApp.MVVM.Model
 			get => _state;
 			private set
 			{
-				MainViewModel.EventLogger?.LogMessage($"PTZ: CommunicationState update: {value}");
+				EventLogger.LogMessage("OnvifPtzCameraController", EventLogger.LogLevel.Info, $"CommunicationState update: {value}");
 				_state = value;
 			}
 		}
@@ -62,7 +52,7 @@ namespace RoverControlApp.MVVM.Model
 		public double ElapsedSecondsOnCurrentState => _generalPurposeStopwatch.Elapsed.TotalSeconds;
 
 		public TimeSpan MinSpanEveryCom =>
-			TimeSpan.FromSeconds(1 / MainViewModel.Settings.Settings.Camera.PtzRequestFrequency);
+			TimeSpan.FromSeconds(1 / LocalSettings.Singleton.Camera.PtzRequestFrequency);
 		public TimeSpan MaxSpanEveryCom => 1.5 * MinSpanEveryCom;
 
 
@@ -77,12 +67,8 @@ namespace RoverControlApp.MVVM.Model
 			CameraMotion = vector;
 		}
 
-		public OnvifPtzCameraController(string ip, int port, string login, string password)
+		public OnvifPtzCameraController()
 		{
-			_ip = ip;
-			_port = port;
-			_login = login;
-			_password = password;
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
 			_ptzThread = new Thread(ThreadWork) { IsBackground = true, Name = "PtzController_Thread", Priority = ThreadPriority.AboveNormal };
@@ -91,7 +77,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private void ThreadWork()
 		{
-			MainViewModel.EventLogger.LogMessage("PTZ: Thread started");
+			EventLogger.LogMessage("OnvifPtzCameraController", EventLogger.LogLevel.Verbose, "Thread started");
 			Vector4 motionLast = _cameraMotion = Vector4.Zero;
 
 			while (!_cts.IsCancellationRequested)
@@ -107,13 +93,18 @@ namespace RoverControlApp.MVVM.Model
 			if (_camera != null) EndCamera();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Created;
-			var acc = new Account(_ip + ':' + _port, _login, _password);
+			var acc = new Account
+			(
+				LocalSettings.Singleton.Camera.ConnectionSettings.Ip + ':' + LocalSettings.Singleton.Camera.ConnectionSettings.PtzPort,
+				LocalSettings.Singleton.Camera.ConnectionSettings.Login,
+				LocalSettings.Singleton.Camera.ConnectionSettings.Password
+			);
 			_camera = Camera.Create(acc, (e) => _ptzThreadError = e);
 
 			if (_ptzThreadError is not null)
 			{
-				MainViewModel.EventLogger.LogMessage($"PTZ: Connecting to camera failed after " +
-													 $"{(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s with error: {_ptzThreadError}");
+				EventLogger.LogMessage("OnvifPtzCameraController", EventLogger.LogLevel.Error, $"Connecting to camera failed after " 
+					+ $"{(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s with error: {_ptzThreadError}");
 				State = CommunicationState.Faulted;
 				return;
 			}
@@ -122,8 +113,7 @@ namespace RoverControlApp.MVVM.Model
 			//_camera?.Ptz.OpenAsync().Wait();
 			_camera?.Ptz.StopAsync(_camera.Profile.token, true, true).Wait();
 			State = CommunicationState.Opened;
-			MainViewModel.EventLogger.LogMessage($"PTZ: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
-
+			EventLogger.LogMessage("OnvifPtzCameraController", EventLogger.LogLevel.Info, $"PTZ: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 		}
 
 		private void EndCamera()
@@ -154,13 +144,13 @@ namespace RoverControlApp.MVVM.Model
 					}
 					catch (AggregateException e)
 					{
-						MainViewModel.EventLogger.LogMessage($"PTZ: Handled exception {e} caught");
+						EventLogger.LogMessage("OnvifPtzCameraController", EventLogger.LogLevel.Error, $"Handled exception {e} caught");
 						errCaught = true;
 					}
 
 					if (_generalPurposeStopwatch.Elapsed.TotalSeconds > 10 || errCaught)
 					{
-						MainViewModel.EventLogger.LogMessage($"PTZ: Camera connection lost ;( Sending a move request took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+						EventLogger.LogMessage("OnvifPtzCameraController", EventLogger.LogLevel.Error, $"Camera connection lost ;( Sending a move request took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 						State = CommunicationState.Faulted;
 						EndCamera();
 						return;
@@ -240,7 +230,7 @@ namespace RoverControlApp.MVVM.Model
 				return false;
 			}
 
-			speed = MainViewModel.Settings.Settings.Camera.InverseAxis ? new Vector4(-@new.X, -@new.Y, @new.Z, @new.W) : @new;
+			speed = LocalSettings.Singleton.Camera.InverseAxis ? new Vector4(-@new.X, -@new.Y, @new.Z, @new.W) : @new;
 
 			//Have to make sure none scalar is |x| <= 0.1f bc camera treats it as a MAX SPEED
 			if (Mathf.IsEqualApprox(speed.X, 0f, 0.1f)) speed.X = 0f;

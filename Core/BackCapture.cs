@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Godot;
+using RoverControlApp.MVVM.Model;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using Godot;
-using System.Threading.Tasks;
-using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.Core
 {
@@ -16,7 +14,7 @@ namespace RoverControlApp.Core
 		/// <summary>
 		/// How long frame remains in memory [ms]. 
 		/// </summary>
-		public long HistoryLength { get; set; } = 15000;
+		public long HistoryLength { get => LocalSettings.Singleton.General.BackCaptureLength; }
 		/// <summary>
 		/// Remove all frames from memory on save?
 		/// </summary>
@@ -44,7 +42,7 @@ namespace RoverControlApp.Core
 		{
 			if (_history.Count == 0)
 			{
-				MainViewModel.EventLogger?.LogMessage($"BackCapture ERROR: Save failed, no data in history!");
+				EventLogger.LogMessage("BackCapture", EventLogger.LogLevel.Error, "Save failed, no data in history!");
 				return false;
 			}
 
@@ -55,7 +53,7 @@ namespace RoverControlApp.Core
 				var err = DirAccess.MakeDirAbsolute(path);
 				if (err != Error.Ok)
 				{
-					MainViewModel.EventLogger?.LogMessage($"BackCapture ERROR: Creating folder \"{path}\" failed. ({err.ToString()})");
+					EventLogger.LogMessage("BackCapture", EventLogger.LogLevel.Error, $"Creating folder \"{path}\" failed. ({err})");
 					return false;
 				}
 			}
@@ -67,7 +65,7 @@ namespace RoverControlApp.Core
 				var err = DirAccess.MakeDirAbsolute(path);
 				if (err != Error.Ok)
 				{
-					MainViewModel.EventLogger?.LogMessage($"BackCapture ERROR: Creating folder \"{path}\" failed. ({err.ToString()})");
+					EventLogger.LogMessage("BackCapture", EventLogger.LogLevel.Error, $"Creating folder \"{path}\" failed. ({err})");
 					return false;
 				}
 			}
@@ -77,7 +75,7 @@ namespace RoverControlApp.Core
 				var singleFrame = _history.Dequeue();
 				var err = singleFrame.Frame.SaveJpg($"{path}/{singleFrame.Timestamp}.jpg");
 				if (err != Error.Ok)
-					MainViewModel.EventLogger?.LogMessage($"BackCapture ERROR: Saving frame \"{singleFrame.Timestamp}\" failed. ({err.ToString()})");
+					EventLogger.LogMessage("BackCapture", EventLogger.LogLevel.Error, $"Saving frame \"{singleFrame.Timestamp}\" failed. ({err})");
 			}
 
 			return true;

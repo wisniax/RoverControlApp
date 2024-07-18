@@ -1,22 +1,18 @@
-﻿using System;
+﻿using RoverControlApp.Core;
+using System;
 using System.ServiceModel;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using GodotPlugins.Game;
-using RoverControlApp.Core;
-using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class MissionStatus
+    public class MissionStatus
 	{
 		public event Func<MqttClasses.RoverMissionStatus?, Task>? OnRoverMissionStatusChanged;
 
 		private CancellationTokenSource _cts;
 		private Thread? _retriveMisionStatusThread;
-		private MqttClient? _mqttClient => MainViewModel.MqttClient;
-		private LocalSettings.Mqtt? _mqttSettings => MainViewModel.Settings?.Settings?.Mqtt;
 
 		private MqttClasses.RoverMissionStatus? _status;
 		public MqttClasses.RoverMissionStatus? Status
@@ -25,7 +21,7 @@ namespace RoverControlApp.MVVM.Model
 			private set
 			{
 				_status = value;
-				MainViewModel.EventLogger?.LogMessage($"Mission status set to: {value?.MissionStatus} at " +
+				EventLogger.LogMessage("MissionStatus", EventLogger.LogLevel.Info, $"Mission status set to: {value?.MissionStatus} at " +
 													  $"{DateTimeOffset.FromUnixTimeMilliseconds(value?.Timestamp ?? 0)}");
 				OnRoverMissionStatusChanged?.Invoke(value);
 			}
@@ -42,12 +38,12 @@ namespace RoverControlApp.MVVM.Model
 
 		private void ThreadWork()
 		{
-			MainViewModel.EventLogger?.LogMessage("MissionStatus: Retrieving status in progress");
+			EventLogger.LogMessageDebug("MissionStatus", EventLogger.LogLevel.Verbose, "Retrieving status in progress");
 			string? serialized = "";
-			SpinWait.SpinUntil(() => _mqttClient?.ConnectionState == CommunicationState.Opened);
+			SpinWait.SpinUntil(() => MqttNode.Singleton.ConnectionState == CommunicationState.Opened);
 			SpinWait.SpinUntil(() =>
 			{
-				serialized = _mqttClient?.GetReceivedMessageOnTopicAsString(_mqttSettings?.TopicMissionStatus);
+				serialized = MqttNode.Singleton.GetReceivedMessageOnTopicAsString(LocalSettings.Singleton.Mqtt.TopicMissionStatus);
 				return serialized != null;
 			}, 5000);
 
@@ -59,14 +55,14 @@ namespace RoverControlApp.MVVM.Model
 			}
 			catch (Exception e)
 			{
-				MainViewModel.EventLogger?.LogMessage($"MissionStatus: Error caught {e}");
+				EventLogger.LogMessage("MissionStatus", EventLogger.LogLevel.Error, $"Error caught {e}");
 				Status = new MqttClasses.RoverMissionStatus();
 				return;
 			}
 
 			if (status == null)
 			{
-				MainViewModel.EventLogger?.LogMessage($"MissionStatus: Null reference stopping mission.");
+				EventLogger.LogMessage("MissionStatus", EventLogger.LogLevel.Error, $"Null reference stopping mission.");
 				Status = new MqttClasses.RoverMissionStatus();
 				return;
 			}
@@ -74,13 +70,13 @@ namespace RoverControlApp.MVVM.Model
 			var hoursPassed = (DateTime.Now - DateTimeOffset.FromUnixTimeMilliseconds(status.Timestamp).DateTime).TotalHours;
 			if (hoursPassed > 8)
 			{
-				MainViewModel.EventLogger?.LogMessage("MissionStatus: Retrieving status succeeded but was older than 8 hours thus mission was stopped.");
+				EventLogger.LogMessage("MissionStatus", EventLogger.LogLevel.Warning, $"Retrieving status succeeded but was older than 8 hours thus mission was stopped.");
 				Status = new MqttClasses.RoverMissionStatus();
 				return;
 			}
 
 			Status = status;
-			MainViewModel.EventLogger?.LogMessage("MissionStatus: Retrieving status succeeded");
+			EventLogger.LogMessage("MissionStatus", EventLogger.LogLevel.Info, $"MissionStatus: Retrieving status succeeded");
 		}
 
 		public void StopMission()

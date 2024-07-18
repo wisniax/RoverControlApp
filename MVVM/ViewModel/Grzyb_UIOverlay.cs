@@ -1,12 +1,8 @@
 using Godot;
-using MQTTnet;
-using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
-using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
@@ -22,20 +18,26 @@ public partial class Grzyb_UIOverlay : UIOverlay
 	{
 		base._Ready();
 		ControlMode = 1;
+
+		var lastMessage = MqttNode.Singleton.GetReceivedMessageOnTopic(LocalSettings.Singleton.Mqtt.TopicEStopStatus);
+
+		if (lastMessage is not null)
+			MqttSubscriber(LocalSettings.Singleton.Mqtt.TopicEStopStatus, new MqttNodeMessage(lastMessage));
+
+		MqttNode.Singleton.Connect(MqttNode.SignalName.MessageReceived, Callable.From<string, MqttNodeMessage>(MqttSubscriber));
 	}
 
-	public Task MqttSubscriber(string subTopic, MqttApplicationMessage? msg)
+	public void MqttSubscriber(string subTopic, MqttNodeMessage msg)
 	{
-		if (MainViewModel.Settings?.Settings?.Mqtt.TopicEStopStatus is null || subTopic != MainViewModel.Settings?.Settings?.Mqtt.TopicEStopStatus || msg == null || msg.PayloadSegment.Count == 0)
-			return System.Threading.Tasks.Task.CompletedTask;
+		if (LocalSettings.Singleton.Mqtt.TopicEStopStatus is null || subTopic != LocalSettings.Singleton.Mqtt.TopicEStopStatus || msg == null || msg.Message.PayloadSegment.Count == 0)
+			return;
 
 		//skip first 4bytes dunno what it is
-		string payloadStingified = Encoding.UTF8.GetString(msg.PayloadSegment.Array, 4, msg.PayloadSegment.Count - 4);
+		string payloadStingified = Encoding.UTF8.GetString(msg.Message.PayloadSegment.Array, 4, msg.Message.PayloadSegment.Count - 4);
 
 		var doc = JsonDocument.Parse(payloadStingified);
 		doc.RootElement.GetProperty("mushroom");
 
 		ControlMode = doc.RootElement.GetProperty("mushroom").GetInt32();
-		return Task.CompletedTask;
 	}
 }

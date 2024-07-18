@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Godot;
+using System;
 using System.Collections.Generic;
 using System.ServiceModel;
-using Godot;
-using MQTTnet.Server;
 
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
 // ReSharper disable UnusedMember.Global
@@ -114,8 +113,8 @@ namespace RoverControlApp.Core
 		}
 		public class ActiveKmlObjects
 		{
-			public List<string> area { get; set; }
-			public List<string> poi { get; set; }
+			public List<string> area { get; set; } = [];
+			public List<string> poi { get; set; } = [];
 			public long? Timestamp { get; set; }
 		}
 		public class AngularVelocity

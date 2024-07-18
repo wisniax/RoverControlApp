@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://em10imnbie42"]
+[gd_scene load_steps=6 format=3 uid="uid://em10imnbie42"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/SettingsManager.cs" id="1_pihm0"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SettingsManagerTree.cs" id="2_mu20m"]
@@ -6,7 +6,15 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sy7lu"]
 bg_color = Color(0, 0.45098, 0.545098, 1)
 
-[node name="SettingsManager" type="Panel"]
+[sub_resource type="InputEventKey" id="InputEventKey_1iepe"]
+device = -1
+ctrl_pressed = true
+keycode = 83
+
+[sub_resource type="Shortcut" id="Shortcut_vgxpl"]
+events = [SubResource("InputEventKey_1iepe")]
+
+[node name="SettingsManager" type="Panel" node_paths=PackedStringArray("smTree", "statusBar")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -14,8 +22,8 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_sy7lu")
 script = ExtResource("1_pihm0")
-SMTreeNodePath = NodePath("SettingsManagerTree")
-StatusBarNodePath = NodePath("StatusBar/StatusBarLabel")
+smTree = NodePath("SettingsManagerTree")
+statusBar = NodePath("StatusBar/StatusBarLabel")
 
 [node name="SettingsManagerTree" type="Tree" parent="."]
 layout_mode = 1
@@ -25,7 +33,9 @@ anchor_bottom = 1.0
 offset_bottom = -77.0
 grow_horizontal = 2
 grow_vertical = 2
-columns = 2
+columns = 3
+allow_rmb_select = true
+hide_root = true
 script = ExtResource("2_mu20m")
 
 [node name="StatusBar" type="HBoxContainer" parent="."]
@@ -51,23 +61,49 @@ bbcode_enabled = true
 scroll_active = false
 shortcut_keys_enabled = false
 
-[node name="Loaders" type="VBoxContainer" parent="StatusBar"]
+[node name="Reverters" type="VBoxContainer" parent="StatusBar"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 
-[node name="LoadSettings" type="Button" parent="StatusBar/Loaders"]
+[node name="RevertSettings" type="Button" parent="StatusBar/Reverters"]
 layout_mode = 2
-text = "RESET"
+tooltip_text = "Reverts current changes to settings (marked with yellow border)."
+focus_mode = 0
+text = "REVERT"
 
-[node name="ForceDefaultSettings" type="Button" parent="StatusBar/Loaders"]
+[node name="ForceDefaultSettings" type="Button" parent="StatusBar/Reverters"]
 layout_mode = 2
+tooltip_text = "Reverts settings to build-in defaults. Settings are NOT automaticly saved to file. Changes will be lost after closing application."
+focus_mode = 0
 text = "DEFAULTS"
 
-[node name="SaveSettings" type="Button" parent="StatusBar"]
-custom_minimum_size = Vector2(120, 0)
+[node name="LoadSettings" type="Button" parent="StatusBar"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-text = "SAVE AND
-RESTART APP"
+tooltip_text = "Load settings from file. Simple as that."
+focus_mode = 0
+text = "LOAD
+FROM FILE"
 
-[connection signal="pressed" from="StatusBar/Loaders/LoadSettings" to="." method="OnLoadSettingsPressed"]
-[connection signal="pressed" from="StatusBar/Loaders/ForceDefaultSettings" to="." method="OnForceDefaultSettingsPressed"]
+[node name="ApplySettings" type="Button" parent="StatusBar"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+tooltip_text = "Applies current changes to settings without writing them to settings file. Changes will be lost after closing application."
+focus_mode = 0
+text = "APPLY
+"
+
+[node name="SaveSettings" type="Button" parent="StatusBar"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+tooltip_text = "Applies current changes to settings and writes them to settings file."
+focus_mode = 0
+shortcut = SubResource("Shortcut_vgxpl")
+text = "SAVE
+TO FILE"
+
+[connection signal="pressed" from="StatusBar/Reverters/RevertSettings" to="." method="OnRevertSettingsPressed"]
+[connection signal="pressed" from="StatusBar/Reverters/ForceDefaultSettings" to="." method="OnForceDefaultSettingsPressed"]
+[connection signal="pressed" from="StatusBar/LoadSettings" to="." method="OnLoadSettingsPressed"]
+[connection signal="pressed" from="StatusBar/ApplySettings" to="." method="OnApplySettingsPressed"]
 [connection signal="pressed" from="StatusBar/SaveSettings" to="." method="OnSaveSettingsPressed"]

@@ -1,36 +1,34 @@
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.ServiceModel;
-using System.Text;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
+using RoverControlApp.MVVM.Model.Settings;
+using System;
+using System.Globalization;
+using System.ServiceModel;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.ViewModel
 {
-	public partial class MainViewModel : Control
+    public partial class MainViewModel : Control
 	{
-		public static MainViewModel? MainViewModelInstance { get; private set; } = null;
-		public static EventLogger? EventLogger { get; private set; }
-		public static LocalSettings? Settings { get; private set; }
-		public static PressedKeys? PressedKeys { get; private set; }
-		public static RoverCommunication? RoverCommunication { get; private set; }
-		public static MissionStatus? MissionStatus { get; private set; }
-		public static MqttClient? MqttClient { get; private set; }
-		public static MissionSetPoint? MissionSetPoint { get; private set; }
+		public PressedKeys PressedKeys { get; private set; }
+		public RoverCommunication RoverCommunication { get; private set; }
+		public MissionStatus MissionStatus { get; private set; }
+		public MissionSetPoint MissionSetPoint { get; private set; }
+
+		private WeakReference<RtspStreamClient>? _rtspClientWeak;
+		private WeakReference<OnvifPtzCameraController>? _ptzClientWeak;
 
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
-		private JoyVibrato? _joyVibrato;
+		private JoyVibrato _joyVibrato = new();
 		private BackCapture _backCapture = new();
 
-		private TextureRect? _imTextureRect;
-		private ImageTexture? _imTexture;
+		private ImageTexture? imTexture;
 
+		[Export]
+		private TextureRect imTextureRect = null!;
 		[Export]
 		private RoverMode_UIOverlay RoverModeUIDis = null!;
 		[Export]
@@ -55,111 +53,59 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ZedMonitor ZedMonitor = null!;
 		[Export]
 		private Label SafeModeIndicator = null!;
-
-		private void StartUp()
+		public MainViewModel()
 		{
-			EventLogger = new EventLogger();
-			Settings = new LocalSettings();
-			Settings.SaveSettings();
-			MqttClient = new MqttClient(Settings.Settings!.Mqtt);
 			PressedKeys = new PressedKeys();
 			MissionStatus = new MissionStatus();
-			RoverCommunication = new RoverCommunication(Settings.Settings!.Mqtt);
+			RoverCommunication = new RoverCommunication(PressedKeys, MissionStatus);
 			MissionSetPoint = new MissionSetPoint();
+		}
 
-			if (Settings.Settings.JoyVibrateOnModeChange)
-			{
-				_joyVibrato = new();
-			}
+		public override void _EnterTree()
+		{
+			SettingsManagerNode.Target = LocalSettings.Singleton;
 
-			if (Settings.Settings.Camera.EnablePtzControl)
-				_ptzClient = new OnvifPtzCameraController(
-					Settings.Settings.Camera.Ip,
-					Settings.Settings.Camera.PtzPort,
-					Settings.Settings.Camera.Login,
-					Settings.Settings.Camera.Password);
-
-			if (Settings.Settings.Camera.EnableRtspStream)
-				_rtspClient = new RtspStreamClient(
-								Settings.Settings.Camera.Login,
-								Settings.Settings.Camera.Password,
-								Settings.Settings.Camera.RtspStreamPath,
-								Settings.Settings.Camera.Ip,
-								"rtsp",
-								Settings.Settings.Camera.RtspPort);
-
-			_imTextureRect = GetNode<TextureRect>("CameraView");
-
-			if (_ptzClient != null) PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
-			if (_joyVibrato is not null) PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
-
-			SettingsManagerNode.Target = Settings;
-			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode!.MissionStatusUpdatedSubscriber;
-			MissionControlNode.LoadSizeAndPos();
-			MissionControlNode.SMissionControlVisualUpdate();
-
-			MqttClient.OnMessageReceivedAsync += VelMonitor.MqttSubscriber;
-			MqttClient.OnMessageReceivedAsync += ZedMonitor.OnGyroscopeChanged;
-
-			//UIDis
-			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
-			GrzybUIDis.MqttSubscriber(Settings.Settings.Mqtt.TopicEStopStatus, MqttClient.GetReceivedMessageOnTopic(Settings.Settings.Mqtt.TopicEStopStatus));
-			MqttClient.OnMessageReceivedAsync += GrzybUIDis.MqttSubscriber;
+			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
+			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
-			//state new mode
-			_joyVibrato?.ControlModeChangedSubscriber(PressedKeys.ControlMode);
-
-			_backCapture.HistoryLength = Settings.Settings.BackCaptureLength;
-
-			
+			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
 		}
 
 		// Called when the node enters the scene tree for the first time.
 		public override void _Ready()
 		{
-			if (MainViewModelInstance is not null)
-				throw new Exception("MainViewModel must have single instance!!!");
-			MainViewModelInstance = this;
+			MissionControlNode.LoadSizeAndPos();
+			MissionControlNode.SMissionControlVisualUpdate();
 
-			Thread.CurrentThread.Name = "MainUI_Thread";
-			StartUp();
+			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
+
+			ManagePtzStatus();
+			ManageRtspStatus();
+
+			LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
+			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		}
 
-		private void VirtualRestart()
+		public override void _ExitTree()
 		{
-			//UIDis
-			MqttClient.OnMessageReceivedAsync -= GrzybUIDis.MqttSubscriber;
+			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
+
+			PressedKeys.OnControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
-			MqttClient!.OnMessageReceivedAsync -= VelMonitor.MqttSubscriber;
-			MqttClient!.OnMessageReceivedAsync -= ZedMonitor.OnGyroscopeChanged;
+			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 			SafeModeIndicator.Visible = false;
 
-			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
-			if (_ptzClient != null)
-			{
-				if (PressedKeys != null) PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
-				_ptzClient?.Dispose();
-			}
-			PressedKeys.OnControlModeChanged -= RoverModeUIDis!.ControlModeChangedSubscriber;
-			_ptzClient = null;
-			_rtspClient?.Dispose();
-			_rtspClient = null;
-			if (PressedKeys is not null && _joyVibrato is not null)
-				PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
-			_joyVibrato?.Dispose();
-			_joyVibrato = null;
-			MissionStatus!.OnRoverMissionStatusChanged -= MissionControlNode!.MissionStatusUpdatedSubscriber;
-			RoverCommunication?.Dispose();
-			MqttClient?.Dispose();
-			StartUp();
+			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
+			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		}
 
 		protected override void Dispose(bool disposing)
 		{
-			RoverCommunication?.Dispose();
-			MqttClient?.Dispose();
+			PressedKeys.Dispose();
+			RoverCommunication.Dispose();
 			_rtspClient?.Dispose();
 			_ptzClient?.Dispose();
 			base.Dispose(disposing);
@@ -173,15 +119,11 @@ namespace RoverControlApp.MVVM.ViewModel
 			if (@event.IsActionPressed("app_backcapture_save"))
 			{
 				if (_backCapture.SaveHistory())
-					EventLogger?.LogMessage($"BackCapture INFO: Saved capture!");
+					EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Info, "Saved capture!");
 				else
-					EventLogger?.LogMessage($"BackCapture ERROR: Save failed!");
+					EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Error, "Save failed!");
 			}
 		}
-
-		
-
-		
 
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
@@ -191,18 +133,79 @@ namespace RoverControlApp.MVVM.ViewModel
 				_backCapture.CleanUpHistory();
 
 				_rtspClient.LockGrabbingFrames();
-				if (_imTexture == null) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
-				else _imTexture.Update(_rtspClient.LatestImage);
+				if (imTexture == null) imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
+				else imTexture.Update(_rtspClient.LatestImage);
 
 				_backCapture.FrameFeed(_rtspClient.LatestImage);
 
 				_rtspClient.UnLockGrabbingFrames();
-				_imTextureRect!.Texture = _imTexture;
+				imTextureRect.Texture = imTexture;
 				_rtspClient.NewFrameSaved = false;
 			}
 			UpdateLabel();
+		}
 
-			GrzybUIDis.MqttSubscriber("", null);
+		/*
+		 * Settings event handlers
+		 */
+
+		void OnSettingsCategoryChanged(StringName property)
+		{
+			if (property != nameof(LocalSettings.Camera)) return;
+
+			ManagePtzStatus();
+			ManageRtspStatus();
+		}
+
+		void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
+		{
+			if (category != nameof(LocalSettings.Camera)) return;
+
+			switch (name)
+			{
+				case nameof(LocalSettings.Camera.EnablePtzControl):
+					ManagePtzStatus();
+					break;
+				case nameof(LocalSettings.Camera.EnableRtspStream):
+					ManageRtspStatus();
+					break;
+			}
+		}
+
+		/*
+		 * settings handlers end
+		 */
+
+		private void ManageRtspStatus()
+		{
+			switch (LocalSettings.Singleton.Camera.EnableRtspStream)
+			{
+				case true when _rtspClient is null:
+					_rtspClient = new();
+					_rtspClientWeak = new(_rtspClient);
+					break;
+				case false when _rtspClient is not null:
+					_rtspClient.Dispose();
+					_rtspClient = null;
+					break;
+			}
+		}
+
+		private void ManagePtzStatus()
+		{
+			switch (LocalSettings.Singleton.Camera.EnablePtzControl)
+			{
+				case true when _ptzClient is null:
+					_ptzClient = new OnvifPtzCameraController();
+					_ptzClientWeak = new(_ptzClient);
+					PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
+					break;
+				case false when _ptzClient is not null:
+					PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
+					_ptzClient.Dispose();
+					_ptzClient = null;
+					break;
+			}
 		}
 
 		private Color GetColorForCommunicationState(CommunicationState? state)
@@ -229,20 +232,26 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			FancyDebugViewRLab.Clear();
 
+			RtspStreamClient? rtspClient = null;
+			OnvifPtzCameraController? ptzClient = null;
+
+			_rtspClientWeak?.TryGetTarget(out rtspClient);
+			_ptzClientWeak?.TryGetTarget(out ptzClient);
+
 			Color mqttStatusColor = GetColorForCommunicationState(RoverCommunication?.RoverStatus?.CommunicationState);
 
-			Color rtspStatusColor = GetColorForCommunicationState(_rtspClient?.State);
+			Color rtspStatusColor = GetColorForCommunicationState(rtspClient?.State);
 
-			Color ptzStatusColor = GetColorForCommunicationState(_ptzClient?.State);
+			Color ptzStatusColor = GetColorForCommunicationState(ptzClient?.State);
 
 			Color rtspAgeColor;
-			if (_rtspClient?.ElapsedSecondsOnCurrentState < 1.0f)
+			if (rtspClient?.ElapsedSecondsOnCurrentState < 1.0f)
 				rtspAgeColor = Colors.LightGreen;
 			else
 				rtspAgeColor = Colors.Orange;
 
-			string? rtspAge = _rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
-			string? ptzAge = _ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			string? rtspAge = rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			string? ptzAge = ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
 			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode},\t" +
 						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication?.RoverStatus?.CommunicationState}[/color],\t" +
@@ -260,18 +269,18 @@ namespace RoverControlApp.MVVM.ViewModel
 					break;
 			}
 
-			if (_rtspClient?.State == CommunicationState.Opened)
+			if (rtspClient?.State == CommunicationState.Opened)
 				FancyDebugViewRLab.AppendText($"RTSP: Frame is [color={rtspAgeColor.ToHtml(false)}]{rtspAge}s[/color] old\n");
 			else
-				FancyDebugViewRLab.AppendText($"RTSP: [color={rtspStatusColor.ToHtml(false)}]{_rtspClient?.State ?? CommunicationState.Closed}[/color], Time: {rtspAge ?? "N/A "}s\n");
+				FancyDebugViewRLab.AppendText($"RTSP: [color={rtspStatusColor.ToHtml(false)}]{rtspClient?.State ?? CommunicationState.Closed}[/color], Time: {rtspAge ?? "N/A "}s\n");
 
-			if (_ptzClient?.State == CommunicationState.Opened)
+			if (ptzClient?.State == CommunicationState.Opened)
 			{
 				FancyDebugViewRLab.AppendText($"PTZ: Since last move request: {ptzAge}s\n");
-				FancyDebugViewRLab.AppendText($"PTZ: Move vector: {_ptzClient.CameraMotion}\n");
+				FancyDebugViewRLab.AppendText($"PTZ: Move vector: {ptzClient.CameraMotion}\n");
 			}
 			else
-				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{_ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
+				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
 		}
 
 		public async Task<bool> CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
@@ -287,7 +296,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			if (img.IsEmpty())
 			{
-				EventLogger?.LogMessage($"CaptureCameraImage ERROR: No image to capture!");
+				EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Error, $"No image to capture!");
 				return false;
 			}
 
@@ -298,7 +307,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				saveAsJpg = false;
 			else
 			{
-				EventLogger?.LogMessage($"CaptureCameraImage ERROR: \"{fileExtension}\" is not valid extension! (png or jpg)");
+				EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Error, $"\"{fileExtension}\" is not valid extension! (png or jpg)");
 				return false;
 			}
 
@@ -307,11 +316,11 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			if (!DirAccess.DirExistsAbsolute(pathToFile))
 			{
-				EventLogger?.LogMessage($"CaptureCameraImage INFO: Subfolder \"{pathToFile}\" not exists yet, creating.");
+				EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Info, $"Subfolder \"{pathToFile}\" not exists yet, creating.");
 				var err = DirAccess.MakeDirAbsolute(pathToFile);
 				if (err != Error.Ok)
 				{
-					EventLogger?.LogMessage($"CaptureCameraImage ERROR: Creating subfolder \"{pathToFile}\" failed. ({err.ToString()})");
+					EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Error, $"Creating subfolder \"{pathToFile}\" failed. ({err})");
 					return false;
 				}
 			}
@@ -319,7 +328,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			pathToFile += $"/{fileName}.{fileExtension}";
 
 			if (FileAccess.FileExists(pathToFile))
-				EventLogger?.LogMessage($"CaptureCameraImage WARNING: \"{pathToFile}\" already exists and will be overwrited!");
+				EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Warning, $"\"{pathToFile}\" already exists and will be overwrited!");
 
 			Error imgSaveErr;
 			if (saveAsJpg)
@@ -329,7 +338,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			if (imgSaveErr != Error.Ok)
 			{
-				EventLogger?.LogMessage($"CaptureCameraImage ERROR: Creating subfolder \"{pathToFile}\" failed. ({imgSaveErr.ToString()})");
+				EventLogger.LogMessage("MainViewModel/CaptureCameraImage", EventLogger.LogLevel.Error, $"Creating subfolder \"{pathToFile}\" failed. ({imgSaveErr.ToString()})");
 				return false;
 			}
 
@@ -340,9 +349,9 @@ namespace RoverControlApp.MVVM.ViewModel
 		private void OnBackCapture()
 		{
 			if (_backCapture.SaveHistory())
-				EventLogger?.LogMessage($"BackCapture INFO: Saved capture!");
+				EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Info, "Saved capture!");
 			else
-				EventLogger?.LogMessage($"BackCapture ERROR: Save failed!");
+				EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Error, "Save capture failed!");
 		}
 
 		private void OnRTSPCapture()

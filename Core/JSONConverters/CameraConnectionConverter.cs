@@ -1,0 +1,83 @@
+﻿using RoverControlApp.MVVM.Model.Settings;
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace RoverControlApp.Core.JSONConverters;
+
+public class CameraConnectionConverter : JsonConverter<CameraConnection>
+{
+	static readonly CameraConnection @default = new();
+
+	public override CameraConnection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+	{
+		if (reader.TokenType != JsonTokenType.StartObject)
+			throw new JsonException("Expected start of an object.");
+
+		string? ip = null;
+		string? login = null;
+		string? password = null;
+		string? rtspStreamPath = null;
+		int? rtspPort = null;
+		int? ptzPort = null;
+
+		while (reader.Read())
+		{
+			if (reader.TokenType == JsonTokenType.EndObject)
+				break;
+
+			if (reader.TokenType != JsonTokenType.PropertyName)
+				throw new JsonException("Expected property name.");
+
+			string propertyName = reader.GetString()!;
+			reader.Read();
+
+			switch (propertyName)
+			{
+				case nameof(CameraConnection.Ip):
+					ip = reader.GetString();
+					break;
+				case nameof(CameraConnection.Login):
+					login = reader.GetString();
+					break;
+				case nameof(CameraConnection.Password):
+					password = reader.GetString();
+					break;
+				case nameof(CameraConnection.RtspStreamPath):
+					rtspStreamPath = reader.GetString();
+					break;
+				case nameof(CameraConnection.RtspPort):
+					rtspPort = reader.GetInt32();
+					break;
+				case nameof(CameraConnection.PtzPort):
+					ptzPort = reader.GetInt32();
+					break;
+				default:
+					reader.Skip();
+					break;
+			}
+		}
+
+		return new CameraConnection
+		(
+			ip ?? @default.Ip,
+			login ?? @default.Login,
+			password ?? @default.Password,
+			rtspStreamPath ?? @default.RtspStreamPath,
+			rtspPort ?? @default.RtspPort, 
+			ptzPort ?? @default.PtzPort
+		);
+	}
+
+	public override void Write(Utf8JsonWriter writer, CameraConnection value, JsonSerializerOptions options)
+	{
+		writer.WriteStartObject();
+		writer.WriteString(nameof(CameraConnection.Ip), value.Ip);
+		writer.WriteString(nameof(CameraConnection.Login), value.Login);
+		writer.WriteString(nameof(CameraConnection.Password), value.Password);
+		writer.WriteString(nameof(CameraConnection.RtspStreamPath), value.RtspStreamPath);
+		writer.WriteNumber(nameof(CameraConnection.RtspPort), value.RtspPort);
+		writer.WriteNumber(nameof(CameraConnection.PtzPort), value.PtzPort);
+		writer.WriteEndObject();
+	}
+}

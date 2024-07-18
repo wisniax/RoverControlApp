@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.ServiceModel;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Godot;
 using OpenCvSharp;
-using RoverControlApp.MVVM.ViewModel;
+using RoverControlApp.Core;
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.ServiceModel;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.Model
 {
@@ -41,35 +38,22 @@ namespace RoverControlApp.MVVM.Model
 
 		private Thread? _rtspThread;
 
-		private string _ip;
-		private int _port;
-		private string _protocol;
-		private string _login;
-		private string _password;
-		private string _pathToStream;
-
 		public CommunicationState State
 		{
 			get => _state;
 			private set
 			{
-				MainViewModel.EventLogger.LogMessage($"RTSP: CommunicationState update: {value}");
+				EventLogger.LogMessage("RtspStreamClient", EventLogger.LogLevel.Info, $"CommunicationState update: {value}");
 				_state = value;
 			}
 		}
 
 		private volatile CommunicationState _state = CommunicationState.Closed;
 
-		private CancellationTokenSource _cts;
+		private readonly CancellationTokenSource _cts;
 
-		public RtspStreamClient(string login, string password, string pathToStream, string ip, string protocol = "rtsp", int port = 554)
+		public RtspStreamClient()
 		{
-			this._ip = ip;
-			this._port = port;
-			this._protocol = protocol;
-			this._login = login;
-			this._password = password;
-			this._pathToStream = pathToStream;
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
 			_rtspThread = new Thread(ThreadWork) { IsBackground = true, Name = "RtspStream_Thread", Priority = ThreadPriority.BelowNormal };
@@ -78,7 +62,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private void ThreadWork()
 		{
-			MainViewModel.EventLogger.LogMessage("RTSP: Thread started");
+			EventLogger.LogMessage("RtspStreamClient", EventLogger.LogLevel.Verbose, "Thread started");
 			while (!_cts.IsCancellationRequested)
 			{
 				DoWork();
@@ -89,7 +73,7 @@ namespace RoverControlApp.MVVM.Model
 
 		public void Dispose()
 		{
-			MainViewModel.EventLogger.LogMessage("RTSP: Dispose called... Closing client");
+			EventLogger.LogMessage("RtspStreamClient", EventLogger.LogLevel.Verbose, "Dispose called... Closing client");
 			_cts.Cancel();
 			_rtspThread?.Join(1000);
 			_cts.Dispose();
@@ -108,19 +92,24 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
-			var task = Task.Run(() => Capture = new VideoCapture($"{_protocol}://{_login}:{_password}@{_ip}:{_port}{_pathToStream}"));
+			var task = 
+				Task.Run(() => Capture = new VideoCapture
+				(
+					$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Login}"
+					+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
+				);
 			m = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;
 			if (!task.Wait(TimeSpan.FromSeconds(15)) || Capture == null || !Capture.IsOpened())
 			{
-				MainViewModel.EventLogger?.LogMessage($"RTSP: Connecting to camera failed after {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+				EventLogger.LogMessage("RtspStreamClient", EventLogger.LogLevel.Error, $"RTSP: Connecting to camera failed after {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 				State = CommunicationState.Faulted;
 				EndCapture();
 				return;
 			}
 
-			MainViewModel.EventLogger?.LogMessage($"RTSP: Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+			EventLogger.LogMessage("RtspStreamClient", EventLogger.LogLevel.Info, $"Connecting to camera succeeded in {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 
 			Capture?.Set(VideoCaptureProperties.XI_Timeout, 5000);
 			Capture?.Set(VideoCaptureProperties.BufferSize, 0);
@@ -145,7 +134,7 @@ namespace RoverControlApp.MVVM.Model
 
 					if (!ret || _generalPurposeStopwatch.Elapsed.TotalSeconds > 5)
 					{
-						MainViewModel.EventLogger?.LogMessage($"RTSP: Camera connection lost ;( Grabbing a frame took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
+						EventLogger.LogMessage("RtspStreamClient", EventLogger.LogLevel.Error, $"RTSP: Camera connection lost ;( Grabbing a frame took {(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s");
 						State = CommunicationState.Faulted;
 						EndCapture();
 						return;
@@ -168,7 +157,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		private System.Threading.Mutex _grabFrameMutex = new();
+		private readonly System.Threading.Mutex _grabFrameMutex = new();
 
 		public void LockGrabbingFrames()
 		{
@@ -193,7 +182,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 			catch (Exception e)
 			{
-				MainViewModel.EventLogger?.LogMessage(e.ToString());
+				EventLogger.LogMessage("RtspStreamClient", EventLogger.LogLevel.Error, e.ToString());
 				return false;
 			}
 
@@ -215,8 +204,7 @@ namespace RoverControlApp.MVVM.Model
 			NewFrameSaved = true;
 			UnLockGrabbingFrames();
 
-			if (MainViewModel.Settings.Settings.VerboseDebug)
-				MainViewModel.EventLogger.LogMessage($"RTSP: Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
+			EventLogger.LogMessageDebug("RtspStreamClient", EventLogger.LogLevel.Verbose, $"Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
 
 			return true;
 		}
