@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.Model
 {
-    public class RoverCommunication : IDisposable
+	public class RoverCommunication : IDisposable
 	{
 		public event Func<MqttClasses.RoverStatus?, Task>? OnRoverStatusChanged;
 		private MqttClasses.ControlMode ControlMode => pressedKeys.ControlMode;

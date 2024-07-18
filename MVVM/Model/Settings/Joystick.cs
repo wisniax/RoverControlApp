@@ -12,9 +12,9 @@ public partial class Joystick : SettingBase, ICloneable
 
 	public Joystick()
 	{
-        _newFancyRoverController = false;
-        _deadzone = 0.15f;
-        _vibrateOnModeChange = true;
+		_newFancyRoverController = false;
+		_deadzone = 0.15f;
+		_vibrateOnModeChange = true;
 	}
 
 	public Joystick(bool newFancyRoverController, float deadzone, bool vibrateOnModeChange)

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.ViewModel
 {
-    public partial class MainViewModel : Control
+	public partial class MainViewModel : Control
 	{
 		public PressedKeys PressedKeys { get; private set; }
 		public RoverCommunication RoverCommunication { get; private set; }

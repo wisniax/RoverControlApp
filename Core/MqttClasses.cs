@@ -117,38 +117,38 @@ namespace RoverControlApp.Core
 			public List<string> poi { get; set; } = [];
 			public long? Timestamp { get; set; }
 		}
-        public class AngularVelocity
-        {
-            public double x { get; set; }
-            public double y { get; set; }
-            public double z { get; set; }
-        }
+		public class AngularVelocity
+		{
+			public double x { get; set; }
+			public double y { get; set; }
+			public double z { get; set; }
+		}
 
-        public class LinearAcceleration
-        {
-            public double x { get; set; }
-            public double y { get; set; }
-            public double z { get; set; }
-        }
+		public class LinearAcceleration
+		{
+			public double x { get; set; }
+			public double y { get; set; }
+			public double z { get; set; }
+		}
 
-        public class Orientation
-        {
-            public double x { get; set; }
-            public double y { get; set; }
-            public double z { get; set; }
-            public double w { get; set; }
-        }
+		public class Orientation
+		{
+			public double x { get; set; }
+			public double y { get; set; }
+			public double z { get; set; }
+			public double w { get; set; }
+		}
 
-        public class ZedImuData
-        {
-            public List<double> orientation_covariance { get; set; }
-            public List<double> angular_velocity_covariance { get; set; }
-            public List<double> linear_acceleration_covariance { get; set; }
-            public AngularVelocity angular_velocity { get; set; }
-            public LinearAcceleration linear_acceleration { get; set; }
-            public Orientation orientation { get; set; }
-            public long Timestamp { get; set; }
-        }
+		public class ZedImuData
+		{
+			public List<double> orientation_covariance { get; set; }
+			public List<double> angular_velocity_covariance { get; set; }
+			public List<double> linear_acceleration_covariance { get; set; }
+			public AngularVelocity angular_velocity { get; set; }
+			public LinearAcceleration linear_acceleration { get; set; }
+			public Orientation orientation { get; set; }
+			public long Timestamp { get; set; }
+		}
 
-    }
+	}
 }

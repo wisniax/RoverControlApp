@@ -12,10 +12,10 @@ public partial class General : SettingBase, ICloneable
 	
 	public General()
 	{
-        _verboseDebug = false;
-        _missionControlPosition = "20;30";
-        _missionControlSize = "480;360";
-        _backCaptureLength = 15000;
+		_verboseDebug = false;
+		_missionControlPosition = "20;30";
+		_missionControlSize = "480;360";
+		_backCaptureLength = 15000;
 	}
 
 	public General(bool verboseDebug, string missionControlPosition, string missionControlSize, long backCaptureLength)

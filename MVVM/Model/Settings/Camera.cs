@@ -11,7 +11,7 @@ public partial class Camera : SettingBase, ICloneable
 {
 
 	public Camera()
-    {
+	{
 		_connectionSettings = new();
 
 		_inverseAxis = false;
