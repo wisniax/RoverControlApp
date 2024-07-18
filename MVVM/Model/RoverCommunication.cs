@@ -29,19 +29,27 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		private MqttClasses.RoverStatus GenerateRoverStatus
+		private MqttClasses.RoverStatus GenerateRoverStatus(CommunicationState? connection = null, MqttClasses.ControlMode? controlMode = null, bool? padConnected = null)
 		{
-			get
+			var nowTimestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+			var obj = new MqttClasses.RoverStatus
 			{
-				var obj = new MqttClasses.RoverStatus
-				{
-					CommunicationState = MqttNode.Singleton.ConnectionState,
-					ControlMode = ControlMode,
-					PadConnected = _pressedKeys.PadConnected
-				};
-				RoverStatus = obj;
-				return obj;
-			}
+				CommunicationState = connection ?? CommunicationState.Closed,
+				ControlMode = controlMode ?? ControlMode,
+				PadConnected = padConnected ?? _pressedKeys.PadConnected,
+
+				// Rapid ConnectionState change in MqttNode,
+				// creates possibility for two events to be emited in <1ms.
+				// Due to low precision (in this specific case) of timestamp,
+				// two messages with identical timestamp are created.
+				// To fix this (workaround) we add 1ms to timestamp,
+				// if it is same as timestamp previously generated.
+
+				Timestamp = this.RoverStatus?.Timestamp == nowTimestamp ? nowTimestamp + 1 : nowTimestamp
+			};
+			RoverStatus = obj;
+			return obj;
 		}
 
 
@@ -61,8 +69,10 @@ namespace RoverControlApp.MVVM.Model
 
 			MqttNode.Singleton.Connect(MqttNode.SignalName.ConnectionChanged, Callable.From<CommunicationState>(OnMqttConnectionChanged));
 
-			if (MqttNode.Singleton.ConnectionState == CommunicationState.Opened)
-				RoverCommunication_OnControlStatusChanged(GenerateRoverStatus).Wait(250);
+			if (MqttNode.Singleton.ConnectionState != CommunicationState.Opened)
+				return;
+
+			RoverCommunication_OnControlStatusChanged(GenerateRoverStatus()).Wait(250);
 		}
 
 		private async Task PressedKeysOnOnContainerMovement(MqttClasses.RoverContainer arg)
@@ -73,12 +83,16 @@ namespace RoverControlApp.MVVM.Model
 
 		private void OnMqttConnectionChanged(CommunicationState arg)
 		{
-			Task.Run( async () => await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus) );
+			// Don't use RoverStatus here.
+			// GenerateRoverStatus must be called on UI thread for workaround to work. 
+
+			var objMe = GenerateRoverStatus(connection: arg);
+			Task.Run( async () => await RoverCommunication_OnControlStatusChanged(objMe) );
 		}
 
 		private async Task OnPadConnectionChanged(bool arg)
 		{
-			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus);
+			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(padConnected: arg));
 		}
 
 
@@ -90,7 +104,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private async Task PressedKeys_OnControlModeChanged(MqttClasses.ControlMode arg)
 		{
-			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus);
+			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(controlMode: arg));
 		}
 
 		private async Task RoverCommunication_OnControlStatusChanged(MqttClasses.RoverStatus roverStatus)

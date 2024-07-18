@@ -37,6 +37,7 @@ public partial class MqttNode : Node
 			if (_connectionState == value) return;
 			_connectionState = value;
 			CallDeferred(MethodName.EmitSignal, SignalName.ConnectionChanged, (int)_connectionState);
+			EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Connection state changed to \"{value}\"");
 		}
 	}
 
@@ -115,11 +116,13 @@ public partial class MqttNode : Node
 	public async Task EnqueueMessageAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
 		await _managedMqttClient.EnqueueAsync(TopicFull(subtopic),arg, qos, retain);
+		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued at subtopic: \"{subtopic}\" with:\n{arg}");
 	}
 
 	public void EnqueueMessage(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
 		Task.Run(async () => await _managedMqttClient.EnqueueAsync(subtopic, arg, qos, retain));
+		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued at subtopic: \"{subtopic}\" with:\n{arg}");
 	}
 
 	public MqttApplicationMessage? GetReceivedMessageOnTopic(string? subtopic)
@@ -388,7 +391,7 @@ public partial class MqttNode : Node
 
 	private Dictionary<string, MqttApplicationMessage?>? _responses;
 
-	private CommunicationState _connectionState = CommunicationState.Closed;
+	private volatile CommunicationState _connectionState = CommunicationState.Closed;
 
 	const string LogSource = "MqttNode";
 }
