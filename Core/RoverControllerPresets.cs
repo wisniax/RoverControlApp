@@ -64,6 +64,8 @@ namespace RoverControlApp.Core
 				float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
 				velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
 
+				if (LocalSettings.Singleton.Joystick.Enabled) velocity *= LocalSettings.Singleton.Joystick.MaxSpeed;
+
 				float turn = Input.GetAxis("rover_move_right", "rover_move_left");
 				turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToSingle(LocalSettings.Singleton.Joystick.Deadzone))) ? 0 : turn;
 
