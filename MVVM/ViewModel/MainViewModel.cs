@@ -51,8 +51,6 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		[Export]
 		private ZedMonitor ZedMonitor = null!;
-		[Export]
-		private Label SafeModeIndicator = null!;
 		public MainViewModel()
 		{
 			PressedKeys = new PressedKeys();
@@ -65,6 +63,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			SettingsManagerNode.Target = LocalSettings.Singleton;
 
+			SettingsManagerNode.OnSettingsApplied += RoverModeUIDis.SettingsAppliedSubscriber;
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;

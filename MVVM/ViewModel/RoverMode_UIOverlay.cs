@@ -21,6 +21,18 @@ public partial class RoverMode_UIOverlay : UIOverlay
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
 		ControlMode = (int)newMode;
+		CallDeferred(MethodName.UpdateSafeModeIndicatator);
+		return Task.CompletedTask;
+	}
+
+	public Task SettingsAppliedSubscriber()
+	{
+		CallDeferred(MethodName.UpdateSafeModeIndicatator);
+		return Task.CompletedTask;
+	}
+
+	void UpdateSafeModeIndicatator()
+	{
 		if (ControlMode == 1 && LocalSettings.Singleton.Joystick.Enabled == true && LocalSettings.Singleton.Joystick.MaxSpeed < 1)
 		{
 			SafeModeIndicator.Visible = true;
@@ -30,8 +42,6 @@ public partial class RoverMode_UIOverlay : UIOverlay
 		{
 			SafeModeIndicator.Visible = false;
 		}
-		return Task.CompletedTask;
 	}
-
 
 }

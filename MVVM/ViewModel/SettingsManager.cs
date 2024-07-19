@@ -1,10 +1,16 @@
 using Godot;
+using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
+using System.Threading.Tasks;
+using System;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class SettingsManager : Panel
 {
+	public event Func<Task>? OnSettingsApplied;
+	
+
 	[Export]
 	private SettingsManagerTree smTree = null!;
 
@@ -55,6 +61,7 @@ public partial class SettingsManager : Panel
 	{
 		smTree.ApplySettings();
 		statusBar.Text = "[color=lightgreen]Settings applied![/color]";
+		OnSettingsApplied?.Invoke();
 	}
 
 	private void OnUpdateStatusBar(string text)
