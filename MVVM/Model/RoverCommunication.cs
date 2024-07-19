@@ -35,7 +35,7 @@ namespace RoverControlApp.MVVM.Model
 
 			var obj = new MqttClasses.RoverStatus
 			{
-				CommunicationState = connection ?? CommunicationState.Closed,
+				CommunicationState = connection ?? (RoverStatus is not null ? RoverStatus.CommunicationState : MqttNode.Singleton.ConnectionState),
 				ControlMode = controlMode ?? ControlMode,
 				PadConnected = padConnected ?? _pressedKeys.PadConnected,
 
