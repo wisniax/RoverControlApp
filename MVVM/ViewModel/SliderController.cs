@@ -1,6 +1,5 @@
 ﻿using Godot;
 using RoverControlApp.MVVM.Model;
-using System;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
