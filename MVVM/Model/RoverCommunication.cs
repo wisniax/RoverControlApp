@@ -31,22 +31,11 @@ namespace RoverControlApp.MVVM.Model
 
 		private MqttClasses.RoverStatus GenerateRoverStatus(CommunicationState? connection = null, MqttClasses.ControlMode? controlMode = null, bool? padConnected = null)
 		{
-			var nowTimestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
 			var obj = new MqttClasses.RoverStatus
 			{
 				CommunicationState = connection ?? (RoverStatus is not null ? RoverStatus.CommunicationState : MqttNode.Singleton.ConnectionState),
 				ControlMode = controlMode ?? ControlMode,
 				PadConnected = padConnected ?? _pressedKeys.PadConnected,
-
-				// Rapid ConnectionState change in MqttNode,
-				// creates possibility for two events to be emited in <1ms.
-				// Due to low precision (in this specific case) of timestamp,
-				// two messages with identical timestamp are created.
-				// To fix this (workaround) we add 1ms to timestamp,
-				// if it is same as timestamp previously generated.
-
-				Timestamp = this.RoverStatus?.Timestamp == nowTimestamp ? nowTimestamp + 1 : nowTimestamp
 			};
 			RoverStatus = obj;
 			return obj;
@@ -81,13 +70,9 @@ namespace RoverControlApp.MVVM.Model
 				JsonSerializer.Serialize(arg));
 		}
 
-		private void OnMqttConnectionChanged(CommunicationState arg)
+		private async void OnMqttConnectionChanged(CommunicationState arg)
 		{
-			// Don't use RoverStatus here.
-			// GenerateRoverStatus must be called on UI thread for workaround to work. 
-
-			var objMe = GenerateRoverStatus(connection: arg);
-			Task.Run( async () => await RoverCommunication_OnControlStatusChanged(objMe) );
+			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(connection: arg));
 		}
 
 		private async Task OnPadConnectionChanged(bool arg)
