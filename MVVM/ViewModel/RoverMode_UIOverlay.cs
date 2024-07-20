@@ -33,10 +33,10 @@ public partial class RoverMode_UIOverlay : UIOverlay
 
 	void UpdateSafeModeIndicatator()
 	{
-		if (ControlMode == 1 && LocalSettings.Singleton.Joystick.Enabled == true && LocalSettings.Singleton.Joystick.MaxSpeed < 1)
+		if (ControlMode == 1 && LocalSettings.Singleton.SpeedLimiter.Enabled == true && LocalSettings.Singleton.SpeedLimiter.MaxSpeed < 1)
 		{
 			SafeModeIndicator.Visible = true;
-			SafeModeIndicator.Text = $"Safe Mode ON - {Mathf.Round(LocalSettings.Singleton.Joystick.MaxSpeed * 100.0)}%";//Rounding may seem unnecessary, but without it numbers higher than 80 would be displayed as 79.99999999999999
+			SafeModeIndicator.Text = $"Safe Mode ON - {Mathf.Round(LocalSettings.Singleton.SpeedLimiter.MaxSpeed * 100.0)}%";//Rounding may seem unnecessary, but without it numbers higher than 80 would be displayed as 79.99999999999999
 		}
 		else
 		{

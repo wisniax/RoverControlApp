@@ -17,8 +17,6 @@ public class JoystickConverter : JsonConverter<Joystick>
 		bool? newFancyRoverController = null;
 		float? deadzone = null;
 		bool? vibrateOnModeChange = null;
-		bool? enabled = null;
-		float? maxSpeed = null;
 
 		while (reader.Read())
 		{
@@ -42,12 +40,6 @@ public class JoystickConverter : JsonConverter<Joystick>
 				case nameof(Joystick.VibrateOnModeChange):
 					vibrateOnModeChange = reader.GetBoolean();
 					break;
-				case nameof(Joystick.Enabled):
-					enabled = reader.GetBoolean();
-					break;
-				case nameof(Joystick.MaxSpeed):
-					maxSpeed = reader.GetSingle();
-					break;
 				default:
 					reader.Skip();
 					break;
@@ -58,9 +50,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 		(
 			newFancyRoverController ?? @default.NewFancyRoverController,
 			deadzone ?? @default.Deadzone,
-			vibrateOnModeChange ?? @default.VibrateOnModeChange,
-			enabled ?? @default.Enabled,
-			maxSpeed ?? @default.MaxSpeed
+			vibrateOnModeChange ?? @default.VibrateOnModeChange
 		);
 	}
 
@@ -70,8 +60,6 @@ public class JoystickConverter : JsonConverter<Joystick>
 		writer.WriteBoolean(nameof(Joystick.NewFancyRoverController), value.NewFancyRoverController);
 		writer.WriteNumber(nameof(Joystick.Deadzone), value.Deadzone);
 		writer.WriteBoolean(nameof(Joystick.VibrateOnModeChange), value.VibrateOnModeChange);
-		writer.WriteBoolean(nameof(Joystick.Enabled), value.Enabled);
-		writer.WriteNumber(nameof(Joystick.MaxSpeed), value.MaxSpeed);
 		writer.WriteEndObject();
 	}
 }
