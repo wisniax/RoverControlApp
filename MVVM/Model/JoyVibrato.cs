@@ -9,7 +9,7 @@ namespace RoverControlApp.MVVM.Model;
 
 public class JoyVibrato : IDisposable
 {
-	private readonly Dictionary<MqttClasses.ControlMode, VibrationSequence[]> PRESET = new()
+	private readonly Dictionary<MqttClasses.ControlMode, VibrationSequence[]> Presets = new()
 	{
 		{
 			MqttClasses.ControlMode.EStop,
@@ -55,6 +55,73 @@ public class JoyVibrato : IDisposable
 		}
 	};
 
+	private Task? _taskVibrato;
+	private CancellationTokenSource _ctSource;
+	private CancellationToken _ctToken;
+	private bool _disposedValue = false;
+
+	public JoyVibrato()
+	{
+		_ctSource = new CancellationTokenSource();
+		_ctToken = _ctSource.Token;
+	}
+
+	public async Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
+	{
+		if (_taskVibrato?.IsCompleted == false)
+		{
+			_ctSource.Cancel();
+			try { await _taskVibrato; } 
+			catch (Exception) { /*its just canceled*/ }
+			_ctSource = new();
+			_ctToken = _ctSource.Token;
+		}
+
+		if(LocalSettings.Singleton.Joystick.VibrateOnModeChange)
+			_taskVibrato = Task.Run(async () => await Vibrate(newMode), _ctToken);
+	}
+
+	private async Task Vibrate(MqttClasses.ControlMode controlMode)
+	{
+		_ctToken.ThrowIfCancellationRequested();
+
+		VibrationSequence[] sequence = Presets[controlMode];
+		long offset;
+
+		foreach(var vibration in sequence)
+		{
+			if(_ctToken.IsCancellationRequested)
+			{
+				foreach(var joyId in Input.GetConnectedJoypads()) 
+					Input.StopJoyVibration(joyId);
+				_ctToken.ThrowIfCancellationRequested();
+			}
+
+			offset = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+			foreach (var joyId in Input.GetConnectedJoypads())
+				Input.StartJoyVibration(joyId, vibration.WeakMotor, vibration.StrongMotor, vibration.Duration);
+
+			await Task.Delay(Math.Max(0,Convert.ToInt32(Convert.ToInt64(vibration.Duration * 1000f) - (DateTimeOffset.Now.ToUnixTimeMilliseconds() - offset))));
+		}
+	}
+
+	protected virtual void Dispose(bool disposing)
+	{
+		if (_disposedValue)	return;
+
+		if (disposing && (_taskVibrato?.IsCompleted == false))
+			_ctSource.Cancel();
+
+		_disposedValue = true;
+	}
+
+	public void Dispose()
+	{
+		Dispose(disposing: true);
+		GC.SuppressFinalize(this);
+	}
+
 	public struct VibrationSequence
 	{
 		public float Duration { get; set; }
@@ -69,71 +136,4 @@ public class JoyVibrato : IDisposable
 		}
 	}
 
-	private Task? taskVibrato;
-	private CancellationTokenSource ctSource;
-	private CancellationToken ctToken;
-	private bool disposedValue;
-
-	public JoyVibrato()
-	{
-		ctSource = new CancellationTokenSource();
-		ctToken = ctSource.Token;
-	}
-
-	public async Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
-	{
-		if (taskVibrato?.IsCompleted == false)
-		{
-			ctSource.Cancel();
-			try { await taskVibrato; } 
-			catch (Exception) { /*its just canceled*/ }
-			ctSource = new();
-			ctToken = ctSource.Token;
-		}
-
-		if(LocalSettings.Singleton.Joystick.VibrateOnModeChange)
-			taskVibrato = Task.Run(async () => await Vibrate(newMode), ctToken);
-	}
-
-	private async Task Vibrate(MqttClasses.ControlMode controlMode)
-	{
-		ctToken.ThrowIfCancellationRequested();
-
-		VibrationSequence[] sequence = PRESET[controlMode];
-		long offset;
-
-		foreach(var vibration in sequence)
-		{
-			if(ctToken.IsCancellationRequested)
-			{
-				foreach(var joyId in Input.GetConnectedJoypads()) 
-					Input.StopJoyVibration(joyId);
-				ctToken.ThrowIfCancellationRequested();
-			}
-
-			offset = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
-			foreach (var joyId in Input.GetConnectedJoypads())
-				Input.StartJoyVibration(joyId, vibration.WeakMotor, vibration.StrongMotor, vibration.Duration);
-
-			await Task.Delay(Math.Max(0,Convert.ToInt32(Convert.ToInt64(vibration.Duration * 1000f) - (DateTimeOffset.Now.ToUnixTimeMilliseconds() - offset))));
-		}
-	}
-
-	protected virtual void Dispose(bool disposing)
-	{
-		if (!disposedValue)
-		{
-			if (disposing && (taskVibrato?.IsCompleted == false))
-				ctSource.Cancel();
-
-			disposedValue = true;
-		}
-	}
-
-	public void Dispose()
-	{
-		Dispose(disposing: true);
-		GC.SuppressFinalize(this);
-	}
 }

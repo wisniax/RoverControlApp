@@ -1,8 +1,7 @@
 ﻿using Godot;
-using RoverControlApp.Core;
 using System.Runtime.CompilerServices;
 
-namespace RoverControlApp.MVVM.Model.Settings
+namespace RoverControlApp.Core.Settings
 {
 	public abstract partial class SettingBase : RefCounted
 	{

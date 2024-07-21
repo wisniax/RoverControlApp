@@ -1,4 +1,4 @@
-﻿using RoverControlApp.MVVM.Model.Settings;
+﻿using RoverControlApp.Core.Settings;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -7,7 +7,7 @@ namespace RoverControlApp.Core.JSONConverters;
 
 public class CameraConnectionConverter : JsonConverter<CameraConnection>
 {
-	static readonly CameraConnection @default = new();
+	private static readonly CameraConnection Default = new();
 
 	public override CameraConnection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
@@ -60,12 +60,12 @@ public class CameraConnectionConverter : JsonConverter<CameraConnection>
 
 		return new CameraConnection
 		(
-			ip ?? @default.Ip,
-			login ?? @default.Login,
-			password ?? @default.Password,
-			rtspStreamPath ?? @default.RtspStreamPath,
-			rtspPort ?? @default.RtspPort, 
-			ptzPort ?? @default.PtzPort
+			ip ?? Default.Ip,
+			login ?? Default.Login,
+			password ?? Default.Password,
+			rtspStreamPath ?? Default.RtspStreamPath,
+			rtspPort ?? Default.RtspPort, 
+			ptzPort ?? Default.PtzPort
 		);
 	}
 

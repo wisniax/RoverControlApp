@@ -14,10 +14,15 @@ namespace RoverControlApp.MVVM.Model
 	public class OnvifPtzCameraController : IDisposable
 	{
 		private Camera? _camera = null;
-
 		private Vector4 _cameraMotion = Vector4.Zero;
-
 		private readonly Mutex _dataMutex = new();
+		private volatile CommunicationState _state;
+		private volatile Stopwatch _generalPurposeStopwatch;
+		private Thread? _ptzThread;
+		private Exception? _ptzThreadError = null;
+		private CancellationTokenSource _cts;
+		private DateTime _lastComTimeStamp = System.DateTime.Now;
+
 		public Vector4 CameraMotion
 		{
 			get
@@ -36,7 +41,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		private volatile CommunicationState _state;
+
 
 		public CommunicationState State
 		{
@@ -48,7 +53,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		private volatile Stopwatch _generalPurposeStopwatch;
+
 		public double ElapsedSecondsOnCurrentState => _generalPurposeStopwatch.Elapsed.TotalSeconds;
 
 		public TimeSpan MinSpanEveryCom =>
@@ -57,10 +62,7 @@ namespace RoverControlApp.MVVM.Model
 
 
 
-		private Thread? _ptzThread;
-		private Exception? _ptzThreadError = null;
-		private CancellationTokenSource _cts;
-		private DateTime _lastComTimeStamp = System.DateTime.Now;
+
 
 		public void ChangeMoveVector(object? sender, Vector4 vector)
 		{

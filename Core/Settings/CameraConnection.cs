@@ -1,14 +1,14 @@
 ﻿using Godot;
-using RoverControlApp.Core;
 using RoverControlApp.Core.JSONConverters;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace RoverControlApp.MVVM.Model.Settings;
+namespace RoverControlApp.Core.Settings;
 
 [JsonConverter(typeof(CameraConnectionConverter))]
 public partial class CameraConnection : RefCounted
 {
+
 	public CameraConnection()
 	{
 		Ip = "192.168.1.35";

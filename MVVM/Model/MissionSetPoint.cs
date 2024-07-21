@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.Model
 {
-    public class MissionSetPoint
+	public class MissionSetPoint
 	{
 		public event Func<MqttClasses.ActiveKmlObjects?, Task>? ActiveKmlObjectsUpdated;
 		public MqttClasses.ActiveKmlObjects? ActiveKmlObjects { get; private set; }

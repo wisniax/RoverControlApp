@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.Model
 {
-    public class MissionStatus
+	public class MissionStatus
 	{
 		public event Func<MqttClasses.RoverMissionStatus?, Task>? OnRoverMissionStatusChanged;
 

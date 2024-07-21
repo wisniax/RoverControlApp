@@ -5,7 +5,7 @@ using MQTTnet.Extensions.ManagedClient;
 using MQTTnet.Protocol;
 using MQTTnet.Server;
 using RoverControlApp.Core;
-using RoverControlApp.MVVM.Model.Settings;
+using RoverControlApp.Core.Settings;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -37,6 +37,7 @@ public partial class MqttNode : Node
 			if (_connectionState == value) return;
 			_connectionState = value;
 			CallDeferred(MethodName.EmitSignal, SignalName.ConnectionChanged, (int)_connectionState);
+			EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Connection state changed to \"{value}\"");
 		}
 	}
 
@@ -52,7 +53,7 @@ public partial class MqttNode : Node
 	public override void _Ready()
 	{
 		Singleton ??= this;
-		LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategotyChanged));
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedSubcategoryChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsSubcategoryChanged));
 		MqStart();
@@ -60,7 +61,7 @@ public partial class MqttNode : Node
 
 	public override void _ExitTree()
 	{
-		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategotyChanged));
+		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedSubcategoryChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsSubcategoryChanged));
 		MqStop();
@@ -71,7 +72,7 @@ public partial class MqttNode : Node
 	 * Settings handlers
 	 */ 
 
-	void OnSettingsCategotyChanged(StringName property)
+	void OnSettingsCategoryChanged(StringName property)
 	{
 		if (property != nameof(LocalSettings.Mqtt)) return;
 
@@ -80,12 +81,10 @@ public partial class MqttNode : Node
 
 	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 	{
-		if (category != nameof(Settings.Mqtt)) return;
+		if (category != nameof(Mqtt)) return;
 
 		var (newTopic, newQos) =
-			(from entry in LocalSettings.Singleton.Mqtt.GetAllTopicsToSubscribe()
-			 where entry.Item1 == newValue.AsString()
-			 select entry).FirstOrDefault();
+			(LocalSettings.Singleton.Mqtt.GetAllTopicsToSubscribe().Where(entry => entry.Item1 == newValue.AsString())).FirstOrDefault();
 
 		if (string.IsNullOrEmpty(newTopic))
 			return;
@@ -96,7 +95,7 @@ public partial class MqttNode : Node
 
 	void OnSettingsSubcategoryChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 	{
-		if (category != nameof(Settings.Mqtt) || name != nameof(Mqtt.ClientSettings)) return;
+		if (category != nameof(Mqtt) || name != nameof(Mqtt.ClientSettings)) return;
 
 		MqRestart();		
 	}
@@ -117,11 +116,13 @@ public partial class MqttNode : Node
 	public async Task EnqueueMessageAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
 		await _managedMqttClient.EnqueueAsync(TopicFull(subtopic),arg, qos, retain);
+		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued at subtopic: \"{subtopic}\" with:\n{arg}");
 	}
 
 	public void EnqueueMessage(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
 		Task.Run(async () => await _managedMqttClient.EnqueueAsync(subtopic, arg, qos, retain));
+		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued at subtopic: \"{subtopic}\" with:\n{arg}");
 	}
 
 	public MqttApplicationMessage? GetReceivedMessageOnTopic(string? subtopic)
@@ -139,24 +140,24 @@ public partial class MqttNode : Node
 	}
 
 	/*
-	 * Methods for Mqtt managment
+	 * Methods for Mqtt control
 	 */
 
 	private bool MqStart()
 	{
 		if (ConnectionState == CommunicationState.Created)
 		{
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is already starting!");
+			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is already starting!");
 			return false;
 		}
 
 		if (ConnectionState != CommunicationState.Closed)
 		{
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is not fully closed!");
+			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is not fully closed!");
 			return false;
 		}
 
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, "Starting mqtt");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Starting mqtt");
 		ConnectionState = CommunicationState.Created;
 
 		_cts = new CancellationTokenSource();
@@ -168,31 +169,29 @@ public partial class MqttNode : Node
 
 	private bool MqStop(bool awaitFullStop = false)
 	{
-		if(ConnectionState == CommunicationState.Closed)
+		switch (ConnectionState)
 		{
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is stopped!");
-			return false;
-		}
-		if (ConnectionState == CommunicationState.Closing)
-		{
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is already stopping!");
-			return false;
+			case CommunicationState.Closed:
+				EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is stopped!");
+				return false;
+			case CommunicationState.Closing:
+				EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is already stopping!");
+				return false;
 		}
 
-		EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, "Requesting thread stop");
+		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, "Requesting thread stop");
 		_cts!.Cancel();
 
 		if(awaitFullStop)
 		{
 			_mqttThread!.Join();
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
+			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
 			return true;
 		}
 
-		if (_mqttThread!.Join(200))
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
-		else
-			EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, "Thread stop not confirmed. Proceeding");
+		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose,
+			_mqttThread!.Join(200) ? "Thread stop confirmed!" : "Thread stop not confirmed. Proceeding");
+
 		return true;
 	}
 
@@ -205,7 +204,7 @@ public partial class MqttNode : Node
 	{
 		if (string.IsNullOrEmpty(subtopic)) return;
 		var topic = TopicFull(subtopic);
-		EventLogger.LogMessage(_logSource,EventLogger.LogLevel.Verbose, $"Subscribing to topic: \"{topic}\"");
+		EventLogger.LogMessage(LogSource,EventLogger.LogLevel.Verbose, $"Subscribing to topic: \"{topic}\"");
 		await _managedMqttClient.SubscribeAsync(topic, qos);
 	}
 
@@ -218,10 +217,8 @@ public partial class MqttNode : Node
 	{
 		if (string.IsNullOrEmpty(subtopic)) return;
 		var topic = TopicFull(subtopic);
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, $"Unsubscribing from topic: \"{topic}\"");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, $"Unsubscribing from topic: \"{topic}\"");
 		await _managedMqttClient.UnsubscribeAsync(topic);
-
-		//_responses.Remove(subtopic); /* should i remove it? */
 	}
 
 	private void MqUnsubscribeTopic(string subtopic)
@@ -231,14 +228,14 @@ public partial class MqttNode : Node
 
 	private async Task MqSubscribeAllAsync()
 	{
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, $"Subscribing to ALL topics.");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, $"Subscribing to ALL topics.");
 
-		List<Task> subTasks = new();
+		List<Task> subTasks = [];
 
 		foreach(var (topic, qos) in LocalSettings.Singleton.Mqtt.GetAllTopicsToSubscribe())
 			subTasks.Add(MqSubscribeTopicAsync(topic, qos));
 
-		await Task.WhenAll();
+		await Task.WhenAll(subTasks);
 	}
 
 	/*
@@ -247,19 +244,19 @@ public partial class MqttNode : Node
 
 	private void ThWork()
 	{
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, "Thread started");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread started");
 		ConnectionState = CommunicationState.Opening;
 		
 		//kind of worried about this one
 		ThClientConnect().Wait();
 		SpinWait.SpinUntil(() => _cts!.IsCancellationRequested);
 
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, "Thread stopping");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread stopping");
 		ConnectionState = CommunicationState.Closing;
 
 		//and this
 		ThClientDisconnect().Wait();
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Verbose, "Thread quit");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread quit");
 		ConnectionState = CommunicationState.Closed;
 	}
 
@@ -346,27 +343,27 @@ public partial class MqttNode : Node
 
 	private Task ThOnConnectedAsync(MqttClientConnectedEventArgs arg)
 	{
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Info, "Mqtt is now Connected!");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Info, "Mqtt is now Connected!");
 		ConnectionState = CommunicationState.Opened;
 		return Task.CompletedTask;
 	}
 
 	private Task ThOnDisconnectedAsync(MqttClientDisconnectedEventArgs arg)
 	{
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Info, "Mqtt is now Disconnected!");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Info, "Mqtt is now Disconnected!");
 		ConnectionState = CommunicationState.Faulted;
 		return Task.CompletedTask;
 	}
 
 	private Task ThOnSynchronizingSubscriptionsFailedAsync(ManagedProcessFailedEventArgs arg)
 	{
-		EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Error, $"Synchronizing subscriptions failed with: {arg}");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Error, $"Synchronizing subscriptions failed with: {arg}");
 		return Task.CompletedTask;
 	}
 
 	private Task ThOnApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
 	{
-		EventLogger.LogMessageDebug(_logSource, EventLogger.LogLevel.Verbose, $"Message received on topic {arg.ApplicationMessage.Topic} with:\n   {arg.ApplicationMessage.ConvertPayloadToString()}");
+		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, $"Message received on topic {arg.ApplicationMessage.Topic} with:\n   {arg.ApplicationMessage.ConvertPayloadToString()}");
 
 		if (_responses == null) return Task.CompletedTask;
 
@@ -376,7 +373,7 @@ public partial class MqttNode : Node
 		if (_responses.ContainsKey(topic))
 			_responses[topic] = payload;
 		else if (!_responses.TryAdd(topic, payload))
-			EventLogger.LogMessage(_logSource, EventLogger.LogLevel.Error, $"Adding {payload} on topic {topic} to dictionary failed");
+			EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Error, $"Adding {payload} on topic {topic} to dictionary failed");
 
 		CallDeferred(MethodName.EmitSignal, SignalName.MessageReceived, topic, new MqttNodeMessage(payload));
 		MessageReceivedAsync?.Invoke(topic, payload);
@@ -394,7 +391,7 @@ public partial class MqttNode : Node
 
 	private Dictionary<string, MqttApplicationMessage?>? _responses;
 
-	private CommunicationState _connectionState = CommunicationState.Closed;
+	private volatile CommunicationState _connectionState = CommunicationState.Closed;
 
-	const string _logSource = "MqttNode";
+	const string LogSource = "MqttNode";
 }

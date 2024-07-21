@@ -91,8 +91,7 @@ namespace RoverControlApp.Core
 					vec.Y /= 8f;
 				}
 
-				var oldVelocity = new Vector2(Convert.ToSingle(input.ZRotAxis),
-					Convert.ToSingle(input.XVelAxis));
+				var oldVelocity = new Vector2(Convert.ToSingle(input.XVelAxis), Convert.ToSingle(input.ZRotAxis));
 				if (oldVelocity.IsEqualApprox(vec)) return false;
 
 

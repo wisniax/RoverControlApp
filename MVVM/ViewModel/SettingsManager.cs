@@ -1,5 +1,6 @@
 using Godot;
 using RoverControlApp.Core;
+using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
 using System.Threading.Tasks;
 using System;

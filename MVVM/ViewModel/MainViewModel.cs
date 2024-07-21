@@ -1,7 +1,6 @@
 using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
-using RoverControlApp.MVVM.Model.Settings;
 using System;
 using System.Globalization;
 using System.ServiceModel;
@@ -10,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.ViewModel
 {
-    public partial class MainViewModel : Control
+	public partial class MainViewModel : Control
 	{
 		public PressedKeys PressedKeys { get; private set; }
 		public RoverCommunication RoverCommunication { get; private set; }
@@ -25,7 +24,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private JoyVibrato _joyVibrato = new();
 		private BackCapture _backCapture = new();
 
-		private ImageTexture? imTexture;
+		private ImageTexture? _imTexture;
 
 		[Export]
 		private TextureRect imTextureRect = null!;
@@ -131,14 +130,14 @@ namespace RoverControlApp.MVVM.ViewModel
 				_backCapture.CleanUpHistory();
 
 				_rtspClient.LockGrabbingFrames();
-				if (imTexture == null) imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
-				else imTexture.Update(_rtspClient.LatestImage);
+				if (_imTexture == null) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
+				else _imTexture.Update(_rtspClient.LatestImage);
 
 				_backCapture.FrameFeed(_rtspClient.LatestImage);
 
 				_rtspClient.UnLockGrabbingFrames();
-				imTextureRect.Texture = imTexture;
-				_rtspClient.NewFrameSaved = false;
+				imTextureRect.Texture = _imTexture;
+				_rtspClient.MarkFrameOld();
 			}
 			UpdateLabel();
 		}

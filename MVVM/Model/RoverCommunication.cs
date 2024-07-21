@@ -8,16 +8,16 @@ using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.Model
 {
-    public class RoverCommunication : IDisposable
+	public class RoverCommunication : IDisposable
 	{
 		public event Func<MqttClasses.RoverStatus?, Task>? OnRoverStatusChanged;
-		private MqttClasses.ControlMode ControlMode => pressedKeys.ControlMode;
+		private MqttClasses.ControlMode ControlMode => _pressedKeys.ControlMode;
 
-		private readonly PressedKeys pressedKeys;
-		private readonly MissionStatus missionStatus;
+		private readonly PressedKeys _pressedKeys;
+		private readonly MissionStatus _missionStatus;
 
 		private MqttClasses.RoverStatus? _roverStatus;
-		private bool disposedValue;
+		private bool _disposedValue = false;
 
 		public MqttClasses.RoverStatus? RoverStatus
 		{
@@ -29,26 +29,23 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		private MqttClasses.RoverStatus GenerateRoverStatus
+		private MqttClasses.RoverStatus GenerateRoverStatus(CommunicationState? connection = null, MqttClasses.ControlMode? controlMode = null, bool? padConnected = null)
 		{
-			get
+			var obj = new MqttClasses.RoverStatus
 			{
-				var obj = new MqttClasses.RoverStatus
-				{
-					CommunicationState = MqttNode.Singleton.ConnectionState,
-					ControlMode = ControlMode,
-					PadConnected = pressedKeys.PadConnected
-				};
-				RoverStatus = obj;
-				return obj;
-			}
+				CommunicationState = connection ?? (RoverStatus is not null ? RoverStatus.CommunicationState : MqttNode.Singleton.ConnectionState),
+				ControlMode = controlMode ?? ControlMode,
+				PadConnected = padConnected ?? _pressedKeys.PadConnected,
+			};
+			RoverStatus = obj;
+			return obj;
 		}
 
 
 		public RoverCommunication(PressedKeys pressedKeys, MissionStatus missionStatus)
 		{
-			this.pressedKeys = pressedKeys;
-			this.missionStatus = missionStatus;
+			_pressedKeys = pressedKeys;
+			_missionStatus = missionStatus;
 
 			pressedKeys.OnControlModeChanged += PressedKeys_OnControlModeChanged;
 
@@ -61,8 +58,10 @@ namespace RoverControlApp.MVVM.Model
 
 			MqttNode.Singleton.Connect(MqttNode.SignalName.ConnectionChanged, Callable.From<CommunicationState>(OnMqttConnectionChanged));
 
-			if (MqttNode.Singleton.ConnectionState == CommunicationState.Opened)
-				RoverCommunication_OnControlStatusChanged(GenerateRoverStatus).Wait(250);
+			if (MqttNode.Singleton.ConnectionState != CommunicationState.Opened)
+				return;
+
+			RoverCommunication_OnControlStatusChanged(GenerateRoverStatus()).Wait(250);
 		}
 
 		private async Task PressedKeysOnOnContainerMovement(MqttClasses.RoverContainer arg)
@@ -71,14 +70,14 @@ namespace RoverControlApp.MVVM.Model
 				JsonSerializer.Serialize(arg));
 		}
 
-		private void OnMqttConnectionChanged(CommunicationState arg)
+		private async void OnMqttConnectionChanged(CommunicationState arg)
 		{
-			Task.Run( async () => await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus) );
+			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(connection: arg));
 		}
 
 		private async Task OnPadConnectionChanged(bool arg)
 		{
-			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus);
+			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(padConnected: arg));
 		}
 
 
@@ -90,7 +89,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private async Task PressedKeys_OnControlModeChanged(MqttClasses.ControlMode arg)
 		{
-			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus);
+			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(controlMode: arg));
 		}
 
 		private async Task RoverCommunication_OnControlStatusChanged(MqttClasses.RoverStatus roverStatus)
@@ -112,21 +111,20 @@ namespace RoverControlApp.MVVM.Model
 
 		protected virtual void Dispose(bool disposing)
 		{
-			if (!disposedValue)
+			if (_disposedValue) return;
+
+			if (disposing)
 			{
-				if (disposing)
-				{
-					pressedKeys.OnControlModeChanged -= PressedKeys_OnControlModeChanged;
+				_pressedKeys.OnControlModeChanged -= PressedKeys_OnControlModeChanged;
 
-					pressedKeys.OnPadConnectionChanged -= OnPadConnectionChanged;
-					pressedKeys.OnRoverMovementVector -= RoverMovementVectorChanged;
-					pressedKeys.OnManipulatorMovement -= RoverManipulatorVectorChanged;
+				_pressedKeys.OnPadConnectionChanged -= OnPadConnectionChanged;
+				_pressedKeys.OnRoverMovementVector -= RoverMovementVectorChanged;
+				_pressedKeys.OnManipulatorMovement -= RoverManipulatorVectorChanged;
 
-					missionStatus.OnRoverMissionStatusChanged -= OnRoverMissionStatusChanged;
-				}
-
-				disposedValue = true;
+				_missionStatus.OnRoverMissionStatusChanged -= OnRoverMissionStatusChanged;
 			}
+
+			_disposedValue = true;
 		}
 
 		public void Dispose()

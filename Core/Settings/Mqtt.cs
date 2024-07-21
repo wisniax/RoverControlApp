@@ -1,10 +1,9 @@
 ﻿using Godot;
-using RoverControlApp.Core;
 using RoverControlApp.Core.JSONConverters;
 using System;
 using System.Text.Json.Serialization;
 
-namespace RoverControlApp.MVVM.Model.Settings;
+namespace RoverControlApp.Core.Settings;
 
 [JsonConverter(typeof(MqttConverter))]
 public partial class Mqtt : SettingBase, ICloneable
@@ -15,14 +14,14 @@ public partial class Mqtt : SettingBase, ICloneable
 		_clientSettings = new();
 
 		_topicRoverControl = "RoverControl";
-        _topicManipulatorControl = "ManipulatorControl";
-        _topicRoverFeedback = "RoverFeedback";
-        _topicRoverStatus = "RoverStatus";
-        _topicRoverContainer = "RoverContainer";
-        _topicMissionStatus = "MissionStatus";
-        _topicKmlSetPoint = "KMLNode/SetPoint";
-        _topicWheelFeedback = "wheel_feedback";
-        _topicEStopStatus = "button_stop";
+		_topicManipulatorControl = "ManipulatorControl";
+		_topicRoverFeedback = "RoverFeedback";
+		_topicRoverStatus = "RoverStatus";
+		_topicRoverContainer = "RoverContainer";
+		_topicMissionStatus = "MissionStatus";
+		_topicKmlSetPoint = "KMLNode/SetPoint";
+		_topicWheelFeedback = "wheel_feedback";
+		_topicEStopStatus = "button_stop";
 		_topicZedImuData = "TopicZedImuData";
 		_topicKmlListOfActiveObj = "KMLNode/ActiveKMLObjects";
 	}

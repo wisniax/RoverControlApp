@@ -1,4 +1,4 @@
-﻿using RoverControlApp.MVVM.Model.Settings;
+﻿using RoverControlApp.Core.Settings;
 using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -7,7 +7,7 @@ namespace RoverControlApp.Core.JSONConverters;
 
 public class MqttClientOptionsConverter : JsonConverter<MqttClientOptions>
 {
-	static readonly MqttClientOptions @default = new();
+	private static readonly MqttClientOptions Default = new();
 
 	public override MqttClientOptions Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
@@ -18,9 +18,6 @@ public class MqttClientOptionsConverter : JsonConverter<MqttClientOptions>
 		int? brokerPort = null;
 		double? pingInterval = null;
 		string? topicMain = null;
-		string? topicWill = null;
-		string? willPayloadType = null;
-		string? willPayloadSerializedJson = null;
 
 		while (reader.Read())
 		{
@@ -47,15 +44,6 @@ public class MqttClientOptionsConverter : JsonConverter<MqttClientOptions>
 				case nameof(MqttClientOptions.TopicMain):
 					topicMain = reader.GetString();
 					break;
-				case nameof(MqttClientOptions.TopicWill):
-					topicWill = reader.GetString();
-					break;
-				case nameof(MqttClientOptions.WillPayloadType):
-					willPayloadType = reader.GetString();
-					break;
-				case nameof(MqttClientOptions.WillPayloadSerializedJson):
-					willPayloadSerializedJson = reader.GetString();
-					break;
 				default:
 					reader.Skip();
 					break;
@@ -64,13 +52,10 @@ public class MqttClientOptionsConverter : JsonConverter<MqttClientOptions>
 
 		return new MqttClientOptions
 		(
-			brokerIp ?? @default.BrokerIp,
-			brokerPort ?? @default.BrokerPort,
-			pingInterval ?? @default.PingInterval,
-			topicMain ?? @default.TopicMain,
-			topicWill ?? @default.TopicWill,
-			willPayloadType ?? @default.WillPayloadType,
-			willPayloadSerializedJson ?? @default.WillPayloadSerializedJson
+			brokerIp ?? Default.BrokerIp,
+			brokerPort ?? Default.BrokerPort,
+			pingInterval ?? Default.PingInterval,
+			topicMain ?? Default.TopicMain
 		);
 	}
 
@@ -81,9 +66,6 @@ public class MqttClientOptionsConverter : JsonConverter<MqttClientOptions>
 		writer.WriteNumber(nameof(MqttClientOptions.BrokerPort), value.BrokerPort);
 		writer.WriteNumber(nameof(MqttClientOptions.PingInterval), value.PingInterval);
 		writer.WriteString(nameof(MqttClientOptions.TopicMain), value.TopicMain);
-		writer.WriteString(nameof(MqttClientOptions.TopicWill), value.TopicWill);
-		writer.WriteString(nameof(MqttClientOptions.WillPayloadType), value.WillPayloadType);
-		writer.WriteString(nameof(MqttClientOptions.WillPayloadSerializedJson), value.WillPayloadSerializedJson);
 		writer.WriteEndObject();
 	}
 }
