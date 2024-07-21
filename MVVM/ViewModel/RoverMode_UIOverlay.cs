@@ -25,18 +25,29 @@ public partial class RoverMode_UIOverlay : UIOverlay
 		return Task.CompletedTask;
 	}
 
-	public Task SettingsAppliedSubscriber()
+	public override void _Ready()
 	{
-		CallDeferred(MethodName.UpdateSafeModeIndicatator);
-		return Task.CompletedTask;
+		base._Ready();
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged,
+			Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+	}
+
+	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
+	{
+		if (category != nameof(LocalSettings.SpeedLimiter))
+			return;
+
+		UpdateSafeModeIndicatator();
 	}
 
 	void UpdateSafeModeIndicatator()
 	{
-		if (ControlMode == 1 && LocalSettings.Singleton.SpeedLimiter.Enabled == true && LocalSettings.Singleton.SpeedLimiter.MaxSpeed < 1)
+		if (ControlMode == 1 && LocalSettings.Singleton.SpeedLimiter.Enabled == true)
 		{
 			SafeModeIndicator.Visible = true;
-			SafeModeIndicator.Text = $"Safe Mode ON - {Mathf.Round(LocalSettings.Singleton.SpeedLimiter.MaxSpeed * 100.0)}%";//Rounding may seem unnecessary, but without it numbers higher than 80 would be displayed as 79.99999999999999
+			SafeModeIndicator.Text = $"Safe Mode ON - {(LocalSettings.Singleton.SpeedLimiter.MaxSpeed).ToString("P0")}";
+
+			//SafeModeIndicator.Text = $"Safe Mode ON - {Mathf.Round(LocalSettings.Singleton.SpeedLimiter.MaxSpeed * 100.0)}%";//Rounding may seem unnecessary, but without it numbers higher than 80 would be displayed as 79.99999999999999
 		}
 		else
 		{

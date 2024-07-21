@@ -37,7 +37,7 @@ public partial class SpeedLimiter : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _enabled, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range,  formatData: "0.2;1;0.05;f;f", customName: "MaxSpeed (multiplier)")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range,  formatData: "0.1;0.95;0.05;f;f", customName: "MaxSpeed (multiplier)")]
 	public float MaxSpeed
 	{
 		get => _maxSpeed;

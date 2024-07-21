@@ -7,7 +7,7 @@ namespace RoverControlApp.Core.JSONConverters;
 
 public class SpeedLimiterConverter : JsonConverter<SpeedLimiter>
 {
-	static readonly SpeedLimiter @default = new();
+	private static readonly SpeedLimiter Default = new();
 
 	public override SpeedLimiter Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
@@ -44,8 +44,8 @@ public class SpeedLimiterConverter : JsonConverter<SpeedLimiter>
 
 		return new SpeedLimiter
 		(
-			enabled ?? @default.Enabled,
-			maxSpeed ?? @default.MaxSpeed
+			enabled ?? Default.Enabled,
+			maxSpeed ?? Default.MaxSpeed
 		);
 	}
 

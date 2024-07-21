@@ -29,7 +29,7 @@ public partial class Joystick : SettingBase, ICloneable
 		{
 			NewFancyRoverController = _newFancyRoverController,
 			Deadzone = _deadzone,
-			VibrateOnModeChange = _vibrateOnModeChange,
+			VibrateOnModeChange = _vibrateOnModeChange
 		};
 	}
 

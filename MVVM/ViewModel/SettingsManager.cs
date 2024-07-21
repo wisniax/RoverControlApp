@@ -62,7 +62,6 @@ public partial class SettingsManager : Panel
 	{
 		smTree.ApplySettings();
 		statusBar.Text = "[color=lightgreen]Settings applied![/color]";
-		OnSettingsApplied?.Invoke();
 	}
 
 	private void OnUpdateStatusBar(string text)

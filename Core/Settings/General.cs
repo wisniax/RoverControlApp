@@ -32,7 +32,7 @@ public partial class General : SettingBase, ICloneable
 			VerboseDebug = _verboseDebug,
 			MissionControlPosition = _missionControlPosition,
 			MissionControlSize = _missionControlSize,
-			BackCaptureLength = _backCaptureLength,
+			BackCaptureLength = _backCaptureLength
 		};
 	}
 
