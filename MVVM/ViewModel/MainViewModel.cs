@@ -62,7 +62,6 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			SettingsManagerNode.Target = LocalSettings.Singleton;
 
-			//SettingsManagerNode.OnSettingsApplied += RoverModeUIDis.SettingsAppliedSubscriber;
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
