@@ -4,7 +4,7 @@ using RoverControlApp.Core.JSONConverters;
 using System;
 using System.Text.Json.Serialization;
 
-namespace RoverControlApp.MVVM.Model.Settings;
+namespace RoverControlApp.Core.Settings;
 
 [JsonConverter(typeof(SpeedLimiterConverter))]
 public partial class SpeedLimiter : SettingBase, ICloneable

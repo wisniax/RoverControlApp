@@ -4,7 +4,7 @@ using System;
 using System.Data;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-using RoverControlApp.MVVM.Model.Settings;
+using RoverControlApp.Core.Settings;
 
 namespace RoverControlApp.Core;
 
