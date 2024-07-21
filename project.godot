@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Rover Control App"
-run/main_scene="res://MVVM/View/MainView.tscn"
+run/main_scene="res://MVVM/View/Startup.tscn"
 config/features=PackedStringArray("4.2", "C#", "GL Compatibility")
 run/max_fps=60
 run/low_processor_mode=true
@@ -22,7 +22,8 @@ config/icon="res://Resources/icon.svg"
 
 [autoload]
 
-OnAppLoad="*res://Core/OnAppLoad.gd"
+LocalSettings="res://Core/LocalSettings.cs"
+MqttNode="res://MVVM/Model/MqttNode.cs"
 
 [debug]
 

@@ -1,164 +1,263 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
+﻿using Godot;
+using RoverControlApp.Core;
+using System;
+using System.Data;
+using System.Runtime.CompilerServices;
 using System.Text.Json;
-using Godot;
-using RoverControlApp.MVVM.ViewModel;
-using RoverControlApp.MVVM.Model;
-using FileAccess = System.IO.FileAccess;
 
 namespace RoverControlApp.Core;
 
-public class LocalSettings
+/// <summary>
+/// Master class for settings storage. Can be fetched by LocalSettings.Singleton<br/> 
+/// </summary>
+public partial class LocalSettings : Node
 {
-	public class Camera
+	private sealed class PackedSettings
 	{
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"(?i)(?:[0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(?:\d{1,3}\.){3}\d{1,3}|(?:http:\/\/|https:\/\/)\S+")]
-		public string Ip { get; set; } = "192.168.1.35";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string RtspStreamPath { get; set; } = "/live/0/MAIN";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
-		public int RtspPort { get; set; } = 554;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
-		public int PtzPort { get; set; } = 80;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string Login { get; set; } = "admin";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string Password { get; set; } = "admin";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-		public bool InverseAxis { get; set; } = false;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-		public bool EnableRtspStream { get; set; } = true;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-		public bool EnablePtzControl { get; set; } = true;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "1;4;0.01;f;d")]
-		public double PtzRequestFrequency { get; set; } = 2.69;
+		public Settings.Camera? Camera { get; set; } = null;
+		public Settings.Mqtt? Mqtt { get; set; } = null;
+		public Settings.Joystick? Joystick { get; set; } = null;
+		public Settings.General? General { get; set; } = null;
 	}
 
-	public class Mqtt
-	{
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string BrokerIp { get; set; } = "broker.hivemq.com";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
-		public int BrokerPort { get; set; } = 1883;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.1;60;0.1;t;d")]
-		public double PingInterval { get; set; } = 2.5;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicMain { get; set; } = "RappTORS";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicRoverControl { get; set; } = "RoverControl";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicManipulatorControl { get; set; } = "ManipulatorControl";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicRoverFeedback { get; set; } = "RoverFeedback";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicRoverStatus { get; set; } = "RoverStatus";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicRoverContainer { get; set; } = "RoverContainer";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicMissionStatus { get; set; } = "MissionStatus";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicKmlSetPoint { get; set; } = "KMLNode/SetPoint";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicWheelFeedback { get; set; } = "wheel_feedback";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-        public string TopicZedImuData { get; set; } = "ZedImuData";
-        [SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-        public string TopicEStopStatus { get; set; } = "button_stop";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-		public string TopicKmlListOfActiveObj { get; set; } = "KMLNode/ActiveKMLObjects";
+	private JsonSerializerOptions serializerOptions = new() { WriteIndented = true };
 
-	}
+	private static readonly string _settingsPath = "user://RoverControlAppSettings.json";
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+	public static LocalSettings Singleton { get; private set; }
+#pragma warning restore CS8618 
 
-	public class Vars
-	{
-		[SettingsManagerVisible(customName: "Camera Settings")]
-		public Camera Camera { get; set; } = new();
-		[SettingsManagerVisible(customName: "MQTT Settings")]
-		public Mqtt Mqtt { get; set; } = new();
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-		public bool VerboseDebug { get; set; } = false;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
-		public float JoyPadDeadzone { get; set; } = 0.15f;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-		public bool NewFancyRoverController { get; set; } = true;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-		public bool JoyVibrateOnModeChange { get; set; } = true;
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"-?[0-9]+;-?[0-9]+")]
-		public string MissionControlPosition { get; set; } = "20;30";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: @"-?[0-9]+;-?[0-9]+")]
-		public string MissionControlSize { get; set; } = "480;360";
-		[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData:"0;60000;100;f;l", customTooltip: "How long is history [ms]")]
-		public long BackCaptureLength { get; set; } = 15000;
-	}
+	/// <summary>
+	/// Signal stating that one of categories was overwritten (reference changed)
+	/// </summary>
+	[Signal]
+	public delegate void CategoryChangedEventHandler(StringName category);
 
-	[SettingsManagerVisible]
-	public Vars? Settings { get; private set; }
+	/// <summary>
+	/// Signal SubcategoryChanged propagated from one of categories. Prefer this over SettingBase.SubcategoryChanged
+	/// </summary>
+	[Signal]
+	public delegate void PropagatedSubcategoryChangedEventHandler(StringName category, StringName subcategory, Variant oldValue, Variant newValue);
 
-	private readonly string _settingsPath = Path.Join(OS.GetUserDataDir(), "RoverControlAppSettings.json");
+	/// <summary>
+	/// Signal PropertyChanged propagated from one of categories. Prefer this over SettingBase.PropertyChanged
+	/// </summary>
+	[Signal]
+	public delegate void PropagatedPropertyChangedEventHandler(StringName category, StringName property, Variant oldValue, Variant newValue);
 
 	public LocalSettings()
 	{
+		_camera = new();
+		_mqtt = new();
+		_joystick = new();
+		_general = new();
+
 		if (LoadSettings()) return;
-		Settings = new();
-		if (SaveSettings()) return;
-		throw new Exception("Can't create settings file...");
+
+		ForceDefaultSettings();
 	}
 
+	public override void _Ready()
+	{
+		//first ever call to _Ready will be on singletone instance.
+		Singleton ??= this;
+	}
+
+	/// <summary>
+	/// Load settings form file
+	/// </summary>
+	/// <exception cref="FieldAccessException"/>
+	/// <exception cref="JsonException"/>
+	/// <exception cref="DataException"/>
+	/// <returns>true on success</returns>
 	public bool LoadSettings()
 	{
-		if (!Directory.Exists(OS.GetUserDataDir())) return false;
-		if (!File.Exists(_settingsPath)) return false;
 		try
 		{
-			using var fs = new FileStream(_settingsPath, FileMode.Open, FileAccess.Read);
-			using var sr = new StreamReader(fs);
-			var serializedSettings = sr.ReadToEnd();
-			sr.Close();
-			fs.Close();
-			Settings = JsonSerializer.Deserialize<Vars>(serializedSettings);
+			using var settingsFileAccess = FileAccess.Open(_settingsPath, FileAccess.ModeFlags.Read) ?? throw new FieldAccessException(FileAccess.GetOpenError().ToString());
+
+			var serializedSettings = settingsFileAccess.GetAsText(true);
+
+			var packedSettings = JsonSerializer.Deserialize<PackedSettings>(serializedSettings, serializerOptions) ?? throw new DataException("unknown reason");
+
+			Camera = packedSettings.Camera ?? new();
+			Mqtt = packedSettings.Mqtt ?? new();
+			Joystick = packedSettings.Joystick ?? new();
+			General = packedSettings.General ?? new();
 		}
 		catch (Exception e)
 		{
-			MainViewModel.EventLogger.LogMessage($"Loading local settings failed: {e}");
+			EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Error, $"Loading settings failed:\n\t{e}");
 			return false;
 		}
 
-		MainViewModel.EventLogger.LogMessage("Loading local settings succeeded");
+		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Info, "Loading settings succeeded");
 		return true;
 	}
 
+	/// <summary>
+	/// Save settings to file
+	/// </summary>
+	///	<exception cref="FieldAccessException"/>
+	///	<exception cref="JsonException"/>
+	/// <returns>true on success</returns>
 	public bool SaveSettings()
 	{
 		try
 		{
-			if (!Directory.Exists(OS.GetUserDataDir())) Directory.CreateDirectory(OS.GetUserDataDir());
-			using var fs = new FileStream(_settingsPath, FileMode.Create, FileAccess.Write);
-			using var sw = new StreamWriter(fs);
-			string serializedSettings = JsonSerializer.Serialize(Settings, new JsonSerializerOptions() { WriteIndented = true });
+			using var settingsFileAccess = FileAccess.Open(_settingsPath, FileAccess.ModeFlags.Write) ?? throw new FieldAccessException(FileAccess.GetOpenError().ToString());
+			
+			PackedSettings packedSettings = new()
+			{
+				Camera = Camera,
+				Mqtt = Mqtt,
+				Joystick = Joystick,
+				General = General
+			};
 
-			sw.WriteLine(serializedSettings);
-			sw.Flush();
-			sw.Close();
-			fs.Close();
+			settingsFileAccess.StoreString(JsonSerializer.Serialize(packedSettings, serializerOptions));
 		}
 		catch (Exception e)
 		{
-			MainViewModel.EventLogger.LogMessage($"Saving settings failed with: {e}");
+			EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Error, $"Saving settings failed with:\n\t{e}");
 			return false;
 		}
 
-		MainViewModel.EventLogger.LogMessage("Saving settings succeeded");
+		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Info, "Saving settings succeeded");
 		return true;
 	}
 
+	/// <summary>
+	/// Reset settings to default state
+	/// </summary>
 	public void ForceDefaultSettings()
 	{
-		Settings = new Vars();
-		SaveSettings();
+		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Info, "Loading default settings");
+		Camera = new();
+		Mqtt = new();
+		Joystick = new();
+		General = new();
 	}
+
+	private void EmitSignalCategoryChanged(string sectionName)
+	{
+		EmitSignal(SignalName.CategoryChanged, sectionName);
+		EventLogger.LogMessageDebug("LocalSettings", EventLogger.LogLevel.Verbose, $"Section \"{sectionName}\" was overwritten");
+	}
+
+	private void PropagateSignal(StringName signal, StringName category, params Variant[] args)
+	{
+		Variant[] combined = new Variant[args.Length + 1];
+
+		combined[0] = category;
+		args.CopyTo(combined, 1);
+
+		EventLogger.LogMessageDebug("LocalSettings", EventLogger.LogLevel.Verbose, $"Field \"{args[0].AsStringName()}\" from \"{combined[0]}\" was changed. Signal propagated to LocalSettings.");
+		
+		EmitSignal(signal, combined);
+	}
+
+	/// <summary>
+	/// Fany pants lambda creator for propagator
+	/// </summary>
+	/// <param name="signal">SignalName.PropagatedPropertyChanged or SignalName.PropagatedSubcategoryChanged</param>
+	/// <param name="category">name of category (when used in Property setter should be empty)</param>
+	/// <returns></returns>
+	private Action<StringName, Variant, Variant> CreatePropagator(StringName signal, [CallerMemberName] string category = "")
+	{
+		return (field, oldVal, newVal) => PropagateSignal(signal, category, field, oldVal, newVal);
+	}
+
+
+	[SettingsManagerVisible(customName: "Camera Settings")]
+	public Settings.Camera Camera
+	{
+		get => _camera;
+		set
+		{
+			_camera = value;
+
+			_camera.Connect(
+				Settings.Camera.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged)) 
+			);
+			_camera.Connect(
+				Settings.Camera.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(Camera));
+		}
+	}
+
+	[SettingsManagerVisible(customName: "MQTT Settings")]
+	public Settings.Mqtt Mqtt
+	{
+		get => _mqtt;
+		set
+		{
+			_mqtt = value;
+
+			_mqtt.Connect(
+				Settings.Mqtt.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
+			);
+			_mqtt.Connect(
+				Settings.Mqtt.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(Mqtt));
+		}
+	}
+
+	[SettingsManagerVisible(customName: "Joystick Settings")]
+	public Settings.Joystick Joystick
+	{
+		get => _joystick;
+		set
+		{
+			_joystick = value;
+
+			_joystick.Connect(
+				Settings.Joystick.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
+			);
+			_joystick.Connect(
+				Settings.Joystick.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(Joystick));
+		}
+	}
+
+	[SettingsManagerVisible(customName: "General Settings")]
+	public Settings.General General
+	{
+		get => _general;
+		set
+		{
+			_general = value;
+
+			_general.Connect(
+				Settings.General.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
+			);
+			_general.Connect(
+				Settings.General.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(General));
+		}
+	}
+
+	Settings.Camera _camera;
+	Settings.Mqtt _mqtt;
+	Settings.Joystick _joystick;
+	Settings.General _general;
 }
 
 
