@@ -46,8 +46,6 @@ public partial class RoverMode_UIOverlay : UIOverlay
 		{
 			SafeModeIndicator.Visible = true;
 			SafeModeIndicator.Text = $"Safe Mode ON - {(LocalSettings.Singleton.SpeedLimiter.MaxSpeed).ToString("P0")}";
-
-			//SafeModeIndicator.Text = $"Safe Mode ON - {Mathf.Round(LocalSettings.Singleton.SpeedLimiter.MaxSpeed * 100.0)}%";//Rounding may seem unnecessary, but without it numbers higher than 80 would be displayed as 79.99999999999999
 		}
 		else
 		{
