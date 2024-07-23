@@ -66,7 +66,6 @@ MissionControlNode = NodePath("MissionControl")
 FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
-SafeModeIndicator = NodePath("RoverModeUIDis/SafeModeIndicator")
 
 [node name="CameraView" type="TextureRect" parent="."]
 layout_mode = 1
@@ -118,7 +117,7 @@ custom_minimum_size = Vector2(170, 26)
 offset_left = 13.0
 offset_right = 183.0
 
-[node name="RoverModeUIDis" parent="." node_paths=PackedStringArray("SafeModeIndicator", "Animator") instance=ExtResource("3_mtbtk")]
+[node name="RoverModeUIDis" parent="." node_paths=PackedStringArray("_safeModeIndicatorLabel", "Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -129,7 +128,7 @@ offset_right = -181.0
 offset_bottom = 4.0
 grow_horizontal = 0
 script = ExtResource("4_bwker")
-SafeModeIndicator = NodePath("SafeModeIndicator")
+_safeModeIndicatorLabel = NodePath("SafeModeIndicator")
 Animator = NodePath("RoverMode/AnimationPlayer")
 BackgroundNodePath = NodePath("RoverMode/Background")
 LabelNodePath = NodePath("RoverMode/Label")
@@ -273,9 +272,9 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]

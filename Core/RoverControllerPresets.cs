@@ -112,6 +112,7 @@ namespace RoverControlApp.Core
 
 				Vector2 velocity = Input.GetVector("rover_move_right", "rover_move_left", "rover_move_down",
 					"rover_move_up", Mathf.Max(0.1f, joyDeadZone));
+				if (LocalSettings.Singleton.SpeedLimiter.Enabled) velocity *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
 				// velocity = velocity.Clamp(new Vector2(-1f, -1f), new Vector2(1f, 1f));
 				velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, joyDeadZone)) ? 0 : velocity.X;
 				velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, joyDeadZone)) ? 0 : velocity.Y;

@@ -45,7 +45,7 @@ public partial class ZedMonitor : Panel
 
 	public event Func<MqttClasses.ZedImuData?, Task>? GyroscopeChanged;
 
-	MqttClasses.ZedImuData ?Gyroscope;
+	MqttClasses.ZedImuData? Gyroscope;
 
 	public override void _EnterTree()
 	{
@@ -136,5 +136,4 @@ public partial class ZedMonitor : Panel
 	{
 		timerDisplay.Text = $"Data is >{time} seconds old.";
 	}
-
 }

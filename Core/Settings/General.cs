@@ -8,7 +8,7 @@ namespace RoverControlApp.Core.Settings;
 [JsonConverter(typeof(GeneralConverter))]
 public partial class General : SettingBase, ICloneable
 {
-	
+
 	public General()
 	{
 		_verboseDebug = false;
@@ -32,7 +32,7 @@ public partial class General : SettingBase, ICloneable
 			VerboseDebug = _verboseDebug,
 			MissionControlPosition = _missionControlPosition,
 			MissionControlSize = _missionControlSize,
-			BackCaptureLength = _backCaptureLength
+			BackCaptureLength = _backCaptureLength,
 		};
 	}
 
@@ -64,10 +64,9 @@ public partial class General : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _backCaptureLength, value);
 	}
 
-	
+
 	bool _verboseDebug;
 	string _missionControlPosition;
 	string _missionControlSize;
 	long _backCaptureLength;
 }
-

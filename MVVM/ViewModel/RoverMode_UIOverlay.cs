@@ -9,7 +9,7 @@ namespace RoverControlApp.MVVM.ViewModel;
 public partial class RoverMode_UIOverlay : UIOverlay
 {
 	[Export]
-	Label SafeModeIndicator;
+	Label _safeModeIndicatorLabel;
 	public override Dictionary<int, Setting> Presets { get; } = new()
 	{
 		{ 0, new(Colors.DarkRed, Colors.Orange, "Rover: E-STOP", "Rover: ") },
@@ -42,14 +42,14 @@ public partial class RoverMode_UIOverlay : UIOverlay
 
 	void UpdateSafeModeIndicatator()
 	{
-		if (ControlMode == 1 && LocalSettings.Singleton.SpeedLimiter.Enabled == true)
+		if (ControlMode == 1 && LocalSettings.Singleton.SpeedLimiter.Enabled)
 		{
-			SafeModeIndicator.Visible = true;
-			SafeModeIndicator.Text = $"Safe Mode ON - {(LocalSettings.Singleton.SpeedLimiter.MaxSpeed).ToString("P0")}";
+			_safeModeIndicatorLabel.Visible = true;
+			_safeModeIndicatorLabel.Text = $"Safe Mode ON - {LocalSettings.Singleton.SpeedLimiter.MaxSpeed:P0}";
 		}
 		else
 		{
-			SafeModeIndicator.Visible = false;
+			_safeModeIndicatorLabel.Visible = false;
 		}
 	}
 
