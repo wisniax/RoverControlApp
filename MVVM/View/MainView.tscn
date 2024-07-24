@@ -117,7 +117,7 @@ custom_minimum_size = Vector2(170, 26)
 offset_left = 13.0
 offset_right = 183.0
 
-[node name="RoverModeUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
+[node name="RoverModeUIDis" parent="." node_paths=PackedStringArray("_safeModeIndicatorLabel", "Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -128,6 +128,7 @@ offset_right = -181.0
 offset_bottom = 4.0
 grow_horizontal = 0
 script = ExtResource("4_bwker")
+_safeModeIndicatorLabel = NodePath("SafeModeIndicator")
 Animator = NodePath("RoverMode/AnimationPlayer")
 BackgroundNodePath = NodePath("RoverMode/Background")
 LabelNodePath = NodePath("RoverMode/Label")
@@ -136,6 +137,25 @@ LabelNodePath = NodePath("RoverMode/Label")
 custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
 offset_right = 178.0
+
+[node name="SafeModeIndicator" type="Label" parent="RoverModeUIDis"]
+visible = false
+layout_mode = 2
+offset_left = -2.0
+offset_top = 31.0
+offset_right = 178.0
+offset_bottom = 54.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "VAL B"
+horizontal_alignment = 1
+
+[node name="Background" type="ColorRect" parent="RoverModeUIDis/SafeModeIndicator"]
+z_index = -1
+layout_mode = 2
+offset_top = -1.0
+offset_right = 180.0
+offset_bottom = 25.0
+color = Color(0.356863, 0.454902, 0.905882, 1)
 
 [node name="MissonStatusUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
@@ -252,9 +272,9 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]
