@@ -1,5 +1,6 @@
 using Godot;
-using OpenCvSharp;
+//using OpenCvSharp;
+using Emgu.CV;
 using RoverControlApp.Core;
 using System;
 using System.Diagnostics;
@@ -195,16 +196,11 @@ namespace RoverControlApp.MVVM.Model
 			}
 
 
-			Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
-
-			if (_arr?.Length != m.Total() * m.Channels())
-				_arr = new byte[m.Total() * m.Channels()];
-
-			CvInvoke.CvtColor(m, m, Emgu.CV.CvEnum.ColorConversion.Bgr2Rgb);
+			CvInvoke.CvtColor(_matrix, _matrix, Emgu.CV.CvEnum.ColorConversion.Bgr2Rgb);
 			//Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
 
-			if (_arr?.Length != m.Total * m.NumberOfChannels)
-				_arr = new byte[m.Total * m.NumberOfChannels];
+			if (_arr?.Length != _matrix.Total * _matrix.NumberOfChannels)
+				_arr = new byte[_matrix.Total * _matrix.NumberOfChannels];
 			//if (_arr?.Length != m.Total() * m.Channels())
 			//	_arr = new byte[m.Total() * m.Channels()];
 
