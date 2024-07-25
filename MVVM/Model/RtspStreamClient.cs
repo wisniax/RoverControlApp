@@ -95,19 +95,17 @@ namespace RoverControlApp.MVVM.Model
 
 		private void CreateCapture()
 		{
-			//OnFrameReceived?.Invoke();
-			
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
-			//var task = 
-			//	Task.Run(() => Capture = new VideoCapture
-			//	(
-			//		$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Login}"
-			//		+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
-			//	);
+			var task =
+				Task.Run(() => Capture = new VideoCapture
+				(
+					$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Login}"
+					+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
+				);
 
-			var task = Task.Run(() => Capture = new VideoCapture
-					($"http://158.58.130.148:80/mjpg/video.mjpg"));
+			//var task = Task.Run(() => Capture = new VideoCapture
+			//		($"http://158.58.130.148:80/mjpg/video.mjpg"));
 			_matrix = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;
@@ -204,12 +202,12 @@ namespace RoverControlApp.MVVM.Model
 
 
 			CvInvoke.CvtColor(_matrix, _matrix, Emgu.CV.CvEnum.ColorConversion.Bgr2Rgb);
-			//Cv2.CvtColor(m, m, ColorConversionCodes.BGR2RGB);
+			//Cv2.CvtColor(_martix, _matrix, ColorConversionCodes.BGR2RGB);
 
 			if (_arr?.Length != _matrix.Total * _matrix.NumberOfChannels)
 				_arr = new byte[_matrix.Total * _matrix.NumberOfChannels];
-			//if (_arr?.Length != m.Total() * m.Channels())
-			//	_arr = new byte[m.Total() * m.Channels()];
+			//if (_arr?.Length != _matrix.Total() * _matrix.Channels())
+			//	_arr = new byte[_matrix.Total() * _matrix.Channels()];
 
 			Marshal.Copy(_matrix.DataPointer, _arr, 0, (int)_matrix.Total * _matrix.NumberOfChannels);
 			//Marshal.Copy(_matrix.Data, _arr, 0, (int)_matrix.Total() * _matrix.Channels());
