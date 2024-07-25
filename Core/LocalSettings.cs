@@ -4,7 +4,6 @@ using System;
 using System.Data;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
-
 namespace RoverControlApp.Core;
 
 /// <summary>
@@ -17,6 +16,7 @@ public partial class LocalSettings : Node
 		public Settings.Camera? Camera { get; set; } = null;
 		public Settings.Mqtt? Mqtt { get; set; } = null;
 		public Settings.Joystick? Joystick { get; set; } = null;
+		public Settings.SpeedLimiter? SpeedLimiter { get; set; } = null;
 		public Settings.General? General { get; set; } = null;
 	}
 
@@ -51,6 +51,7 @@ public partial class LocalSettings : Node
 		_camera = new();
 		_mqtt = new();
 		_joystick = new();
+		_speedLimiter = new();
 		_general = new();
 
 		if (LoadSettings()) return;
@@ -84,6 +85,7 @@ public partial class LocalSettings : Node
 			Camera = packedSettings.Camera ?? new();
 			Mqtt = packedSettings.Mqtt ?? new();
 			Joystick = packedSettings.Joystick ?? new();
+			SpeedLimiter = packedSettings.SpeedLimiter ?? new();
 			General = packedSettings.General ?? new();
 		}
 		catch (Exception e)
@@ -113,6 +115,7 @@ public partial class LocalSettings : Node
 				Camera = Camera,
 				Mqtt = Mqtt,
 				Joystick = Joystick,
+				SpeedLimiter = SpeedLimiter,
 				General = General
 			};
 
@@ -137,6 +140,7 @@ public partial class LocalSettings : Node
 		Camera = new();
 		Mqtt = new();
 		Joystick = new();
+		SpeedLimiter = new();
 		General = new();
 	}
 
@@ -233,6 +237,27 @@ public partial class LocalSettings : Node
 		}
 	}
 
+	[SettingsManagerVisible(customName: "SpeedLimiter Settings")]
+	public Settings.SpeedLimiter SpeedLimiter
+	{
+		get => _speedLimiter;
+		set
+		{
+			_speedLimiter = value;
+
+			_speedLimiter.Connect(
+				Settings.SpeedLimiter.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
+			);
+			_speedLimiter.Connect(
+				Settings.SpeedLimiter.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(SpeedLimiter));
+		}
+	}
+
 	[SettingsManagerVisible(customName: "General Settings")]
 	public Settings.General General
 	{
@@ -257,6 +282,7 @@ public partial class LocalSettings : Node
 	Settings.Camera _camera;
 	Settings.Mqtt _mqtt;
 	Settings.Joystick _joystick;
+	Settings.SpeedLimiter _speedLimiter;
 	Settings.General _general;
 }
 

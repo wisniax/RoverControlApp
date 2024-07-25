@@ -33,7 +33,7 @@ public partial class ZedMonitor : Panel
 	//Every {timerInterval} seconds, timer will trigger _on_timer_timeout and timeSLU will be updated. timeSLU will later be displayed in timerDisplay. Can easily be changed in Godot editor.
 	[Export]
 	int timerInterval = 1;
-	
+
 	//If time between messages is greater than errorTime, error message is displayed. Can easily be changed in Godot editor.
 	[Export]
 	int errorTime = 5;
@@ -41,11 +41,11 @@ public partial class ZedMonitor : Panel
 
 	bool error = false;
 	//time since last update
-	int timeSLU = 0;   
+	int timeSLU = 0;
 
 	public event Func<MqttClasses.ZedImuData?, Task>? GyroscopeChanged;
 
-	MqttClasses.ZedImuData ?Gyroscope;
+	MqttClasses.ZedImuData? Gyroscope;
 
 	public override void _EnterTree()
 	{
@@ -79,7 +79,7 @@ public partial class ZedMonitor : Panel
 		{
 			EventLogger.LogMessage("ZedMonitor", EventLogger.LogLevel.Error, $"{e.Message}");
 			return Task.CompletedTask;
-		}  
+		}
 	}
 
 	public void _on_timer_timeout()

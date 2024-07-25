@@ -25,6 +25,9 @@ namespace RoverControlApp.Core
 				float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
 				velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
 
+				if (LocalSettings.Singleton.SpeedLimiter.Enabled) velocity *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
+
+
 				float turn = Input.GetAxis("rover_move_right", "rover_move_left");
 				turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToInt32(LocalSettings.Singleton.Joystick.Deadzone))) ? 0 : turn;
 
@@ -60,6 +63,8 @@ namespace RoverControlApp.Core
 
 				float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
 				velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
+
+				if (LocalSettings.Singleton.SpeedLimiter.Enabled) velocity *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
 
 				float turn = Input.GetAxis("rover_move_right", "rover_move_left");
 				turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToSingle(LocalSettings.Singleton.Joystick.Deadzone))) ? 0 : turn;
@@ -107,6 +112,7 @@ namespace RoverControlApp.Core
 
 				Vector2 velocity = Input.GetVector("rover_move_right", "rover_move_left", "rover_move_down",
 					"rover_move_up", Mathf.Max(0.1f, joyDeadZone));
+				if (LocalSettings.Singleton.SpeedLimiter.Enabled) velocity *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
 				// velocity = velocity.Clamp(new Vector2(-1f, -1f), new Vector2(1f, 1f));
 				velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, joyDeadZone)) ? 0 : velocity.X;
 				velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, joyDeadZone)) ? 0 : velocity.Y;
