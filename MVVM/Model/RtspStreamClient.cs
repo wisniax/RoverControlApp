@@ -13,6 +13,10 @@ namespace RoverControlApp.MVVM.Model
 {
 	public class RtspStreamClient : IDisposable
 	{
+		[Signal]
+		public delegate void FrameReceivedEventHandler(int id);
+		public event FrameReceivedEventHandler? FrameReceived;
+
 		private readonly CancellationTokenSource _cts;
 
 		private volatile Stopwatch _generalPurposeStopwatch;
@@ -95,12 +99,15 @@ namespace RoverControlApp.MVVM.Model
 			
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
-			var task = 
-				Task.Run(() => Capture = new VideoCapture
-				(
-					$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Login}"
-					+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
-				);
+			//var task = 
+			//	Task.Run(() => Capture = new VideoCapture
+			//	(
+			//		$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Login}"
+			//		+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
+			//	);
+
+			var task = Task.Run(() => Capture = new VideoCapture
+					($"http://158.58.130.148:80/mjpg/video.mjpg"));
 			_matrix = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;
@@ -205,7 +212,7 @@ namespace RoverControlApp.MVVM.Model
 			//	_arr = new byte[m.Total() * m.Channels()];
 
 			Marshal.Copy(_matrix.DataPointer, _arr, 0, (int)_matrix.Total * _matrix.NumberOfChannels);
-			//Marshal.Copy(m.Data, _arr, 0, (int)m.Total() * m.Channels());
+			//Marshal.Copy(_matrix.Data, _arr, 0, (int)_matrix.Total() * _matrix.Channels());
 
 			LockGrabbingFrames();
 			if (LatestImage?.GetWidth() != _matrix.Width && LatestImage?.GetHeight() != _matrix.Height)
@@ -217,7 +224,7 @@ namespace RoverControlApp.MVVM.Model
 
 			EventLogger.LogMessageDebug("RtspStreamClient", EventLogger.LogLevel.Verbose, $"Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
 
-			OnFrameReceived?.Invoke();
+			FrameReceived?.Invoke(0);
 
 			return true;
 		}

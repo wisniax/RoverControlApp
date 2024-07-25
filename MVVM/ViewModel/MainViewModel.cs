@@ -27,7 +27,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ImageTexture? _imTexture;
 
 		[Export]
-		private TextureRect imTextureRect = null!;
+		private TextureRect _imTextureRect = null!;
 		[Export]
 		private RoverMode_UIOverlay RoverModeUIDis = null!;
 		[Export]
@@ -81,6 +81,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			ManagePtzStatus();
 			ManageRtspStatus();
 
+			_rtspClient.FrameReceived += IsRtspOkWrapper;
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		}
@@ -136,7 +137,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				_backCapture.FrameFeed(_rtspClient.LatestImage);
 
 				_rtspClient.UnLockGrabbingFrames();
-				imTextureRect.Texture = _imTexture;
+				_imTextureRect.Texture = _imTexture;
 				_rtspClient.MarkFrameOld();
 			}
 			UpdateLabel();
@@ -356,7 +357,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
 		}
 
-		void IsRtspOkWrapper()
+		void IsRtspOkWrapper(int id)
 		{
 			CallDeferred(MethodName.IsRtspResOk);
 		}
@@ -375,7 +376,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 				_rtspClient.UnLockGrabbingFrames();
 				_imTextureRect!.Texture = _imTexture;
-				_rtspClient.NewFrameSaved = false;
+				_rtspClient.MarkFrameOld();
 			}
 		}
 	}
