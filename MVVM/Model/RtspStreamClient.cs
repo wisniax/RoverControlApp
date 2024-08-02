@@ -95,15 +95,15 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
-			//var task =
-			//	Task.Run(() => Capture = new VideoCapture
-			//	(
-			//		$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Login}"
-			//		+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
-			//	);
+			var task =
+				Task.Run(() => Capture = new VideoCapture
+				(
+					$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Login}"
+					+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
+				);
 
-			var task = Task.Run(() => Capture = new VideoCapture
-					($"http://158.58.130.148:80/mjpg/video.mjpg"));
+			//var task = Task.Run(() => Capture = new VideoCapture
+			//		($"http://158.58.130.148:80/mjpg/video.mjpg"));
 
 			_matrix = new Mat();
 			_generalPurposeStopwatch.Restart();
