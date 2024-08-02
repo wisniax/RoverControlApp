@@ -81,7 +81,6 @@ namespace RoverControlApp.MVVM.ViewModel
 			ManagePtzStatus();
 			ManageRtspStatus();
 
-			_rtspClient.FrameReceived += IsRtspOkWrapper;
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		}
@@ -181,6 +180,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				case true when _rtspClient is null:
 					_rtspClient = new();
 					_rtspClientWeak = new(_rtspClient);
+					_rtspClient.FrameReceived += OnRtspFrameReceivedWrapper;
 					break;
 				case false when _rtspClient is not null:
 					_rtspClient.Dispose();
@@ -357,12 +357,12 @@ namespace RoverControlApp.MVVM.ViewModel
 			CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
 		}
 
-		void IsRtspOkWrapper(int id)
+		void OnRtspFrameReceivedWrapper(int id)
 		{
-			CallDeferred(MethodName.IsRtspResOk);
+			CallDeferred(MethodName.OnRtspFrameReceived);
 		}
 
-		public void IsRtspResOk()
+		public void OnRtspFrameReceived()
 		{
 			if (_rtspClient is { NewFrameSaved: true })
 			{
