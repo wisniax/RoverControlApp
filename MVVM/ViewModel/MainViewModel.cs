@@ -27,7 +27,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ImageTexture? _imTexture;
 
 		[Export]
-		private TextureRect imTextureRect = null!;
+		private TextureRect _imTextureRect = null!;
 		[Export]
 		private RoverMode_UIOverlay RoverModeUIDis = null!;
 		[Export]
@@ -98,6 +98,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		}
 
+
 		protected override void Dispose(bool disposing)
 		{
 			PressedKeys.Dispose();
@@ -135,7 +136,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				_backCapture.FrameFeed(_rtspClient.LatestImage);
 
 				_rtspClient.UnLockGrabbingFrames();
-				imTextureRect.Texture = _imTexture;
+				_imTextureRect.Texture = _imTexture;
 				_rtspClient.MarkFrameOld();
 			}
 			UpdateLabel();
@@ -179,8 +180,10 @@ namespace RoverControlApp.MVVM.ViewModel
 				case true when _rtspClient is null:
 					_rtspClient = new();
 					_rtspClientWeak = new(_rtspClient);
+					_rtspClient.FrameReceived += OnRtspFrameReceivedWrapper;
 					break;
 				case false when _rtspClient is not null:
+					_rtspClient.FrameReceived -= OnRtspFrameReceivedWrapper;
 					_rtspClient.Dispose();
 					_rtspClient = null;
 					break;
@@ -353,6 +356,29 @@ namespace RoverControlApp.MVVM.ViewModel
 		private void OnRTSPCapture()
 		{
 			CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
+		}
+
+		void OnRtspFrameReceivedWrapper(int id)
+		{
+			CallDeferred(MethodName.OnRtspFrameReceived);
+		}
+
+		public void OnRtspFrameReceived()
+		{
+			if (_rtspClient is { NewFrameSaved: true })
+			{
+				_backCapture.CleanUpHistory();
+
+				_rtspClient.LockGrabbingFrames();
+				if (_imTexture == null || _imTexture._GetHeight() != _rtspClient.LatestImage.GetHeight() || _imTexture._GetWidth() != _rtspClient.LatestImage.GetWidth()) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
+				else _imTexture.Update(_rtspClient.LatestImage);
+
+				_backCapture.FrameFeed(_rtspClient.LatestImage);
+
+				_rtspClient.UnLockGrabbingFrames();
+				_imTextureRect!.Texture = _imTexture;
+				_rtspClient.MarkFrameOld();
+			}
 		}
 	}
 }
