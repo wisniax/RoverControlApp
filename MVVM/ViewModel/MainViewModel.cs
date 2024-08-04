@@ -183,6 +183,7 @@ namespace RoverControlApp.MVVM.ViewModel
 					_rtspClient.FrameReceived += OnRtspFrameReceivedWrapper;
 					break;
 				case false when _rtspClient is not null:
+					_rtspClient.FrameReceived -= OnRtspFrameReceivedWrapper;
 					_rtspClient.Dispose();
 					_rtspClient = null;
 					break;
