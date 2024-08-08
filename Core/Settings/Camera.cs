@@ -56,12 +56,21 @@ public partial class Camera : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _inverseAxis,value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+#if GODOT_ANDROID
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check, allowEdit: false)]
+	public bool EnableRtspStream
+	{
+		get => false;
+		set => EventLogger.LogMessage("Settings.Camera", EventLogger.LogLevel.Warning, "Android detected! Change to EnableRtspStream was ignored. (RTSP is not compatible thus is force-disabled)");
+	}
+#else
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check, allowEdit: true)]
 	public bool EnableRtspStream
 	{
 		get => _enableRtspStream;
 		set => EmitSignal_SettingChanged(ref _enableRtspStream, value);
 	}
+#endif
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool EnablePtzControl

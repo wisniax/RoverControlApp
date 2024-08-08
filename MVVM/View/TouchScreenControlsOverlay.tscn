@@ -1,0 +1,57 @@
+[gd_scene load_steps=3 format=3 uid="uid://c305bnu0gq0hy"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/TouchScreenControlsOverlay.cs" id="1_a2q3q"]
+[ext_resource type="Texture2D" uid="uid://8u5j8uy5xyq8" path="res://Resources/arrow.png" id="2_82oay"]
+
+[node name="TouchScreenControlsOverlay" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_a2q3q")
+
+[node name="ChangeControlModeBtn" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -184.0
+offset_top = 61.0
+offset_right = -8.0
+offset_bottom = 125.0
+grow_horizontal = 0
+focus_mode = 0
+text = "Change Control Mode"
+
+[node name="Forward" type="TouchScreenButton" parent="."]
+position = Vector2(961, 226)
+scale = Vector2(1.5, 1.5)
+texture_normal = ExtResource("2_82oay")
+action = "rover_move_forward"
+
+[node name="Backward" type="TouchScreenButton" parent="."]
+position = Vector2(1058, 480)
+rotation = 3.14159
+scale = Vector2(1.5, 1.5)
+texture_normal = ExtResource("2_82oay")
+action = "rover_move_backward"
+
+[node name="Left" type="TouchScreenButton" parent="."]
+position = Vector2(51, 403)
+rotation = -1.57079
+scale = Vector2(1.5, 1.5)
+texture_normal = ExtResource("2_82oay")
+action = "rover_move_left"
+
+[node name="Right" type="TouchScreenButton" parent="."]
+position = Vector2(318, 305)
+rotation = 1.57079
+scale = Vector2(1.5, 1.5)
+texture_normal = ExtResource("2_82oay")
+action = "rover_move_right"
+
+[connection signal="button_down" from="ChangeControlModeBtn" to="." method="OnButtonStateChange" binds= [4194306, true]]
+[connection signal="button_up" from="ChangeControlModeBtn" to="." method="OnButtonStateChange" binds= [4194306, false]]

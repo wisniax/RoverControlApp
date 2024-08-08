@@ -63,6 +63,10 @@ public partial class LocalSettings : Node
 	{
 		//first ever call to _Ready will be on singletone instance.
 		Singleton ??= this;
+
+#if GODOT_ANDROID
+		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Warning, "Android detected! RTSP is force-disabled");
+#endif
 	}
 
 	/// <summary>

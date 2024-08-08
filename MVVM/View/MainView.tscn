@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=21 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://crakb6uxv2yt8" path="res://MVVM/View/MissionControl.tscn" id="4_wrhi8"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionStatus_UIOverlay.cs" id="6_4tmru"]
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
+[ext_resource type="PackedScene" uid="uid://c305bnu0gq0hy" path="res://MVVM/View/TouchScreenControlsOverlay.tscn" id="7_4yapt"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
@@ -226,6 +227,9 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_gr50h")
 text = "SETTINGS"
 
+[node name="TouchscreenControlsOverlay" parent="." instance=ExtResource("7_4yapt")]
+layout_mode = 1
+
 [node name="MissionControl" parent="." instance=ExtResource("4_wrhi8")]
 visible = false
 layout_mode = 0
@@ -272,9 +276,9 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]

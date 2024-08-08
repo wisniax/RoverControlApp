@@ -109,7 +109,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		public override void _Input(InputEvent @event)
 		{
-			if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return;
+			if (@event is not (InputEventAction or InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return;
 			PressedKeys?.HandleInputEvent(@event);
 
 			if (@event.IsActionPressed("app_backcapture_save"))

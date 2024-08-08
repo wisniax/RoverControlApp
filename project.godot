@@ -33,6 +33,7 @@ file_logging/max_log_files=50
 [display]
 
 window/size/viewport_width=1154
+window/stretch/scale.android=2.0
 
 [dotnet]
 
