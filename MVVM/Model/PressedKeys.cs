@@ -12,8 +12,8 @@ namespace RoverControlApp.MVVM.Model
 		private MqttClasses.RoverControl _roverMovement;
 		private MqttClasses.ManipulatorControl _manipulatorMovement;
 		private MqttClasses.RoverContainer _containerMovement;
-		private RoverControllerPresets.IRoverDriveController _roverDriveControllerPreset = null!;
-		private RoverControllerPresets.IRoverManipulatorController _roverManipulatorControllerPreset = null!;
+		private RoverControllerPresetsOld.IRoverDriveController _roverDriveControllerPreset = null!;
+		private RoverControllerPresetsOld.IRoverManipulatorController _roverManipulatorControllerPreset = null!;
 		private bool _disposedValue;
 
 		public event EventHandler<Vector4>? OnAbsoluteVectorChanged;
@@ -93,9 +93,9 @@ namespace RoverControlApp.MVVM.Model
 		{
 			_manipulatorMovement = new MqttClasses.ManipulatorControl();
 			_roverDriveControllerPreset = LocalSettings.Singleton.Joystick.NewFancyRoverController
-				? new RoverControllerPresets.ForzaLikeController()
-				: new RoverControllerPresets.EricSOnController();
-			_roverManipulatorControllerPreset = new RoverControllerPresets.SingleAxisManipulatorController();
+				? new RoverControllerPresetsOld.ForzaLikeController()
+				: new RoverControllerPresetsOld.EricSOnController();
+			_roverManipulatorControllerPreset = new RoverControllerPresetsOld.SingleAxisManipulatorController();
 		}
 
 		/*
