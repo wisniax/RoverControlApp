@@ -2,6 +2,8 @@
 using RoverControlApp.Core;
 using System;
 using System.Threading.Tasks;
+using RoverControlApp.Core.RoverControllerPresets;
+using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.MVVM.Model
 {
@@ -12,7 +14,7 @@ namespace RoverControlApp.MVVM.Model
 		private MqttClasses.RoverControl _roverMovement;
 		private MqttClasses.ManipulatorControl _manipulatorMovement;
 		private MqttClasses.RoverContainer _containerMovement;
-		private RoverControllerPresetsOld.IRoverDriveController _roverDriveControllerPreset = null!;
+		private IRoverDriveController _roverDriveControllerPreset = null!;
 		private RoverControllerPresetsOld.IRoverManipulatorController _roverManipulatorControllerPreset = null!;
 		private bool _disposedValue;
 
@@ -92,9 +94,8 @@ namespace RoverControlApp.MVVM.Model
 		void SetupControllerPresets()
 		{
 			_manipulatorMovement = new MqttClasses.ManipulatorControl();
-			_roverDriveControllerPreset = LocalSettings.Singleton.Joystick.NewFancyRoverController
-				? new RoverControllerPresetsOld.ForzaLikeController()
-				: new RoverControllerPresetsOld.EricSOnController();
+			//TODO read drive controller form settings
+			_roverDriveControllerPreset =  new ForzaLikeController();
 			_roverManipulatorControllerPreset = new RoverControllerPresetsOld.SingleAxisManipulatorController();
 		}
 
@@ -184,8 +185,10 @@ namespace RoverControlApp.MVVM.Model
 		private void HandleMovementInputEvent()
 		{
 			if (ControlMode != MqttClasses.ControlMode.Rover) return;
-			if (!_roverDriveControllerPreset.CalculateMoveVector(out MqttClasses.RoverControl roverControl, RoverMovement)) return;
-			RoverMovement = roverControl;
+			
+			RoverControl roverControl = _roverDriveControllerPreset.CalculateMoveVector();
+			if (_roverDriveControllerPreset.IsMoveVectorChanged(roverControl, RoverMovement))
+				RoverMovement = roverControl;
 		}
 		private void HandleFunctionInputEvent()
 		{
