@@ -2,7 +2,7 @@
 using Godot;
 using static RoverControlApp.Core.MqttClasses;
 
-namespace RoverControlApp.Core.RoverControllerPresets;
+namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class GoodOldGamesLikeController : IRoverDriveController
 {
@@ -16,13 +16,13 @@ public class GoodOldGamesLikeController : IRoverDriveController
 
 		Vector2 velocity = Input.GetVector(
 			"rover_move_down",
-			"rover_move_up", 
-			"rover_move_right", 
+			"rover_move_up",
+			"rover_move_right",
 			"rover_move_left",
 			joyDeadZone
 		);
 
-		if (LocalSettings.Singleton.SpeedLimiter.Enabled) 
+		if (LocalSettings.Singleton.SpeedLimiter.Enabled)
 			velocity *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
 
 		velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, joyDeadZone) ? 0 : velocity.X;

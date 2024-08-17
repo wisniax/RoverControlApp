@@ -2,7 +2,7 @@
 using Godot;
 using static RoverControlApp.Core.MqttClasses;
 
-namespace RoverControlApp.Core.RoverControllerPresets;
+namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class DirectDriveController : IRoverDriveController
 {

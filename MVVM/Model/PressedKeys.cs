@@ -3,6 +3,7 @@ using RoverControlApp.Core;
 using System;
 using System.Threading.Tasks;
 using RoverControlApp.Core.RoverControllerPresets;
+using RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.MVVM.Model
