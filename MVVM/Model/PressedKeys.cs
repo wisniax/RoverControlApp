@@ -4,29 +4,30 @@ using System;
 using System.Threading.Tasks;
 using RoverControlApp.Core.RoverControllerPresets;
 using RoverControlApp.Core.RoverControllerPresets.DriveControllers;
+using RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.MVVM.Model
 {
 	public class PressedKeys : IDisposable
 	{
-		private volatile MqttClasses.ControlMode _controlMode;
+		private volatile ControlMode _controlMode;
 		private Vector4 _lastAbsoluteVector;
-		private MqttClasses.RoverControl _roverMovement;
-		private MqttClasses.ManipulatorControl _manipulatorMovement;
-		private MqttClasses.RoverContainer _containerMovement;
+		private RoverControl _roverMovement;
+		private ManipulatorControl _manipulatorMovement;
+		private RoverContainer _containerMovement;
 		private IRoverDriveController _roverDriveControllerPreset = null!;
-		private RoverControllerPresetsOld.IRoverManipulatorController _roverManipulatorControllerPreset = null!;
+		private IRoverManipulatorController _roverManipulatorControllerPreset = null!;
 		private bool _disposedValue;
 
 		public event EventHandler<Vector4>? OnAbsoluteVectorChanged;
-		public event Func<MqttClasses.RoverControl, Task>? OnRoverMovementVector;
-		public event Func<MqttClasses.ManipulatorControl, Task>? OnManipulatorMovement;
-		public event Func<MqttClasses.RoverContainer, Task>? OnContainerMovement;
+		public event Func<RoverControl, Task>? OnRoverMovementVector;
+		public event Func<ManipulatorControl, Task>? OnManipulatorMovement;
+		public event Func<RoverContainer, Task>? OnContainerMovement;
 		public event Func<bool, Task>? OnPadConnectionChanged;
-		public event Func<MqttClasses.ControlMode, Task>? OnControlModeChanged;
+		public event Func<ControlMode, Task>? OnControlModeChanged;
 
-		public MqttClasses.ControlMode ControlMode
+		public ControlMode ControlMode
 		{
 			get => _controlMode;
 			private set
@@ -37,7 +38,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		public bool PadConnected => Input.GetConnectedJoypads().Count > 0;
+		public static bool PadConnected => Input.GetConnectedJoypads().Count > 0;
 
 		public Vector4 LastAbsoluteVector
 		{
@@ -49,7 +50,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		public MqttClasses.RoverControl RoverMovement
+		public RoverControl RoverMovement
 		{
 			get => _roverMovement;
 			private set
@@ -59,7 +60,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		public MqttClasses.ManipulatorControl ManipulatorMovement
+		public ManipulatorControl ManipulatorMovement
 		{
 			get => _manipulatorMovement;
 			private set
@@ -69,7 +70,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		public MqttClasses.RoverContainer ContainerMovement
+		public RoverContainer ContainerMovement
 		{
 			get => _containerMovement;
 			private set
@@ -94,10 +95,10 @@ namespace RoverControlApp.MVVM.Model
 
 		void SetupControllerPresets()
 		{
-			_manipulatorMovement = new MqttClasses.ManipulatorControl();
+			_manipulatorMovement = new();
 			//TODO read drive controller form settings
 			_roverDriveControllerPreset =  new ForzaLikeController();
-			_roverManipulatorControllerPreset = new RoverControllerPresetsOld.SingleAxisManipulatorController();
+			_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
 		}
 
 		/*
@@ -135,7 +136,7 @@ namespace RoverControlApp.MVVM.Model
 			StopAll();
 		}
 
-		public void HandleInputEvent(InputEvent @event)
+		public void HandleInputEvent(InputEvent _)
 		{
 			HandleFunctionInputEvent();
 			HandleCameraInputEvent();
@@ -146,22 +147,24 @@ namespace RoverControlApp.MVVM.Model
 
 		private void HandleContainerInputEvent()
 		{
-			if (ControlMode != MqttClasses.ControlMode.Manipulator) return;
+			if (ControlMode != ControlMode.Manipulator) return;
 			var axis = Input.GetAxis("camera_focus_out", "camera_focus_in");
 			if (Mathf.IsEqualApprox(axis, ContainerMovement.Axis1, 0.01f)) return;
-			ContainerMovement = new MqttClasses.RoverContainer { Axis1 = axis };
+			ContainerMovement = new RoverContainer { Axis1 = axis };
 		}
 
 		private void HandleManipulatorInputEvent()
 		{
-			if (ControlMode != MqttClasses.ControlMode.Manipulator) return;
-			if (!_roverManipulatorControllerPreset.CalculateMoveVector(out MqttClasses.ManipulatorControl manipulatorControl, ManipulatorMovement)) return;
-			ManipulatorMovement = manipulatorControl;
+			if (ControlMode != ControlMode.Manipulator) return;
+
+			ManipulatorControl manipulatorControl = _roverManipulatorControllerPreset.CalculateMoveVector();
+			if(_roverManipulatorControllerPreset.IsMoveVectorChanged(manipulatorControl, ManipulatorMovement))
+				ManipulatorMovement = manipulatorControl;
 		}
 
 		private void HandleCameraInputEvent()
 		{
-			if (ControlMode == MqttClasses.ControlMode.Manipulator) return;
+			if (ControlMode == ControlMode.Manipulator) return;
 
 			Vector4 absoluteVector4 = Vector4.Zero;
 
@@ -185,7 +188,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private void HandleMovementInputEvent()
 		{
-			if (ControlMode != MqttClasses.ControlMode.Rover) return;
+			if (ControlMode != ControlMode.Rover) return;
 			
 			RoverControl roverControl = _roverDriveControllerPreset.CalculateMoveVector();
 			if (_roverDriveControllerPreset.IsMoveVectorChanged(roverControl, RoverMovement))
@@ -200,8 +203,8 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (!Input.IsActionJustPressed("ControlModeChange", true)) return;
 
-			if ((int)ControlMode + 1 >= Enum.GetNames<MqttClasses.ControlMode>().Length)
-				ControlMode = MqttClasses.ControlMode.EStop;
+			if ((int)ControlMode + 1 >= Enum.GetNames<ControlMode>().Length)
+				ControlMode = ControlMode.EStop;
 			else ControlMode++;
 
 			StopAll();
@@ -210,9 +213,9 @@ namespace RoverControlApp.MVVM.Model
 		private void StopAll()
 		{
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
-			RoverMovement = new MqttClasses.RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
-			ContainerMovement = new MqttClasses.RoverContainer { Axis1 = 0f };
-			ManipulatorMovement = new MqttClasses.ManipulatorControl();
+			RoverMovement = new RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
+			ContainerMovement = new RoverContainer { Axis1 = 0f };
+			ManipulatorMovement = new ManipulatorControl();
 			LastAbsoluteVector = Vector4.Zero;
 		}
 
