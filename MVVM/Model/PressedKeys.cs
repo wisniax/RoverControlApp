@@ -96,8 +96,10 @@ namespace RoverControlApp.MVVM.Model
 		void SetupControllerPresets()
 		{
 			_manipulatorMovement = new();
-			//TODO read drive controller form settings
-			_roverDriveControllerPreset =  new ForzaLikeController();
+			_roverDriveControllerPreset =
+				RoverDriveControllerSelector.GetController(
+					(RoverDriveControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverDriveController
+				);
 			_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
 		}
 
@@ -118,7 +120,7 @@ namespace RoverControlApp.MVVM.Model
 
 			switch (name)
 			{
-				case nameof(LocalSettings.Joystick.NewFancyRoverController):
+				case nameof(LocalSettings.Joystick.RoverDriveController):
 					SetupControllerPresets();
 					break;
 			}

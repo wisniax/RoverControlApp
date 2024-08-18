@@ -2,6 +2,7 @@
 using RoverControlApp.Core.JSONConverters;
 using System;
 using System.Text.Json.Serialization;
+using RoverControlApp.Core.RoverControllerPresets;
 
 namespace RoverControlApp.Core.Settings;
 
@@ -11,14 +12,14 @@ public partial class Joystick : SettingBase, ICloneable
 
 	public Joystick()
 	{
-		_newFancyRoverController = false;
+		_roverDriveController = 3;
 		_deadzone = 0.15f;
 		_vibrateOnModeChange = true;
 	}
 
-	public Joystick(bool newFancyRoverController, float deadzone, bool vibrateOnModeChange)
+	public Joystick(int roverDriveController, float deadzone, bool vibrateOnModeChange)
 	{
-		_newFancyRoverController = newFancyRoverController;
+		_roverDriveController = roverDriveController;
 		_deadzone = deadzone;
 		_vibrateOnModeChange = vibrateOnModeChange;
 	}
@@ -27,17 +28,24 @@ public partial class Joystick : SettingBase, ICloneable
 	{
 		return new Joystick()
 		{
-			NewFancyRoverController = _newFancyRoverController,
+			RoverDriveController = _roverDriveController,
 			Deadzone = _deadzone,
 			VibrateOnModeChange = _vibrateOnModeChange
 		};
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-	public bool NewFancyRoverController
+	[SettingsManagerVisible(
+		cellMode: TreeItem.TreeCellMode.Range,
+		formatData:"0;3;1;f;i",
+		customTooltip:	"0 - GoodOldGamesLikeController\n" +
+						"1 - EricSOnController\n" +
+						"2 - ForzaLikeController\n" +
+						"3 - DirectDriveController (Default)"
+	)]
+	public int RoverDriveController
 	{
-		get => _newFancyRoverController;
-		set => EmitSignal_SettingChanged(ref _newFancyRoverController, value);
+		get => _roverDriveController;
+		set => EmitSignal_SettingChanged(ref _roverDriveController, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
@@ -54,7 +62,7 @@ public partial class Joystick : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _vibrateOnModeChange, value);
 	}
 
-	bool _newFancyRoverController;
+	int _roverDriveController;
 	float _deadzone;
 	bool _vibrateOnModeChange;
 }
