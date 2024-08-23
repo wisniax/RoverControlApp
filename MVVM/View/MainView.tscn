@@ -46,7 +46,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,7 +54,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_84vv0")
-imTextureRect = NodePath("CameraView")
 RoverModeUIDis = NodePath("RoverModeUIDis")
 GrzybUIDis = NodePath("GrzybUIDis")
 MissionStatusUIDis = NodePath("MissonStatusUIDis")
@@ -67,15 +66,223 @@ FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
 
-[node name="CameraView" type="TextureRect" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(229, 150)
+layout_mode = 0
+offset_left = 925.0
+offset_top = 35.0
+offset_right = 1154.0
+offset_bottom = 606.0
+
+[node name="CameraViewSub0" type="TextureRect" parent="VBoxContainer"]
+visible = false
+custom_minimum_size = Vector2(0, 111.08)
+layout_mode = 2
+texture = ExtResource("2_1llr5")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/CameraViewSub0"]
+layout_mode = 0
+offset_left = 150.0
+offset_top = -2.0
+offset_right = 225.0
+offset_bottom = 21.0
+text = "Cam 0 SD"
+
+[node name="CameraViewSub1" type="TextureRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 111.08)
+layout_mode = 2
+texture = ExtResource("2_1llr5")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/CameraViewSub1"]
+layout_mode = 0
+offset_left = 150.0
+offset_top = -2.0
+offset_right = 225.0
+offset_bottom = 21.0
+text = "Cam 1 SD"
+
+[node name="CameraViewSub2" type="TextureRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 111.08)
+layout_mode = 2
+texture = ExtResource("2_1llr5")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/CameraViewSub2"]
+layout_mode = 0
+offset_left = 150.0
+offset_top = -2.0
+offset_right = 225.0
+offset_bottom = 21.0
+text = "Cam 2 SD"
+
+[node name="CameraViewSub3" type="TextureRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 111.08)
+layout_mode = 2
+texture = ExtResource("2_1llr5")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/CameraViewSub3"]
+layout_mode = 0
+offset_left = 150.0
+offset_top = -2.0
+offset_right = 225.0
+offset_bottom = 21.0
+text = "Cam 3 SD"
+
+[node name="CameraViewSub4" type="TextureRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 111.08)
+layout_mode = 2
+texture = ExtResource("2_1llr5")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/CameraViewSub4"]
+layout_mode = 0
+offset_left = 150.0
+offset_top = -2.0
+offset_right = 225.0
+offset_bottom = 21.0
+text = "Cam 4 SD"
+
+[node name="CameraViewSub5" type="TextureRect" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 111.08)
+layout_mode = 2
+texture = ExtResource("2_1llr5")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/CameraViewSub5"]
+layout_mode = 0
+offset_left = 150.0
+offset_top = -2.0
+offset_right = 225.0
+offset_bottom = 21.0
+text = "Cam 5 SD"
+
+[node name="CameraViewMain0" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -229.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_1llr5")
 expand_mode = 2
+
+[node name="Label" type="Label" parent="CameraViewMain0"]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 6.0
+offset_right = 776.0
+offset_bottom = 29.0
+text = "Camera 0 HD"
+horizontal_alignment = 1
+
+[node name="CameraViewMain1" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -229.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_1llr5")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="CameraViewMain1"]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 6.0
+offset_right = 776.0
+offset_bottom = 29.0
+text = "Camera 1 HD"
+horizontal_alignment = 1
+
+[node name="CameraViewMain2" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -229.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_1llr5")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="CameraViewMain2"]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 6.0
+offset_right = 776.0
+offset_bottom = 29.0
+text = "Camera 2 HD"
+horizontal_alignment = 1
+
+[node name="CameraViewMain3" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -229.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_1llr5")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="CameraViewMain3"]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 6.0
+offset_right = 776.0
+offset_bottom = 29.0
+text = "Camera 3 HD"
+horizontal_alignment = 1
+
+[node name="CameraViewMain4" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -229.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_1llr5")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="CameraViewMain4"]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 6.0
+offset_right = 776.0
+offset_bottom = 29.0
+text = "Camera 4 HD"
+horizontal_alignment = 1
+
+[node name="CameraViewMain5" type="TextureRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -229.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_1llr5")
+expand_mode = 2
+
+[node name="Label" type="Label" parent="CameraViewMain5"]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 6.0
+offset_right = 776.0
+offset_bottom = 29.0
+text = "Camera 5 HD"
+horizontal_alignment = 1
 
 [node name="FancyDebugViewRLab" type="RichTextLabel" parent="."]
 layout_mode = 1
