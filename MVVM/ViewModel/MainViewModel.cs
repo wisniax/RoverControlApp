@@ -26,10 +26,10 @@ namespace RoverControlApp.MVVM.ViewModel
 		private JoyVibrato _joyVibrato = new();
 		private BackCapture _backCapture = new();
 
-		private ImageTexture? _imTexture;
+		private ImageTexture?[] _imTexture = new ImageTexture?[MaxCams];
 
 		[Export]
-		private TextureRect imTextureRect = null!;
+		private TextureRect[] imTextureRect = null!;
 		[Export]
 		private RoverMode_UIOverlay RoverModeUIDis = null!;
 		[Export]
@@ -134,13 +134,13 @@ namespace RoverControlApp.MVVM.ViewModel
 				_backCapture.CleanUpHistory();
 
 				_rtspClient[0].LockGrabbingFrames();
-				if (_imTexture == null) _imTexture = ImageTexture.CreateFromImage(_rtspClient[0].LatestImage);
-				else _imTexture.Update(_rtspClient[0].LatestImage);
+				if (_imTexture[0] == null) _imTexture[0] = ImageTexture.CreateFromImage(_rtspClient[0].LatestImage);
+				else _imTexture[0].Update(_rtspClient[0].LatestImage);
 
 				_backCapture.FrameFeed(_rtspClient[0].LatestImage);
 
 				_rtspClient[0].UnLockGrabbingFrames();
-				imTextureRect.Texture = _imTexture;
+				imTextureRect[0].Texture = _imTexture[0];
 				_rtspClient[0].MarkFrameOld();
 			}
 			UpdateLabel();
