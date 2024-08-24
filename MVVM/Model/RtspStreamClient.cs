@@ -97,7 +97,7 @@ namespace RoverControlApp.MVVM.Model
 			string rtspUrl = $"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Login}"
 				+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}";
 
-			var task = Task.Run(() => Capture = new VideoCapture(rtspUrl));
+			var task = Task.Run(() => Capture = new VideoCapture("http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg"));
 			_matrix = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;
