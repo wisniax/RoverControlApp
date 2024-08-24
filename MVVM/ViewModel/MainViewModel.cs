@@ -129,19 +129,22 @@ namespace RoverControlApp.MVVM.ViewModel
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
 		{
-			if (_rtspClient[0] is { NewFrameSaved: true })
+			for (int i = 0; i < MaxCams; i++)
 			{
-				_backCapture.CleanUpHistory();
+				if (_rtspClient[i] is { NewFrameSaved: true })
+				{
+					_backCapture.CleanUpHistory();
 
-				_rtspClient[0].LockGrabbingFrames();
-				if (_imTexture[0] == null) _imTexture[0] = ImageTexture.CreateFromImage(_rtspClient[0].LatestImage);
-				else _imTexture[0].Update(_rtspClient[0].LatestImage);
+					_rtspClient[i].LockGrabbingFrames();
+					if (_imTexture[i] == null) _imTexture[i] = ImageTexture.CreateFromImage(_rtspClient[i].LatestImage);
+					else _imTexture[i].Update(_rtspClient[i].LatestImage);
 
-				_backCapture.FrameFeed(_rtspClient[0].LatestImage);
+					_backCapture.FrameFeed(_rtspClient[i].LatestImage);
 
-				_rtspClient[0].UnLockGrabbingFrames();
-				imTextureRect[0].Texture = _imTexture[0];
-				_rtspClient[0].MarkFrameOld();
+					_rtspClient[i].UnLockGrabbingFrames();
+					imTextureRect[i].Texture = _imTexture[i];
+					_rtspClient[i].MarkFrameOld();
+				}
 			}
 			UpdateLabel();
 		}
@@ -179,16 +182,19 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void ManageRtspStatus()
 		{
-			switch (LocalSettings.Singleton.Camera.EnableRtspStream)
+			for (int i = 0; i < MaxCams; i++)
 			{
-				case true when _rtspClient[0] is null:
-					_rtspClient[0] = new();
-					_rtspClientWeak = new(_rtspClient[0]);
-					break;
-				case false when _rtspClient[0] is not null:
-					_rtspClient[0].Dispose();
-					_rtspClient = null;
-					break;
+				switch (LocalSettings.Singleton.Camera.EnableRtspStream)
+				{
+					case true when _rtspClient[i] is null:
+						_rtspClient[i] = new();
+						_rtspClientWeak = new(_rtspClient[i]);
+						break;
+					case false when _rtspClient[i] is not null:
+						_rtspClient[i].Dispose();
+						_rtspClient = null;
+						break;
+				}
 			}
 		}
 
@@ -290,10 +296,15 @@ namespace RoverControlApp.MVVM.ViewModel
 				return false;
 
 			Image img = new();
-			_rtspClient[0].LockGrabbingFrames();
-			if (_rtspClient[0].LatestImage is not null && !_rtspClient[0].LatestImage.IsEmpty())
-				img.CopyFrom(_rtspClient[0].LatestImage);
-			_rtspClient[0].UnLockGrabbingFrames();
+
+			for (int i = 0; i < MaxCams; i++)
+			{
+				_rtspClient[i].LockGrabbingFrames();
+				if (_rtspClient[i].LatestImage is not null && !_rtspClient[i].LatestImage.IsEmpty())
+					img.CopyFrom(_rtspClient[i].LatestImage);
+				_rtspClient[i].UnLockGrabbingFrames();
+
+			}
 
 			if (img.IsEmpty())
 			{
