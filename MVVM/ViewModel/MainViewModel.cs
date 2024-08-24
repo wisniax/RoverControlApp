@@ -19,7 +19,9 @@ namespace RoverControlApp.MVVM.ViewModel
 		private WeakReference<RtspStreamClient>? _rtspClientWeak;
 		private WeakReference<OnvifPtzCameraController>? _ptzClientWeak;
 
-		private RtspStreamClient? _rtspClient;
+		private static int MaxCams = 6;
+
+		private RtspStreamClient?[] _rtspClient = new RtspStreamClient?[MaxCams];
 		private OnvifPtzCameraController? _ptzClient;
 		private JoyVibrato _joyVibrato = new();
 		private BackCapture _backCapture = new();
@@ -102,7 +104,10 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			PressedKeys.Dispose();
 			RoverCommunication.Dispose();
-			_rtspClient?.Dispose();
+			foreach (var client in _rtspClient)
+			{
+				client?.Dispose();
+			}
 			_ptzClient?.Dispose();
 			base.Dispose(disposing);
 		}
@@ -124,19 +129,19 @@ namespace RoverControlApp.MVVM.ViewModel
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
 		{
-			if (_rtspClient is { NewFrameSaved: true })
+			if (_rtspClient[0] is { NewFrameSaved: true })
 			{
 				_backCapture.CleanUpHistory();
 
-				_rtspClient.LockGrabbingFrames();
-				if (_imTexture == null) _imTexture = ImageTexture.CreateFromImage(_rtspClient.LatestImage);
-				else _imTexture.Update(_rtspClient.LatestImage);
+				_rtspClient[0].LockGrabbingFrames();
+				if (_imTexture == null) _imTexture = ImageTexture.CreateFromImage(_rtspClient[0].LatestImage);
+				else _imTexture.Update(_rtspClient[0].LatestImage);
 
-				_backCapture.FrameFeed(_rtspClient.LatestImage);
+				_backCapture.FrameFeed(_rtspClient[0].LatestImage);
 
-				_rtspClient.UnLockGrabbingFrames();
+				_rtspClient[0].UnLockGrabbingFrames();
 				imTextureRect.Texture = _imTexture;
-				_rtspClient.MarkFrameOld();
+				_rtspClient[0].MarkFrameOld();
 			}
 			UpdateLabel();
 		}
@@ -176,12 +181,12 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			switch (LocalSettings.Singleton.Camera.EnableRtspStream)
 			{
-				case true when _rtspClient is null:
-					_rtspClient = new();
-					_rtspClientWeak = new(_rtspClient);
+				case true when _rtspClient[0] is null:
+					_rtspClient[0] = new();
+					_rtspClientWeak = new(_rtspClient[0]);
 					break;
-				case false when _rtspClient is not null:
-					_rtspClient.Dispose();
+				case false when _rtspClient[0] is not null:
+					_rtspClient[0].Dispose();
 					_rtspClient = null;
 					break;
 			}
@@ -285,10 +290,10 @@ namespace RoverControlApp.MVVM.ViewModel
 				return false;
 
 			Image img = new();
-			_rtspClient.LockGrabbingFrames();
-			if (_rtspClient.LatestImage is not null && !_rtspClient.LatestImage.IsEmpty())
-				img.CopyFrom(_rtspClient.LatestImage);
-			_rtspClient.UnLockGrabbingFrames();
+			_rtspClient[0].LockGrabbingFrames();
+			if (_rtspClient[0].LatestImage is not null && !_rtspClient[0].LatestImage.IsEmpty())
+				img.CopyFrom(_rtspClient[0].LatestImage);
+			_rtspClient[0].UnLockGrabbingFrames();
 
 			if (img.IsEmpty())
 			{
