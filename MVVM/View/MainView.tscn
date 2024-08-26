@@ -54,7 +54,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_84vv0")
-imTextureRect = [NodePath("VBoxContainer/CameraViewSub0"), NodePath("VBoxContainer/CameraViewSub1"), NodePath("VBoxContainer/CameraViewSub2"), NodePath("VBoxContainer/CameraViewSub3"), NodePath("VBoxContainer/CameraViewSub4"), NodePath("VBoxContainer/CameraViewSub5")]
+imTextureRect = [NodePath("VBoxContainer/CameraViewSub0"), NodePath("VBoxContainer/CameraViewSub1"), NodePath("VBoxContainer/CameraViewSub2"), NodePath("VBoxContainer/CameraViewSub3"), NodePath("VBoxContainer/CameraViewSub4"), NodePath("VBoxContainer/CameraViewSub5"), NodePath("CameraViewMain0")]
 RoverModeUIDis = NodePath("RoverModeUIDis")
 GrzybUIDis = NodePath("GrzybUIDis")
 MissionStatusUIDis = NodePath("MissonStatusUIDis")
@@ -89,6 +89,12 @@ offset_right = 225.0
 offset_bottom = 21.0
 text = "Cam 0 SD"
 
+[node name="Button" type="Button" parent="VBoxContainer/CameraViewSub0"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 228.0
+offset_bottom = 109.0
+
 [node name="CameraViewSub1" type="TextureRect" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 111.08)
 layout_mode = 2
@@ -102,6 +108,11 @@ offset_top = -2.0
 offset_right = 225.0
 offset_bottom = 21.0
 text = "Cam 1 SD"
+
+[node name="Button" type="Button" parent="VBoxContainer/CameraViewSub1"]
+modulate = Color(1, 1, 1, 0)
+offset_right = 228.0
+offset_bottom = 109.0
 
 [node name="CameraViewSub2" type="TextureRect" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 111.08)
@@ -117,6 +128,11 @@ offset_right = 225.0
 offset_bottom = 21.0
 text = "Cam 2 SD"
 
+[node name="Button" type="Button" parent="VBoxContainer/CameraViewSub2"]
+modulate = Color(1, 1, 1, 0)
+offset_right = 228.0
+offset_bottom = 109.0
+
 [node name="CameraViewSub3" type="TextureRect" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 111.08)
 layout_mode = 2
@@ -130,6 +146,11 @@ offset_top = -2.0
 offset_right = 225.0
 offset_bottom = 21.0
 text = "Cam 3 SD"
+
+[node name="Button" type="Button" parent="VBoxContainer/CameraViewSub3"]
+modulate = Color(1, 1, 1, 0)
+offset_right = 228.0
+offset_bottom = 109.0
 
 [node name="CameraViewSub4" type="TextureRect" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 111.08)
@@ -145,6 +166,11 @@ offset_right = 225.0
 offset_bottom = 21.0
 text = "Cam 4 SD"
 
+[node name="Button" type="Button" parent="VBoxContainer/CameraViewSub4"]
+modulate = Color(1, 1, 1, 0)
+offset_right = 228.0
+offset_bottom = 109.0
+
 [node name="CameraViewSub5" type="TextureRect" parent="VBoxContainer"]
 custom_minimum_size = Vector2(0, 111.08)
 layout_mode = 2
@@ -158,6 +184,11 @@ offset_top = -2.0
 offset_right = 225.0
 offset_bottom = 21.0
 text = "Cam 5 SD"
+
+[node name="Button" type="Button" parent="VBoxContainer/CameraViewSub5"]
+modulate = Color(1, 1, 1, 0)
+offset_right = 228.0
+offset_bottom = 109.0
 
 [node name="CameraViewMain0" type="TextureRect" parent="."]
 layout_mode = 1
@@ -473,14 +504,20 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
+[connection signal="pressed" from="VBoxContainer/CameraViewSub0/Button" to="." method="ChangeCamera" binds= [0]]
+[connection signal="pressed" from="VBoxContainer/CameraViewSub1/Button" to="." method="ChangeCamera" binds= [1]]
+[connection signal="pressed" from="VBoxContainer/CameraViewSub2/Button" to="." method="ChangeCamera" binds= [2]]
+[connection signal="pressed" from="VBoxContainer/CameraViewSub3/Button" to="." method="ChangeCamera" binds= [3]]
+[connection signal="pressed" from="VBoxContainer/CameraViewSub4/Button" to="." method="ChangeCamera" binds= [4]]
+[connection signal="pressed" from="VBoxContainer/CameraViewSub5/Button" to="." method="ChangeCamera" binds= [5]]
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 
 [editable path="GrzybUIDis"]

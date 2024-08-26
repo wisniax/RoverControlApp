@@ -8,6 +8,7 @@ using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
 using RoverControlApp.Core;
+using RoverControlApp.MVVM.ViewModel;
 
 namespace RoverControlApp.MVVM.Model
 {
@@ -29,7 +30,7 @@ namespace RoverControlApp.MVVM.Model
 		private Core.Settings.Camera _myCamera;
 
 		private int _id;
-		private bool _isHD;
+		public bool isHD;
 
 		public VideoCapture? Capture { get; private set; }
 
@@ -64,7 +65,7 @@ namespace RoverControlApp.MVVM.Model
 		public RtspStreamClient(int id, bool isHD)
 		{
 			_id = id;
-			_isHD = isHD;
+			this.isHD = isHD;
 
 			switch (_id)
 			{
@@ -131,7 +132,7 @@ namespace RoverControlApp.MVVM.Model
 
 
 			string rtspUrl = $"rtsp://{_myCamera.ConnectionSettings.Login}:{_myCamera.ConnectionSettings.Login}"
-				+ $"@{_myCamera.ConnectionSettings.Ip}:{_myCamera.ConnectionSettings.RtspPort}{(_isHD ? _myCamera.ConnectionSettings.RtspStreamPathHD : _myCamera.ConnectionSettings.RtspStreamPathSD)}";
+				+ $"@{_myCamera.ConnectionSettings.Ip}:{_myCamera.ConnectionSettings.RtspPort}{(isHD ? _myCamera.ConnectionSettings.RtspStreamPathHD : _myCamera.ConnectionSettings.RtspStreamPathSD)}";
 
 			string altUrl = "http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg";
 

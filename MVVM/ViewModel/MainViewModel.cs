@@ -137,6 +137,21 @@ namespace RoverControlApp.MVVM.ViewModel
 			UpdateLabel();
 		}
 
+		void ChangeCamera(int id)
+		{
+			if (_rtspClient[id] is null)
+				return;
+
+			for (int i = 0; i < MaxCams; i++)
+			{
+				imTextureRect[i].Visible = true;
+				_rtspClient[i].isHD = false;
+			}
+
+			imTextureRect[id].Visible = false;
+			_rtspClient[id].isHD = true;
+			GetNode<Label>("CameraViewMain0/Label").Text = $"Camera {id} HD";
+		}
 
 		void RTSPworkHandler(int id)
 		{
@@ -154,7 +169,10 @@ namespace RoverControlApp.MVVM.ViewModel
 			_backCapture.FrameFeed(_rtspClient[id].LatestImage);
 
 			_rtspClient[id].UnLockGrabbingFrames();
-			imTextureRect[id].Texture = _imTexture[id];
+			if (!_rtspClient[id].isHD)
+				imTextureRect[id].Texture = _imTexture[id];
+			else
+				imTextureRect[6].Texture = _imTexture[id];
 			_rtspClient[id].MarkFrameOld();
 		}
 
