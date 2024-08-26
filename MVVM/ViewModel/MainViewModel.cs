@@ -80,8 +80,9 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
 
-			ManagePtzStatus();
-			ManageRtspStatus();
+			ManagePtzStatus(LocalSettings.Singleton.Camera0);
+			ManageRtspStatus(LocalSettings.Singleton.Camera0, 0);
+			ManageRtspStatus(LocalSettings.Singleton.Camera1, 1);
 
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -155,24 +156,39 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		void OnSettingsCategoryChanged(StringName property)
 		{
-			if (property != nameof(LocalSettings.Camera)) return;
+			if (property != nameof(LocalSettings.Camera0))
+			{
+				ManagePtzStatus(LocalSettings.Singleton.Camera0);
+				ManageRtspStatus(LocalSettings.Singleton.Camera0, 1);
+			}
 
-			ManagePtzStatus();
-			ManageRtspStatus();
+			if (property != nameof(LocalSettings.Camera1))
+				ManageRtspStatus(LocalSettings.Singleton.Camera1, 1);
 		}
 
 		void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 		{
-			if (category != nameof(LocalSettings.Camera)) return;
-
-			switch (name)
+			if (category == nameof(LocalSettings.Camera0))
 			{
-				case nameof(LocalSettings.Camera.EnablePtzControl):
-					ManagePtzStatus();
-					break;
-				case nameof(LocalSettings.Camera.EnableRtspStream):
-					ManageRtspStatus();
-					break;
+				switch (name)
+				{
+					case nameof(LocalSettings.Camera0.EnablePtzControl):
+						ManagePtzStatus(LocalSettings.Singleton.Camera0);
+						break;
+					case nameof(LocalSettings.Camera0.EnableRtspStream):
+						ManageRtspStatus(LocalSettings.Singleton.Camera0, 0);
+						break;
+				}
+			}
+
+			if (category == nameof(LocalSettings.Camera1))
+			{
+				switch (name)
+				{
+					case nameof(LocalSettings.Camera1.EnableRtspStream):
+						ManageRtspStatus(LocalSettings.Singleton.Camera1, 1);
+						break;
+				}
 			}
 		}
 
@@ -180,27 +196,24 @@ namespace RoverControlApp.MVVM.ViewModel
 		 * settings handlers end
 		 */
 
-		private void ManageRtspStatus()
+		private void ManageRtspStatus(Core.Settings.Camera camera, int id)
 		{
-			for (int i = 0; i < MaxCams; i++)
+			switch (camera.EnableRtspStream)
 			{
-				switch (LocalSettings.Singleton.Camera.EnableRtspStream)
-				{
-					case true when _rtspClient[i] is null:
-						_rtspClient[i] = new();
-						_rtspClientWeak = new(_rtspClient[i]);
-						break;
-					case false when _rtspClient[i] is not null:
-						_rtspClient[i].Dispose();
-						_rtspClient = null;
-						break;
-				}
+				case true when _rtspClient[id] is null:
+					_rtspClient[id] = new(id);
+					_rtspClientWeak = new(_rtspClient[id]);
+					break;
+				case false when _rtspClient[id] is not null:
+					_rtspClient[id].Dispose();
+					_rtspClient = null;
+					break;
 			}
 		}
 
-		private void ManagePtzStatus()
+		private void ManagePtzStatus(Core.Settings.Camera camera)
 		{
-			switch (LocalSettings.Singleton.Camera.EnablePtzControl)
+			switch (camera.EnablePtzControl)
 			{
 				case true when _ptzClient is null:
 					_ptzClient = new OnvifPtzCameraController();
@@ -290,7 +303,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
 		}
 
-		public async Task<bool> CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
+		public async Task<bool> CaptureCameraImage(int activeCam, string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
 		{
 			if (_rtspClient is null)
 				return false;
@@ -368,7 +381,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void OnRTSPCapture()
 		{
-			CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
+			CaptureCameraImage(0, subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
 		}
 	}
 }

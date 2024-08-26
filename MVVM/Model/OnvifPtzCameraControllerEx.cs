@@ -102,9 +102,9 @@ namespace RoverControlApp.MVVM.Model
 			State = CommunicationState.Created;
 			var acc = new Account
 			(
-				LocalSettings.Singleton.Camera.ConnectionSettings.Ip + ':' + LocalSettings.Singleton.Camera.ConnectionSettings.PtzPort,
-				LocalSettings.Singleton.Camera.ConnectionSettings.Login,
-				LocalSettings.Singleton.Camera.ConnectionSettings.Password
+				LocalSettings.Singleton.Camera0.ConnectionSettings.Ip + ':' + LocalSettings.Singleton.Camera0.ConnectionSettings.PtzPort,
+				LocalSettings.Singleton.Camera0.ConnectionSettings.Login,
+				LocalSettings.Singleton.Camera0.ConnectionSettings.Password
 			);
 			_camera = Camera.Create(acc, (e) => _ptzThreadError = e);
 
@@ -249,7 +249,7 @@ namespace RoverControlApp.MVVM.Model
 		{
 			data = new();
 
-			data.TiltAndZoom = LocalSettings.Singleton.Camera.InverseAxis
+			data.TiltAndZoom = LocalSettings.Singleton.Camera0.InverseAxis
 				? new Vector4(-moveNew.X, -moveNew.Y, moveNew.Z, moveNew.W)
 				: moveNew;
 

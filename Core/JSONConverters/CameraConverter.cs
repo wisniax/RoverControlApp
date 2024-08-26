@@ -19,6 +19,7 @@ public class CameraConverter : JsonConverter<Camera>
 		bool? enableRtspStream = null;
 		bool? enablePtzControl = null;
 		double? ptzRequestFrequency = null;
+		bool? hdEnabled = null;
 
 		while (reader.Read())
 		{
@@ -60,7 +61,8 @@ public class CameraConverter : JsonConverter<Camera>
 			inverseAxis ?? Default.InverseAxis,
 			enableRtspStream ?? Default.EnableRtspStream,
 			enablePtzControl ?? Default.EnablePtzControl,
-			ptzRequestFrequency ?? Default.PtzRequestFrequency
+			ptzRequestFrequency ?? Default.PtzRequestFrequency,
+			hdEnabled ?? Default.HdEnabled
 		);
 	}
 

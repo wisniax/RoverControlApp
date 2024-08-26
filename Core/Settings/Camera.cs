@@ -19,7 +19,7 @@ public partial class Camera : SettingBase, ICloneable
 		_ptzRequestFrequency = 2.69;
 	}
 
-	public Camera(CameraConnection connectionSettings, bool inverseAxis, bool enableRtspStream, bool enablePtzControl, double ptzRequestFrequency)
+	public Camera(CameraConnection connectionSettings, bool inverseAxis, bool enableRtspStream, bool enablePtzControl, double ptzRequestFrequency, bool HdEnabled)
 	{
 		_connectionSettings = connectionSettings;
 
@@ -77,11 +77,18 @@ public partial class Camera : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _ptzRequestFrequency, value);
 	}
 
+	public bool HdEnabled
+	{
+		get => _hdEnabled;
+		set => EmitSignal_SettingChanged(ref _hdEnabled, value);
+	}
+
 	CameraConnection _connectionSettings;
 	bool _inverseAxis;
 	bool _enableRtspStream;
 	bool _enablePtzControl;
 	double _ptzRequestFrequency;
+	bool _hdEnabled;
 }
 
 

@@ -17,7 +17,8 @@ public class CameraConnectionConverter : JsonConverter<CameraConnection>
 		string? ip = null;
 		string? login = null;
 		string? password = null;
-		string? rtspStreamPath = null;
+		string? rtspStreamPathHD = null;
+		string? rtspStreamPathSD = null;
 		int? rtspPort = null;
 		int? ptzPort = null;
 
@@ -43,8 +44,11 @@ public class CameraConnectionConverter : JsonConverter<CameraConnection>
 				case nameof(CameraConnection.Password):
 					password = reader.GetString();
 					break;
-				case nameof(CameraConnection.RtspStreamPath):
-					rtspStreamPath = reader.GetString();
+				case nameof(CameraConnection.RtspStreamPathHD):
+					rtspStreamPathHD = reader.GetString();
+					break;
+				case nameof(CameraConnection.RtspStreamPathSD):
+					rtspStreamPathSD = reader.GetString();
 					break;
 				case nameof(CameraConnection.RtspPort):
 					rtspPort = reader.GetInt32();
@@ -63,7 +67,8 @@ public class CameraConnectionConverter : JsonConverter<CameraConnection>
 			ip ?? Default.Ip,
 			login ?? Default.Login,
 			password ?? Default.Password,
-			rtspStreamPath ?? Default.RtspStreamPath,
+			rtspStreamPathHD ?? Default.RtspStreamPathHD,
+			rtspStreamPathSD ?? Default.RtspStreamPathSD,
 			rtspPort ?? Default.RtspPort, 
 			ptzPort ?? Default.PtzPort
 		);
@@ -75,7 +80,8 @@ public class CameraConnectionConverter : JsonConverter<CameraConnection>
 		writer.WriteString(nameof(CameraConnection.Ip), value.Ip);
 		writer.WriteString(nameof(CameraConnection.Login), value.Login);
 		writer.WriteString(nameof(CameraConnection.Password), value.Password);
-		writer.WriteString(nameof(CameraConnection.RtspStreamPath), value.RtspStreamPath);
+		writer.WriteString(nameof(CameraConnection.RtspStreamPathHD), value.RtspStreamPathHD);
+		writer.WriteString(nameof(CameraConnection.RtspStreamPathSD), value.RtspStreamPathSD);
 		writer.WriteNumber(nameof(CameraConnection.RtspPort), value.RtspPort);
 		writer.WriteNumber(nameof(CameraConnection.PtzPort), value.PtzPort);
 		writer.WriteEndObject();
