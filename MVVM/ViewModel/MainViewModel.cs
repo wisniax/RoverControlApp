@@ -83,6 +83,10 @@ namespace RoverControlApp.MVVM.ViewModel
 			ManagePtzStatus(LocalSettings.Singleton.Camera0);
 			ManageRtspStatus(LocalSettings.Singleton.Camera0, 0);
 			ManageRtspStatus(LocalSettings.Singleton.Camera1, 1);
+			ManageRtspStatus(LocalSettings.Singleton.Camera2, 2);
+			ManageRtspStatus(LocalSettings.Singleton.Camera3, 3);
+			ManageRtspStatus(LocalSettings.Singleton.Camera4, 4);
+			ManageRtspStatus(LocalSettings.Singleton.Camera5, 5);
 
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -130,24 +134,28 @@ namespace RoverControlApp.MVVM.ViewModel
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
 		{
-			for (int i = 0; i < MaxCams; i++)
-			{
-				if (_rtspClient[i] is { NewFrameSaved: true })
-				{
-					_backCapture.CleanUpHistory();
-
-					_rtspClient[i].LockGrabbingFrames();
-					if (_imTexture[i] == null) _imTexture[i] = ImageTexture.CreateFromImage(_rtspClient[i].LatestImage);
-					else _imTexture[i].Update(_rtspClient[i].LatestImage);
-
-					_backCapture.FrameFeed(_rtspClient[i].LatestImage);
-
-					_rtspClient[i].UnLockGrabbingFrames();
-					imTextureRect[i].Texture = _imTexture[i];
-					_rtspClient[i].MarkFrameOld();
-				}
-			}
 			UpdateLabel();
+		}
+
+
+		void RTSPworkHandler(int id)
+		{
+			CallDeferred("RTSPwork", id);
+		}
+
+		void RTSPwork(int id)
+		{
+			_backCapture.CleanUpHistory();
+
+			_rtspClient[id].LockGrabbingFrames();
+			if (_imTexture[id] == null) _imTexture[id] = ImageTexture.CreateFromImage(_rtspClient[id].LatestImage);
+			else _imTexture[id].Update(_rtspClient[id].LatestImage);
+
+			_backCapture.FrameFeed(_rtspClient[id].LatestImage);
+
+			_rtspClient[id].UnLockGrabbingFrames();
+			imTextureRect[id].Texture = _imTexture[id];
+			_rtspClient[id].MarkFrameOld();
 		}
 
 		/*
@@ -156,37 +164,62 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		void OnSettingsCategoryChanged(StringName property)
 		{
-			if (property != nameof(LocalSettings.Camera0))
+			switch (property)
 			{
-				ManagePtzStatus(LocalSettings.Singleton.Camera0);
-				ManageRtspStatus(LocalSettings.Singleton.Camera0, 1);
+				case nameof(LocalSettings.Camera0):
+					ManagePtzStatus(LocalSettings.Singleton.Camera0);
+					ManageRtspStatus(LocalSettings.Singleton.Camera0, 1); 
+					break;
+				case nameof(LocalSettings.Camera1):
+					ManageRtspStatus(LocalSettings.Singleton.Camera1, 1);
+					break;
+				case nameof(LocalSettings.Camera2):
+					ManageRtspStatus(LocalSettings.Singleton.Camera2, 2);
+					break;
+				case nameof(LocalSettings.Camera3):
+					ManageRtspStatus(LocalSettings.Singleton.Camera3, 3);
+					break;
+				case nameof(LocalSettings.Camera4):
+					ManageRtspStatus(LocalSettings.Singleton.Camera4, 4);
+					break;
+				case nameof(LocalSettings.Camera5):
+					ManageRtspStatus(LocalSettings.Singleton.Camera5, 5);
+					break;
+				default:
+					break;
 			}
-
-			if (property != nameof(LocalSettings.Camera1))
-				ManageRtspStatus(LocalSettings.Singleton.Camera1, 1);
 		}
 
 		void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 		{
-			if (category == nameof(LocalSettings.Camera0))
+			if (category == nameof(LocalSettings.Camera0) && name == nameof(LocalSettings.Camera0.EnablePtzControl))
 			{
-				switch (name)
-				{
-					case nameof(LocalSettings.Camera0.EnablePtzControl):
-						ManagePtzStatus(LocalSettings.Singleton.Camera0);
-						break;
-					case nameof(LocalSettings.Camera0.EnableRtspStream):
-						ManageRtspStatus(LocalSettings.Singleton.Camera0, 0);
-						break;
-				}
+				ManagePtzStatus(LocalSettings.Singleton.Camera0);
 			}
 
-			if (category == nameof(LocalSettings.Camera1))
+			if (name == nameof(LocalSettings.Camera1.EnableRtspStream))
 			{
-				switch (name)
+				switch (category)
 				{
-					case nameof(LocalSettings.Camera1.EnableRtspStream):
+					case nameof(LocalSettings.Camera0):
+						ManageRtspStatus(LocalSettings.Singleton.Camera0, 0);
+						break;
+					case nameof(LocalSettings.Camera1):
 						ManageRtspStatus(LocalSettings.Singleton.Camera1, 1);
+						break;
+					case nameof(LocalSettings.Camera2):
+						ManageRtspStatus(LocalSettings.Singleton.Camera2, 2);
+						break;
+					case nameof(LocalSettings.Camera3):
+						ManageRtspStatus(LocalSettings.Singleton.Camera3, 3);
+						break;
+					case nameof(LocalSettings.Camera4):
+						ManageRtspStatus(LocalSettings.Singleton.Camera4, 4);
+						break;
+					case nameof(LocalSettings.Camera5):
+						ManageRtspStatus(LocalSettings.Singleton.Camera5, 5);
+						break;
+					default: 
 						break;
 				}
 			}
@@ -201,12 +234,13 @@ namespace RoverControlApp.MVVM.ViewModel
 			switch (camera.EnableRtspStream)
 			{
 				case true when _rtspClient[id] is null:
-					_rtspClient[id] = new(id);
+					_rtspClient[id] = new(id, id >= MaxCams);
 					_rtspClientWeak = new(_rtspClient[id]);
+					_rtspClient[id].FrameReceived += RTSPworkHandler;
 					break;
 				case false when _rtspClient[id] is not null:
 					_rtspClient[id].Dispose();
-					_rtspClient = null;
+					_rtspClient[id] = null;
 					break;
 			}
 		}

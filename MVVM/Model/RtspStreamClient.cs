@@ -23,9 +23,13 @@ namespace RoverControlApp.MVVM.Model
 		private Mat? _matrix;
 		private Thread? _rtspThread;
 
+		public delegate void FrameReceivedEventHandler(int id);
+		public event FrameReceivedEventHandler? FrameReceived;
+
 		private Core.Settings.Camera _myCamera;
 
 		private int _id;
+		private bool _isHD;
 
 		public VideoCapture? Capture { get; private set; }
 
@@ -57,9 +61,10 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		public RtspStreamClient(int id)
+		public RtspStreamClient(int id, bool isHD)
 		{
 			_id = id;
+			_isHD = isHD;
 
 			switch (_id)
 			{
@@ -68,6 +73,18 @@ namespace RoverControlApp.MVVM.Model
 					break;
 				case 1:
 					_myCamera = LocalSettings.Singleton.Camera1;
+					break;
+				case 2:
+					_myCamera = LocalSettings.Singleton.Camera2;
+					break;
+				case 3:
+					_myCamera = LocalSettings.Singleton.Camera3;
+					break;
+				case 4:
+					_myCamera = LocalSettings.Singleton.Camera4;
+					break;
+				case 5:
+					_myCamera = LocalSettings.Singleton.Camera5;
 					break;
 				default:
 					break;
@@ -114,7 +131,7 @@ namespace RoverControlApp.MVVM.Model
 
 
 			string rtspUrl = $"rtsp://{_myCamera.ConnectionSettings.Login}:{_myCamera.ConnectionSettings.Login}"
-				+ $"@{_myCamera.ConnectionSettings.Ip}:{_myCamera.ConnectionSettings.RtspPort}{_myCamera.ConnectionSettings.RtspStreamPathHD}";
+				+ $"@{_myCamera.ConnectionSettings.Ip}:{_myCamera.ConnectionSettings.RtspPort}{(_isHD ? _myCamera.ConnectionSettings.RtspStreamPathHD : _myCamera.ConnectionSettings.RtspStreamPathSD)}";
 
 			string altUrl = "http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg";
 
@@ -242,6 +259,8 @@ namespace RoverControlApp.MVVM.Model
 			UnLockGrabbingFrames();
 
 			EventLogger.LogMessageDebug("RtspStreamClient", EventLogger.LogLevel.Verbose, $"Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
+
+			FrameReceived?.Invoke(_id);
 
 			return true;
 		}

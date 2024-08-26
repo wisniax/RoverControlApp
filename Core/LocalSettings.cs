@@ -15,6 +15,10 @@ public partial class LocalSettings : Node
 	{
 		public Settings.Camera? Camera0 { get; set; } = null;
 		public Settings.Camera? Camera1 { get; set; } = null;
+		public Settings.Camera? Camera2 { get; set; } = null;
+		public Settings.Camera? Camera3 { get; set; } = null;
+		public Settings.Camera? Camera4 { get; set; } = null;
+		public Settings.Camera? Camera5 { get; set; } = null;
 		public Settings.Mqtt? Mqtt { get; set; } = null;
 		public Settings.Joystick? Joystick { get; set; } = null;
 		public Settings.SpeedLimiter? SpeedLimiter { get; set; } = null;
@@ -51,6 +55,10 @@ public partial class LocalSettings : Node
 	{
 		_camera0 = new();
 		_camera1 = new();
+		_camera2 = new();
+		_camera3 = new();
+		_camera4 = new();
+		_camera5 = new();
 		_mqtt = new();
 		_joystick = new();
 		_speedLimiter = new();
@@ -86,6 +94,10 @@ public partial class LocalSettings : Node
 
 			Camera0 = packedSettings.Camera0 ?? new();
 			Camera1 = packedSettings.Camera1 ?? new();
+			Camera2 = packedSettings.Camera2 ?? new();
+			Camera3 = packedSettings.Camera3 ?? new();
+			Camera4 = packedSettings.Camera4 ?? new();
+			Camera5 = packedSettings.Camera5 ?? new();
 			Mqtt = packedSettings.Mqtt ?? new();
 			Joystick = packedSettings.Joystick ?? new();
 			SpeedLimiter = packedSettings.SpeedLimiter ?? new();
@@ -117,6 +129,10 @@ public partial class LocalSettings : Node
 			{
 				Camera0 = Camera0,
 				Camera1 = Camera1,
+				Camera2 = Camera2,
+				Camera3 = Camera3,
+				Camera4 = Camera4,
+				Camera5 = Camera5,
 				Mqtt = Mqtt,
 				Joystick = Joystick,
 				SpeedLimiter = SpeedLimiter,
@@ -143,6 +159,10 @@ public partial class LocalSettings : Node
 		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Info, "Loading default settings");
 		Camera0 = new();
 		Camera1 = new();
+		Camera2 = new();
+		Camera3 = new();
+		Camera4 = new();
+		Camera5 = new();
 		Mqtt = new();
 		Joystick = new();
 		SpeedLimiter = new();
@@ -218,6 +238,90 @@ public partial class LocalSettings : Node
 			);
 
 			EmitSignalCategoryChanged(nameof(Camera1));
+		}
+	}
+
+	[SettingsManagerVisible(customName: "Camera2 Settings")]
+	public Settings.Camera Camera2
+	{
+		get => _camera2;
+		set
+		{
+			_camera2 = value;
+
+			_camera2.Connect(
+				Settings.Camera.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged)) 
+			);
+			_camera2.Connect(
+				Settings.Camera.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(Camera2));
+		}
+	}
+
+	[SettingsManagerVisible(customName: "Camera3 Settings")]
+	public Settings.Camera Camera3
+	{
+		get => _camera3;
+		set
+		{
+			_camera3 = value;
+
+			_camera3.Connect(
+				Settings.Camera.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged)) 
+			);
+			_camera3.Connect(
+				Settings.Camera.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(Camera3));
+		}
+	}
+
+	[SettingsManagerVisible(customName: "Camera4 Settings")]
+	public Settings.Camera Camera4
+	{
+		get => _camera4;
+		set
+		{
+			_camera4 = value;
+
+			_camera4.Connect(
+				Settings.Camera.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged)) 
+			);
+			_camera4.Connect(
+				Settings.Camera.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(Camera4));
+		}
+	}
+
+	[SettingsManagerVisible(customName: "Camera5 Settings")]
+	public Settings.Camera Camera5
+	{
+		get => _camera5;
+		set
+		{
+			_camera5 = value;
+
+			_camera5.Connect(
+				Settings.Camera.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged)) 
+			);
+			_camera5.Connect(
+				Settings.Camera.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(Camera5));
 		}
 	}
 
@@ -307,6 +411,10 @@ public partial class LocalSettings : Node
 
 	Settings.Camera _camera0;
 	Settings.Camera _camera1;
+	Settings.Camera _camera2;
+	Settings.Camera _camera3;
+	Settings.Camera _camera4;
+	Settings.Camera _camera5;
 	Settings.Mqtt _mqtt;
 	Settings.Joystick _joystick;
 	Settings.SpeedLimiter _speedLimiter;
