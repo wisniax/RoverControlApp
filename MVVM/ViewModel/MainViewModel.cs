@@ -144,12 +144,20 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			for (int i = 0; i < MaxCams; i++)
 			{
-				imTextureRect[i].Visible = true;
-				_rtspClient[i].isHD = false;
+				if (_rtspClient[i].isHD)
+				{
+					_rtspClient[i].isHD = false;
+					imTextureRect[i].Visible = true;
+					//_rtspClient[i].RestartCapture();
+				}
 			}
+
 
 			imTextureRect[id].Visible = false;
 			_rtspClient[id].isHD = true;
+
+			//_rtspClient[id].RestartCapture();
+			
 			GetNode<Label>("CameraViewMain0/Label").Text = $"Camera {id} HD";
 		}
 
@@ -252,7 +260,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			switch (camera.EnableRtspStream)
 			{
 				case true when _rtspClient[id] is null:
-					_rtspClient[id] = new(id, id >= MaxCams);
+					_rtspClient[id] = new(id);
 					_rtspClientWeak = new(_rtspClient[id]);
 					_rtspClient[id].FrameReceived += RTSPworkHandler;
 					break;

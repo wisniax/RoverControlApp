@@ -30,7 +30,7 @@ namespace RoverControlApp.MVVM.Model
 		private Core.Settings.Camera _myCamera;
 
 		private int _id;
-		public bool isHD;
+		public bool isHD = false;
 
 		public VideoCapture? Capture { get; private set; }
 
@@ -62,10 +62,11 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		public RtspStreamClient(int id, bool isHD)
+		public RtspStreamClient(int id)
 		{
 			_id = id;
-			this.isHD = isHD;
+
+			if(id == 0) isHD = true;
 
 			switch (_id)
 			{
@@ -116,6 +117,12 @@ namespace RoverControlApp.MVVM.Model
 			_cts.Dispose();
 			_rtspThread = null;
 		}
+		
+		public void RestartCapture()
+		{
+			EndCapture();
+			CreateCapture();
+		}
 
 		private void EndCapture()
 		{
@@ -136,23 +143,7 @@ namespace RoverControlApp.MVVM.Model
 
 			string altUrl = "http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg";
 
-			switch (_myCamera.ConnectionSettings.PtzPort)
-			{
-				case 1:
-					altUrl = "http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg";
-					break;
-				case 2:
-					altUrl = "http://158.58.130.148:80/mjpg/video.mjpg";
-					break;
-				case 3:
-					altUrl = "http://";
-					break;
-				default:
-					break;
-			}
-
-
-			var task = Task.Run(() => Capture = new VideoCapture(altUrl));
+			var task = Task.Run(() => Capture = new VideoCapture(rtspUrl));
 			_matrix = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;
@@ -171,6 +162,7 @@ namespace RoverControlApp.MVVM.Model
 			Capture?.SetExceptionMode(false);
 			State = CommunicationState.Opened;
 		}
+
 
 		private void DoWork()
 		{
@@ -232,7 +224,7 @@ namespace RoverControlApp.MVVM.Model
 
 			try
 			{
-				if (!Capture.Grab()) return false;
+				if(!Capture.Grab()) return false;
 				if (!Capture.Retrieve(_matrix)) return false;
 			}
 			catch (Exception e)

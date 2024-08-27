@@ -76,6 +76,7 @@ offset_right = 1154.0
 offset_bottom = 606.0
 
 [node name="CameraViewSub0" type="TextureRect" parent="VBoxContainer"]
+visible = false
 custom_minimum_size = Vector2(0, 111.08)
 layout_mode = 2
 texture = ExtResource("2_1llr5")
@@ -111,6 +112,7 @@ text = "Cam 1 SD"
 
 [node name="Button" type="Button" parent="VBoxContainer/CameraViewSub1"]
 modulate = Color(1, 1, 1, 0)
+layout_mode = 0
 offset_right = 228.0
 offset_bottom = 109.0
 
@@ -130,6 +132,7 @@ text = "Cam 2 SD"
 
 [node name="Button" type="Button" parent="VBoxContainer/CameraViewSub2"]
 modulate = Color(1, 1, 1, 0)
+layout_mode = 0
 offset_right = 228.0
 offset_bottom = 109.0
 
@@ -149,6 +152,7 @@ text = "Cam 3 SD"
 
 [node name="Button" type="Button" parent="VBoxContainer/CameraViewSub3"]
 modulate = Color(1, 1, 1, 0)
+layout_mode = 0
 offset_right = 228.0
 offset_bottom = 109.0
 
@@ -168,6 +172,7 @@ text = "Cam 4 SD"
 
 [node name="Button" type="Button" parent="VBoxContainer/CameraViewSub4"]
 modulate = Color(1, 1, 1, 0)
+layout_mode = 0
 offset_right = 228.0
 offset_bottom = 109.0
 
@@ -187,6 +192,7 @@ text = "Cam 5 SD"
 
 [node name="Button" type="Button" parent="VBoxContainer/CameraViewSub5"]
 modulate = Color(1, 1, 1, 0)
+layout_mode = 0
 offset_right = 228.0
 offset_bottom = 109.0
 
@@ -516,8 +522,8 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 
 [editable path="GrzybUIDis"]
