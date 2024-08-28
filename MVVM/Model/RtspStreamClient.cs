@@ -118,10 +118,9 @@ namespace RoverControlApp.MVVM.Model
 			_rtspThread = null;
 		}
 		
-		public void RestartCapture()
+		public void SetStateClosing()
 		{
-			EndCapture();
-			CreateCapture();
+			State = CommunicationState.Closing;
 		}
 
 		private void EndCapture()
@@ -140,8 +139,6 @@ namespace RoverControlApp.MVVM.Model
 
 			string rtspUrl = $"rtsp://{_myCamera.ConnectionSettings.Login}:{_myCamera.ConnectionSettings.Login}"
 				+ $"@{_myCamera.ConnectionSettings.Ip}:{_myCamera.ConnectionSettings.RtspPort}{(isHD ? _myCamera.ConnectionSettings.RtspStreamPathHD : _myCamera.ConnectionSettings.RtspStreamPathSD)}";
-
-			string altUrl = "http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg";
 
 			var task = Task.Run(() => Capture = new VideoCapture(rtspUrl));
 			_matrix = new Mat();
