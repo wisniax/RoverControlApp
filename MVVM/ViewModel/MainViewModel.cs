@@ -16,7 +16,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		public MissionStatus MissionStatus { get; private set; }
 		public MissionSetPoint MissionSetPoint { get; private set; }
 
-		private WeakReference<RtspStreamClient>? _rtspClientWeak;
+		private WeakReference<RtspStreamClient>?[] _rtspClientWeak = new WeakReference<RtspStreamClient>?[MaxCams];
 		private WeakReference<OnvifPtzCameraController>? _ptzClientWeak;
 
 		private static int MaxCams = 6;
@@ -261,7 +261,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			{
 				case true when _rtspClient[id] is null:
 					_rtspClient[id] = new(id);
-					_rtspClientWeak = new(_rtspClient[id]);
+					_rtspClientWeak[id] = new(_rtspClient[id]);
 					_rtspClient[id].FrameReceived += RTSPworkHandler;
 					break;
 				case false when _rtspClient[id] is not null:
@@ -312,25 +312,40 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			FancyDebugViewRLab.Clear();
 
-			RtspStreamClient? rtspClient = null;
+			RtspStreamClient?[] rtspClient = new RtspStreamClient?[MaxCams];
 			OnvifPtzCameraController? ptzClient = null;
 
-			_rtspClientWeak?.TryGetTarget(out rtspClient);
+			for (int id = 0; id < MaxCams; id++)
+			{
+				_rtspClientWeak[id]?.TryGetTarget(out rtspClient[id]);
+			}
 			_ptzClientWeak?.TryGetTarget(out ptzClient);
 
 			Color mqttStatusColor = GetColorForCommunicationState(RoverCommunication?.RoverStatus?.CommunicationState);
 
-			Color rtspStatusColor = GetColorForCommunicationState(rtspClient?.State);
+			Color[] rtspStatusColor = new Color[MaxCams];
+
+			for (int id = 0; id < MaxCams; id++)
+			{
+				rtspStatusColor[id] = GetColorForCommunicationState(rtspClient[id]?.State);
+			}
 
 			Color ptzStatusColor = GetColorForCommunicationState(ptzClient?.State);
 
-			Color rtspAgeColor;
-			if (rtspClient?.ElapsedSecondsOnCurrentState < 1.0f)
-				rtspAgeColor = Colors.LightGreen;
-			else
-				rtspAgeColor = Colors.Orange;
+			Color[] rtspAgeColor = new Color[MaxCams];
+			for (int id = 0; id < MaxCams; id++)
+			{
+				if (rtspClient[id]?.ElapsedSecondsOnCurrentState < 1.0f)
+					rtspAgeColor[id] = Colors.LightGreen;
+				else
+					rtspAgeColor[id] = Colors.Orange;
+			}
 
-			string? rtspAge = rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			string[]? rtspAge = new string[MaxCams];
+			for (int id = 0; id < MaxCams; id++)
+			{
+				rtspAge[id] = rtspClient[id]?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
+			}
 			string? ptzAge = ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
 			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode},\t" +
@@ -349,10 +364,13 @@ namespace RoverControlApp.MVVM.ViewModel
 					break;
 			}
 
-			if (rtspClient?.State == CommunicationState.Opened)
-				FancyDebugViewRLab.AppendText($"RTSP: Frame is [color={rtspAgeColor.ToHtml(false)}]{rtspAge}s[/color] old\n");
-			else
-				FancyDebugViewRLab.AppendText($"RTSP: [color={rtspStatusColor.ToHtml(false)}]{rtspClient?.State ?? CommunicationState.Closed}[/color], Time: {rtspAge ?? "N/A "}s\n");
+			for (int id = 0; id < MaxCams; id++)
+			{
+				if (rtspClient[id]?.State == CommunicationState.Opened)
+					FancyDebugViewRLab.AppendText($"RTSP {id}: Frame is [color={rtspAgeColor[id].ToHtml(false)}]{rtspAge[id]}s[/color] old\n");
+				else
+					FancyDebugViewRLab.AppendText($"RTSP {id}: [color={rtspStatusColor[id].ToHtml(false)}]{rtspClient[id]?.State ?? CommunicationState.Closed}[/color], Time: {rtspAge[id] ?? "N/A "}s\n");
+			}
 
 			if (ptzClient?.State == CommunicationState.Opened)
 			{
