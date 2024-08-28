@@ -148,14 +148,20 @@ namespace RoverControlApp.MVVM.ViewModel
 				{
 					_rtspClient[i].isHD = false;
 					imTextureRect[i].Visible = true;
-					_rtspClient[i].SetStateClosing();
+					if (!LocalSettings.Singleton.General.sdOnlyMode)
+					{
+						_rtspClient[i].SetStateClosing();
+					}
 				}
 			}
 
 
 			imTextureRect[id].Visible = false;
 			_rtspClient[id].isHD = true;
-			_rtspClient[id].SetStateClosing();
+			if (!LocalSettings.Singleton.General.sdOnlyMode)
+			{
+				_rtspClient[id].SetStateClosing();
+			}
 			
 			GetNode<Label>("CameraViewMain0/Label").Text = $"Camera {id} HD";
 		}

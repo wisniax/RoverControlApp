@@ -14,6 +14,7 @@ public class GeneralConverter : JsonConverter<General>
 		if (reader.TokenType != JsonTokenType.StartObject)
 			throw new JsonException("Expected start of an object.");
 
+		bool? sdOnlyMode = null;
 		bool? verboseDebug = null;
 		string? missionControlPosition = null;
 		string? missionControlSize = null;
@@ -32,6 +33,9 @@ public class GeneralConverter : JsonConverter<General>
 
 			switch (propertyName)
 			{
+				case nameof(General.sdOnlyMode):
+					sdOnlyMode = reader.GetBoolean();
+					break;
 				case nameof(General.VerboseDebug):
 					verboseDebug = reader.GetBoolean();
 					break;
@@ -52,6 +56,7 @@ public class GeneralConverter : JsonConverter<General>
 
 		return new General
 		(
+			sdOnlyMode: Default.sdOnlyMode,
 			verboseDebug ?? Default.VerboseDebug,
 			missionControlPosition ?? Default.MissionControlPosition,
 			missionControlSize ?? Default.MissionControlSize,
@@ -62,6 +67,7 @@ public class GeneralConverter : JsonConverter<General>
 	public override void Write(Utf8JsonWriter writer, General value, JsonSerializerOptions options)
 	{
 		writer.WriteStartObject();
+		writer.WriteBoolean(nameof(General.sdOnlyMode), value.sdOnlyMode);
 		writer.WriteBoolean(nameof(General.VerboseDebug), value.VerboseDebug);
 		writer.WriteString(nameof(General.MissionControlPosition), value.MissionControlPosition);
 		writer.WriteString(nameof(General.MissionControlSize), value.MissionControlSize);

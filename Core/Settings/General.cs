@@ -11,14 +11,16 @@ public partial class General : SettingBase, ICloneable
 
 	public General()
 	{
+		_sdOnlyMode = false;
 		_verboseDebug = false;
 		_missionControlPosition = "20;30";
 		_missionControlSize = "480;360";
 		_backCaptureLength = 15000;
 	}
 
-	public General(bool verboseDebug, string missionControlPosition, string missionControlSize, long backCaptureLength)
+	public General(bool sdOnlyMode, bool verboseDebug, string missionControlPosition, string missionControlSize, long backCaptureLength)
 	{
+		_sdOnlyMode = sdOnlyMode;
 		_verboseDebug = verboseDebug;
 		_missionControlPosition = missionControlPosition;
 		_missionControlSize = missionControlSize;
@@ -29,6 +31,7 @@ public partial class General : SettingBase, ICloneable
 	{
 		return new General()
 		{
+			sdOnlyMode = _sdOnlyMode,
 			VerboseDebug = _verboseDebug,
 			MissionControlPosition = _missionControlPosition,
 			MissionControlSize = _missionControlSize,
@@ -36,6 +39,13 @@ public partial class General : SettingBase, ICloneable
 		};
 	}
 
+	[SettingsManagerVisible(customName:"SD only mode (no stream resets)", cellMode: TreeItem.TreeCellMode.Check)]
+	public bool sdOnlyMode
+	{
+		get => _sdOnlyMode;
+		set => EmitSignal_SettingChanged(ref _sdOnlyMode, value);
+	}
+	
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool VerboseDebug
 	{
@@ -64,7 +74,7 @@ public partial class General : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _backCaptureLength, value);
 	}
 
-
+	bool _sdOnlyMode;
 	bool _verboseDebug;
 	string _missionControlPosition;
 	string _missionControlSize;
