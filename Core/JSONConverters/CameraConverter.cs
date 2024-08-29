@@ -14,6 +14,7 @@ public class CameraConverter : JsonConverter<Camera>
 		if (reader.TokenType != JsonTokenType.StartObject)
 			throw new JsonException("Expected start of an object.");
 
+		CameraConnection? connectionSettings = null;
 		string? streamPathHD = null;
 		string? streamPathSD = null;
 		bool? inverseAxis = null;
@@ -35,6 +36,9 @@ public class CameraConverter : JsonConverter<Camera>
 
 			switch (propertyName)
 			{
+				case nameof(Camera.ConnectionSettings):
+					connectionSettings = JsonSerializer.Deserialize<CameraConnection>(ref reader, options);
+					break;
 				case nameof(Camera.StreamPathHD):
 					streamPathHD = reader.GetString();
 					break;
@@ -61,6 +65,7 @@ public class CameraConverter : JsonConverter<Camera>
 
 		return new Camera
 		(
+			connectionSettings ?? Default.ConnectionSettings,
 			streamPathHD ?? Default.StreamPathHD,
 			streamPathSD ?? Default.StreamPathSD,
 			inverseAxis ?? Default.InverseAxis,
@@ -74,6 +79,8 @@ public class CameraConverter : JsonConverter<Camera>
 	public override void Write(Utf8JsonWriter writer, Camera value, JsonSerializerOptions options)
 	{
 		writer.WriteStartObject();
+		writer.WritePropertyName(nameof(Camera.ConnectionSettings));
+		JsonSerializer.Serialize(writer, value.ConnectionSettings, options);
 		writer.WriteBoolean(nameof(Camera.InverseAxis), value.InverseAxis);
 		writer.WriteBoolean(nameof(Camera.EnableRtspStream), value.EnableRtspStream);
 		writer.WriteBoolean(nameof(Camera.EnablePtzControl), value.EnablePtzControl);
