@@ -137,8 +137,18 @@ namespace RoverControlApp.MVVM.Model
 			State = CommunicationState.Created;
 
 
-			string rtspUrl = $"rtsp://{_myCamera.ConnectionSettings.Login}:{_myCamera.ConnectionSettings.Login}"
-				+ $"@{_myCamera.ConnectionSettings.Ip}:{_myCamera.ConnectionSettings.RtspPort}{((isHD && !LocalSettings.Singleton.General.sdOnlyMode) ? _myCamera.ConnectionSettings.RtspStreamPathHD : _myCamera.ConnectionSettings.RtspStreamPathSD)}";
+			string rtspUrl;
+			if (_myCamera.ConnectionSettings.Login == "" || _myCamera.ConnectionSettings.Password == "")
+			{
+				rtspUrl = $"rtsp://{_myCamera.ConnectionSettings.Ip}:{_myCamera.ConnectionSettings.RtspPort}" +
+				          $"{((isHD && !LocalSettings.Singleton.General.sdOnlyMode) ? _myCamera.ConnectionSettings.RtspStreamPathHD : _myCamera.ConnectionSettings.RtspStreamPathSD)}";
+
+			}
+			else
+			{
+				rtspUrl = $"rtsp://{_myCamera.ConnectionSettings.Login}:{_myCamera.ConnectionSettings.Login}@{_myCamera.ConnectionSettings.Ip}:{_myCamera.ConnectionSettings.RtspPort}" +
+				          $"{((isHD && !LocalSettings.Singleton.General.sdOnlyMode) ? _myCamera.ConnectionSettings.RtspStreamPathHD : _myCamera.ConnectionSettings.RtspStreamPathSD)}";
+			}
 
 			var task = Task.Run(() => Capture = new VideoCapture(rtspUrl));
 			_matrix = new Mat();
