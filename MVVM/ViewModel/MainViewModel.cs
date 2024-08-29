@@ -202,21 +202,32 @@ namespace RoverControlApp.MVVM.ViewModel
 				case nameof(LocalSettings.Camera0):
 					ManagePtzStatus(LocalSettings.Singleton.Camera0);
 					ManageRtspStatus(LocalSettings.Singleton.Camera0, 1); 
+					_rtspClient[0].UpdateConnectionSettings();
 					break;
 				case nameof(LocalSettings.Camera1):
+					ManagePtzStatus(LocalSettings.Singleton.Camera1);
 					ManageRtspStatus(LocalSettings.Singleton.Camera1, 1);
+					_rtspClient[1].UpdateConnectionSettings();
 					break;
 				case nameof(LocalSettings.Camera2):
+					ManagePtzStatus(LocalSettings.Singleton.Camera2);
 					ManageRtspStatus(LocalSettings.Singleton.Camera2, 2);
+					_rtspClient[2].UpdateConnectionSettings();
 					break;
 				case nameof(LocalSettings.Camera3):
+					ManagePtzStatus(LocalSettings.Singleton.Camera3);
 					ManageRtspStatus(LocalSettings.Singleton.Camera3, 3);
+					_rtspClient[3].UpdateConnectionSettings();
 					break;
 				case nameof(LocalSettings.Camera4):
+					ManagePtzStatus(LocalSettings.Singleton.Camera4);
 					ManageRtspStatus(LocalSettings.Singleton.Camera4, 4);
+					_rtspClient[4].UpdateConnectionSettings();
 					break;
 				case nameof(LocalSettings.Camera5):
+					ManagePtzStatus(LocalSettings.Singleton.Camera5);
 					ManageRtspStatus(LocalSettings.Singleton.Camera5, 5);
+					_rtspClient[5].UpdateConnectionSettings();
 					break;
 				default:
 					break;

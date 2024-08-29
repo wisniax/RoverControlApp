@@ -68,6 +68,16 @@ namespace RoverControlApp.MVVM.Model
 
 			if(id == 0) isHD = true;
 
+			UpdateConnectionSettings();
+
+			_generalPurposeStopwatch = Stopwatch.StartNew();
+			_cts = new CancellationTokenSource();
+			_rtspThread = new Thread(ThreadWork) { IsBackground = true, Name = $"RtspStream_Thread{_id}", Priority = ThreadPriority.BelowNormal };
+			_rtspThread.Start();
+		}
+
+		public void UpdateConnectionSettings()
+		{
 			switch (_id)
 			{
 				case 0:
@@ -91,11 +101,6 @@ namespace RoverControlApp.MVVM.Model
 				default:
 					break;
 			}
-
-			_generalPurposeStopwatch = Stopwatch.StartNew();
-			_cts = new CancellationTokenSource();
-			_rtspThread = new Thread(ThreadWork) { IsBackground = true, Name = $"RtspStream_Thread{_id}", Priority = ThreadPriority.BelowNormal };
-			_rtspThread.Start();
 		}
 
 		private void ThreadWork()
@@ -137,18 +142,7 @@ namespace RoverControlApp.MVVM.Model
 			State = CommunicationState.Created;
 
 
-			string rtspUrl;
-			if (_myCamera.ConnectionSettings.Login == "" || _myCamera.ConnectionSettings.Password == "")
-			{
-				rtspUrl = $"rtsp://{_myCamera.ConnectionSettings.Ip}:{_myCamera.ConnectionSettings.RtspPort}" +
-				          $"{((isHD && !LocalSettings.Singleton.General.sdOnlyMode) ? _myCamera.ConnectionSettings.RtspStreamPathHD : _myCamera.ConnectionSettings.RtspStreamPathSD)}";
-
-			}
-			else
-			{
-				rtspUrl = $"rtsp://{_myCamera.ConnectionSettings.Login}:{_myCamera.ConnectionSettings.Login}@{_myCamera.ConnectionSettings.Ip}:{_myCamera.ConnectionSettings.RtspPort}" +
-				          $"{((isHD && !LocalSettings.Singleton.General.sdOnlyMode) ? _myCamera.ConnectionSettings.RtspStreamPathHD : _myCamera.ConnectionSettings.RtspStreamPathSD)}";
-			}
+			string rtspUrl = isHD && !LocalSettings.Singleton.General.sdOnlyMode ? _myCamera.StreamPathHD : _myCamera.StreamPathSD;
 
 			var task = Task.Run(() => Capture = new VideoCapture(rtspUrl));
 			_matrix = new Mat();

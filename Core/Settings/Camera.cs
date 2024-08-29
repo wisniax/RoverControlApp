@@ -11,18 +11,18 @@ public partial class Camera : SettingBase, ICloneable
 
 	public Camera()
 	{
-		_connectionSettings = new();
-
+		_streamPathHD = "http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg";
+		_streamPathSD = "http://158.58.130.148/mjpg/video.mjpg";
 		_inverseAxis = false;
 		_enableRtspStream = true;
 		_enablePtzControl = true;
 		_ptzRequestFrequency = 2.69;
 	}
 
-	public Camera(CameraConnection connectionSettings, bool inverseAxis, bool enableRtspStream, bool enablePtzControl, double ptzRequestFrequency, bool HdEnabled)
+	public Camera(string streamPathHD, string streamPathSD, bool inverseAxis, bool enableRtspStream, bool enablePtzControl, double ptzRequestFrequency, bool HdEnabled)
 	{
-		_connectionSettings = connectionSettings;
-
+		_streamPathHD = streamPathHD;
+		_streamPathSD = streamPathSD;
 		_inverseAxis = inverseAxis;
 		_enableRtspStream = enableRtspStream;
 		_enablePtzControl = enablePtzControl;
@@ -33,8 +33,8 @@ public partial class Camera : SettingBase, ICloneable
 	{
 		return new Camera()
 		{
-			ConnectionSettings = _connectionSettings,
-
+			StreamPathHD = _streamPathHD,
+			StreamPathSD = _streamPathSD,
 			InverseAxis  = _inverseAxis,
 			EnableRtspStream  = _enableRtspStream,
 			EnablePtzControl  = _enablePtzControl,
@@ -42,11 +42,18 @@ public partial class Camera : SettingBase, ICloneable
 		};
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
-	public CameraConnection ConnectionSettings
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string StreamPathHD
 	{
-		get => _connectionSettings;
-		set => EmitSignal_SectionChanged(ref _connectionSettings, value);
+		get => _streamPathHD;
+		set => EmitSignal_SettingChanged(ref _streamPathHD,value);
+	}
+	
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string StreamPathSD
+	{
+		get => _streamPathSD;
+		set => EmitSignal_SettingChanged(ref _streamPathSD,value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
@@ -83,7 +90,8 @@ public partial class Camera : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _hdEnabled, value);
 	}
 
-	CameraConnection _connectionSettings;
+	string _streamPathHD;
+	string _streamPathSD;
 	bool _inverseAxis;
 	bool _enableRtspStream;
 	bool _enablePtzControl;
