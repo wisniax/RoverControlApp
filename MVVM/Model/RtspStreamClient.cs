@@ -81,22 +81,22 @@ namespace RoverControlApp.MVVM.Model
 			switch (_id)
 			{
 				case 0:
-					_myCamera = LocalSettings.Singleton.Camera0;
+					_myCamera = LocalSettings.Singleton.AllCameras.Camera0;
 					break;
 				case 1:
-					_myCamera = LocalSettings.Singleton.Camera1;
+					_myCamera = LocalSettings.Singleton.AllCameras.Camera1;
 					break;
 				case 2:
-					_myCamera = LocalSettings.Singleton.Camera2;
+					_myCamera = LocalSettings.Singleton.AllCameras.Camera2;
 					break;
 				case 3:
-					_myCamera = LocalSettings.Singleton.Camera3;
+					_myCamera = LocalSettings.Singleton.AllCameras.Camera3;
 					break;
 				case 4:
-					_myCamera = LocalSettings.Singleton.Camera4;
+					_myCamera = LocalSettings.Singleton.AllCameras.Camera4;
 					break;
 				case 5:
-					_myCamera = LocalSettings.Singleton.Camera5;
+					_myCamera = LocalSettings.Singleton.AllCameras.Camera5;
 					break;
 				default:
 					break;

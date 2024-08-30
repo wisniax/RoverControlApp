@@ -58,7 +58,7 @@ namespace RoverControlApp.MVVM.Model
 		public double ElapsedSecondsOnCurrentState => _generalPurposeStopwatch.Elapsed.TotalSeconds;
 
 		public TimeSpan MinSpanEveryCom =>
-			TimeSpan.FromSeconds(1 / LocalSettings.Singleton.Camera0.PtzRequestFrequency);
+			TimeSpan.FromSeconds(1 / LocalSettings.Singleton.AllCameras.Camera0.PtzRequestFrequency);
 		public TimeSpan MaxSpanEveryCom => 1.5 * MinSpanEveryCom;
 
 
@@ -100,9 +100,9 @@ namespace RoverControlApp.MVVM.Model
 			State = CommunicationState.Created;
 			var acc = new Account
 			(
-				LocalSettings.Singleton.Camera0.ConnectionSettings.Ip + ':' + LocalSettings.Singleton.Camera0.ConnectionSettings.PtzPort,
-				LocalSettings.Singleton.Camera0.ConnectionSettings.Login,
-				LocalSettings.Singleton.Camera0.ConnectionSettings.Password
+				LocalSettings.Singleton.AllCameras.Camera0.ConnectionSettings.Ip + ':' + LocalSettings.Singleton.AllCameras.Camera0.ConnectionSettings.PtzPort,
+				LocalSettings.Singleton.AllCameras.Camera0.ConnectionSettings.Login,
+				LocalSettings.Singleton.AllCameras.Camera0.ConnectionSettings.Password
 			);
 			_camera = Camera.Create(acc, (e) => _ptzThreadError = e);
 
@@ -235,7 +235,7 @@ namespace RoverControlApp.MVVM.Model
 				return false;
 			}
 
-			speed = LocalSettings.Singleton.Camera0.InverseAxis ? new Vector4(-@new.X, -@new.Y, @new.Z, @new.W) : @new;
+			speed = LocalSettings.Singleton.AllCameras.Camera0.InverseAxis ? new Vector4(-@new.X, -@new.Y, @new.Z, @new.W) : @new;
 
 			//Have to make sure none scalar is |x| <= 0.1f bc camera treats it as a MAX SPEED
 			if (Mathf.IsEqualApprox(speed.X, 0f, 0.1f)) speed.X = 0f;

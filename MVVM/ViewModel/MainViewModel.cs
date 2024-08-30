@@ -84,20 +84,20 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
 
-			ManagePtzStatus(LocalSettings.Singleton.Camera0, 0);
-			ManagePtzStatus(LocalSettings.Singleton.Camera1, 1);
-			ManagePtzStatus(LocalSettings.Singleton.Camera2, 2);
-			ManagePtzStatus(LocalSettings.Singleton.Camera3, 3);
-			ManagePtzStatus(LocalSettings.Singleton.Camera4, 4);
-			ManagePtzStatus(LocalSettings.Singleton.Camera5, 5);
+			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
+			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
+			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
+			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
+			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
+			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
 
 
-			ManageRtspStatus(LocalSettings.Singleton.Camera0, 0);
-			ManageRtspStatus(LocalSettings.Singleton.Camera1, 1);
-			ManageRtspStatus(LocalSettings.Singleton.Camera2, 2);
-			ManageRtspStatus(LocalSettings.Singleton.Camera3, 3);
-			ManageRtspStatus(LocalSettings.Singleton.Camera4, 4);
-			ManageRtspStatus(LocalSettings.Singleton.Camera5, 5);
+			ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
+			ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
+			ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
+			ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
+			ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
+			ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
 
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -214,34 +214,34 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			switch (property)
 			{
-				case nameof(LocalSettings.Camera0):
-					ManagePtzStatus(LocalSettings.Singleton.Camera0, 0);
-					ManageRtspStatus(LocalSettings.Singleton.Camera0, 0); 
+				case nameof(LocalSettings.AllCameras.Camera0):
+					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
+					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera0, 0); 
 					_rtspClient[0].UpdateConnectionSettings();
 					break;
-				case nameof(LocalSettings.Camera1):
-					ManagePtzStatus(LocalSettings.Singleton.Camera1, 1);
-					ManageRtspStatus(LocalSettings.Singleton.Camera1, 1);
+				case nameof(LocalSettings.AllCameras.Camera1):
+					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
+					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
 					_rtspClient[1].UpdateConnectionSettings();
 					break;
-				case nameof(LocalSettings.Camera2):
-					ManagePtzStatus(LocalSettings.Singleton.Camera2, 2);
-					ManageRtspStatus(LocalSettings.Singleton.Camera2, 2);
+				case nameof(LocalSettings.AllCameras.Camera2):
+					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
+					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
 					_rtspClient[2].UpdateConnectionSettings();
 					break;
-				case nameof(LocalSettings.Camera3):
-					ManagePtzStatus(LocalSettings.Singleton.Camera3, 3);
-					ManageRtspStatus(LocalSettings.Singleton.Camera3, 3);
+				case nameof(LocalSettings.AllCameras.Camera3):
+					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
+					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
 					_rtspClient[3].UpdateConnectionSettings();
 					break;
-				case nameof(LocalSettings.Camera4):
-					ManagePtzStatus(LocalSettings.Singleton.Camera4, 4);
-					ManageRtspStatus(LocalSettings.Singleton.Camera4, 4);
+				case nameof(LocalSettings.AllCameras.Camera4):
+					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
+					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
 					_rtspClient[4].UpdateConnectionSettings();
 					break;
-				case nameof(LocalSettings.Camera5):
-					ManagePtzStatus(LocalSettings.Singleton.Camera5, 5);
-					ManageRtspStatus(LocalSettings.Singleton.Camera5, 5);
+				case nameof(LocalSettings.AllCameras.Camera5):
+					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
+					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
 					_rtspClient[5].UpdateConnectionSettings();
 					break;
 				default:
@@ -251,38 +251,38 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 		{
-			if (name == nameof(LocalSettings.Camera0.EnablePtzControl))
+			if (name == nameof(LocalSettings.AllCameras.Camera0.EnablePtzControl))
 			{
 				switch (category)
 				{
-					case nameof(LocalSettings.Camera0):
-						ManagePtzStatus(LocalSettings.Singleton.Camera0, 0);
+					case nameof(LocalSettings.AllCameras.Camera0):
+						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
 						break;
 
 				}
 			}
 
-			if (name == nameof(LocalSettings.Camera1.EnableRtspStream))
+			if (name == nameof(LocalSettings.AllCameras.Camera1.EnableRtspStream))
 			{
 				switch (category)
 				{
-					case nameof(LocalSettings.Camera0):
-						ManageRtspStatus(LocalSettings.Singleton.Camera0, 0);
+					case nameof(LocalSettings.AllCameras.Camera0):
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
 						break;
-					case nameof(LocalSettings.Camera1):
-						ManageRtspStatus(LocalSettings.Singleton.Camera1, 1);
+					case nameof(LocalSettings.AllCameras.Camera1):
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
 						break;
-					case nameof(LocalSettings.Camera2):
-						ManageRtspStatus(LocalSettings.Singleton.Camera2, 2);
+					case nameof(LocalSettings.AllCameras.Camera2):
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
 						break;
-					case nameof(LocalSettings.Camera3):
-						ManageRtspStatus(LocalSettings.Singleton.Camera3, 3);
+					case nameof(LocalSettings.AllCameras.Camera3):
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
 						break;
-					case nameof(LocalSettings.Camera4):
-						ManageRtspStatus(LocalSettings.Singleton.Camera4, 4);
+					case nameof(LocalSettings.AllCameras.Camera4):
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
 						break;
-					case nameof(LocalSettings.Camera5):
-						ManageRtspStatus(LocalSettings.Singleton.Camera5, 5);
+					case nameof(LocalSettings.AllCameras.Camera5):
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
 						break;
 					default: 
 						break;
