@@ -18,9 +18,10 @@ public partial class Camera : SettingBase, ICloneable
 		_enableRtspStream = true;
 		_enablePtzControl = true;
 		_ptzRequestFrequency = 2.69;
+		_dontRefresh = false;
 	}
 
-	public Camera(CameraConnection connectionSettings, string streamPathHD, string streamPathSD, bool inverseAxis, bool enableRtspStream, bool enablePtzControl, double ptzRequestFrequency, bool HdEnabled)
+	public Camera(CameraConnection connectionSettings, string streamPathHD, string streamPathSD, bool inverseAxis, bool enableRtspStream, bool enablePtzControl, double ptzRequestFrequency, bool dontRefresh)
 	{
 		_connectionSettings = connectionSettings;
 		_streamPathHD = streamPathHD;
@@ -29,6 +30,7 @@ public partial class Camera : SettingBase, ICloneable
 		_enableRtspStream = enableRtspStream;
 		_enablePtzControl = enablePtzControl;
 		_ptzRequestFrequency = ptzRequestFrequency;
+		_dontRefresh = dontRefresh;
 	}
 
 	public object Clone()
@@ -36,11 +38,13 @@ public partial class Camera : SettingBase, ICloneable
 		return new Camera()
 		{
 			ConnectionSettings = _connectionSettings,
-
+			StreamPathHD = _streamPathHD,
+			StreamPathSD = _streamPathSD,
 			InverseAxis  = _inverseAxis,
 			EnableRtspStream  = _enableRtspStream,
 			EnablePtzControl  = _enablePtzControl,
-			PtzRequestFrequency  = _ptzRequestFrequency
+			PtzRequestFrequency  = _ptzRequestFrequency,
+			DontRefresh = _dontRefresh
 		};
 	}
 
@@ -93,12 +97,12 @@ public partial class Camera : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _ptzRequestFrequency, value);
 	}
 
-	public bool HdEnabled
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+	public bool DontRefresh
 	{
-		get => _hdEnabled;
-		set => EmitSignal_SettingChanged(ref _hdEnabled, value);
+		get => _dontRefresh;
+		set => EmitSignal_SettingChanged(ref _dontRefresh, value);
 	}
-
 	CameraConnection _connectionSettings;
 	string _streamPathHD;
 	string _streamPathSD;
@@ -106,7 +110,7 @@ public partial class Camera : SettingBase, ICloneable
 	bool _enableRtspStream;
 	bool _enablePtzControl;
 	double _ptzRequestFrequency;
-	bool _hdEnabled;
+	bool _dontRefresh;
 }
 
 

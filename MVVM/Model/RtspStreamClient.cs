@@ -125,7 +125,7 @@ namespace RoverControlApp.MVVM.Model
 		
 		public void SetStateClosing()
 		{
-			State = CommunicationState.Closing;
+			if(!_myCamera.DontRefresh) State = CommunicationState.Closing;
 		}
 
 		private void EndCapture()

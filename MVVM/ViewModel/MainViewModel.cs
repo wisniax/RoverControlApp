@@ -165,6 +165,7 @@ namespace RoverControlApp.MVVM.ViewModel
 					imTextureRect[i].Visible = true;
 					if (!LocalSettings.Singleton.General.sdOnlyMode)
 					{
+						_rtspClient[i].UpdateConnectionSettings();
 						_rtspClient[i].SetStateClosing();
 					}
 				}
@@ -175,6 +176,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			_rtspClient[id].isHD = true;
 			if (!LocalSettings.Singleton.General.sdOnlyMode)
 			{
+				_rtspClient[id].UpdateConnectionSettings();
 				_rtspClient[id].SetStateClosing();
 			}
 			
@@ -268,21 +270,27 @@ namespace RoverControlApp.MVVM.ViewModel
 				{
 					case nameof(LocalSettings.AllCameras.Camera0):
 						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
+						_rtspClient[0].UpdateConnectionSettings();
 						break;
 					case nameof(LocalSettings.AllCameras.Camera1):
 						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
+						_rtspClient[1].UpdateConnectionSettings();
 						break;
 					case nameof(LocalSettings.AllCameras.Camera2):
 						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
+						_rtspClient[2].UpdateConnectionSettings();
 						break;
 					case nameof(LocalSettings.AllCameras.Camera3):
 						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
+						_rtspClient[3].UpdateConnectionSettings();
 						break;
 					case nameof(LocalSettings.AllCameras.Camera4):
 						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
+						_rtspClient[4].UpdateConnectionSettings();
 						break;
 					case nameof(LocalSettings.AllCameras.Camera5):
 						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
+						_rtspClient[5].UpdateConnectionSettings();
 						break;
 					default: 
 						break;
