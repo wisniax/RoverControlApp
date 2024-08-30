@@ -22,6 +22,7 @@ namespace RoverControlApp.MVVM.Model
 		private Exception? _ptzThreadError = null;
 		private CancellationTokenSource _cts;
 		private DateTime _lastComTimeStamp = System.DateTime.Now;
+		private int id;
 
 		public Vector4 CameraMotion
 		{
@@ -64,17 +65,19 @@ namespace RoverControlApp.MVVM.Model
 
 
 
-		public void ChangeMoveVector(object? sender, Vector4 vector)
+		public void ChangeMoveVector(object? sender, Vector4 vector, int id)
 		{
-			CameraMotion = vector;
+			if(id == this.id) CameraMotion = vector;
 		}
 
-		public OnvifPtzCameraController()
+		public OnvifPtzCameraController(int id)
 		{
+			this.id = id;
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
-			_ptzThread = new Thread(ThreadWork) { IsBackground = true, Name = "PtzController_Thread", Priority = ThreadPriority.AboveNormal };
+			_ptzThread = new Thread(ThreadWork) { IsBackground = true, Name = $"PtzController_Thread{id}", Priority = ThreadPriority.AboveNormal };
 			_ptzThread.Start();
+
 		}
 
 		private void ThreadWork()

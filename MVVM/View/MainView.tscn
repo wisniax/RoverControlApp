@@ -46,7 +46,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowPTZflipper", "ShowRTSPflipper", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -61,6 +61,8 @@ MissionStatusUIDis = NodePath("MissonStatusUIDis")
 ShowSettingsBtn = NodePath("HBoxContainer/ShowSettingsBtn")
 ShowVelMonitor = NodePath("HBoxContainer/ShowVelMonitor")
 ShowMissionControlBrn = NodePath("HBoxContainer/ShowMissionControl")
+ShowPTZflipper = NodePath("FancyDebugViewRLab/PTZdebugShower")
+ShowRTSPflipper = NodePath("FancyDebugViewRLab/RTSPdebugShower")
 SettingsManagerNode = NodePath("SettingsManager")
 MissionControlNode = NodePath("MissionControl")
 FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
@@ -341,6 +343,20 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
+[node name="RTSPdebugShower" type="Button" parent="FancyDebugViewRLab"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_top = 25.0
+offset_right = 443.0
+offset_bottom = 45.0
+
+[node name="PTZdebugShower" type="Button" parent="FancyDebugViewRLab"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_top = 48.0
+offset_right = 443.0
+offset_bottom = 68.0
+
 [node name="GrzybUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
 anchors_preset = 1
@@ -516,6 +532,8 @@ offset_bottom = -40.0
 [connection signal="pressed" from="VBoxContainer/CameraViewSub3/Button" to="." method="ChangeCamera" binds= [3]]
 [connection signal="pressed" from="VBoxContainer/CameraViewSub4/Button" to="." method="ChangeCamera" binds= [4]]
 [connection signal="pressed" from="VBoxContainer/CameraViewSub5/Button" to="." method="ChangeCamera" binds= [5]]
+[connection signal="pressed" from="FancyDebugViewRLab/RTSPdebugShower" to="." method="FlipBool" binds= [0]]
+[connection signal="pressed" from="FancyDebugViewRLab/PTZdebugShower" to="." method="FlipBool" binds= [1]]
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]

@@ -13,7 +13,8 @@ public partial class LocalSettings : Node
 {
 	private sealed class PackedSettings
 	{
-		public Settings.Camera? Camera0 { get; set; } = null;
+		public Settings.Camera
+			Camera0 { get; set; } = null;
 		public Settings.Camera? Camera1 { get; set; } = null;
 		public Settings.Camera? Camera2 { get; set; } = null;
 		public Settings.Camera? Camera3 { get; set; } = null;
