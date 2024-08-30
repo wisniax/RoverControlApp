@@ -14,6 +14,7 @@ namespace RoverControlApp.MVVM.Model
 		private volatile ControlMode _controlMode;
 		private Vector4 _lastAbsoluteVector;
 		private RoverControl _roverMovement;
+		private CrabControl _crabMovement;
 		private ManipulatorControl _manipulatorMovement;
 		private RoverContainer _containerMovement;
 		private IRoverDriveController _roverDriveControllerPreset = null!;
@@ -22,6 +23,7 @@ namespace RoverControlApp.MVVM.Model
 
 		public event EventHandler<Vector4>? OnAbsoluteVectorChanged;
 		public event Func<RoverControl, Task>? OnRoverMovementVector;
+		public event Func<CrabControl, Task>? OnCrabMovementVector;
 		public event Func<ManipulatorControl, Task>? OnManipulatorMovement;
 		public event Func<RoverContainer, Task>? OnContainerMovement;
 		public event Func<bool, Task>? OnPadConnectionChanged;
@@ -60,6 +62,16 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
+		public CrabControl CrabMovement
+		{
+			get => _crabMovement;
+			private set
+			{
+				_crabMovement = value;
+				OnCrabMovementVector?.Invoke(value);
+			}
+		}
+
 		public ManipulatorControl ManipulatorMovement
 		{
 			get => _manipulatorMovement;
@@ -85,6 +97,7 @@ namespace RoverControlApp.MVVM.Model
 			Input.JoyConnectionChanged += InputOnJoyConnectionChanged;
 			_lastAbsoluteVector = Vector4.Zero;
 			_roverMovement = new();
+			_crabMovement = new();
 			_manipulatorMovement = new();
 			_containerMovement = new();
 			SetupControllerPresets();
@@ -216,6 +229,7 @@ namespace RoverControlApp.MVVM.Model
 		{
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
 			RoverMovement = new RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
+			CrabMovement = new CrabControl() { XAxis = 0, YAxis = 0 };
 			ContainerMovement = new RoverContainer { Axis1 = 0f };
 			ManipulatorMovement = new ManipulatorControl();
 			LastAbsoluteVector = Vector4.Zero;

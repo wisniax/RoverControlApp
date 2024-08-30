@@ -150,5 +150,12 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; }
 		}
 
+		public class CrabControl
+		{
+			public bool Enabled { get; set; }
+			public double XAxis { get; set; }
+			public double YAxis { get; set; }
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
 	}
 }
