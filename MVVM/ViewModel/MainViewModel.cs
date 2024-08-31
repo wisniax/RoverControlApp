@@ -255,7 +255,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			switch (RoverCommunication?.RoverStatus?.ControlMode)
 			{
 				case MqttClasses.ControlMode.Rover:
-					var vecc = new Vector2((float)PressedKeys.RoverMovement.XVelAxis, (float)PressedKeys.RoverMovement.ZRotAxis);
+					var vecc = new Vector2((float)PressedKeys.RoverMovement.Vel, (float)PressedKeys.RoverMovement.XAxis);
 					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {vecc.Length():F3}, " +
 												  $"Angle: " +
 												  $"{vecc.Angle() * 180 / Mathf.Pi:F1}\n");

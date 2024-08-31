@@ -51,7 +51,6 @@ namespace RoverControlApp.MVVM.Model
 
 			pressedKeys.OnPadConnectionChanged += OnPadConnectionChanged;
 			pressedKeys.OnRoverMovementVector += RoverMovementVectorChanged;
-			pressedKeys.OnCrabMovementVector += CrabMovementVectorChanged;
 			pressedKeys.OnManipulatorMovement += RoverManipulatorVectorChanged;
 			pressedKeys.OnContainerMovement += PressedKeysOnOnContainerMovement;
 
@@ -103,12 +102,6 @@ namespace RoverControlApp.MVVM.Model
 		{
 			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicRoverControl,
 				JsonSerializer.Serialize(roverControl));
-		}
-
-		private async Task CrabMovementVectorChanged(MqttClasses.CrabControl crabControl)
-		{
-			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicCrabControl,
-				JsonSerializer.Serialize(crabControl));
 		}
 
 		private async Task RoverManipulatorVectorChanged(MqttClasses.ManipulatorControl manipulatorControl)
