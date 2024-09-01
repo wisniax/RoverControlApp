@@ -15,9 +15,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 			throw new JsonException("Expected start of an object.");
 
 		MqttClientOptions? clientSettings = null;
-		string? topicRoverControl = null;
-		string? topicCrabControl = null;
-		string? topicManipulatorControl = null;
+		string? topicRoverControl = null; string? topicManipulatorControl = null;
 		string? topicRoverFeedback = null;
 		string? topicRoverStatus = null;
 		string? topicRoverContainer = null;
@@ -46,9 +44,6 @@ public class MqttConverter : JsonConverter<Mqtt>
 					break;
 				case nameof(Mqtt.TopicRoverControl):
 					topicRoverControl = reader.GetString();
-					break;
-				case nameof(Mqtt.TopicCrabControl):
-					topicCrabControl = reader.GetString();
 					break;
 				case nameof(Mqtt.TopicManipulatorControl):
 					topicManipulatorControl = reader.GetString();
@@ -90,7 +85,6 @@ public class MqttConverter : JsonConverter<Mqtt>
 		(
 			clientSettings ?? Default.ClientSettings,
 			topicRoverControl ?? Default.TopicRoverControl,
-			topicCrabControl ?? Default.TopicCrabControl,
 			topicManipulatorControl ?? Default.TopicManipulatorControl,
 			topicRoverFeedback ?? Default.TopicRoverFeedback,
 			topicRoverStatus ?? Default.TopicRoverStatus,
@@ -110,7 +104,6 @@ public class MqttConverter : JsonConverter<Mqtt>
 		writer.WritePropertyName(nameof(Mqtt.ClientSettings));
 		JsonSerializer.Serialize(writer, value.ClientSettings, options);
 		writer.WriteString(nameof(Mqtt.TopicRoverControl), value.TopicRoverControl);
-		writer.WriteString(nameof(Mqtt.TopicCrabControl), value.TopicCrabControl);
 		writer.WriteString(nameof(Mqtt.TopicManipulatorControl), value.TopicManipulatorControl);
 		writer.WriteString(nameof(Mqtt.TopicRoverFeedback), value.TopicRoverFeedback);
 		writer.WriteString(nameof(Mqtt.TopicRoverStatus), value.TopicRoverStatus);

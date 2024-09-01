@@ -14,7 +14,6 @@ public partial class Mqtt : SettingBase, ICloneable
 		_clientSettings = new();
 
 		_topicRoverControl = "RoverControl";
-		_topicCrabControl = "CrabControl";
 		_topicManipulatorControl = "ManipulatorControl";
 		_topicRoverFeedback = "RoverFeedback";
 		_topicRoverStatus = "RoverStatus";
@@ -31,7 +30,6 @@ public partial class Mqtt : SettingBase, ICloneable
 	(
 		MqttClientOptions clientSettings,
 		string topicRoverControl,
-		string topicCrabControl,
 		string topicManipulatorControl,
 		string topicRoverFeedback,
 		string topicRoverStatus,
@@ -46,7 +44,6 @@ public partial class Mqtt : SettingBase, ICloneable
 	{
 		_clientSettings = clientSettings;
 		_topicRoverControl = topicRoverControl;
-		_topicCrabControl = topicCrabControl;
 		_topicManipulatorControl = topicManipulatorControl;
 		_topicRoverFeedback = topicRoverFeedback;
 		_topicRoverStatus = topicRoverStatus;
@@ -66,7 +63,6 @@ public partial class Mqtt : SettingBase, ICloneable
 			ClientSettings = _clientSettings,
 
 			TopicRoverControl = _topicRoverControl,
-			TopicCrabControl = _topicCrabControl,
 			TopicManipulatorControl = _topicManipulatorControl,
 			TopicRoverFeedback = _topicRoverFeedback,
 			TopicRoverStatus = _topicRoverStatus,
@@ -92,13 +88,6 @@ public partial class Mqtt : SettingBase, ICloneable
 	{
 		get => _topicRoverControl; 
 		set => EmitSignal_SettingChanged(ref _topicRoverControl, value);
-	}
-
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-	public string TopicCrabControl
-	{
-		get => _topicCrabControl; 
-		set => EmitSignal_SettingChanged(ref _topicCrabControl, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
@@ -174,7 +163,6 @@ public partial class Mqtt : SettingBase, ICloneable
 	MqttClientOptions _clientSettings;
 
 	string _topicRoverControl;
-	string _topicCrabControl;
 	string _topicManipulatorControl;
 	string _topicRoverFeedback;
 	string _topicRoverStatus;
