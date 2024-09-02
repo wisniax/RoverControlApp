@@ -150,6 +150,13 @@ namespace RoverControlApp.MVVM.ViewModel
 		public override void _Process(double delta)
 		{
 			UpdateLabel();
+			for (int i = 0; i < MaxCams; i++)
+			{
+				if (_rtspClient[i] == null)
+					imTextureRect[i].Visible = false;
+				else
+					imTextureRect[i].Visible = !_rtspClient[i].isHD;
+			}
 		}
 
 		void ChangeCamera(int id)
@@ -159,14 +166,17 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			for (int i = 0; i < MaxCams; i++)
 			{
-				if (_rtspClient[i].isHD)
+				if (_rtspClient[i] != null)
 				{
-					_rtspClient[i].isHD = false;
-					imTextureRect[i].Visible = true;
-					if (!LocalSettings.Singleton.General.sdOnlyMode)
+					if (_rtspClient[i].isHD)
 					{
-						_rtspClient[i].UpdateConnectionSettings();
-						_rtspClient[i].SetStateClosing();
+						_rtspClient[i].isHD = false;
+						if (!LocalSettings.Singleton.General.sdOnlyMode)
+						{
+							_rtspClient[i].UpdateConnectionSettings();
+							_rtspClient[i].SetStateClosing();
+						}
+						imTextureRect[i].Visible = true;
 					}
 				}
 			}
@@ -180,6 +190,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				_rtspClient[id].SetStateClosing();
 			}
 			
+			GetNode<Label>("CameraViewMain0/Label").Visible = true;
 			GetNode<Label>("CameraViewMain0/Label").Text = $"Camera {id} HD";
 		}
 
@@ -260,7 +271,23 @@ namespace RoverControlApp.MVVM.ViewModel
 					case nameof(LocalSettings.AllCameras.Camera0):
 						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
 						break;
-
+					case nameof(LocalSettings.AllCameras.Camera1):
+						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
+						break;
+					case nameof(LocalSettings.AllCameras.Camera2):
+						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
+						break;
+					case nameof(LocalSettings.AllCameras.Camera3):
+						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
+						break;
+					case nameof(LocalSettings.AllCameras.Camera4):
+						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
+						break;
+					case nameof(LocalSettings.AllCameras.Camera5):
+						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
+						break;
+					default:
+						break;
 				}
 			}
 
@@ -309,9 +336,11 @@ namespace RoverControlApp.MVVM.ViewModel
 				case true when _rtspClient[id] is null:
 					_rtspClient[id] = new(id);
 					_rtspClientWeak[id] = new(_rtspClient[id]);
+					imTextureRect[id].Visible = true;
 					_rtspClient[id].FrameReceived += RTSPworkHandler;
 					break;
 				case false when _rtspClient[id] is not null:
+					imTextureRect[id].Visible = false;
 					_rtspClient[id].Dispose();
 					_rtspClient[id] = null;
 					break;
@@ -429,6 +458,8 @@ namespace RoverControlApp.MVVM.ViewModel
 				for (int id = 0; id < MaxCams; id++)
 				{
 					string temp = rtspClient[id]?.State.ToString();
+					if(temp is null)
+						temp = "N/A";
 					FancyDebugViewRLab.AppendText($"{id}: [color={rtspStatusColor[id].ToHtml(false)}]{temp[0]}[/color]{(id == MaxCams-1 ? "" : ", ")}");
 				}
 				FancyDebugViewRLab.AppendText("\n");
@@ -456,6 +487,8 @@ namespace RoverControlApp.MVVM.ViewModel
 				for (int id = 0; id < MaxCams; id++)
 				{
 					string temp = ptzClient[id]?.State.ToString();
+					if (temp is null)
+						temp = "N/A";
 					FancyDebugViewRLab.AppendText($"{id}: [color={ptzStatusColor[id].ToHtml(false)}]{temp[0]}[/color]{(id == MaxCams - 1 ? "" : ", ")}");
 				}
 				FancyDebugViewRLab.AppendText("\n");

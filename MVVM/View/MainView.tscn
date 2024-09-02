@@ -216,6 +216,7 @@ texture = ExtResource("2_1llr5")
 expand_mode = 2
 
 [node name="Label" type="Label" parent="CameraViewMain0"]
+visible = false
 layout_mode = 0
 offset_left = 229.0
 offset_top = 6.0
@@ -546,9 +547,9 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]
