@@ -7,6 +7,7 @@ using System.Globalization;
 using System.ServiceModel;
 using System.Text.Json;
 using System.Threading.Tasks;
+using RoverControlApp.Core.Settings;
 
 namespace RoverControlApp.MVVM.ViewModel
 {
@@ -18,7 +19,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		public MissionSetPoint MissionSetPoint { get; private set; }
 
 		private WeakReference<RtspStreamClient>?[] _rtspClientWeak = new WeakReference<RtspStreamClient>?[MaxCams];
-		private WeakReference<OnvifPtzCameraController>?[] _ptzClientWeak = new WeakReference<OnvifPtzCameraController>?[MaxCams];
+		private WeakReference<OnvifPtzCameraController>? _ptzClientWeak;
 
 		private static int MaxCams = 6;
 
@@ -26,7 +27,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private bool _ptzHidden = true;
 
 		private RtspStreamClient?[] _rtspClient = new RtspStreamClient?[MaxCams];
-		private OnvifPtzCameraController?[] _ptzClient = new OnvifPtzCameraController?[MaxCams];
+		private OnvifPtzCameraController? _ptzClient;
 		private JoyVibrato _joyVibrato = new();
 		private BackCapture _backCapture = new();
 
@@ -84,12 +85,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
 
-			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
-			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
-			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
-			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
-			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
-			ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
+			ManagePtzStatus();
 
 
 			ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
@@ -99,8 +95,10 @@ namespace RoverControlApp.MVVM.ViewModel
 			ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
 			ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
 
+
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedSubcategoryChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsSubcategoryChanged));
 		}
 
 		public override void _ExitTree()
@@ -125,10 +123,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				client?.Dispose();
 			}
 
-			foreach (var client in _ptzClient)
-			{
-				client?.Dispose();
-			}
+			_ptzClient.Dispose();
 			base.Dispose(disposing);
 		}
 
@@ -223,37 +218,95 @@ namespace RoverControlApp.MVVM.ViewModel
 		 * Settings event handlers
 		 */
 
+
+		void OnSettingsSubcategoryChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
+		{
+			if (category == nameof(LocalSettings.AllCameras))
+			{
+				switch (name)
+				{
+					case nameof(AllCameras.Camera0):
+						ManagePtzStatus();
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
+						if (_rtspClient[0] != null)
+						{
+							_rtspClient[0].UpdateConnectionSettings();
+							_rtspClient[0].SetStateClosing();
+						}
+						break;
+					case nameof(AllCameras.Camera1):
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
+						if (_rtspClient[1] != null)
+						{
+							_rtspClient[1].UpdateConnectionSettings();
+							_rtspClient[1].SetStateClosing();
+						}
+						break;
+					case nameof(AllCameras.Camera2):
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
+						if (_rtspClient[2] != null)
+						{
+							_rtspClient[2].UpdateConnectionSettings();
+							_rtspClient[2].SetStateClosing();
+						}
+						break;
+					case nameof(AllCameras.Camera3):
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
+						if (_rtspClient[3] != null)
+						{
+							_rtspClient[3].UpdateConnectionSettings();
+							_rtspClient[3].SetStateClosing();
+						}
+						break;
+					case nameof(AllCameras.Camera4):
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
+						if (_rtspClient[4] != null)
+						{
+							_rtspClient[4].UpdateConnectionSettings();
+							_rtspClient[4].SetStateClosing();
+						}
+						break;
+					case nameof(AllCameras.Camera5):
+						ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
+						if (_rtspClient[5] != null)
+						{
+							_rtspClient[5].UpdateConnectionSettings();
+							_rtspClient[5].SetStateClosing();
+						}
+						break;
+					default:
+						break;
+				}
+			}
+			return;
+		}
+
 		void OnSettingsCategoryChanged(StringName property)
 		{
 			switch (property)
 			{
 				case nameof(LocalSettings.AllCameras.Camera0):
-					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
+					ManagePtzStatus();
 					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera0, 0); 
 					_rtspClient[0].UpdateConnectionSettings();
 					break;
 				case nameof(LocalSettings.AllCameras.Camera1):
-					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
 					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
 					_rtspClient[1].UpdateConnectionSettings();
 					break;
 				case nameof(LocalSettings.AllCameras.Camera2):
-					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
 					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
 					_rtspClient[2].UpdateConnectionSettings();
 					break;
 				case nameof(LocalSettings.AllCameras.Camera3):
-					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
 					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
 					_rtspClient[3].UpdateConnectionSettings();
 					break;
 				case nameof(LocalSettings.AllCameras.Camera4):
-					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
 					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
 					_rtspClient[4].UpdateConnectionSettings();
 					break;
 				case nameof(LocalSettings.AllCameras.Camera5):
-					ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
 					ManageRtspStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
 					_rtspClient[5].UpdateConnectionSettings();
 					break;
@@ -269,22 +322,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				switch (category)
 				{
 					case nameof(LocalSettings.AllCameras.Camera0):
-						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera0, 0);
-						break;
-					case nameof(LocalSettings.AllCameras.Camera1):
-						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera1, 1);
-						break;
-					case nameof(LocalSettings.AllCameras.Camera2):
-						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera2, 2);
-						break;
-					case nameof(LocalSettings.AllCameras.Camera3):
-						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera3, 3);
-						break;
-					case nameof(LocalSettings.AllCameras.Camera4):
-						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera4, 4);
-						break;
-					case nameof(LocalSettings.AllCameras.Camera5):
-						ManagePtzStatus(LocalSettings.Singleton.AllCameras.Camera5, 5);
+						ManagePtzStatus();
 						break;
 					default:
 						break;
@@ -347,19 +385,19 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 		}
 
-		private void ManagePtzStatus(Core.Settings.Camera camera, int id)
+		private void ManagePtzStatus()
 		{
-			switch (camera.EnablePtzControl)
+			switch (LocalSettings.Singleton.AllCameras.Camera0.EnablePtzControl)
 			{
-				case true when _ptzClient[id] is null:
-					_ptzClient[id] = new OnvifPtzCameraController(id);
-					_ptzClientWeak[id] = new(_ptzClient[id]);
-					PressedKeys.OnAbsoluteVectorChanged += (sender, e) => _ptzClient[id]?.ChangeMoveVector(sender, e, id);
+				case true when _ptzClient is null:
+					_ptzClient = new OnvifPtzCameraController();
+					_ptzClientWeak = new(_ptzClient);
+					PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
 					break;
-				case false when _ptzClient[id] is not null:
-					PressedKeys.OnAbsoluteVectorChanged -= (sender, e) => _ptzClient[id]?.ChangeMoveVector(sender, e, id);
-					_ptzClient[id].Dispose();
-					_ptzClient[id] = null;
+				case false when _ptzClient is not null:
+					PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
+					_ptzClient.Dispose();
+					_ptzClient = null;
 					break;
 			}
 		}
@@ -389,23 +427,22 @@ namespace RoverControlApp.MVVM.ViewModel
 			FancyDebugViewRLab.Clear();
 
 			RtspStreamClient?[] rtspClient = new RtspStreamClient?[MaxCams];
-			OnvifPtzCameraController[]? ptzClient = new OnvifPtzCameraController[MaxCams];
+			OnvifPtzCameraController? ptzClient = null;
 
 			for (int id = 0; id < MaxCams; id++)
 			{
 				_rtspClientWeak[id]?.TryGetTarget(out rtspClient[id]);
-				_ptzClientWeak[id]?.TryGetTarget(out ptzClient[id]);
 			}
+			_ptzClientWeak?.TryGetTarget(out ptzClient);
 
 			Color mqttStatusColor = GetColorForCommunicationState(RoverCommunication?.RoverStatus?.CommunicationState);
 
 			Color[] rtspStatusColor = new Color[MaxCams];
-			Color[] ptzStatusColor = new Color[MaxCams];
+			Color ptzStatusColor = GetColorForCommunicationState(ptzClient?.State);
 
 			for (int id = 0; id < MaxCams; id++)
 			{
 				rtspStatusColor[id] = GetColorForCommunicationState(rtspClient[id]?.State);
-				ptzStatusColor[id] = GetColorForCommunicationState(ptzClient[id]?.State);
 			}
 
 
@@ -419,12 +456,12 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 
 			string[]? rtspAge = new string[MaxCams];
-			string[]? ptzAge = new string[MaxCams];
 			for (int id = 0; id < MaxCams; id++)
 			{
 				rtspAge[id] = rtspClient[id]?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
-				ptzAge[id] = ptzClient[id]?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 			}
+
+			string? ptzAge = ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
 			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode},\t" +
 						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication?.RoverStatus?.CommunicationState}[/color],\t" +
@@ -465,34 +502,30 @@ namespace RoverControlApp.MVVM.ViewModel
 				FancyDebugViewRLab.AppendText("\n");
 			}
 
-			if (!_ptzHidden)
+			if (ptzClient?.State == CommunicationState.Opened)
 			{
-				for (int id = 0; id < MaxCams; id++)
-				{
-					if (ptzClient[id]?.State == CommunicationState.Opened)
-					{
-						FancyDebugViewRLab.AppendText($"PTZ  {id}: Since last move request: {ptzAge}s\n");
-						FancyDebugViewRLab.AppendText($"PTZ  {id}: Move vector: {ptzClient[id].CameraMotion}\n");
-					}
-					else
-					{
-						FancyDebugViewRLab.AppendText(
-							$"PTZ {id}: [color={ptzStatusColor[id].ToHtml(false)}]{ptzClient[id]?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge[id] ?? "N/A "}s\n");
-					}
-				}
+				FancyDebugViewRLab.AppendText($"PTZ : Since last move request: {ptzAge}s\n");
+				FancyDebugViewRLab.AppendText($"PTZ : Move vector: {ptzClient.CameraMotion}\n");
 			}
 			else
 			{
-				FancyDebugViewRLab.AppendText("PTZ : ");
-				for (int id = 0; id < MaxCams; id++)
-				{
-					string temp = ptzClient[id]?.State.ToString();
-					if (temp is null)
-						temp = "N/A";
-					FancyDebugViewRLab.AppendText($"{id}: [color={ptzStatusColor[id].ToHtml(false)}]{temp[0]}[/color]{(id == MaxCams - 1 ? "" : ", ")}");
-				}
-				FancyDebugViewRLab.AppendText("\n");
+				FancyDebugViewRLab.AppendText(
+					$"PTZ : [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
 			}
+			
+			
+			//else
+			//{
+			//	FancyDebugViewRLab.AppendText("PTZ : ");
+			//	for (int id = 0; id < MaxCams; id++)
+			//	{
+			//		string temp = ptzClient[id]?.State.ToString();
+			//		if (temp is null)
+			//			temp = "N/A";
+			//		FancyDebugViewRLab.AppendText($"{id}: [color={ptzStatusColor[id].ToHtml(false)}]{temp[0]}[/color]{(id == MaxCams - 1 ? "" : ", ")}");
+			//	}
+			//	FancyDebugViewRLab.AppendText("\n");
+			//}
 
 			ShowRTSPflipper.Position = new Vector2(0, 25 + ((RoverCommunication?.RoverStatus?.ControlMode == MqttClasses.ControlMode.EStop || RoverCommunication?.RoverStatus?.ControlMode == MqttClasses.ControlMode.Autonomy) ? 0 : 23));
 			ShowRTSPflipper.Size = new Vector2(ShowRTSPflipper.Size.X, 20 + (_rtspHidden ? 0 : 5*23));
@@ -501,7 +534,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			ShowPTZflipper.Size = new Vector2(ShowPTZflipper.Size.X, 20 + (_ptzHidden ? 0 : 5*23));
 		}
 
-		public async Task<bool> CaptureCameraImage(int activeCam, string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
+		public async Task<bool> CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
 		{
 			if (_rtspClient is null)
 				return false;
@@ -590,7 +623,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void OnRTSPCapture()
 		{
-			CaptureCameraImage(0, subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
+			CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
 		}
 	}
 }

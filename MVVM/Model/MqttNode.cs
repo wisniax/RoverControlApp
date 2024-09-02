@@ -115,6 +115,11 @@ public partial class MqttNode : Node
 
 	public async Task EnqueueMessageAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
+		if (subtopic == null || arg == null)
+		{
+			return;
+		}
+		
 		await _managedMqttClient.EnqueueAsync(TopicFull(subtopic),arg, qos, retain);
 		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued at subtopic: \"{subtopic}\" with:\n{arg}");
 	}

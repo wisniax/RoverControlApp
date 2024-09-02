@@ -66,8 +66,6 @@ namespace RoverControlApp.MVVM.Model
 		{
 			this.id = id;
 
-			if(id == 0) isHD = true;
-
 			UpdateConnectionSettings();
 
 			_generalPurposeStopwatch = Stopwatch.StartNew();
@@ -142,7 +140,7 @@ namespace RoverControlApp.MVVM.Model
 			State = CommunicationState.Created;
 
 
-			string rtspUrl = isHD && !LocalSettings.Singleton.General.sdOnlyMode ? _myCamera.StreamPathHD : _myCamera.StreamPathSD;
+			string rtspUrl = isHD && !LocalSettings.Singleton.General.sdOnlyMode ? _myCamera.ConnectionSettings.RtspStreamPathHD : _myCamera.ConnectionSettings.RtspStreamPathSD;
 
 			var task = Task.Run(() => Capture = new VideoCapture(rtspUrl));
 			_matrix = new Mat();

@@ -14,8 +14,8 @@ public partial class CameraConnection : RefCounted
 		Ip = "192.168.1.35";
 		Login = "admin";
 		Password = "admin";
-		RtspStreamPathHD = "/live/0/MAIN";
-		RtspStreamPathSD = "/live/0/MAIN";
+		RtspStreamPathHD = "192.168.1.101:8554/cam0";
+		RtspStreamPathSD = "192.168.1.101:8554/cam0";
 		RtspPort = 554;
 		PtzPort = 80;
 	}
