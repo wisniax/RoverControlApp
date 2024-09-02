@@ -123,7 +123,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				client?.Dispose();
 			}
 
-			_ptzClient.Dispose();
+			_ptzClient?.Dispose();
 			base.Dispose(disposing);
 		}
 
