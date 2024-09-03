@@ -42,6 +42,13 @@ namespace RoverControlApp.Core
 			Spheric = 2
 		}
 
+		public enum SamplerDirection
+		{
+			Down = 0,
+			Stop = 1,
+			Up = 2
+		}
+
 		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
@@ -85,6 +92,12 @@ namespace RoverControlApp.Core
 			}
 		}
 
+		public class SamplerControl
+		{
+			public SamplerDirection DrillCommand { get; set; } = SamplerDirection.Stop;
+			public SamplerDirection PlatformCommand { get; set; } = SamplerDirection.Stop;
+		}
+		
 		public class RoverContainer
 		{
 			public float Axis1 { get; set; } = 0f;

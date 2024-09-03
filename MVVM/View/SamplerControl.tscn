@@ -1,0 +1,107 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1j8lxbvqx1te"]
+
+[ext_resource type="Script" path="res://MVVM/View/SamplerControl.cs" id="1_cfnjr"]
+
+[node name="SamplerControl" type="Panel" node_paths=PackedStringArray("_drillStateLabel", "_platformStateLabel")]
+offset_right = 442.0
+offset_bottom = 231.0
+script = ExtResource("1_cfnjr")
+_drillStateLabel = NodePath("DrillMenu/Label")
+_platformStateLabel = NodePath("PlatformMenu/Label")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 443.0
+offset_bottom = 30.0
+text = "Sampler"
+horizontal_alignment = 1
+
+[node name="DrillMenu" type="Label" parent="."]
+layout_mode = 0
+offset_left = 139.0
+offset_top = 43.0
+offset_right = 206.0
+offset_bottom = 73.0
+text = "Drill"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DrillMenu"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 29.0
+offset_right = 53.0
+offset_bottom = 157.0
+
+[node name="UP" type="Button" parent="DrillMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "UP"
+
+[node name="STOP" type="Button" parent="DrillMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "STOP"
+
+[node name="DOWN" type="Button" parent="DrillMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "DOWN"
+
+[node name="Label" type="Label" parent="DrillMenu"]
+layout_mode = 0
+offset_left = -97.0
+offset_top = 80.0
+offset_right = -2.0
+offset_bottom = 103.0
+text = "State: Stop"
+
+[node name="PlatformMenu" type="Label" parent="."]
+layout_mode = 0
+offset_left = 316.0
+offset_top = 43.0
+offset_right = 384.0
+offset_bottom = 73.0
+text = "Platform"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PlatformMenu"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 29.0
+offset_right = 53.0
+offset_bottom = 157.0
+
+[node name="UP" type="Button" parent="PlatformMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "UP"
+
+[node name="STOP" type="Button" parent="PlatformMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "STOP"
+
+[node name="DOWN" type="Button" parent="PlatformMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "DOWN"
+
+[node name="Label" type="Label" parent="PlatformMenu"]
+layout_mode = 0
+offset_left = -97.0
+offset_top = 80.0
+offset_right = -2.0
+offset_bottom = 103.0
+text = "State: Stop"
