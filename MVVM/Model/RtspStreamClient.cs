@@ -22,6 +22,8 @@ namespace RoverControlApp.MVVM.Model
 		private Mat? _matrix;
 		private Thread? _rtspThread;
 
+		public int id { get; set; }
+
 		public VideoCapture? Capture { get; private set; }
 
 		public Image LatestImage
@@ -52,8 +54,10 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		public RtspStreamClient()
+		public RtspStreamClient(int id)
 		{
+			this.id = id;
+
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
 			_rtspThread = new Thread(ThreadWork) { IsBackground = true, Name = "RtspStream_Thread", Priority = ThreadPriority.BelowNormal };
@@ -92,12 +96,9 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
+			string link = LocalSettings.Singleton.Camera0.ConnectionSettings.RtspLink;
 			var task = 
-				Task.Run(() => Capture = new VideoCapture
-				(
-					$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Password}"
-					+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
-				);
+				Task.Run(() => Capture = new VideoCapture(link));
 			_matrix = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;
