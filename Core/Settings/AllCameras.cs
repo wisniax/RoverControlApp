@@ -11,12 +11,12 @@ public partial class AllCameras : SettingBase, ICloneable
 
 	public AllCameras()
 	{
-		_camera0 = new();
-		_camera1 = new();
-		_camera2 = new();
-		_camera3 = new();
-		_camera4 = new();
-		_camera5 = new();
+		_camera0 = new(0);
+		_camera1 = new(1);
+		_camera2 = new(2);
+		_camera3 = new(3);
+		_camera4 = new(4);
+		_camera5 = new(5);
 	}
 
 	public AllCameras(Camera camera0, Camera camera1, Camera camera2, Camera camera3, Camera camera4, Camera camera5)

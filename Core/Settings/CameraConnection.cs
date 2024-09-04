@@ -9,13 +9,57 @@ namespace RoverControlApp.Core.Settings;
 public partial class CameraConnection : RefCounted
 {
 
-	public CameraConnection()
+	public CameraConnection(int id)
 	{
-		Ip = "192.168.1.35";
-		Login = "admin";
-		Password = "admin";
-		RtspStreamPathHD = "192.168.1.101:8554/cam0";
-		RtspStreamPathSD = "192.168.1.101:8554/cam0";
+		switch (id)
+		{
+			case 0:
+				Ip = "192.168.1.35";
+				Login = "admin";
+				Password = "admin";
+				RtspStreamPathHD = "admin:admin@192.168.1.35:554/live/0/MAIN";
+				RtspStreamPathSD = "admin:admin@192.168.1.35:554/live/0/MAIN";
+				break;
+			case 1:
+				Ip = "192.168.1.35";
+				Login = "admin";
+				Password = "admin";
+				RtspStreamPathHD = "admin:Faptors69@192.168.1.36:554/1/1";
+				RtspStreamPathSD = "admin:Faptors69@192.168.1.36:554/1/2";
+				break;
+			case 2:
+				Ip = "192.168.1.35";
+				Login = "admin";
+				Password = "admin";
+				RtspStreamPathHD = "192.168.1.37:8554/cam0";
+				RtspStreamPathSD = "192.168.1.37:8554/cam0";
+				break;
+			case 3:
+				Ip = "192.168.1.35";
+				Login = "admin";
+				Password = "admin";
+				RtspStreamPathHD = "192.168.1.37:8554/cam1";
+				RtspStreamPathSD = "192.168.1.37:8554/cam1";
+				break;
+			case 4:
+				Ip = "192.168.1.35";
+				Login = "admin";
+				Password = "admin";
+				RtspStreamPathHD = "192.168.1.38:8554/cam1";
+				RtspStreamPathSD = "192.168.1.38:8554/cam1";
+				break;
+			case 5:
+				Ip = "192.168.1.35";
+				Login = "admin";
+				Password = "admin";
+				RtspStreamPathHD = "192.168.1.38:8554/cam0";
+				RtspStreamPathSD = "192.168.1.38:8554/cam0";
+				break;
+			default:
+				break;
+
+		}
+		
 		RtspPort = 554;
 		PtzPort = 80;
 	}

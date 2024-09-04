@@ -67,7 +67,7 @@ namespace RoverControlApp.MVVM.Model
 			this.id = id;
 
 			UpdateConnectionSettings();
-
+			LoadDefaults();
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
 			_rtspThread = new Thread(ThreadWork) { IsBackground = true, Name = $"RtspStream_Thread{this.id}", Priority = ThreadPriority.BelowNormal };
@@ -98,6 +98,17 @@ namespace RoverControlApp.MVVM.Model
 					break;
 				default:
 					break;
+			}
+		}
+
+		public void LoadDefaults()
+		{
+			switch (id)
+			{
+				case 0: _myCamera = new(0); break;
+				case 1: _myCamera = new(1); break;
+				case 2: _myCamera = new(2); break;
+
 			}
 		}
 

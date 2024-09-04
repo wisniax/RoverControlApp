@@ -8,10 +8,9 @@ namespace RoverControlApp.Core.Settings;
 [JsonConverter(typeof(CameraConverter))]
 public partial class Camera : SettingBase, ICloneable
 {
-
-	public Camera()
+	public Camera(int id)
 	{
-		_connectionSettings = new();
+		_connectionSettings = new(id);
 		_inverseAxis = false;
 		_enableRtspStream = true;
 		_enablePtzControl = true;
@@ -31,7 +30,7 @@ public partial class Camera : SettingBase, ICloneable
 
 	public object Clone()
 	{
-		return new Camera()
+		return new Camera(0)
 		{
 			ConnectionSettings = _connectionSettings,
 			InverseAxis  = _inverseAxis,

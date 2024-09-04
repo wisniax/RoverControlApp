@@ -7,7 +7,7 @@ namespace RoverControlApp.Core.JSONConverters;
 
 public class CameraConnectionConverter : JsonConverter<CameraConnection>
 {
-	private static readonly CameraConnection Default = new();
+	private static readonly CameraConnection Default = new(0);
 
 	public override CameraConnection Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
