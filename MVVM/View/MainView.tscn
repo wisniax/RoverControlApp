@@ -84,7 +84,6 @@ custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 
 [node name="CameraViewSub0" type="TextureRect" parent="VBoxContainer"]
-visible = false
 custom_minimum_size = Vector2(0, 111.08)
 layout_mode = 2
 texture = ExtResource("2_1llr5")
@@ -223,111 +222,6 @@ offset_top = 6.0
 offset_right = 776.0
 offset_bottom = 29.0
 text = "Camera 0 HD"
-horizontal_alignment = 1
-
-[node name="CameraViewMain1" type="TextureRect" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -229.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_1llr5")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="CameraViewMain1"]
-layout_mode = 0
-offset_left = 229.0
-offset_top = 6.0
-offset_right = 776.0
-offset_bottom = 29.0
-text = "Camera 1 HD"
-horizontal_alignment = 1
-
-[node name="CameraViewMain2" type="TextureRect" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -229.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_1llr5")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="CameraViewMain2"]
-layout_mode = 0
-offset_left = 229.0
-offset_top = 6.0
-offset_right = 776.0
-offset_bottom = 29.0
-text = "Camera 2 HD"
-horizontal_alignment = 1
-
-[node name="CameraViewMain3" type="TextureRect" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -229.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_1llr5")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="CameraViewMain3"]
-layout_mode = 0
-offset_left = 229.0
-offset_top = 6.0
-offset_right = 776.0
-offset_bottom = 29.0
-text = "Camera 3 HD"
-horizontal_alignment = 1
-
-[node name="CameraViewMain4" type="TextureRect" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -229.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_1llr5")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="CameraViewMain4"]
-layout_mode = 0
-offset_left = 229.0
-offset_top = 6.0
-offset_right = 776.0
-offset_bottom = 29.0
-text = "Camera 4 HD"
-horizontal_alignment = 1
-
-[node name="CameraViewMain5" type="TextureRect" parent="."]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -229.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_1llr5")
-expand_mode = 2
-
-[node name="Label" type="Label" parent="CameraViewMain5"]
-layout_mode = 0
-offset_left = 229.0
-offset_top = 6.0
-offset_right = 776.0
-offset_bottom = 29.0
-text = "Camera 5 HD"
 horizontal_alignment = 1
 
 [node name="FancyDebugViewRLab" type="RichTextLabel" parent="."]
