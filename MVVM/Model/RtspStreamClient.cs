@@ -95,7 +95,7 @@ namespace RoverControlApp.MVVM.Model
 			var task = 
 				Task.Run(() => Capture = new VideoCapture
 				(
-					$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Login}"
+					$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Password}"
 					+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
 				);
 			_matrix = new Mat();
