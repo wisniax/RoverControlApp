@@ -11,7 +11,7 @@ public partial class MqttClientOptions : RefCounted
 
 	public MqttClientOptions()
 	{
-		BrokerIp = "broker.hivemq.com";
+		BrokerIp = "192.168.1.20";
 		BrokerPort = 1883;
 		PingInterval = 2.5;
 		TopicMain = "RappTORS";
