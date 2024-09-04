@@ -272,7 +272,12 @@ namespace RoverControlApp.MVVM.ViewModel
 			Color mqttStatusColor = GetColorForCommunicationState(RoverCommunication?.RoverStatus?.CommunicationState);
 
 			Color[] rtspStatusColor = new Color[numCams];
-				GetColorForCommunicationState(rtspClient[0]?.State);
+
+			for (int i = 0; i < numCams; i++)
+			{
+				rtspStatusColor[i] = GetColorForCommunicationState(rtspClient[i]?.State);
+			}
+
 
 			Color ptzStatusColor = GetColorForCommunicationState(ptzClient?.State);
 
@@ -310,9 +315,6 @@ namespace RoverControlApp.MVVM.ViewModel
 					FancyDebugViewRLab.AppendText($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys?.ManipulatorMovement)}\n");
 					break;
 			}
-
-			GD.Print(rtspAge[0]);
-			GD.Print(rtspAge[1]);
 
 			for (int i = 0; i < numCams; i++)
 			{

@@ -14,7 +14,7 @@ public partial class CameraConnection : RefCounted
 		Ip = "192.168.1.35";
 		Login = "admin";
 		Password = "admin";
-		RtspLink = "http://158.58.130.148/mjpg/video.mjpg";
+		RtspLink = "http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg";
 		RtspPort = 554;
 		PtzPort = 80;
 	}

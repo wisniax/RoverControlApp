@@ -96,9 +96,8 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
-			string link = LocalSettings.Singleton.Camera0.ConnectionSettings.RtspLink;
-			var task = 
-				Task.Run(() => Capture = new VideoCapture(link));
+			string link = GetNewRTSPLink();
+			var task = Task.Run(() => Capture = new VideoCapture(link));
 			_matrix = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;
@@ -116,6 +115,19 @@ namespace RoverControlApp.MVVM.Model
 			Capture?.Set(VideoCaptureProperties.BufferSize, 0);
 			Capture?.SetExceptionMode(false);
 			State = CommunicationState.Opened;
+		}
+
+		string GetNewRTSPLink()
+		{
+			switch (id)
+			{
+				case 0:
+					return LocalSettings.Singleton.Camera0.ConnectionSettings.RtspLink;
+				case 1:
+					return LocalSettings.Singleton.Camera1.ConnectionSettings.RtspLink;
+				default:
+					return LocalSettings.Singleton.Camera0.ConnectionSettings.RtspLink;
+			}
 		}
 
 		private void DoWork()
