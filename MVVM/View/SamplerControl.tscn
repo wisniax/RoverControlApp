@@ -3,25 +3,25 @@
 [ext_resource type="Script" path="res://MVVM/View/SamplerControl.cs" id="1_cfnjr"]
 
 [node name="SamplerControl" type="Panel" node_paths=PackedStringArray("_drillStateLabel", "_platformStateLabel")]
-offset_right = 442.0
+offset_right = 522.0
 offset_bottom = 231.0
 script = ExtResource("1_cfnjr")
-_drillStateLabel = NodePath("DrillMenu/Label")
-_platformStateLabel = NodePath("PlatformMenu/Label")
+_drillStateLabel = NodePath("States/Label")
+_platformStateLabel = NodePath("States/Label2")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
-offset_right = 443.0
+offset_right = 518.0
 offset_bottom = 30.0
 text = "Sampler"
 horizontal_alignment = 1
 
 [node name="DrillMenu" type="Label" parent="."]
 layout_mode = 0
-offset_left = 139.0
-offset_top = 43.0
-offset_right = 206.0
-offset_bottom = 73.0
+offset_left = 6.0
+offset_top = 46.0
+offset_right = 115.0
+offset_bottom = 76.0
 text = "Drill"
 horizontal_alignment = 1
 
@@ -53,20 +53,40 @@ theme_override_font_sizes/font_size = 10
 action_mode = 0
 text = "DOWN"
 
-[node name="Label" type="Label" parent="DrillMenu"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="DrillMenu"]
 layout_mode = 0
-offset_left = -97.0
-offset_top = 80.0
-offset_right = -2.0
-offset_bottom = 103.0
-text = "State: Stop"
+offset_left = 58.0
+offset_top = 29.0
+offset_right = 99.0
+offset_bottom = 157.0
+
+[node name="LEFT" type="Button" parent="DrillMenu/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "LEFT"
+
+[node name="STOP" type="Button" parent="DrillMenu/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "STOP"
+
+[node name="RIGHT" type="Button" parent="DrillMenu/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "RIGHT"
 
 [node name="PlatformMenu" type="Label" parent="."]
 layout_mode = 0
-offset_left = 316.0
-offset_top = 43.0
-offset_right = 384.0
-offset_bottom = 73.0
+offset_left = 141.0
+offset_top = 47.0
+offset_right = 209.0
+offset_bottom = 77.0
 text = "Platform"
 horizontal_alignment = 1
 
@@ -98,10 +118,86 @@ theme_override_font_sizes/font_size = 10
 action_mode = 0
 text = "DOWN"
 
-[node name="Label" type="Label" parent="PlatformMenu"]
+[node name="ContainerMenu" type="Label" parent="."]
 layout_mode = 0
-offset_left = -97.0
-offset_top = 80.0
-offset_right = -2.0
-offset_bottom = 103.0
+offset_left = 233.0
+offset_top = 47.0
+offset_right = 310.0
+offset_bottom = 77.0
+text = "Container"
+horizontal_alignment = 1
+
+[node name="MOVE" type="Button" parent="ContainerMenu"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+offset_left = 18.0
+offset_top = 78.0
+offset_right = 59.0
+offset_bottom = 118.0
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "MOVE"
+
+[node name="States" type="Label" parent="."]
+layout_mode = 0
+offset_left = 352.0
+offset_top = 47.0
+offset_right = 456.0
+offset_bottom = 77.0
+text = "States"
+horizontal_alignment = 1
+
+[node name="Label" type="Label" parent="States"]
+layout_mode = 0
+offset_left = -4.0
+offset_top = 29.0
+offset_right = 129.0
+offset_bottom = 83.0
+text = "Moving: Stop
+Drilling: Stopped"
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="States"]
+layout_mode = 0
+offset_left = -28.0
+offset_top = 28.0
+offset_right = -11.0
+offset_bottom = 82.0
+text = "D:"
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="States"]
+layout_mode = 0
+offset_left = -4.0
+offset_top = 99.0
+offset_right = 129.0
+offset_bottom = 122.0
 text = "State: Stop"
+vertical_alignment = 1
+
+[node name="Label5" type="Label" parent="States"]
+layout_mode = 0
+offset_left = -27.0
+offset_top = 99.0
+offset_right = -10.0
+offset_bottom = 122.0
+text = "P:"
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="States"]
+layout_mode = 0
+offset_left = -3.0
+offset_top = 141.0
+offset_right = 158.0
+offset_bottom = 164.0
+text = "State: Retracted"
+vertical_alignment = 1
+
+[node name="Label6" type="Label" parent="States"]
+layout_mode = 0
+offset_left = -26.0
+offset_top = 141.0
+offset_right = -5.0
+offset_bottom = 164.0
+text = "C:"
+vertical_alignment = 1

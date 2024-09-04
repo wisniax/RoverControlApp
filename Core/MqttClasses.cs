@@ -49,6 +49,13 @@ namespace RoverControlApp.Core
 			Up = 2
 		}
 
+		public enum DrillState
+		{
+			Stopped = 0,
+			Left = 1,
+			Right = 2
+		}
+
 		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
@@ -96,6 +103,9 @@ namespace RoverControlApp.Core
 		{
 			public SamplerDirection DrillCommand { get; set; } = SamplerDirection.Stop;
 			public SamplerDirection PlatformCommand { get; set; } = SamplerDirection.Stop;
+			public DrillState DrillState { get; set; } = DrillState.Stopped;
+			public bool isContainterExtended { get; set; } = false;
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 		
 		public class RoverContainer
