@@ -142,7 +142,14 @@ namespace RoverControlApp.MVVM.ViewModel
 					_backCapture.FrameFeed(_rtspClient[i].LatestImage);
 
 					_rtspClient[i].UnLockGrabbingFrames();
-					imTextureRect[i].Texture = _imTexture[i];
+					if (_rtspClient[i].isBig)
+					{
+						imTextureRect[0].Texture = _imTexture[i];
+					}
+					else
+					{
+						imTextureRect[1].Texture = _imTexture[i];
+					}
 					_rtspClient[i].MarkFrameOld();
 				}
 			}
@@ -198,6 +205,15 @@ namespace RoverControlApp.MVVM.ViewModel
 		/*
 		 * settings handlers end
 		 */
+
+		void CameraChange()
+		{
+			foreach (var client in _rtspClient)
+			{
+				client.isBig = !client.isBig;
+			}
+		}
+
 
 		private void ManageRtspStatus(int id)
 		{

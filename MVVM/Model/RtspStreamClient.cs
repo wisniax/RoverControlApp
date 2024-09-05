@@ -23,6 +23,7 @@ namespace RoverControlApp.MVVM.Model
 		private Thread? _rtspThread;
 
 		public int id { get; set; }
+		public bool isBig = false;
 
 		public VideoCapture? Capture { get; private set; }
 
@@ -57,6 +58,7 @@ namespace RoverControlApp.MVVM.Model
 		public RtspStreamClient(int id)
 		{
 			this.id = id;
+			if (id == 0) isBig = true;
 
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();

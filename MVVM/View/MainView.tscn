@@ -89,6 +89,12 @@ offset_bottom = 221.0
 grow_horizontal = 0
 expand_mode = 2
 
+[node name="Button" type="Button" parent="CameraView1"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 315.0
+offset_bottom = 188.0
+
 [node name="FancyDebugViewRLab" type="RichTextLabel" parent="."]
 layout_mode = 1
 anchors_preset = 2
@@ -278,6 +284,7 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
+[connection signal="pressed" from="CameraView1/Button" to="." method="CameraChange"]
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
