@@ -119,7 +119,12 @@ namespace RoverControlApp.MVVM.Model
 			State = CommunicationState.Opened;
 		}
 
-		string GetNewRTSPLink()
+		public void SetStateClosing()
+		{
+			State = CommunicationState.Closing;
+		}
+
+		private string GetNewRTSPLink()
 		{
 			switch (id)
 			{
