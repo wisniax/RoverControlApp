@@ -197,7 +197,6 @@ namespace RoverControlApp.MVVM.Model
 
 			if (_roverDriveControllerPreset.IsMoveVectorChanged(roverControl, RoverMovement))
 				RoverMovement = roverControl;
-
 		}
 		private void HandleFunctionInputEvent()
 		{
