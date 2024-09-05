@@ -39,16 +39,7 @@ public class DirectDriveController : IRoverDriveController
 
 		if (LocalSettings.Singleton.SpeedLimiter.Enabled)
 		{
-			switch (Mode)
-			{
-				case KinematicMode.Ackermann:
-					vec.X *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
-					break;
-				case KinematicMode.Crab:
-					vec.Y *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
-					vec.Z *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
-					break;
-			}
+			vec.X *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
 		}
 		
 
