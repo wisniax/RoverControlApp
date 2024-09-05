@@ -29,9 +29,9 @@ public class DirectDriveController : IRoverDriveController
 		else
 		{
 			vec = new(
-				0,
+				Input.GetAxis("rover_move_backward", "rover_move_forward"),
 				Input.GetAxis("rover_move_right", "rover_move_left"),
-				Input.GetAxis("rover_move_backward", "rover_move_forward")
+				Input.GetAxis("rover_move_down", "rover_move_up")
 				);
 			Mode = KinematicMode.Crab;
 		}
