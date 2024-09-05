@@ -15,7 +15,8 @@ public class MqttConverter : JsonConverter<Mqtt>
 			throw new JsonException("Expected start of an object.");
 
 		MqttClientOptions? clientSettings = null;
-		string? topicRoverControl = null; string? topicManipulatorControl = null;
+		string? topicRoverControl = null; 
+		string? topicManipulatorControl = null;
 		string? topicRoverFeedback = null;
 		string? topicRoverStatus = null;
 		string? topicRoverContainer = null;
