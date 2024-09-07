@@ -54,7 +54,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_84vv0")
-imTextureRect = NodePath("CameraView")
+imTextureRect = [NodePath("CameraView0"), NodePath("CameraView1")]
 RoverModeUIDis = NodePath("RoverModeUIDis")
 GrzybUIDis = NodePath("GrzybUIDis")
 MissionStatusUIDis = NodePath("MissonStatusUIDis")
@@ -67,7 +67,7 @@ FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
 
-[node name="CameraView" type="TextureRect" parent="."]
+[node name="CameraView0" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -76,6 +76,24 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_1llr5")
 expand_mode = 2
+
+[node name="CameraView1" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -314.0
+offset_top = 33.0
+offset_right = 1.0
+offset_bottom = 221.0
+grow_horizontal = 0
+expand_mode = 2
+
+[node name="Button" type="Button" parent="CameraView1"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 315.0
+offset_bottom = 188.0
 
 [node name="FancyDebugViewRLab" type="RichTextLabel" parent="."]
 layout_mode = 1
@@ -185,6 +203,7 @@ grow_horizontal = 0
 grow_vertical = 0
 
 [node name="BackCapture" type="Button" parent="HBoxContainer"]
+visible = false
 layout_mode = 2
 focus_mode = 0
 text = "BackCapture"
@@ -266,6 +285,7 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
+[connection signal="pressed" from="CameraView1/Button" to="." method="CameraChange"]
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
