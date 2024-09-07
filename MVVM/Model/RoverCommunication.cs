@@ -104,6 +104,7 @@ namespace RoverControlApp.MVVM.Model
 			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicRoverControl,
 				JsonSerializer.Serialize(roverControl));
 		}
+
 		private async Task RoverManipulatorVectorChanged(MqttClasses.ManipulatorControl manipulatorControl)
 		{
 			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicManipulatorControl,

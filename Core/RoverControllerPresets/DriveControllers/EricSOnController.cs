@@ -7,6 +7,8 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 public class EricSOnController : IRoverDriveController
 {
 	private const float TURN_ANGLE = 89;
+	private MqttClasses.KinematicMode Mode = MqttClasses.KinematicMode.Compatibility;
+
 	public RoverControl CalculateMoveVector()
 	{
 		float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
@@ -36,7 +38,13 @@ public class EricSOnController : IRoverDriveController
 
 		if (Input.IsActionPressed("camera_zoom_mod"))
 			vec /= 8f;
+		Vector3 vector = new Vector3(vec.X, vec.Y, 0);
 
-		return RoverControlVec2Extension.FromVector2(vec);
+		return RoverControlVec2Extension.FromVector3(vector);
+	}
+
+	public KinematicMode CheckKinematicMode()
+	{
+		return Mode;
 	}
 }
