@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MQTTnet.Protocol;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
+using MQTTnet;
 
 public partial class SamplerControl : Panel
 {
@@ -20,6 +21,10 @@ public partial class SamplerControl : Panel
 	[Export] private Button PlatformUp;
 	[Export] private Button PlatformStop;
 	[Export] private Button PlatformDown;
+
+	[Export] private Label VoltageLabel;
+
+	private string voltageTopic = "VOLTAGE";
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -55,6 +60,9 @@ public partial class SamplerControl : Panel
 		PlatformDown.ButtonUp += () => OnPlatformAction(MqttClasses.SamplerDirection.Stop);
 
 		#endregion
+
+		MqttNode.Singleton.MessageReceivedAsync += OnVoltageChange;
+
 
 	}
 
@@ -143,6 +151,41 @@ public partial class SamplerControl : Panel
 		}
 
 		SendSamplerMsg();
+	}
+
+	public void StopAll()
+	{
+		_samplerControl.DrillCommand = MqttClasses.SamplerDirection.Stop;
+		_samplerControl.PlatformCommand = MqttClasses.SamplerDirection.Stop;
+		_samplerControl.DrillState = MqttClasses.DrillState.Stopped;
+		_samplerControl.isContainerExtended = false;
+
+		DrillLabelUpdate();
+		_containerStateLabel.Text = "State: Retracted";
+
+		SendSamplerMsg();
+	}
+
+	public Task OnVoltageChange(string subTopic, MqttApplicationMessage? msg)
+	{
+		if (subTopic != voltageTopic)
+			return Task.CompletedTask;
+		if (msg is null || msg.PayloadSegment.Count == 0)
+		{
+			EventLogger.LogMessage("Voltmeter", EventLogger.LogLevel.Error, "Empty payload");
+			return Task.CompletedTask;
+		}
+
+		try
+		{
+			VoltageLabel.Text = System.Text.Encoding.UTF8.GetString(msg.PayloadSegment);
+			return Task.CompletedTask;
+		}
+		catch (Exception e)
+		{
+			EventLogger.LogMessage("Voltmeter", EventLogger.LogLevel.Error, $"{e.Message}");
+			return Task.CompletedTask;
+		}
 	}
 
 	public async Task SendSamplerMsg()

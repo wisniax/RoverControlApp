@@ -47,7 +47,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "SamplerControl")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -67,6 +67,7 @@ MissionControlNode = NodePath("MissionControl")
 FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
+SamplerControl = NodePath("SamplerControl")
 
 [node name="CameraView0" type="TextureRect" parent="."]
 layout_mode = 1

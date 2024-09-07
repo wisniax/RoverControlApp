@@ -51,6 +51,9 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private ZedMonitor ZedMonitor = null!;
 
+		[Export]
+		private SamplerControl SamplerControl = null!;
+
 		private const int numCams = 2;
 
 		public MainViewModel()
@@ -70,6 +73,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
+			SamplerControl.StopAll();
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
 		}
 
