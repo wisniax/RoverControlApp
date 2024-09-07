@@ -24,6 +24,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicEStopStatus = "button_stop";
 		_topicZedImuData = "TopicZedImuData";
 		_topicKmlListOfActiveObj = "KMLNode/ActiveKMLObjects";
+		_topicSampler = "SamplerControl";
 	}
 
 	public Mqtt
@@ -39,7 +40,9 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicWheelFeedback,
 		string topicEStopStatus,
 		string topicZedImuData,
-		string topicKmlListOfActiveObj
+		string topicKmlListOfActiveObj,
+		string topicSampler
+
 	)
 	{
 		_clientSettings = clientSettings;
@@ -54,6 +57,8 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicEStopStatus = topicEStopStatus;
 		_topicZedImuData = topicZedImuData;
 		_topicKmlListOfActiveObj = topicKmlListOfActiveObj;
+		_topicSampler = topicSampler;
+
 	}
 
 	public object Clone()
@@ -160,6 +165,14 @@ public partial class Mqtt : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _topicKmlListOfActiveObj, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicSampler
+	{
+		get => _topicSampler;
+		set => EmitSignal_SettingChanged(ref _topicSampler, value);
+	}
+
+
 	MqttClientOptions _clientSettings;
 
 	string _topicRoverControl;
@@ -173,6 +186,7 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicEStopStatus;
 	string _topicZedImuData;
 	string _topicKmlListOfActiveObj;
+	string _topicSampler;
 }
 
 

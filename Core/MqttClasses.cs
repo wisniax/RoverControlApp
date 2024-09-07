@@ -48,6 +48,20 @@ namespace RoverControlApp.Core
 			Spheric = 2
 		}
 
+		public enum SamplerDirection
+		{
+			Down = 0,
+			Stop = 1,
+			Up = 2
+		}
+
+		public enum DrillState
+		{
+			Stopped = 0,
+			Left = 1,
+			Right = 2
+		}
+
 		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
@@ -95,6 +109,15 @@ namespace RoverControlApp.Core
 			}
 		}
 
+		public class SamplerControl
+		{
+			public SamplerDirection DrillCommand { get; set; } = SamplerDirection.Stop; //todo change to movement
+			public SamplerDirection PlatformCommand { get; set; } = SamplerDirection.Stop; //todo change to movement
+			public DrillState DrillState { get; set; } = DrillState.Stopped; //todo change to drillaction
+			public bool isContainerExtended { get; set; } = false; //todo change to extendContainer
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+		
 		public class RoverContainer
 		{
 			public float Axis1 { get; set; } = 0f;

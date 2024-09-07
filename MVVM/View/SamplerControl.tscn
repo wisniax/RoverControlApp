@@ -1,0 +1,157 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1j8lxbvqx1te"]
+
+[ext_resource type="Script" path="res://MVVM/View/SamplerControl.cs" id="1_cfnjr"]
+
+[node name="SamplerControl" type="Panel" node_paths=PackedStringArray("_drillStateLabel", "_containerStateLabel", "DrillUp", "DrillDown", "PlatformUp", "PlatformDown")]
+offset_right = 320.0
+offset_bottom = 277.0
+script = ExtResource("1_cfnjr")
+_drillStateLabel = NodePath("States/Label")
+_containerStateLabel = NodePath("States/Label3")
+DrillUp = NodePath("DrillMenu/VBoxContainer/UP")
+DrillDown = NodePath("DrillMenu/VBoxContainer/DOWN")
+PlatformUp = NodePath("PlatformMenu/VBoxContainer/UP")
+PlatformDown = NodePath("PlatformMenu/VBoxContainer/DOWN")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_right = 323.0
+offset_bottom = 30.0
+text = "Sampler"
+horizontal_alignment = 1
+
+[node name="DrillMenu" type="Label" parent="."]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 46.0
+offset_right = 115.0
+offset_bottom = 76.0
+text = "Drill"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DrillMenu"]
+layout_mode = 0
+offset_left = 13.0
+offset_top = 29.0
+offset_right = 53.0
+offset_bottom = 157.0
+
+[node name="UP" type="Button" parent="DrillMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "UP"
+
+[node name="DOWN" type="Button" parent="DrillMenu/VBoxContainer"]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "DOWN"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="DrillMenu"]
+layout_mode = 0
+offset_left = 58.0
+offset_top = 29.0
+offset_right = 99.0
+offset_bottom = 157.0
+
+[node name="LEFT" type="Button" parent="DrillMenu/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "LEFT"
+
+[node name="STOP" type="Button" parent="DrillMenu/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "STOP"
+
+[node name="RIGHT" type="Button" parent="DrillMenu/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "RIGHT"
+
+[node name="PlatformMenu" type="Label" parent="."]
+layout_mode = 0
+offset_left = 136.0
+offset_top = 47.0
+offset_right = 204.0
+offset_bottom = 77.0
+text = "Platform"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PlatformMenu"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 31.0
+offset_right = 66.0
+offset_bottom = 159.0
+
+[node name="UP" type="Button" parent="PlatformMenu/VBoxContainer"]
+custom_minimum_size = Vector2(62, 62)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "UP"
+
+[node name="DOWN" type="Button" parent="PlatformMenu/VBoxContainer"]
+custom_minimum_size = Vector2(62, 62)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "DOWN"
+
+[node name="ContainerMenu" type="Label" parent="."]
+layout_mode = 0
+offset_left = 233.0
+offset_top = 47.0
+offset_right = 310.0
+offset_bottom = 77.0
+text = "Container"
+horizontal_alignment = 1
+
+[node name="MOVE" type="Button" parent="ContainerMenu"]
+custom_minimum_size = Vector2(70, 70)
+layout_mode = 2
+offset_left = 3.0
+offset_top = 57.0
+offset_right = 73.0
+offset_bottom = 127.0
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "MOVE"
+
+[node name="States" type="Label" parent="."]
+layout_mode = 0
+offset_left = 352.0
+offset_top = 47.0
+offset_right = 456.0
+offset_bottom = 77.0
+horizontal_alignment = 1
+
+[node name="Label" type="Label" parent="States"]
+layout_mode = 0
+offset_left = -351.0
+offset_top = 164.0
+offset_right = -209.0
+offset_bottom = 218.0
+text = "Drilling: Stopped"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="States"]
+layout_mode = 0
+offset_left = -207.0
+offset_top = 179.0
+offset_right = -34.0
+offset_bottom = 202.0
+text = "Container: Retracted"
+horizontal_alignment = 1
+vertical_alignment = 1
