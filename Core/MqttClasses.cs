@@ -50,8 +50,8 @@ namespace RoverControlApp.Core
 
 		public enum SamplerDirection
 		{
-			Down = 0,
-			Stop = 1,
+			Stop = 0,
+			Down = 1,
 			Up = 2
 		}
 
