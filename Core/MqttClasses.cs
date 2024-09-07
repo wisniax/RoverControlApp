@@ -101,10 +101,10 @@ namespace RoverControlApp.Core
 
 		public class SamplerControl
 		{
-			public SamplerDirection DrillCommand { get; set; } = SamplerDirection.Stop;
-			public SamplerDirection PlatformCommand { get; set; } = SamplerDirection.Stop;
-			public DrillState DrillState { get; set; } = DrillState.Stopped;
-			public bool isContainterExtended { get; set; } = false;
+			public SamplerDirection DrillCommand { get; set; } = SamplerDirection.Stop; //todo change to movement
+			public SamplerDirection PlatformCommand { get; set; } = SamplerDirection.Stop; //todo change to movement
+			public DrillState DrillState { get; set; } = DrillState.Stopped; //todo change to drillaction
+			public bool isContainerExtended { get; set; } = false; //todo change to extendContainer
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 		

@@ -122,8 +122,8 @@ public partial class SamplerControl : Panel
 
 	public void OnContainerAction()
 	{
-		_samplerControl.isContainterExtended = !_samplerControl.isContainterExtended;
-		if(_samplerControl.isContainterExtended)
+		_samplerControl.isContainerExtended = !_samplerControl.isContainerExtended;
+		if(_samplerControl.isContainerExtended)
 		{
 			_containerStateLabel.Text = "State: Extended";
 		}
@@ -137,6 +137,6 @@ public partial class SamplerControl : Panel
 
 	public async Task SendSamplerMsg()
 	{
-		await MqttNode.Singleton.EnqueueMessageAsync("sampler", JsonSerializer.Serialize(_samplerControl), MqttQualityOfServiceLevel.ExactlyOnce);
+		await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicSampler, JsonSerializer.Serialize(_samplerControl), MqttQualityOfServiceLevel.ExactlyOnce);
 	}
 }

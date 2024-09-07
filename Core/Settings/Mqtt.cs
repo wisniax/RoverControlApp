@@ -24,7 +24,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicEStopStatus = "button_stop";
 		_topicZedImuData = "TopicZedImuData";
 		_topicKmlListOfActiveObj = "KMLNode/ActiveKMLObjects";
-		_topicSampler = "sampler";
+		_topicSampler = "SamplerControl";
 	}
 
 	public Mqtt
