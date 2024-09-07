@@ -15,8 +15,9 @@ PlatformDown = NodePath("PlatformMenu/VBoxContainer/DOWN")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
+offset_top = 5.0
 offset_right = 323.0
-offset_bottom = 30.0
+offset_bottom = 37.0
 text = "Sampler"
 horizontal_alignment = 1
 
@@ -24,7 +25,7 @@ horizontal_alignment = 1
 layout_mode = 0
 offset_left = 6.0
 offset_top = 46.0
-offset_right = 115.0
+offset_right = 168.0
 offset_bottom = 76.0
 text = "Drill"
 horizontal_alignment = 1
@@ -78,11 +79,34 @@ theme_override_font_sizes/font_size = 10
 action_mode = 0
 text = "RIGHT"
 
+[node name="VBoxContainer3" type="VBoxContainer" parent="DrillMenu"]
+layout_mode = 2
+offset_left = 103.0
+offset_top = 29.0
+offset_right = 144.0
+offset_bottom = 157.0
+
+[node name="FASTERL" type="Button" parent="DrillMenu/VBoxContainer3"]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "FAST
+LEFT"
+
+[node name="FASTERR" type="Button" parent="DrillMenu/VBoxContainer3"]
+custom_minimum_size = Vector2(0, 62)
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+action_mode = 0
+text = "FAST
+RIGHT"
+
 [node name="PlatformMenu" type="Label" parent="."]
 layout_mode = 0
-offset_left = 136.0
+offset_left = 159.0
 offset_top = 47.0
-offset_right = 204.0
+offset_right = 227.0
 offset_bottom = 77.0
 text = "Platform"
 horizontal_alignment = 1

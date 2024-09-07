@@ -21,6 +21,8 @@ public partial class SamplerControl : Panel
 	[Export] private Button PlatformStop;
 	[Export] private Button PlatformDown;
 
+	[Export] private Button DrillFaster;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -38,6 +40,11 @@ public partial class SamplerControl : Panel
 		DrillingLeft.Pressed += () => OnDrillAction(MqttClasses.DrillState.Left);
 		Button DrillingRight = GetNode<Button>("DrillMenu/VBoxContainer2/RIGHT");
 		DrillingRight.Pressed += () => OnDrillAction(MqttClasses.DrillState.Right);
+		Button DrillingLeftFaster = GetNode<Button>("DrillMenu/VBoxContainer3/FASTERL");
+		DrillingLeftFaster.Pressed += () => OnDrillAction(MqttClasses.DrillState.FastLeft);
+		Button DrillingRightFaster = GetNode<Button>("DrillMenu/VBoxContainer3/FASTERR");
+		DrillingRightFaster.Pressed += () => OnDrillAction(MqttClasses.DrillState.FastRight);
+
 
 		Button MoveContainer = GetNode<Button>("ContainerMenu/MOVE");
 		MoveContainer.Pressed += () => OnContainerAction();
@@ -98,6 +105,13 @@ public partial class SamplerControl : Panel
 			case MqttClasses.DrillState.Stopped:
 				_drillStateLabel.Text = "Drilling: Stopped";
 				break;
+			case MqttClasses.DrillState.FastLeft:
+				_drillStateLabel.Text = "Drilling: FastLeft";
+				break;
+			case MqttClasses.DrillState.FastRight:
+				_drillStateLabel.Text = "Drilling: FastRight";
+				break;
+
 		}
 	}
 

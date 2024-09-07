@@ -59,7 +59,9 @@ namespace RoverControlApp.Core
 		{
 			Stopped = 0,
 			Left = 1,
-			Right = 2
+			Right = 2,
+			FastLeft = 3,
+			FastRight = 4
 		}
 
 		public class RoverStatus
