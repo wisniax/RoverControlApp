@@ -13,17 +13,26 @@ public partial class SamplerControl : Panel
 	[Export] private Label _containerStateLabel;
 	
 	private MqttClasses.SamplerControl _samplerControl = new();
-	
+
+	[Export] private Button DrillUp;
+	[Export] private Button DrillStop;
+	[Export] private Button DrillDown;
+	[Export] private Button PlatformUp;
+	[Export] private Button PlatformStop;
+	[Export] private Button PlatformDown;
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
 		#region GodotFixYourShit
 		Button DrillUp = GetNode<Button>("DrillMenu/VBoxContainer/UP");
 		DrillUp.Pressed += () => OnDrillAction(MqttClasses.SamplerDirection.Up);
+		DrillUp.ButtonUp += () => OnDrillAction(MqttClasses.SamplerDirection.Stop);
 		Button DrillStop = GetNode<Button>("DrillMenu/VBoxContainer/STOP");
 		DrillStop.Pressed += () => OnDrillAction(MqttClasses.SamplerDirection.Stop);
 		Button DrillDown = GetNode<Button>("DrillMenu/VBoxContainer/DOWN");
 		DrillDown.Pressed += () => OnDrillAction(MqttClasses.SamplerDirection.Down);
+		DrillDown.ButtonUp += () => OnDrillAction(MqttClasses.SamplerDirection.Stop);
 
 		Button DrillingStop = GetNode<Button>("DrillMenu/VBoxContainer2/STOP");
 		DrillingStop.Pressed += () => OnDrillAction(MqttClasses.DrillState.Stopped);
@@ -37,10 +46,12 @@ public partial class SamplerControl : Panel
 
 		Button PlatformUp = GetNode<Button>("PlatformMenu/VBoxContainer/UP");
 		PlatformUp.Pressed += () => OnPlatformAction(MqttClasses.SamplerDirection.Up);
+		PlatformUp.ButtonUp += () => OnPlatformAction(MqttClasses.SamplerDirection.Stop);
 		Button PlatformStop = GetNode<Button>("PlatformMenu/VBoxContainer/STOP");
 		PlatformStop.Pressed += () => OnPlatformAction(MqttClasses.SamplerDirection.Stop);
 		Button PlatformDown = GetNode<Button>("PlatformMenu/VBoxContainer/DOWN");
 		PlatformDown.Pressed += () => OnPlatformAction(MqttClasses.SamplerDirection.Down);
+		PlatformDown.ButtonUp += () => OnPlatformAction(MqttClasses.SamplerDirection.Stop);
 
 		#endregion
 
@@ -49,6 +60,7 @@ public partial class SamplerControl : Panel
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		
 	}
 
 	public void OnDrillAction(MqttClasses.SamplerDirection direction)
@@ -62,6 +74,8 @@ public partial class SamplerControl : Panel
 		DrillLabelUpdate();
 		SendSamplerMsg();
 	}
+
+
 
 	public void OnDrillAction(MqttClasses.DrillState drillState)
 	{
@@ -116,8 +130,10 @@ public partial class SamplerControl : Panel
 		string enumName = Enum.GetName(typeof(MqttClasses.SamplerDirection), enumValue);
 		_platformStateLabel.Text = $"State: {enumName}";
 
-		
+
 		SendSamplerMsg();
+
+
 	}
 
 	public void OnContainerAction()

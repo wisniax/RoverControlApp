@@ -2,12 +2,19 @@
 
 [ext_resource type="Script" path="res://MVVM/View/SamplerControl.cs" id="1_cfnjr"]
 
-[node name="SamplerControl" type="Panel" node_paths=PackedStringArray("_drillStateLabel", "_platformStateLabel")]
+[node name="SamplerControl" type="Panel" node_paths=PackedStringArray("_drillStateLabel", "_platformStateLabel", "_containerStateLabel", "DrillUp", "DrillStop", "DrillDown", "PlatformUp", "PlatformStop", "PlatformDown")]
 offset_right = 522.0
 offset_bottom = 231.0
 script = ExtResource("1_cfnjr")
 _drillStateLabel = NodePath("States/Label")
 _platformStateLabel = NodePath("States/Label2")
+_containerStateLabel = NodePath("States/Label3")
+DrillUp = NodePath("DrillMenu/VBoxContainer/UP")
+DrillStop = NodePath("DrillMenu/VBoxContainer/STOP")
+DrillDown = NodePath("DrillMenu/VBoxContainer/DOWN")
+PlatformUp = NodePath("PlatformMenu/VBoxContainer/UP")
+PlatformStop = NodePath("PlatformMenu/VBoxContainer/STOP")
+PlatformDown = NodePath("PlatformMenu/VBoxContainer/DOWN")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
