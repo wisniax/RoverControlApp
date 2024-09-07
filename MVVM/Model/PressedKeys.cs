@@ -191,8 +191,10 @@ namespace RoverControlApp.MVVM.Model
 		private void HandleMovementInputEvent()
 		{
 			if (ControlMode != ControlMode.Rover) return;
-			
+
 			RoverControl roverControl = _roverDriveControllerPreset.CalculateMoveVector();
+			roverControl.Mode = _roverDriveControllerPreset.CheckKinematicMode();
+
 			if (_roverDriveControllerPreset.IsMoveVectorChanged(roverControl, RoverMovement))
 				RoverMovement = roverControl;
 		}
@@ -215,7 +217,7 @@ namespace RoverControlApp.MVVM.Model
 		private void StopAll()
 		{
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
-			RoverMovement = new RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
+			RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0};
 			ContainerMovement = new RoverContainer { Axis1 = 0f };
 			ManipulatorMovement = new ManipulatorControl();
 			LastAbsoluteVector = Vector4.Zero;

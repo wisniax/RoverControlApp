@@ -6,6 +6,8 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class ForzaLikeController : IRoverDriveController
 {
+	private MqttClasses.KinematicMode Mode = MqttClasses.KinematicMode.Compatibility;
+
 	public RoverControl CalculateMoveVector()
 	{
 		float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
@@ -18,7 +20,7 @@ public class ForzaLikeController : IRoverDriveController
 
 		turn *= velocity; // Max turn angle: 45 deg.
 
-		Vector2 vec = new Vector2(velocity, turn);
+		Vector3 vec = new Vector3(velocity, turn, 0);
 		float forcedSteer = Input.GetAxis("rover_rotate_right", "rover_rotate_left");
 
 		if (!Mathf.IsEqualApprox(forcedSteer, 0f, 0.05f))
@@ -27,6 +29,11 @@ public class ForzaLikeController : IRoverDriveController
 		if (Input.IsActionPressed("camera_zoom_mod"))
 			vec /= 8f;
 
-		return RoverControlVec2Extension.FromVector2(vec);
+		return RoverControlVec2Extension.FromVector3(vec);
+	}
+
+	public KinematicMode CheckKinematicMode()
+	{
+		return Mode;
 	}
 }

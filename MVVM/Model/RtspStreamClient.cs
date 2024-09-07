@@ -22,6 +22,9 @@ namespace RoverControlApp.MVVM.Model
 		private Mat? _matrix;
 		private Thread? _rtspThread;
 
+		public int id { get; set; }
+		public bool isBig = false;
+
 		public VideoCapture? Capture { get; private set; }
 
 		public Image LatestImage
@@ -52,8 +55,11 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		public RtspStreamClient()
+		public RtspStreamClient(int id)
 		{
+			this.id = id;
+			if (id == 0) isBig = true;
+
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
 			_rtspThread = new Thread(ThreadWork) { IsBackground = true, Name = "RtspStream_Thread", Priority = ThreadPriority.BelowNormal };
@@ -92,12 +98,8 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
-			var task = 
-				Task.Run(() => Capture = new VideoCapture
-				(
-					$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Password}"
-					+ $"@{LocalSettings.Singleton.Camera.ConnectionSettings.Ip}:{LocalSettings.Singleton.Camera.ConnectionSettings.RtspPort}{LocalSettings.Singleton.Camera.ConnectionSettings.RtspStreamPath}")
-				);
+			string link = GetNewRTSPLink();
+			var task = Task.Run(() => Capture = new VideoCapture(link));
 			_matrix = new Mat();
 			_generalPurposeStopwatch.Restart();
 			State = CommunicationState.Opening;
@@ -115,6 +117,24 @@ namespace RoverControlApp.MVVM.Model
 			Capture?.Set(VideoCaptureProperties.BufferSize, 0);
 			Capture?.SetExceptionMode(false);
 			State = CommunicationState.Opened;
+		}
+
+		public void SetStateClosing()
+		{
+			State = CommunicationState.Closing;
+		}
+
+		private string GetNewRTSPLink()
+		{
+			switch (id)
+			{
+				case 0:
+					return LocalSettings.Singleton.Camera0.ConnectionSettings.RtspLink;
+				case 1:
+					return LocalSettings.Singleton.Camera1.ConnectionSettings.RtspLink;
+				default:
+					return LocalSettings.Singleton.Camera0.ConnectionSettings.RtspLink;
+			}
 		}
 
 		private void DoWork()

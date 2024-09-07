@@ -10,9 +10,14 @@ public interface IRoverDriveController
 	public RoverControl CalculateMoveVector();
 
 	/// <summary>
+	/// Checks which kinematic mode is currently active
+	/// </summary>
+	public MqttClasses.KinematicMode CheckKinematicMode();
+	
+	/// <summary>
 	/// Compares two RoverControl states and determines if change is big enough, to be considered
 	/// </summary>
 	/// <returns>true if changed</returns>
 	public bool IsMoveVectorChanged(RoverControl currentState, RoverControl lastState) =>
-		!currentState.ToVector2().IsEqualApprox(lastState.ToVector2());
+		!currentState.ToVector3().IsEqualApprox(lastState.ToVector3());
 }

@@ -14,17 +14,17 @@ public partial class CameraConnection : RefCounted
 		Ip = "192.168.1.35";
 		Login = "admin";
 		Password = "admin";
-		RtspStreamPath = "/live/0/MAIN";
+		RtspLink = "http://pendelcam.kip.uni-heidelberg.de/mjpg/video.mjpg";
 		RtspPort = 554;
 		PtzPort = 80;
 	}
 
-	public CameraConnection(string ip, string login, string password, string streamPath, int rtspPort, int ptzPort)
+	public CameraConnection(string ip, string login, string password, string rtspLink, int rtspPort, int ptzPort)
 	{
 		Ip = ip;
 		Login = login;
 		Password = password;
-		RtspStreamPath = streamPath;
+		RtspLink = rtspLink;
 		RtspPort = rtspPort;
 		PtzPort = ptzPort;
 	}
@@ -44,7 +44,7 @@ public partial class CameraConnection : RefCounted
 	public string Password { get; init; }
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-	public string RtspStreamPath { get; init; }
+	public string RtspLink { get; init; }
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;65535;1;f;i")]
 	public int RtspPort { get; init; }

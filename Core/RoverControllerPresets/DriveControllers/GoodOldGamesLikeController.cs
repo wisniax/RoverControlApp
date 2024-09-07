@@ -6,6 +6,8 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class GoodOldGamesLikeController : IRoverDriveController
 {
+	private MqttClasses.KinematicMode Mode = MqttClasses.KinematicMode.Compatibility;
+
 	public RoverControl CalculateMoveVector()
 	{
 		//deadzone have to be non zero for IsEqualApprox
@@ -13,14 +15,8 @@ public class GoodOldGamesLikeController : IRoverDriveController
 			0.001f,
 			Convert.ToSingle(LocalSettings.Singleton.Joystick.Deadzone)
 		);
-
-		Vector2 velocity = Input.GetVector(
-			"rover_move_down",
-			"rover_move_up",
-			"rover_move_right",
-			"rover_move_left",
-			joyDeadZone
-		);
+		Vector2 tempVel = Input.GetVector("rover_move_down", "rover_move_up", "rover_move_right", "rover_move_left", joyDeadZone);
+		Vector3 velocity = new Vector3(tempVel.X, tempVel.Y, 0);
 
 		if (LocalSettings.Singleton.SpeedLimiter.Enabled)
 			velocity *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
@@ -31,6 +27,11 @@ public class GoodOldGamesLikeController : IRoverDriveController
 		if (Input.IsActionPressed("camera_zoom_mod"))
 			velocity /= 8f;
 
-		return RoverControlVec2Extension.FromVector2(velocity);
+		return RoverControlVec2Extension.FromVector3(velocity);
+	}
+
+	public KinematicMode CheckKinematicMode()
+	{
+		return Mode;
 	}
 }

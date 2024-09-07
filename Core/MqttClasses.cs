@@ -17,6 +17,12 @@ namespace RoverControlApp.Core
 			Manipulator = 2,
 			Autonomy = 3
 		}
+		public enum KinematicMode
+		{
+			Compatibility = 0,
+			Ackermann = 1,
+			Crab = 2
+		}
 		public enum MissionStatus
 		{
 			Created = 0,
@@ -52,19 +58,22 @@ namespace RoverControlApp.Core
 
 		public class RoverControl
 		{
-			public double XVelAxis { get; set; }
-			public double ZRotAxis { get; set; }
+			public double Vel { get; set; }
+			public double XAxis { get; set; }
+			public double YAxis { get; set; }
+			public KinematicMode Mode { get; set; } = KinematicMode.Compatibility;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
 		public class ManipulatorControl
 		{
-			public float Axis1 { get; set; }
-			public float Axis2 { get; set; }
-			public float Axis3 { get; set; }
-			public float Axis4 { get; set; }
-			public float Axis5 { get; set; }
-			public float Gripper { get; set; }
+			public float Axis1 { get; set; } = 0;
+			public float Axis2 { get; set; } = 0;
+			public float Axis3 { get; set; } = 0;
+			public float Axis4 { get; set; } = 0;
+			public float Axis5 { get; set; } = 0;
+			public float Axis6 { get; set; } = 0;
+			public float Gripper { get; set; } = 0;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 			public override bool Equals(object? obj)
 			{
@@ -75,13 +84,14 @@ namespace RoverControlApp.Core
 				isEqual &= Mathf.IsEqualApprox(Axis3, manipObj.Axis3, 0.005f);
 				isEqual &= Mathf.IsEqualApprox(Axis4, manipObj.Axis4, 0.005f);
 				isEqual &= Mathf.IsEqualApprox(Axis5, manipObj.Axis5, 0.005f);
+				isEqual &= Mathf.IsEqualApprox(Axis6, manipObj.Axis6, 0.005f);
 				isEqual &= Mathf.IsEqualApprox(Gripper, manipObj.Gripper, 0.005f);
 				return isEqual;
 			}
 
 			public override int GetHashCode()
 			{
-				return HashCode.Combine(Axis1, Axis2, Axis3, Axis4, Axis5, Gripper);
+				return HashCode.Combine(Axis1, Axis2, Axis3, Axis4, Axis5, Axis6, Gripper);
 			}
 		}
 
@@ -149,6 +159,5 @@ namespace RoverControlApp.Core
 			public Orientation orientation { get; set; }
 			public long Timestamp { get; set; }
 		}
-
 	}
 }
