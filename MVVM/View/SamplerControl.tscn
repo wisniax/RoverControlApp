@@ -2,23 +2,20 @@
 
 [ext_resource type="Script" path="res://MVVM/View/SamplerControl.cs" id="1_cfnjr"]
 
-[node name="SamplerControl" type="Panel" node_paths=PackedStringArray("_drillStateLabel", "_platformStateLabel", "_containerStateLabel", "DrillUp", "DrillStop", "DrillDown", "PlatformUp", "PlatformStop", "PlatformDown")]
-offset_right = 522.0
-offset_bottom = 231.0
+[node name="SamplerControl" type="Panel" node_paths=PackedStringArray("_drillStateLabel", "_containerStateLabel", "DrillUp", "DrillDown", "PlatformUp", "PlatformDown")]
+offset_right = 320.0
+offset_bottom = 277.0
 script = ExtResource("1_cfnjr")
 _drillStateLabel = NodePath("States/Label")
-_platformStateLabel = NodePath("States/Label2")
 _containerStateLabel = NodePath("States/Label3")
 DrillUp = NodePath("DrillMenu/VBoxContainer/UP")
-DrillStop = NodePath("DrillMenu/VBoxContainer/STOP")
 DrillDown = NodePath("DrillMenu/VBoxContainer/DOWN")
 PlatformUp = NodePath("PlatformMenu/VBoxContainer/UP")
-PlatformStop = NodePath("PlatformMenu/VBoxContainer/STOP")
 PlatformDown = NodePath("PlatformMenu/VBoxContainer/DOWN")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
-offset_right = 518.0
+offset_right = 323.0
 offset_bottom = 30.0
 text = "Sampler"
 horizontal_alignment = 1
@@ -40,21 +37,14 @@ offset_right = 53.0
 offset_bottom = 157.0
 
 [node name="UP" type="Button" parent="DrillMenu/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 action_mode = 0
 text = "UP"
 
-[node name="STOP" type="Button" parent="DrillMenu/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-action_mode = 0
-text = "STOP"
-
 [node name="DOWN" type="Button" parent="DrillMenu/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 action_mode = 0
@@ -90,36 +80,29 @@ text = "RIGHT"
 
 [node name="PlatformMenu" type="Label" parent="."]
 layout_mode = 0
-offset_left = 141.0
+offset_left = 136.0
 offset_top = 47.0
-offset_right = 209.0
+offset_right = 204.0
 offset_bottom = 77.0
 text = "Platform"
 horizontal_alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="PlatformMenu"]
 layout_mode = 0
-offset_left = 13.0
-offset_top = 29.0
-offset_right = 53.0
-offset_bottom = 157.0
+offset_left = 4.0
+offset_top = 31.0
+offset_right = 66.0
+offset_bottom = 159.0
 
 [node name="UP" type="Button" parent="PlatformMenu/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(62, 62)
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 action_mode = 0
 text = "UP"
 
-[node name="STOP" type="Button" parent="PlatformMenu/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-action_mode = 0
-text = "STOP"
-
 [node name="DOWN" type="Button" parent="PlatformMenu/VBoxContainer"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(62, 62)
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 action_mode = 0
@@ -135,12 +118,12 @@ text = "Container"
 horizontal_alignment = 1
 
 [node name="MOVE" type="Button" parent="ContainerMenu"]
-custom_minimum_size = Vector2(0, 40)
+custom_minimum_size = Vector2(70, 70)
 layout_mode = 2
-offset_left = 18.0
-offset_top = 78.0
-offset_right = 59.0
-offset_bottom = 118.0
+offset_left = 3.0
+offset_top = 57.0
+offset_right = 73.0
+offset_bottom = 127.0
 theme_override_font_sizes/font_size = 10
 action_mode = 0
 text = "MOVE"
@@ -151,60 +134,24 @@ offset_left = 352.0
 offset_top = 47.0
 offset_right = 456.0
 offset_bottom = 77.0
-text = "States"
 horizontal_alignment = 1
 
 [node name="Label" type="Label" parent="States"]
 layout_mode = 0
-offset_left = -4.0
-offset_top = 29.0
-offset_right = 129.0
-offset_bottom = 83.0
-text = "Moving: Stop
-Drilling: Stopped"
-vertical_alignment = 1
-
-[node name="Label4" type="Label" parent="States"]
-layout_mode = 0
-offset_left = -28.0
-offset_top = 28.0
-offset_right = -11.0
-offset_bottom = 82.0
-text = "D:"
-vertical_alignment = 1
-
-[node name="Label2" type="Label" parent="States"]
-layout_mode = 0
-offset_left = -4.0
-offset_top = 99.0
-offset_right = 129.0
-offset_bottom = 122.0
-text = "State: Stop"
-vertical_alignment = 1
-
-[node name="Label5" type="Label" parent="States"]
-layout_mode = 0
-offset_left = -27.0
-offset_top = 99.0
-offset_right = -10.0
-offset_bottom = 122.0
-text = "P:"
+offset_left = -351.0
+offset_top = 164.0
+offset_right = -209.0
+offset_bottom = 218.0
+text = "Drilling: Stopped"
+horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Label3" type="Label" parent="States"]
 layout_mode = 0
-offset_left = -3.0
-offset_top = 141.0
-offset_right = 158.0
-offset_bottom = 164.0
-text = "State: Retracted"
-vertical_alignment = 1
-
-[node name="Label6" type="Label" parent="States"]
-layout_mode = 0
-offset_left = -26.0
-offset_top = 141.0
-offset_right = -5.0
-offset_bottom = 164.0
-text = "C:"
+offset_left = -207.0
+offset_top = 179.0
+offset_right = -34.0
+offset_bottom = 202.0
+text = "Container: Retracted"
+horizontal_alignment = 1
 vertical_alignment = 1

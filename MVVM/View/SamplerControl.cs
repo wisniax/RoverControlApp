@@ -28,8 +28,6 @@ public partial class SamplerControl : Panel
 		Button DrillUp = GetNode<Button>("DrillMenu/VBoxContainer/UP");
 		DrillUp.Pressed += () => OnDrillAction(MqttClasses.SamplerDirection.Up);
 		DrillUp.ButtonUp += () => OnDrillAction(MqttClasses.SamplerDirection.Stop);
-		Button DrillStop = GetNode<Button>("DrillMenu/VBoxContainer/STOP");
-		DrillStop.Pressed += () => OnDrillAction(MqttClasses.SamplerDirection.Stop);
 		Button DrillDown = GetNode<Button>("DrillMenu/VBoxContainer/DOWN");
 		DrillDown.Pressed += () => OnDrillAction(MqttClasses.SamplerDirection.Down);
 		DrillDown.ButtonUp += () => OnDrillAction(MqttClasses.SamplerDirection.Stop);
@@ -47,8 +45,6 @@ public partial class SamplerControl : Panel
 		Button PlatformUp = GetNode<Button>("PlatformMenu/VBoxContainer/UP");
 		PlatformUp.Pressed += () => OnPlatformAction(MqttClasses.SamplerDirection.Up);
 		PlatformUp.ButtonUp += () => OnPlatformAction(MqttClasses.SamplerDirection.Stop);
-		Button PlatformStop = GetNode<Button>("PlatformMenu/VBoxContainer/STOP");
-		PlatformStop.Pressed += () => OnPlatformAction(MqttClasses.SamplerDirection.Stop);
 		Button PlatformDown = GetNode<Button>("PlatformMenu/VBoxContainer/DOWN");
 		PlatformDown.Pressed += () => OnPlatformAction(MqttClasses.SamplerDirection.Down);
 		PlatformDown.ButtonUp += () => OnPlatformAction(MqttClasses.SamplerDirection.Stop);
@@ -91,29 +87,16 @@ public partial class SamplerControl : Panel
 
 	void DrillLabelUpdate()
 	{
-		switch (_samplerControl.DrillCommand)
-		{
-			case MqttClasses.SamplerDirection.Down:
-				_drillStateLabel.Text = "Moving: Down\n";
-				break;
-			case MqttClasses.SamplerDirection.Stop:
-				_drillStateLabel.Text = "Moving: Stop\n";
-				break;
-			case MqttClasses.SamplerDirection.Up:
-				_drillStateLabel.Text = "Moving: Up\n";
-				break;
-		}
-
 		switch (_samplerControl.DrillState)
 		{
 			case MqttClasses.DrillState.Left:
-				_drillStateLabel.Text += "Drilling: Left";
+				_drillStateLabel.Text = "Drilling: Left";
 				break;
 			case MqttClasses.DrillState.Right:
-				_drillStateLabel.Text += "Drilling: Right";
+				_drillStateLabel.Text = "Drilling: Right";
 				break;
 			case MqttClasses.DrillState.Stopped:
-				_drillStateLabel.Text += "Drilling: Stopped";
+				_drillStateLabel.Text = "Drilling: Stopped";
 				break;
 		}
 	}
@@ -128,7 +111,6 @@ public partial class SamplerControl : Panel
 
 		MqttClasses.SamplerDirection enumValue = (MqttClasses.SamplerDirection)direction;
 		string enumName = Enum.GetName(typeof(MqttClasses.SamplerDirection), enumValue);
-		_platformStateLabel.Text = $"State: {enumName}";
 
 
 		SendSamplerMsg();

@@ -266,6 +266,16 @@ offset_bottom = 236.0
 grow_horizontal = 0
 grow_vertical = 1
 
+[node name="SamplerControl" parent="." instance=ExtResource("11_6bv27")]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -160.0
+offset_right = 160.0
+grow_horizontal = 2
+
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false
 layout_mode = 1
@@ -273,12 +283,6 @@ offset_left = 36.0
 offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
-
-[node name="SamplerControl" parent="." instance=ExtResource("11_6bv27")]
-visible = false
-layout_mode = 0
-offset_left = 311.0
-offset_right = 753.0
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
