@@ -17,12 +17,8 @@ public class SingleAxisManipulatorController : IRoverManipulatorController
 		{
 			manipulatorControl = new()
 			{
-				Axis1 = 0f,
-				Axis2 = 0f,
-				Axis3 = 0f,
-				Axis4 = 0f,
-				Axis5 = 0f,
-				Axis6 = 0f,
+				Axis1 = 0f, Axis2 = 0f, Axis3 = 0f,
+				Axis4 = 0f, Axis5 = 0f, Axis6 = 0f,
 
 				Gripper = velocity
 			};
