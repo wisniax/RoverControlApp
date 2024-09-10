@@ -59,13 +59,13 @@ namespace RoverControlApp.Core
 
 		public class ManipulatorControl
 		{
-			public float Axis1 { get; set; } = 0;
-			public float Axis2 { get; set; } = 0;
-			public float Axis3 { get; set; } = 0;
-			public float Axis4 { get; set; } = 0;
-			public float Axis5 { get; set; } = 0;
-			public float Axis6 { get; set; } = 0;
-			public float Gripper { get; set; } = 0;
+			public float Axis1 { get; set; } = 0f;
+			public float Axis2 { get; set; } = 0f;
+			public float Axis3 { get; set; } = 0f;
+			public float Axis4 { get; set; } = 0f;
+			public float Axis5 { get; set; } = 0f;
+			public float Axis6 { get; set; } = 0f;
+			public float Gripper { get; set; } = 0f;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 			public override bool Equals(object? obj)
 			{

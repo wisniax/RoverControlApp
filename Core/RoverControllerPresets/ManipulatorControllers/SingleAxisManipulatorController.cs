@@ -17,9 +17,6 @@ public class SingleAxisManipulatorController : IRoverManipulatorController
 		{
 			manipulatorControl = new()
 			{
-				Axis1 = 0f, Axis2 = 0f, Axis3 = 0f,
-				Axis4 = 0f, Axis5 = 0f, Axis6 = 0f,
-
 				Gripper = velocity
 			};
 		}
@@ -31,9 +28,7 @@ public class SingleAxisManipulatorController : IRoverManipulatorController
 				Axis3 = Input.IsActionPressed("manipulator_axis_3") ? velocity : 0f,
 				Axis4 = Input.IsActionPressed("manipulator_axis_4") ? velocity : 0f,
 				Axis5 = Input.IsActionPressed("manipulator_axis_5") ? velocity : 0f,
-				Axis6 = Input.IsActionPressed("manipulator_axis_6") ? velocity : 0f,
-
-				Gripper = Input.IsActionPressed("manipulator_gripper") ? velocity : 0f
+				Axis6 = Input.IsActionPressed("manipulator_axis_6") ? velocity : 0f
 			};
 
 		return manipulatorControl;
