@@ -15,6 +15,7 @@ namespace RoverControlApp.MVVM.Model
 		private Vector4 _lastAbsoluteVector;
 		private RoverControl _roverMovement;
 		private ManipulatorControl _manipulatorMovement;
+		private SamplerControl _samplerControl = null!;
 		private RoverContainer _containerMovement;
 		private IRoverDriveController _roverDriveControllerPreset = null!;
 		private IRoverManipulatorController _roverManipulatorControllerPreset = null!;
@@ -101,6 +102,7 @@ namespace RoverControlApp.MVVM.Model
 					(RoverDriveControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverDriveController
 				);
 			_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
+			_samplerControl = new SamplerControl();
 		}
 
 		/*
@@ -145,6 +147,7 @@ namespace RoverControlApp.MVVM.Model
 			HandleMovementInputEvent();
 			HandleManipulatorInputEvent();
 			HandleContainerInputEvent();
+			HandleSamplerInputEvent();
 		}
 
 		private void HandleContainerInputEvent()
@@ -162,6 +165,12 @@ namespace RoverControlApp.MVVM.Model
 			ManipulatorControl manipulatorControl = _roverManipulatorControllerPreset.CalculateMoveVector();
 			if(_roverManipulatorControllerPreset.IsMoveVectorChanged(manipulatorControl, ManipulatorMovement))
 				ManipulatorMovement = manipulatorControl;
+		}
+		private void HandleSamplerInputEvent()
+		{
+			if (ControlMode != ControlMode.Sampler) return;
+
+			_samplerControl.DoSamplerControl();
 		}
 
 		private void HandleCameraInputEvent()
@@ -200,6 +209,7 @@ namespace RoverControlApp.MVVM.Model
 		{
 			HandleControlModeChange();
 		}
+
 
 		private void HandleControlModeChange()
 		{

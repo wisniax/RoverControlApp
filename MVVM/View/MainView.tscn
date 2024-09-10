@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=22 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -10,7 +10,8 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionStatus_UIOverlay.cs" id="6_4tmru"]
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
-[ext_resource type="PackedScene" uid="uid://c1j8lxbvqx1te" path="res://MVVM/View/SamplerControl.tscn" id="11_6bv27"]
+[ext_resource type="PackedScene" uid="uid://cn3qlil2vtxag" path="res://MVVM/View/SamplerControl.tscn" id="11_6bv27"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/SamplerControl.cs" id="11_hshn4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -275,6 +276,7 @@ anchor_right = 0.5
 offset_left = -160.0
 offset_right = 160.0
 grow_horizontal = 2
+script = ExtResource("11_hshn4")
 
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false
