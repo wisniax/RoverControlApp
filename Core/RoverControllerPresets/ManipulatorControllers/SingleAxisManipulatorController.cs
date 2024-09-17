@@ -12,7 +12,7 @@ public class SingleAxisManipulatorController : IRoverManipulatorController
 		if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.Deadzone) 
 			velocity = 0f;
 
-		ManipulatorControl manipulatorControl = null;
+		ManipulatorControl manipulatorControl;
 		if (Input.IsActionPressed("manipulator_axis_5") && Input.IsActionPressed("manipulator_axis_6"))
 		{
 			manipulatorControl = new()
