@@ -257,18 +257,9 @@ namespace RoverControlApp.MVVM.ViewModel
 				case MqttClasses.ControlMode.Rover:
 					var vecc = new Vector3((float)PressedKeys.RoverMovement.Vel, (float)PressedKeys.RoverMovement.XAxis,
 						(float)PressedKeys.RoverMovement.YAxis);
-					if (PressedKeys.RoverMovement.Mode == MqttClasses.KinematicMode.Ackermann)
-					{
-						FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {vecc.Length():F3}, " +
-						                              $"Angle: " +
-						                              $"{(vecc.X == 0 ? new Vector2(vecc.Z, vecc.Y).Angle() : new Vector2(vecc.X, vecc.Y).Angle()) * 180 / Mathf.Pi:F1}\n");
-					}
-					else
-					{
-						FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {PressedKeys.RoverMovement.Vel:F2}, " +
-																					$"XAxis: {PressedKeys.RoverMovement.XAxis:F2}, " +
-																					$"YAxis: {PressedKeys.RoverMovement.YAxis:F2}\n");
-					}
+
+					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {vecc.X:F2}, XAxis: {vecc.Y:F2}, YAxis: {vecc.Z:F2}, Mode: {PressedKeys.RoverMovement.Mode}\n");
+					
 					break;
 				case MqttClasses.ControlMode.Manipulator:
 					FancyDebugViewRLab.AppendText($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys?.ManipulatorMovement)}\n");

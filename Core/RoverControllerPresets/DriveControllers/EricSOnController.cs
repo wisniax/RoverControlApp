@@ -40,7 +40,7 @@ public class EricSOnController : IRoverDriveController
 			vec /= 8f;
 		Vector3 vector = new Vector3(vec.X, vec.Y, 0);
 
-		return RoverControlVec2Extension.FromVector3(vector);
+		return RoverControlVec3Extension.FromVector3(vector);
 	}
 
 	public KinematicMode CheckKinematicMode()

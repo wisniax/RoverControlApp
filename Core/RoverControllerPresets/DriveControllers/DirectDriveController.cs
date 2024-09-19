@@ -18,22 +18,39 @@ public class DirectDriveController : IRoverDriveController
 
 		Vector3 vec;
 
-		if (!Input.IsActionPressed("crab_mode"))
+		Mode = KinematicMode.Ackermann;
+		Mode = Input.IsActionPressed("crab_mode") ? KinematicMode.Crab : Mode;
+		Mode = Input.IsActionPressed("spinner_mode") ? KinematicMode.Spinner : Mode;
+		Mode = Input.IsActionPressed("ebrake_mode") ? KinematicMode.EBrake : Mode;
+
+		switch (Mode)
 		{
-			vec = new(
-				Input.GetAxis("rover_move_backward", "rover_move_forward"),
-				Input.GetAxis("rover_move_right", "rover_move_left"),
-				0);
-			Mode = KinematicMode.Ackermann;
-		}
-		else
-		{
-			vec = new(
-				Input.GetAxis("rover_move_backward", "rover_move_forward"),
-				Input.GetAxis("rover_move_right", "rover_move_left"),
-				Input.GetAxis("rover_move_down", "rover_move_up")
+			case KinematicMode.Ackermann:
+				vec = new(
+					Input.GetAxis("rover_move_backward", "rover_move_forward"),
+					Input.GetAxis("rover_move_right", "rover_move_left"),
+					0);
+				break;
+			case KinematicMode.Crab:
+				vec = new(
+					Input.GetAxis("rover_move_backward", "rover_move_forward"),
+					Input.GetAxis("rover_move_right", "rover_move_left"),
+					Input.GetAxis("rover_move_down", "rover_move_up")
 				);
-			Mode = KinematicMode.Crab;
+				break;
+			case KinematicMode.Spinner:
+				vec = new(
+					Input.GetAxis("rover_move_backward", "rover_move_forward"),
+					0f,
+					0f
+				);
+				break;
+			case KinematicMode.EBrake:
+				vec = new(0, 0, 0); //todo wheels in X pattern?
+				break;
+			default:
+				vec = new(0, 0, 0);
+				break;
 		}
 
 
@@ -49,7 +66,7 @@ public class DirectDriveController : IRoverDriveController
 		if (Input.IsActionPressed("camera_zoom_mod"))
 			vec.X /= 4f;
 
-		return RoverControlVec2Extension.FromVector3(vec);
+		return RoverControlVec3Extension.FromVector3(vec);
 	}
 
 	public KinematicMode CheckKinematicMode()

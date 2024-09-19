@@ -27,7 +27,7 @@ public class GoodOldGamesLikeController : IRoverDriveController
 		if (Input.IsActionPressed("camera_zoom_mod"))
 			velocity /= 8f;
 
-		return RoverControlVec2Extension.FromVector3(velocity);
+		return RoverControlVec3Extension.FromVector3(velocity);
 	}
 
 	public KinematicMode CheckKinematicMode()

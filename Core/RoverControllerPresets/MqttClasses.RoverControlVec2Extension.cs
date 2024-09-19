@@ -4,7 +4,7 @@ using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets;
 
-public static class RoverControlVec2Extension
+public static class RoverControlVec3Extension
 {
 	public static Vector3 ToVector3(this RoverControl roverControl) =>
 		new((float)roverControl.Vel, (float)roverControl.XAxis, (float)roverControl.YAxis);

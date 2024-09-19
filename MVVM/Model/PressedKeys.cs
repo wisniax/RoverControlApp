@@ -195,7 +195,7 @@ namespace RoverControlApp.MVVM.Model
 			RoverControl roverControl = _roverDriveControllerPreset.CalculateMoveVector();
 			roverControl.Mode = _roverDriveControllerPreset.CheckKinematicMode();
 
-			if (_roverDriveControllerPreset.IsMoveVectorChanged(roverControl, RoverMovement))
+			if (_roverDriveControllerPreset.IsMoveVectorChanged(roverControl, RoverMovement) || RoverMovement.Mode != roverControl.Mode)
 				RoverMovement = roverControl;
 		}
 		private void HandleFunctionInputEvent()

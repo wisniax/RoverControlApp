@@ -21,7 +21,9 @@ namespace RoverControlApp.Core
 		{
 			Compatibility = 0,
 			Ackermann = 1,
-			Crab = 2
+			Crab = 2,
+			Spinner = 3,
+			EBrake = 4
 		}
 		public enum MissionStatus
 		{
