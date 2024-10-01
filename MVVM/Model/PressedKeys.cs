@@ -12,6 +12,7 @@ namespace RoverControlApp.MVVM.Model
 	public class PressedKeys : IDisposable
 	{
 		private volatile ControlMode _controlMode;
+		private volatile KinematicMode _kinematicMode;
 		private Vector4 _lastAbsoluteVector;
 		private RoverControl _roverMovement;
 		private ManipulatorControl _manipulatorMovement;
@@ -26,6 +27,7 @@ namespace RoverControlApp.MVVM.Model
 		public event Func<RoverContainer, Task>? OnContainerMovement;
 		public event Func<bool, Task>? OnPadConnectionChanged;
 		public event Func<ControlMode, Task>? OnControlModeChanged;
+		public event Func<KinematicMode, Task>? OnKinematicModeChanged; //todo label over safemode
 
 		public ControlMode ControlMode
 		{
@@ -35,6 +37,17 @@ namespace RoverControlApp.MVVM.Model
 				_controlMode = value;
 				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Control Mode changed {value}");
 				OnControlModeChanged?.Invoke(value);
+			}
+		}
+
+		public KinematicMode KinematicMode
+		{
+			get => _kinematicMode;
+			private set
+			{
+				_kinematicMode = value;
+				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Kinematic Mode changed {value}");
+				OnKinematicModeChanged?.Invoke(value);
 			}
 		}
 
@@ -145,6 +158,7 @@ namespace RoverControlApp.MVVM.Model
 			HandleMovementInputEvent();
 			HandleManipulatorInputEvent();
 			HandleContainerInputEvent();
+			HandleDriveModeChange();
 		}
 
 		private void HandleContainerInputEvent()
@@ -214,10 +228,34 @@ namespace RoverControlApp.MVVM.Model
 			StopAll();
 		}
 
+		private void HandleDriveModeChange()
+		{
+			if (!Input.IsActionJustPressed("crab_mode", true) &&
+			    !Input.IsActionJustPressed("spinner_mode", true) &&
+			    !Input.IsActionJustPressed("ackermann_mode", true) &&
+			    !Input.IsActionJustPressed("ebrake_mode", true)) return;
+
+			if (ControlMode != ControlMode.Rover) return;
+			
+			if (Input.IsActionJustPressed("crab_mode", true))
+				KinematicMode = KinematicMode.Crab;
+			else if (Input.IsActionJustPressed("spinner_mode", true))
+				KinematicMode = KinematicMode.Spinner;
+			else if (Input.IsActionJustPressed("ackermann_mode", true))
+				KinematicMode = KinematicMode.Ackermann;
+			else if (Input.IsActionJustPressed("ebrake_mode", true))
+				KinematicMode = KinematicMode.EBrake;
+			
+			
+			_roverDriveControllerPreset.SetKinematicMode(KinematicMode);
+
+			StopAll();
+		}
+
 		private void StopAll()
 		{
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
-			RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0};
+			RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = _};
 			ContainerMovement = new RoverContainer { Axis1 = 0f };
 			ManipulatorMovement = new ManipulatorControl();
 			LastAbsoluteVector = Vector4.Zero;

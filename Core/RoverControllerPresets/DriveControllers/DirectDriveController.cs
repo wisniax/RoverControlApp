@@ -19,9 +19,6 @@ public class DirectDriveController : IRoverDriveController
 		Vector3 vec;
 
 		Mode = KinematicMode.Ackermann;
-		Mode = Input.IsActionPressed("crab_mode") ? KinematicMode.Crab : Mode;
-		Mode = Input.IsActionPressed("spinner_mode") ? KinematicMode.Spinner : Mode;
-		Mode = Input.IsActionPressed("ebrake_mode") ? KinematicMode.EBrake : Mode;
 
 		switch (Mode)
 		{
@@ -67,6 +64,11 @@ public class DirectDriveController : IRoverDriveController
 			vec.X /= 4f;
 
 		return RoverControlVec3Extension.FromVector3(vec);
+	}
+
+	public void SetKinematicMode(KinematicMode mode)
+	{
+		Mode = mode;
 	}
 
 	public KinematicMode CheckKinematicMode()

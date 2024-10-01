@@ -13,7 +13,9 @@ public interface IRoverDriveController
 	/// Checks which kinematic mode is currently active
 	/// </summary>
 	public MqttClasses.KinematicMode CheckKinematicMode();
-	
+
+	public void SetKinematicMode(MqttClasses.KinematicMode mode);
+
 	/// <summary>
 	/// Compares two RoverControl states and determines if change is big enough, to be considered
 	/// </summary>

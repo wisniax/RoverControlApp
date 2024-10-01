@@ -32,6 +32,10 @@ public class ForzaLikeController : IRoverDriveController
 		return RoverControlVec3Extension.FromVector3(vec);
 	}
 
+	public void SetKinematicMode(KinematicMode mode)
+	{
+
+	}
 	public KinematicMode CheckKinematicMode()
 	{
 		return Mode;

@@ -12,6 +12,12 @@ public partial class RoverMode_UIOverlay : UIOverlay
 	Label _safeModeIndicatorLabel;
 	[Export]
 	PanelContainer _safeModeIndicatorPanel;
+
+	[Export]
+	Label _driveModeIndicatorLabel;
+	[Export] 
+	PanelContainer _driveModeIndicatorPanel;
+
 	public override Dictionary<int, Setting> Presets { get; } = new()
 	{
 		{ 0, new(Colors.DarkRed, Colors.Orange, "Rover: E-STOP", "Rover: ") },
@@ -42,9 +48,9 @@ public partial class RoverMode_UIOverlay : UIOverlay
 		UpdateSafeModeIndicatator();
 	}
 
-	void UpdateControlModeIndicator()
+	void UpdateDriveModeIndicator()
 	{
-
+		
 	}
 
 	void UpdateSafeModeIndicatator()

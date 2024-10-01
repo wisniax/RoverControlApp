@@ -43,6 +43,11 @@ public class EricSOnController : IRoverDriveController
 		return RoverControlVec3Extension.FromVector3(vector);
 	}
 
+	public void SetKinematicMode(KinematicMode mode)
+	{
+		
+	}
+
 	public KinematicMode CheckKinematicMode()
 	{
 		return Mode;

@@ -30,6 +30,11 @@ public class GoodOldGamesLikeController : IRoverDriveController
 		return RoverControlVec3Extension.FromVector3(velocity);
 	}
 
+	public void SetKinematicMode(KinematicMode mode)
+	{
+
+	}
+
 	public KinematicMode CheckKinematicMode()
 	{
 		return Mode;
