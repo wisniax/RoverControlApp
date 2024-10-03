@@ -13,10 +13,7 @@ public partial class SafeMode_UIOverlay : UIOverlay
 	[Export]
 	Label _label;
 
-	public override Dictionary<int, Setting> Presets { get; } = new()
-	{
-		
-	};
+	public override Dictionary<int, Setting> Presets { get; } = new() { };
 
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{

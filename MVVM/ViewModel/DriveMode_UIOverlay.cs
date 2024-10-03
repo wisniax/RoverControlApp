@@ -12,15 +12,8 @@ public partial class DriveMode_UIOverlay : UIOverlay
 	PanelContainer _panelContainer;
 	[Export]
 	Label _label;
-
-	public enum KinematicMode
-	{
-		Compatibility = 0,
-		Ackermann = 1,
-		Crab = 2,
-		Spinner = 3,
-		EBrake = 4
-	}
+	[Export]
+	ColorRect _background;
 
 	public override Dictionary<int, Setting> Presets { get; } = new()
 	{
@@ -33,6 +26,12 @@ public partial class DriveMode_UIOverlay : UIOverlay
 
 	public Task KinematicModeChangedSubscriber(MqttClasses.KinematicMode newMode)
 	{
+		UpdateDriveModeIndicator(newMode);
+		return Task.CompletedTask;
+	}
+
+	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
+	{
 		ControlMode = (int)newMode;
 		return Task.CompletedTask;
 	}
@@ -40,5 +39,34 @@ public partial class DriveMode_UIOverlay : UIOverlay
 	public override void _Ready()
 	{
 	
+	}
+
+	void UpdateDriveModeIndicator(MqttClasses.KinematicMode newMode)
+	{
+		if (ControlMode != 1) { _panelContainer.Visible = false; return; }
+		_panelContainer.Visible = true;
+		switch (newMode)
+		{
+			case MqttClasses.KinematicMode.Ackermann:
+				_label.Text = "Drive: Ackermann";
+				_label.AddThemeColorOverride("font_color", Colors.LightGreen);
+				_background.AddThemeColorOverride("color", Colors.DarkGreen);
+				break;
+			case MqttClasses.KinematicMode.Crab:
+				_label.Text = "Drive: Crab";
+				_label.AddThemeColorOverride("font_color", Colors.Red);
+				_background.AddThemeColorOverride("color", Colors.DarkRed);
+				break;
+			case MqttClasses.KinematicMode.Spinner:
+				_label.Text = "Drive: Spinner";
+				_label.AddThemeColorOverride("font_color", Colors.LightYellow);
+				_background.AddThemeColorOverride("color", Colors.Yellow);
+				break;
+			case MqttClasses.KinematicMode.EBrake:
+				_label.Text = "Drive: E-Brake";
+				_label.AddThemeColorOverride("font_color", Colors.LightBlue);
+				_background.AddThemeColorOverride("color", Colors.DarkBlue);
+				break;
+		}
 	}
 }

@@ -68,6 +68,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnKinematicModeChanged += DriveModeUIDis.KinematicModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
@@ -97,6 +98,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			PressedKeys.OnControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnKinematicModeChanged -= DriveModeUIDis.KinematicModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged -= DriveModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
