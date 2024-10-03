@@ -18,8 +18,6 @@ public class DirectDriveController : IRoverDriveController
 
 		Vector3 vec;
 
-		Mode = KinematicMode.Ackermann;
-
 		switch (Mode)
 		{
 			case KinematicMode.Ackermann:
