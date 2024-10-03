@@ -8,16 +8,6 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class RoverMode_UIOverlay : UIOverlay
 {
-	[Export]
-	Label _safeModeIndicatorLabel;
-	[Export]
-	PanelContainer _safeModeIndicatorPanel;
-
-	[Export]
-	Label _driveModeIndicatorLabel;
-	[Export] 
-	PanelContainer _driveModeIndicatorPanel;
-
 	public override Dictionary<int, Setting> Presets { get; } = new()
 	{
 		{ 0, new(Colors.DarkRed, Colors.Orange, "Rover: E-STOP", "Rover: ") },
@@ -29,41 +19,6 @@ public partial class RoverMode_UIOverlay : UIOverlay
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
 		ControlMode = (int)newMode;
-		CallDeferred(MethodName.UpdateSafeModeIndicatator);
 		return Task.CompletedTask;
 	}
-
-	public override void _Ready()
-	{
-		base._Ready();
-		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged,
-			Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
-	}
-
-	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
-	{
-		if (category != nameof(LocalSettings.SpeedLimiter))
-			return;
-
-		UpdateSafeModeIndicatator();
-	}
-
-	void UpdateDriveModeIndicator()
-	{
-		
-	}
-
-	void UpdateSafeModeIndicatator()
-	{
-		if (ControlMode == 1 && LocalSettings.Singleton.SpeedLimiter.Enabled)
-		{
-			_safeModeIndicatorPanel.Visible = true;
-			_safeModeIndicatorLabel.Text = $"Safe Mode ON - {LocalSettings.Singleton.SpeedLimiter.MaxSpeed:P0}";
-		}
-		else
-		{
-			_safeModeIndicatorPanel.Visible = false;
-		}
-	}
-
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=22 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -8,13 +8,13 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/RoverMode_UIOverlay.cs" id="4_bwker"]
 [ext_resource type="PackedScene" uid="uid://crakb6uxv2yt8" path="res://MVVM/View/MissionControl.tscn" id="4_wrhi8"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionStatus_UIOverlay.cs" id="6_4tmru"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/DriveMode_UIOverlay.cs" id="6_j447r"]
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/SafeMode_UIOverlay.cs" id="7_ssyiv"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_w533b"]
 
 [sub_resource type="InputEventKey" id="InputEventKey_ab7qa"]
 device = -1
@@ -119,7 +119,7 @@ custom_minimum_size = Vector2(170, 26)
 offset_left = 13.0
 offset_right = 183.0
 
-[node name="RoverModeUIDis" parent="." node_paths=PackedStringArray("_safeModeIndicatorLabel", "_safeModeIndicatorPanel", "_driveModeIndicatorLabel", "_driveModeIndicatorPanel", "Animator") instance=ExtResource("3_mtbtk")]
+[node name="RoverModeUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -130,10 +130,6 @@ offset_right = -181.0
 offset_bottom = 4.0
 grow_horizontal = 0
 script = ExtResource("4_bwker")
-_safeModeIndicatorLabel = NodePath("SpeedLimiterMode/Label")
-_safeModeIndicatorPanel = NodePath("SpeedLimiterMode")
-_driveModeIndicatorLabel = NodePath("DriveMode/Label")
-_driveModeIndicatorPanel = NodePath("DriveMode")
 Animator = NodePath("RoverMode/AnimationPlayer")
 BackgroundNodePath = NodePath("RoverMode/Background")
 LabelNodePath = NodePath("RoverMode/Label")
@@ -143,57 +139,49 @@ custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
 offset_right = 178.0
 
-[node name="DriveMode" type="PanelContainer" parent="RoverModeUIDis"]
-visible = false
-custom_minimum_size = Vector2(180, 26)
+[node name="DriveModeUIDis" parent="." node_paths=PackedStringArray("_panelContainer", "_label", "Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -181.0
+offset_top = 36.0
+offset_right = -181.0
+offset_bottom = 36.0
+grow_horizontal = 0
+script = ExtResource("6_j447r")
+_panelContainer = NodePath("RoverMode")
+_label = NodePath("RoverMode/Label")
+Animator = NodePath("RoverMode/AnimationPlayer")
+BackgroundNodePath = NodePath("RoverMode/Background")
+LabelNodePath = NodePath("RoverMode/Label")
+
+[node name="RoverMode" parent="DriveModeUIDis" index="0"]
+custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
-offset_top = 34.0
 offset_right = 178.0
-offset_bottom = 60.0
 
-[node name="Background" type="ColorRect" parent="RoverModeUIDis/DriveMode"]
-layout_mode = 2
-color = Color(1, 0.654902, 0, 1)
-
-[node name="Label" type="Label" parent="RoverModeUIDis/DriveMode"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "VAL B"
-horizontal_alignment = 1
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RoverModeUIDis/DriveMode"]
-reset_on_save = false
-root_node = NodePath("../..")
-libraries = {
-"UIOverlay": SubResource("AnimationLibrary_w533b")
-}
-
-[node name="SpeedLimiterMode" type="PanelContainer" parent="RoverModeUIDis"]
-visible = false
-custom_minimum_size = Vector2(180, 26)
+[node name="SpeedLimiterUIDis" parent="." node_paths=PackedStringArray("_panelContainer", "_label", "Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
-offset_left = -2.0
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -181.0
 offset_top = 68.0
+offset_right = -181.0
+offset_bottom = 68.0
+grow_horizontal = 0
+script = ExtResource("7_ssyiv")
+_panelContainer = NodePath("RoverMode")
+_label = NodePath("RoverMode/Label")
+Animator = NodePath("RoverMode/AnimationPlayer")
+BackgroundNodePath = NodePath("RoverMode/Background")
+LabelNodePath = NodePath("RoverMode/Label")
+
+[node name="RoverMode" parent="SpeedLimiterUIDis" index="0"]
+custom_minimum_size = Vector2(180, 26)
+offset_left = -2.0
 offset_right = 178.0
-offset_bottom = 94.0
-
-[node name="Background" type="ColorRect" parent="RoverModeUIDis/SpeedLimiterMode"]
-layout_mode = 2
-color = Color(0.14902, 0.490196, 1, 1)
-
-[node name="Label" type="Label" parent="RoverModeUIDis/SpeedLimiterMode"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "VAL B"
-horizontal_alignment = 1
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="RoverModeUIDis/SpeedLimiterMode"]
-reset_on_save = false
-root_node = NodePath("../..")
-libraries = {
-"UIOverlay": SubResource("AnimationLibrary_w533b")
-}
 
 [node name="MissonStatusUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
@@ -310,10 +298,12 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]
+[editable path="DriveModeUIDis"]
+[editable path="SpeedLimiterUIDis"]
 [editable path="MissonStatusUIDis"]

@@ -31,6 +31,10 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private RoverMode_UIOverlay RoverModeUIDis = null!;
 		[Export]
+		private DriveMode_UIOverlay DriveModeUIDis = null!;
+		[Export]
+		private SafeMode_UIOverlay SafeModeUIDis = null!;
+		[Export]
 		private Grzyb_UIOverlay GrzybUIDis = null!;
 		[Export]
 		private MissionStatus_UIOverlay MissionStatusUIDis = null!;
@@ -63,6 +67,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			SettingsManagerNode.Target = LocalSettings.Singleton;
 
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.OnKinematicModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
