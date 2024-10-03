@@ -6,7 +6,7 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class ForzaLikeController : IRoverDriveController
 {
-	private MqttClasses.KinematicMode Mode = MqttClasses.KinematicMode.Compatibility;
+	public KinematicMode Mode { get; set; } = KinematicMode.Compatibility;
 
 	public RoverControl CalculateMoveVector()
 	{

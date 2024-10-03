@@ -6,7 +6,7 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class DirectDriveController : IRoverDriveController
 {
-	private MqttClasses.KinematicMode Mode = MqttClasses.KinematicMode.Ackermann;
+	public KinematicMode Mode { get; set; } = KinematicMode.Ackermann;
 
 	public RoverControl CalculateMoveVector()
 	{

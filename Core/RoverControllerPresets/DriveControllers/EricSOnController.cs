@@ -7,7 +7,7 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 public class EricSOnController : IRoverDriveController
 {
 	private const float TURN_ANGLE = 89;
-	private MqttClasses.KinematicMode Mode = MqttClasses.KinematicMode.Compatibility;
+	public KinematicMode Mode { get; set; } = KinematicMode.Compatibility;
 
 	public RoverControl CalculateMoveVector()
 	{
