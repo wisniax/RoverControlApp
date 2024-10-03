@@ -61,17 +61,7 @@ public class DirectDriveController : IRoverDriveController
 		if (Input.IsActionPressed("camera_zoom_mod"))
 			vec.X /= 4f;
 
-		return RoverControlVec3Extension.FromVector3(vec);
-	}
-
-	public void SetKinematicMode(KinematicMode mode)
-	{
-		Mode = mode;
-	}
-
-	public KinematicMode CheckKinematicMode()
-	{
-		return Mode;
+		return RoverControlVec3Extension.ToRoverControl(vec);
 	}
 }
 

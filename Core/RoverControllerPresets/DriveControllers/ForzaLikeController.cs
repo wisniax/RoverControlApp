@@ -29,15 +29,6 @@ public class ForzaLikeController : IRoverDriveController
 		if (Input.IsActionPressed("camera_zoom_mod"))
 			vec /= 8f;
 
-		return RoverControlVec3Extension.FromVector3(vec);
-	}
-
-	public void SetKinematicMode(KinematicMode mode)
-	{
-
-	}
-	public KinematicMode CheckKinematicMode()
-	{
-		return Mode;
+		return RoverControlVec3Extension.ToRoverControl(vec);
 	}
 }
