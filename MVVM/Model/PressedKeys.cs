@@ -255,7 +255,7 @@ namespace RoverControlApp.MVVM.Model
 		private void StopAll()
 		{
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
-			RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = KinematicMode};
+			RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = _kinematicMode};
 			ContainerMovement = new RoverContainer { Axis1 = 0f };
 			ManipulatorMovement = new ManipulatorControl();
 			LastAbsoluteVector = Vector4.Zero;

@@ -67,7 +67,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			SettingsManagerNode.Target = LocalSettings.Singleton;
 
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.OnKinematicModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.OnKinematicModeChanged += DriveModeUIDis.KinematicModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
@@ -96,6 +96,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 
 			PressedKeys.OnControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.OnKinematicModeChanged -= DriveModeUIDis.KinematicModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
