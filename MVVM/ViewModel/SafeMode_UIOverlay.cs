@@ -13,12 +13,14 @@ public partial class SafeMode_UIOverlay : UIOverlay
 	[Export]
 	Label _label;
 
+	//animation skip todo - implement animations
+	private int InternalControlMode;
+
 	public override Dictionary<int, Setting> Presets { get; } = new() { };
 
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
-		if (newMode != MqttClasses.ControlMode.Rover) return Task.CompletedTask;
-		
+		InternalControlMode = (int)newMode;
 		CallDeferred(MethodName.UpdateSafeModeIndicatator);
 		return Task.CompletedTask;
 	}
@@ -40,7 +42,7 @@ public partial class SafeMode_UIOverlay : UIOverlay
 
 	void UpdateSafeModeIndicatator()
 	{
-		if (ControlMode == 1 && LocalSettings.Singleton.SpeedLimiter.Enabled)
+		if (InternalControlMode == 1 && LocalSettings.Singleton.SpeedLimiter.Enabled)
 		{
 			_panelContainer.Visible = true;
 			_label.Text = $"Safe Mode ON - {LocalSettings.Singleton.SpeedLimiter.MaxSpeed:P0}";

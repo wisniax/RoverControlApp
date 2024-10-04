@@ -160,6 +160,7 @@ BackgroundNodePath = NodePath("RoverMode/Background")
 LabelNodePath = NodePath("RoverMode/Label")
 
 [node name="RoverMode" parent="DriveModeUIDis" index="0"]
+visible = false
 custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
 offset_right = 178.0
@@ -182,9 +183,13 @@ BackgroundNodePath = NodePath("RoverMode/Background")
 LabelNodePath = NodePath("RoverMode/Label")
 
 [node name="RoverMode" parent="SpeedLimiterUIDis" index="0"]
+visible = false
 custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
 offset_right = 178.0
+
+[node name="Background" parent="SpeedLimiterUIDis/RoverMode" index="0"]
+color = Color(0.321569, 0.792157, 0.956863, 1)
 
 [node name="MissonStatusUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
