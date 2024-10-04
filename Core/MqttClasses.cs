@@ -161,5 +161,6 @@ namespace RoverControlApp.Core
 			public Orientation orientation { get; set; }
 			public long Timestamp { get; set; }
 		}
+
 	}
 }

@@ -48,11 +48,8 @@ public class DirectDriveController : IRoverDriveController
 				break;
 		}
 
-
-		if (LocalSettings.Singleton.SpeedLimiter.Enabled) 
+		if (LocalSettings.Singleton.SpeedLimiter.Enabled)
 			vec.X *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
-		
-		
 
 		vec.X = Mathf.IsEqualApprox(vec.X, 0f, joyDeadZone) ? 0 : vec.X;
 		vec.Y = Mathf.IsEqualApprox(vec.Y, 0f, joyDeadZone) ? 0 : vec.Y;

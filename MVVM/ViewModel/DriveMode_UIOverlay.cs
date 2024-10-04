@@ -16,7 +16,7 @@ public partial class DriveMode_UIOverlay : UIOverlay
 	ColorRect _background;
 
 	//animation skip todo - implement animations
-	private int InternalControlMode;
+	private int _internalControlMode;
 
 	public MqttClasses.KinematicMode DriveMode = MqttClasses.KinematicMode.Ackermann;
 
@@ -25,7 +25,7 @@ public partial class DriveMode_UIOverlay : UIOverlay
 		{ 0, new(Colors.DarkGray, Colors.LightGray, "Drive: Compatibility", "Drive: ") },
 		{ 1, new(Colors.DarkGreen, Colors.LightGreen, "Drive: Ackermann","Drive: ") },
 		{ 2, new(Colors.DarkRed, Colors.Red, "Drive: Crab","Drive: ") },
-		{ 3, new(Colors.Yellow, Colors.LightYellow, "Drive: Spinner","Drive: ") },
+		{ 3, new(Colors.Yellow, Colors.Black, "Drive: Spinner","Drive: ") },
 		{ 4, new(Colors.DarkBlue, Colors.LightBlue, "Drive: E-Brake","Drive: ") }
 	};
 
@@ -39,7 +39,7 @@ public partial class DriveMode_UIOverlay : UIOverlay
 
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
-		InternalControlMode = (int)newMode;
+		_internalControlMode = (int)newMode;
 		UpdateDriveModeIndicator(DriveMode);
 		return Task.CompletedTask;
 	}
@@ -51,7 +51,7 @@ public partial class DriveMode_UIOverlay : UIOverlay
 
 	void UpdateDriveModeIndicator(MqttClasses.KinematicMode newMode)
 	{
-		if (InternalControlMode != 1) { _panelContainer.Visible = false; return; }
+		if (_internalControlMode != 1) { _panelContainer.Visible = false; return; }
 		_panelContainer.Visible = true;
 		switch (newMode)
 		{
