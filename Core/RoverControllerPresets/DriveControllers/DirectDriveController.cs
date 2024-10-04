@@ -6,6 +6,7 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class DirectDriveController : IRoverDriveController
 {
+	public float SpeedModifier => LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : 1f;
 	public KinematicMode Mode { get; set; } = KinematicMode.Ackermann;
 
 	public RoverControl CalculateMoveVector()
@@ -48,12 +49,12 @@ public class DirectDriveController : IRoverDriveController
 				break;
 		}
 
-		if (LocalSettings.Singleton.SpeedLimiter.Enabled)
-			vec.X *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
+		vec.X *= SpeedModifier;
 
-		vec.X = Mathf.IsEqualApprox(vec.X, 0f, joyDeadZone) ? 0 : vec.X;
+		vec.X = Mathf.IsEqualApprox(vec.X, 0f, joyDeadZone * SpeedModifier) ? 0 : vec.X;
 		vec.Y = Mathf.IsEqualApprox(vec.Y, 0f, joyDeadZone) ? 0 : vec.Y;
 		vec.Z = Mathf.IsEqualApprox(vec.Z, 0f, joyDeadZone) ? 0 : vec.Z;
+
 
 		if (Input.IsActionPressed("camera_zoom_mod"))
 			vec.X /= 4f;
