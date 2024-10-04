@@ -15,6 +15,11 @@ public partial class DriveMode_UIOverlay : UIOverlay
 	[Export]
 	ColorRect _background;
 
+	//animation skip todo - implement animations
+	private int InternalControlMode;
+
+	public MqttClasses.KinematicMode DriveMode = MqttClasses.KinematicMode.Ackermann;
+
 	public override Dictionary<int, Setting> Presets { get; } = new()
 	{
 		{ 0, new(Colors.DarkGray, Colors.LightGray, "Drive: Compatibility", "Drive: ") },
@@ -26,13 +31,16 @@ public partial class DriveMode_UIOverlay : UIOverlay
 
 	public Task KinematicModeChangedSubscriber(MqttClasses.KinematicMode newMode)
 	{
-		UpdateDriveModeIndicator(newMode);
+		DriveMode = newMode;
+		UpdateDriveModeIndicator(DriveMode);
+
 		return Task.CompletedTask;
 	}
 
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
-		ControlMode = (int)newMode;
+		InternalControlMode = (int)newMode;
+		UpdateDriveModeIndicator(DriveMode);
 		return Task.CompletedTask;
 	}
 
@@ -43,29 +51,29 @@ public partial class DriveMode_UIOverlay : UIOverlay
 
 	void UpdateDriveModeIndicator(MqttClasses.KinematicMode newMode)
 	{
-		if (ControlMode != 1) { _panelContainer.Visible = false; return; }
+		if (InternalControlMode != 1) { _panelContainer.Visible = false; return; }
 		_panelContainer.Visible = true;
 		switch (newMode)
 		{
 			case MqttClasses.KinematicMode.Ackermann:
 				_label.Text = "Drive: Ackermann";
 				_label.AddThemeColorOverride("font_color", Colors.LightGreen);
-				_background.AddThemeColorOverride("color", Colors.DarkGreen);
+				_background.Color = Colors.DarkGreen;
 				break;
 			case MqttClasses.KinematicMode.Crab:
 				_label.Text = "Drive: Crab";
 				_label.AddThemeColorOverride("font_color", Colors.Red);
-				_background.AddThemeColorOverride("color", Colors.DarkRed);
+				_background.Color = Colors.DarkRed;
 				break;
 			case MqttClasses.KinematicMode.Spinner:
 				_label.Text = "Drive: Spinner";
-				_label.AddThemeColorOverride("font_color", Colors.LightYellow);
-				_background.AddThemeColorOverride("color", Colors.Yellow);
+				_label.AddThemeColorOverride("font_color", Colors.Black);
+				_background.Color = Colors.Yellow;
 				break;
 			case MqttClasses.KinematicMode.EBrake:
 				_label.Text = "Drive: E-Brake";
 				_label.AddThemeColorOverride("font_color", Colors.LightBlue);
-				_background.AddThemeColorOverride("color", Colors.DarkBlue);
+				_background.Color = Colors.DarkBlue;
 				break;
 		}
 	}
