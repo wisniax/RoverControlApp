@@ -27,7 +27,7 @@ namespace RoverControlApp.MVVM.Model
 		public event Func<RoverContainer, Task>? OnContainerMovement;
 		public event Func<bool, Task>? OnPadConnectionChanged;
 		public event Func<ControlMode, Task>? OnControlModeChanged;
-		public event Func<KinematicMode, Task>? OnKinematicModeChanged; //todo label over safemode
+		public event Func<KinematicMode, Task>? OnKinematicModeChanged;
 
 		public ControlMode ControlMode
 		{
