@@ -13,10 +13,16 @@ public partial class SafeMode_UIOverlay : UIOverlay
 	[Export]
 	Label _label;
 
-	//animation skip todo - implement animations
 	private int _internalControlMode;
 
-	public override Dictionary<int, Setting> Presets { get; } = new() { };
+	private static float _speedLimit => LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
+
+	public override Dictionary<int, Setting> Presets { get; } = new() 
+	{
+		{ 0, new(Colors.Blue, Colors.LightBlue, $"SpeedLimiter: ON {_speedLimit:P0}", "SpeedLimiter: ") },
+		{ 1, new(Colors.DarkRed, Colors.Red, "SpeedLimiter: OFF", "SpeedLimiter: ") }
+
+	};
 
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
@@ -30,27 +36,34 @@ public partial class SafeMode_UIOverlay : UIOverlay
 		base._Ready();
 		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged,
 			Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		UpdateDictionary();
 	}
 
 	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 	{
 		if (category != nameof(LocalSettings.SpeedLimiter))
 			return;
+		UpdateDictionary();
 
 		UpdateSafeModeIndicatator();
 	}
 
+	void UpdateDictionary()
+	{
+		Presets[0] = new(Colors.Blue, Colors.LightBlue, $"SpeedLimiter: ON {_speedLimit:P0}", "SpeedLimiter: ");
+	}
+
 	void UpdateSafeModeIndicatator()
 	{
-		if (_internalControlMode == 1 && LocalSettings.Singleton.SpeedLimiter.Enabled)
+		if (_internalControlMode != 1)
 		{
-			_panelContainer.Visible = true;
-			_label.Text = $"Safe Mode ON - {LocalSettings.Singleton.SpeedLimiter.MaxSpeed:P0}";
+			_panelContainer.Visible = false; 
+			return;
 		}
-		else
-		{
-			_panelContainer.Visible = false;
-		}
+		
+		_panelContainer.Visible = true;
+		
+		ControlMode = LocalSettings.Singleton.SpeedLimiter.Enabled ? 0 : 1;
 	}
 
 }
