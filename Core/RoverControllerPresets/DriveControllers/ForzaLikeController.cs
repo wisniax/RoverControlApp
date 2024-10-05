@@ -26,9 +26,6 @@ public class ForzaLikeController : IRoverDriveController
 		if (!Mathf.IsEqualApprox(forcedSteer, 0f, 0.05f))
 			vec.Y = forcedSteer / 5f;
 
-		if (Input.IsActionPressed("camera_zoom_mod"))
-			vec /= 8f;
-
 		return RoverControlVec3Extension.ToRoverControl(vec);
 	}
 }

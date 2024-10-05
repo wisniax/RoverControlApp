@@ -192,12 +192,6 @@ namespace RoverControlApp.MVVM.Model
 			absoluteVector4.Z = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, LocalSettings.Singleton.Joystick.Deadzone)) ? 0 : velocity.X;
 			absoluteVector4.W = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, LocalSettings.Singleton.Joystick.Deadzone)) ? 0 : velocity.Y;
 
-			if (Input.IsActionPressed("camera_zoom_mod"))
-			{
-				absoluteVector4.X /= 8f;
-				absoluteVector4.Y /= 8f;
-			}
-
 			absoluteVector4 = absoluteVector4.Clamp(new Vector4(-1f, -1f, -1f, -1f), new Vector4(1f, 1f, 1f, 1f));
 			LastAbsoluteVector = absoluteVector4;
 		}

@@ -36,8 +36,6 @@ public class EricSOnController : IRoverDriveController
 		if (!Mathf.IsEqualApprox(forcedSteer, 0f, 0.05f))
 			vec.Y = forcedSteer / 4f;
 
-		if (Input.IsActionPressed("camera_zoom_mod"))
-			vec /= 8f;
 		Vector3 vector = new Vector3(vec.X, vec.Y, 0);
 
 		return RoverControlVec3Extension.ToRoverControl(vector);

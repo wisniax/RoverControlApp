@@ -55,10 +55,6 @@ public class DirectDriveController : IRoverDriveController
 		vec.Y = Mathf.IsEqualApprox(vec.Y, 0f, joyDeadZone) ? 0 : vec.Y;
 		vec.Z = Mathf.IsEqualApprox(vec.Z, 0f, joyDeadZone) ? 0 : vec.Z;
 
-
-		if (Input.IsActionPressed("camera_zoom_mod"))
-			vec.X /= 4f;
-
 		return RoverControlVec3Extension.ToRoverControl(vec);
 	}
 }
