@@ -10,10 +10,8 @@ public partial class SafeMode_UIOverlay : UIOverlay
 {
 	[Export]
 	PanelContainer _panelContainer;
-	[Export]
-	Label _label;
 
-	private int _internalControlMode;
+	private int _inputMode;
 
 	private static float _speedLimit => LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
 
@@ -26,7 +24,7 @@ public partial class SafeMode_UIOverlay : UIOverlay
 
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
-		_internalControlMode = (int)newMode;
+		_inputMode = (int)newMode;
 		CallDeferred(MethodName.UpdateSafeModeIndicatator);
 		return Task.CompletedTask;
 	}
@@ -55,7 +53,7 @@ public partial class SafeMode_UIOverlay : UIOverlay
 
 	void UpdateSafeModeIndicatator()
 	{
-		if (_internalControlMode != 1)
+		if (_inputMode != 1)
 		{
 			_panelContainer.Visible = false; 
 			return;

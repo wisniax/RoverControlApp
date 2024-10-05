@@ -10,10 +10,6 @@ public partial class DriveMode_UIOverlay : UIOverlay
 {
 	[Export] 
 	PanelContainer _panelContainer;
-	[Export]
-	Label _label;
-	[Export]
-	ColorRect _background;
 
 	private int _inputMode; 
 
