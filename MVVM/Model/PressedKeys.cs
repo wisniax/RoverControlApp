@@ -99,6 +99,7 @@ namespace RoverControlApp.MVVM.Model
 			_lastAbsoluteVector = Vector4.Zero;
 			_roverMovement = new();
 			_manipulatorMovement = new();
+			_samplerControl = new();
 			_containerMovement = new();
 			SetupControllerPresets();
 
@@ -114,7 +115,7 @@ namespace RoverControlApp.MVVM.Model
 					(RoverDriveControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverDriveController
 				);
 			_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
-			_samplerControl = new SamplerControl();
+			_samplerControler = new SamplerControler();
 		}
 
 		/*
@@ -241,6 +242,7 @@ namespace RoverControlApp.MVVM.Model
 			RoverMovement = new RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
 			ContainerMovement = new RoverContainer { Axis1 = 0f };
 			ManipulatorMovement = new ManipulatorControl();
+
 			LastAbsoluteVector = Vector4.Zero;
 		}
 
