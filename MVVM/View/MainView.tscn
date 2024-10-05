@@ -141,7 +141,7 @@ custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
 offset_right = 178.0
 
-[node name="DriveModeUIDis" parent="." node_paths=PackedStringArray("_panelContainer", "_label", "_background", "Animator") instance=ExtResource("3_mtbtk")]
+[node name="DriveModeUIDis" parent="." node_paths=PackedStringArray("_panelContainer", "Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -153,8 +153,6 @@ offset_bottom = 36.0
 grow_horizontal = 0
 script = ExtResource("6_j447r")
 _panelContainer = NodePath("RoverMode")
-_label = NodePath("RoverMode/Label")
-_background = NodePath("RoverMode/Background")
 Animator = NodePath("RoverMode/AnimationPlayer")
 BackgroundNodePath = NodePath("RoverMode/Background")
 LabelNodePath = NodePath("RoverMode/Label")
@@ -165,7 +163,7 @@ custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
 offset_right = 178.0
 
-[node name="SpeedLimiterUIDis" parent="." node_paths=PackedStringArray("_panelContainer", "_label", "Animator") instance=ExtResource("3_mtbtk")]
+[node name="SpeedLimiterUIDis" parent="." node_paths=PackedStringArray("_panelContainer", "Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -177,7 +175,6 @@ offset_bottom = 68.0
 grow_horizontal = 0
 script = ExtResource("7_ssyiv")
 _panelContainer = NodePath("RoverMode")
-_label = NodePath("RoverMode/Label")
 Animator = NodePath("RoverMode/AnimationPlayer")
 BackgroundNodePath = NodePath("RoverMode/Background")
 LabelNodePath = NodePath("RoverMode/Label")
