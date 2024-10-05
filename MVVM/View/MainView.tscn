@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
 [ext_resource type="PackedScene" uid="uid://cn3qlil2vtxag" path="res://MVVM/View/SamplerControl.tscn" id="11_6bv27"]
-[ext_resource type="Script" path="res://MVVM/ViewModel/SamplerControl.cs" id="11_hshn4"]
+[ext_resource type="Script" path="res://Core/RoverControllerPresets/SamplerControllers/SamplerControler.cs" id="11_hshn4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
