@@ -19,11 +19,13 @@ namespace RoverControlApp.MVVM.Model
 		private RoverContainer _containerMovement;
 		private IRoverDriveController _roverDriveControllerPreset = null!;
 		private IRoverManipulatorController _roverManipulatorControllerPreset = null!;
+		private SamplerControler _samplerControler = null!;
 		private bool _disposedValue;
 
 		public event EventHandler<Vector4>? OnAbsoluteVectorChanged;
 		public event Func<RoverControl, Task>? OnRoverMovementVector;
 		public event Func<ManipulatorControl, Task>? OnManipulatorMovement;
+		public event Func<SamplerControl, Task>? OnSamplerMovement;
 		public event Func<RoverContainer, Task>? OnContainerMovement;
 		public event Func<bool, Task>? OnPadConnectionChanged;
 		public event Func<ControlMode, Task>? OnControlModeChanged;
@@ -68,6 +70,16 @@ namespace RoverControlApp.MVVM.Model
 			{
 				_manipulatorMovement = value;
 				OnManipulatorMovement?.Invoke(value);
+			}
+		}
+
+		public SamplerControl SamplerMovement
+		{
+			get => _samplerControl;
+			private set
+			{
+				_samplerControl = value;
+				OnSamplerMovement?.Invoke(value);
 			}
 		}
 
@@ -170,7 +182,8 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (ControlMode != ControlMode.Sampler) return;
 
-			_samplerControl.DoSamplerControl();
+			SamplerControl samplerControl = _samplerControler.CalculateMoveVector(SamplerMovement);
+
 		}
 
 		private void HandleCameraInputEvent()

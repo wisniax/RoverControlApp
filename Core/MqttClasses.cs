@@ -104,7 +104,7 @@ namespace RoverControlApp.Core
 		{
 			public float DrillMovement { get; set; } = 0f;
 			public float PlatformMovement { get; set; } = 0f;
-			public double DrillAction { get; set; } = 0f;
+			public float DrillAction { get; set; } = 0f;
 			public bool ExtendContainer1 { get; set; } = false;
 			public bool ExtendContainer2 { get; set; } = false;
 			

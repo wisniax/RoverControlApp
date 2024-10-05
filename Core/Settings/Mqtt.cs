@@ -24,7 +24,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicEStopStatus = "button_stop";
 		_topicZedImuData = "TopicZedImuData";
 		_topicKmlListOfActiveObj = "KMLNode/ActiveKMLObjects";
-		_topicSampler = "SamplerControl";
+		_topicSamplerControlControl = "SamplerControl";
 	}
 
 	public Mqtt
@@ -41,7 +41,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicEStopStatus,
 		string topicZedImuData,
 		string topicKmlListOfActiveObj,
-		string topicSampler
+		string topicSamplerControlControl
 
 	)
 	{
@@ -57,7 +57,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicEStopStatus = topicEStopStatus;
 		_topicZedImuData = topicZedImuData;
 		_topicKmlListOfActiveObj = topicKmlListOfActiveObj;
-		_topicSampler = topicSampler;
+		_topicSamplerControlControl = topicSamplerControlControl;
 
 	}
 
@@ -77,7 +77,8 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicWheelFeedback = _topicWheelFeedback,
 			TopicZedImuData = _topicZedImuData,
 			TopicEStopStatus = _topicEStopStatus,
-			TopicKmlListOfActiveObj = _topicKmlListOfActiveObj
+			TopicKmlListOfActiveObj = _topicKmlListOfActiveObj,
+			TopicSamplerControl = _topicSamplerControlControl
 		};
 	}
 
@@ -166,10 +167,10 @@ public partial class Mqtt : SettingBase, ICloneable
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-	public string TopicSampler
+	public string TopicSamplerControl
 	{
-		get => _topicSampler;
-		set => EmitSignal_SettingChanged(ref _topicSampler, value);
+		get => _topicSamplerControlControl;
+		set => EmitSignal_SettingChanged(ref _topicSamplerControlControl, value);
 	}
 
 
@@ -186,7 +187,7 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicEStopStatus;
 	string _topicZedImuData;
 	string _topicKmlListOfActiveObj;
-	string _topicSampler;
+	string _topicSamplerControlControl;
 }
 
 

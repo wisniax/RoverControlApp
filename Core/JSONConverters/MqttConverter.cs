@@ -97,7 +97,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 			topicEStopStatus ?? Default.TopicEStopStatus,
 			topicZedImuData ?? Default.TopicZedImuData,
 			topicKmlListOfActiveObj ?? Default.TopicKmlListOfActiveObj,
-			topicSampler ?? Default.TopicSampler
+			topicSampler ?? Default.TopicSamplerControl
 		);
 	}
 
@@ -117,7 +117,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 		writer.WriteString(nameof(Mqtt.TopicEStopStatus), value.TopicEStopStatus);
 		writer.WriteString(nameof(Mqtt.TopicZedImuData), value.TopicZedImuData);
 		writer.WriteString(nameof(Mqtt.TopicKmlListOfActiveObj), value.TopicKmlListOfActiveObj);
-		writer.WriteString(nameof(Mqtt.TopicSampler), value.TopicSampler);
+		writer.WriteString(nameof(Mqtt.TopicSamplerControl), value.TopicSamplerControl);
 		writer.WriteEndObject();
 	}
 }
