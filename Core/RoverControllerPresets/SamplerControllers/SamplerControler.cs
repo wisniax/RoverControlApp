@@ -4,12 +4,15 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using MQTTnet.Protocol;
 using RoverControlApp.Core;
+using RoverControlApp.Core.RoverControllerPresets;
 using RoverControlApp.MVVM.Model;
 using static RoverControlApp.Core.MqttClasses;
 
-public partial class SamplerControler : Panel
+namespace RoverControlApp.Core.RoverControllerPresets.SamplerControllers;
+
+public class SamplerControler : IRoverSamplerController
 {
-	public MqttClasses.SamplerControl CalculateMoveVector(SamplerControl oldSamplerControl)
+	public MqttClasses.SamplerControl CalculateMoveVector(SamplerControl lastState)
 	{
 		float velocity = Input.GetAxis("sampler_move_down", "sampler_move_up");
 		if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.Deadzone)
@@ -23,8 +26,8 @@ public partial class SamplerControler : Panel
 			
 			DrillAction = Input.GetAxis("sampler_drill_up", "sampler_drill_down"),
 			
-			ExtendContainer1 = Input.IsActionJustPressed("sampler_container_1") ? !oldSamplerControl.ExtendContainer1 : oldSamplerControl.ExtendContainer1,
-			ExtendContainer2 = Input.IsActionJustPressed("sampler_container_2") ? !oldSamplerControl.ExtendContainer2 : oldSamplerControl.ExtendContainer2,
+			ExtendContainer1 = Input.IsActionJustPressed("sampler_container_1") ? !lastState.ExtendContainer1 : lastState.ExtendContainer1,
+			ExtendContainer2 = Input.IsActionJustPressed("sampler_container_2") ? !lastState.ExtendContainer2 : lastState.ExtendContainer2,
 
 			Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
 		};
@@ -33,10 +36,5 @@ public partial class SamplerControler : Panel
 
 
 		return samplerControl;
-	}
-
-	public async Task SendSamplerMsg()
-	{
-		//await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicSamplerControl, JsonSerializer.Serialize(samplerControl), MqttQualityOfServiceLevel.ExactlyOnce);
 	}
 }

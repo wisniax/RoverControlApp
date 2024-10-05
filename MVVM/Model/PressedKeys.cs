@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using RoverControlApp.Core.RoverControllerPresets;
 using RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 using RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
+using RoverControlApp.Core.RoverControllerPresets.SamplerControllers;
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.MVVM.Model
@@ -19,7 +20,7 @@ namespace RoverControlApp.MVVM.Model
 		private RoverContainer _containerMovement;
 		private IRoverDriveController _roverDriveControllerPreset = null!;
 		private IRoverManipulatorController _roverManipulatorControllerPreset = null!;
-		private SamplerControler _samplerControler = null!;
+		private IRoverSamplerController _roverSamplerControllerPreset = null!;
 		private bool _disposedValue;
 
 		public event EventHandler<Vector4>? OnAbsoluteVectorChanged;
@@ -115,7 +116,7 @@ namespace RoverControlApp.MVVM.Model
 					(RoverDriveControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverDriveController
 				);
 			_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
-			_samplerControler = new SamplerControler();
+			_roverSamplerControllerPreset = new SamplerControler();
 		}
 
 		/*
@@ -183,7 +184,9 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (ControlMode != ControlMode.Sampler) return;
 
-			SamplerControl samplerControl = _samplerControler.CalculateMoveVector(SamplerMovement);
+			SamplerControl samplerControl = _roverSamplerControllerPreset.CalculateMoveVector(SamplerMovement);
+			if (_roverSamplerControllerPreset.IsMoveVectorChanged(samplerControl, SamplerMovement))
+				SamplerMovement = samplerControl;
 
 		}
 
