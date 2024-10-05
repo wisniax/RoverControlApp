@@ -20,7 +20,7 @@ public partial class SafeMode_UIOverlay : UIOverlay
 	public override Dictionary<int, Setting> Presets { get; } = new() 
 	{
 		{ 0, new(Colors.Blue, Colors.LightBlue, $"SpeedLimiter: ON {_speedLimit:P0}", "SpeedLimiter: ") },
-		{ 1, new(Colors.DarkRed, Colors.Red, "SpeedLimiter: OFF", "SpeedLimiter: ") }
+		{ 1, new(Colors.DarkRed, Colors.Orange, "SpeedLimiter: OFF", "SpeedLimiter: ") }
 
 	};
 
