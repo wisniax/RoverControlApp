@@ -36,12 +36,4 @@ public class SamplerControler : IRoverSamplerController
 		return samplerControl;
 	}
 
-	public bool IsMoveVectorChanged(SamplerControl currentState, SamplerControl lastState)
-	{
-		return !Mathf.IsEqualApprox(currentState.DrillMovement, lastState.DrillMovement) ||
-			   !Mathf.IsEqualApprox(currentState.PlatformMovement, lastState.PlatformMovement) ||
-			   !Mathf.IsEqualApprox(currentState.DrillAction, lastState.DrillAction) ||
-			   currentState.ExtendContainer1 != lastState.ExtendContainer1 ||
-			   currentState.ExtendContainer2 != lastState.ExtendContainer2;
-	}
 }

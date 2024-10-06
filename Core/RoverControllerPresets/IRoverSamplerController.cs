@@ -1,4 +1,5 @@
 ﻿using static RoverControlApp.Core.MqttClasses;
+using Godot;
 
 namespace RoverControlApp.Core.RoverControllerPresets;
 
@@ -13,5 +14,10 @@ public interface IRoverSamplerController
 	/// Compares two SamplerControls states and determines if change is big enough, to be considered
 	/// </summary>
 	/// <returns>true if changed</returns>
-	public bool IsMoveVectorChanged(SamplerControl currentState, SamplerControl lastState);
+	public bool IsMoveVectorChanged(SamplerControl currentState, SamplerControl lastState) =>
+		!Mathf.IsEqualApprox(currentState.DrillMovement, lastState.DrillMovement) ||
+		!Mathf.IsEqualApprox(currentState.PlatformMovement, lastState.PlatformMovement) ||
+		!Mathf.IsEqualApprox(currentState.DrillAction, lastState.DrillAction) ||
+		currentState.ExtendContainer1 != lastState.ExtendContainer1 ||
+		currentState.ExtendContainer2 != lastState.ExtendContainer2;
 }
