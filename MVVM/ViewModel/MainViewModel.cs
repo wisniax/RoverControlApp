@@ -263,6 +263,14 @@ namespace RoverControlApp.MVVM.ViewModel
 				case MqttClasses.ControlMode.Manipulator:
 					FancyDebugViewRLab.AppendText($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys?.ManipulatorMovement)}\n");
 					break;
+				case MqttClasses.ControlMode.Sampler:
+					FancyDebugViewRLab.AppendText($"PressedKeys: Sampler DrillAction: {PressedKeys.SamplerMovement.DrillAction:F2}, " +
+					                              $"DrillMov: {PressedKeys.SamplerMovement.DrillMovement:F2}, " +
+					                              $"PlatformMov: {PressedKeys.SamplerMovement.PlatformMovement:F2}, " +
+					                              $"Container1: {((PressedKeys.SamplerMovement.ExtendContainer1) ? "Extended" : "Retracted")}, " +
+					                              $"Container2: {((PressedKeys.SamplerMovement.ExtendContainer2) ? "Extended" : "Retracted")}, " +
+					                              $"Skibidi: {((PressedKeys.SamplerMovement.OpenSkibidi) ? "Opened" : "Closed")}\n");
+					break;
 			}
 
 			if (rtspClient?.State == CommunicationState.Opened)

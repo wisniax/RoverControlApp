@@ -15,7 +15,8 @@ namespace RoverControlApp.Core
 			EStop = 0,
 			Rover = 1,
 			Manipulator = 2,
-			Autonomy = 3
+			Sampler = 3,
+			Autonomy = 4
 		}
 		public enum MissionStatus
 		{
@@ -87,6 +88,18 @@ namespace RoverControlApp.Core
 			}
 		}
 
+		public class SamplerControl
+		{
+			public float DrillMovement { get; set; } = 0f;
+			public float PlatformMovement { get; set; } = 0f;
+			public float DrillAction { get; set; } = 0f;
+			public bool ExtendContainer1 { get; set; } = false;
+			public bool ExtendContainer2 { get; set; } = false;
+			public bool OpenSkibidi { get; set; } = false;
+			
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+		
 		public class RoverContainer
 		{
 			public float Axis1 { get; set; } = 0f;

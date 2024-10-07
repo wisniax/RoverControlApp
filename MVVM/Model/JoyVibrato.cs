@@ -41,10 +41,25 @@ public class JoyVibrato : IDisposable
 			}
 		},
 		{
+			MqttClasses.ControlMode.Sampler,
+			new VibrationSequence[]
+			{
+				new VibrationSequence(0.1f, 1.0f, 0.0f),
+				new VibrationSequence(0.2f, 0.0f, 0.0f),
+				new VibrationSequence(0.2f, 0.0f, 1.0f),
+				new VibrationSequence(0.2f, 0.0f, 0.0f),
+				new VibrationSequence(0.2f, 0.0f, 1.0f),
+				new VibrationSequence(0.2f, 0.0f, 0.0f),
+				new VibrationSequence(0.2f, 0.0f, 1.0f)
+			}
+		},
+		{
 			MqttClasses.ControlMode.Autonomy,
 			new VibrationSequence[]
 			{
 				new VibrationSequence(0.1f, 1.0f, 0.0f),
+				new VibrationSequence(0.2f, 0.0f, 0.0f),
+				new VibrationSequence(0.2f, 0.0f, 1.0f),
 				new VibrationSequence(0.2f, 0.0f, 0.0f),
 				new VibrationSequence(0.2f, 0.0f, 1.0f),
 				new VibrationSequence(0.2f, 0.0f, 0.0f),
