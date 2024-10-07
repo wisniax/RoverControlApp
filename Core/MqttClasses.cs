@@ -43,20 +43,6 @@ namespace RoverControlApp.Core
 			Spheric = 2
 		}
 
-		public enum SamplerDirection
-		{
-			Down = 0,
-			Stop = 1,
-			Up = 2
-		}
-
-		public enum DrillState
-		{
-			Stopped = 0,
-			Left = 1,
-			Right = 2
-		}
-
 		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
