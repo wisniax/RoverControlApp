@@ -212,13 +212,6 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_x20sx")
 text = "VEL MONITOR"
 
-[node name="ShowSamplerControl" type="Button" parent="HBoxContainer"]
-layout_mode = 2
-focus_mode = 0
-toggle_mode = true
-shortcut = SubResource("Shortcut_nofgb")
-text = "SAMPLER"
-
 [node name="ShowZedMonitor" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
