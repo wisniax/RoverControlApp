@@ -19,5 +19,6 @@ public interface IRoverSamplerController
 		!Mathf.IsEqualApprox(currentState.PlatformMovement, lastState.PlatformMovement) ||
 		!Mathf.IsEqualApprox(currentState.DrillAction, lastState.DrillAction) ||
 		currentState.ExtendContainer1 != lastState.ExtendContainer1 ||
-		currentState.ExtendContainer2 != lastState.ExtendContainer2;
+		currentState.ExtendContainer2 != lastState.ExtendContainer2 ||
+		currentState.OpenSkibidi != lastState.OpenSkibidi;
 }

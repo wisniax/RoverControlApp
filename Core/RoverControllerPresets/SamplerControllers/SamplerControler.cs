@@ -29,6 +29,7 @@ public class SamplerControler : IRoverSamplerController
 			DrillAction = drillSpeed,
 			ExtendContainer1 = Input.IsActionJustPressed("sampler_container_1") ? !lastState.ExtendContainer1 : lastState.ExtendContainer1,
 			ExtendContainer2 = Input.IsActionJustPressed("sampler_container_2") ? !lastState.ExtendContainer2 : lastState.ExtendContainer2,
+			OpenSkibidi = Input.IsActionJustPressed("sampler_open_skibidi") ? !lastState.OpenSkibidi : lastState.OpenSkibidi,
 
 			Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
 		};

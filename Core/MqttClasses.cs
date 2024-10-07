@@ -107,6 +107,7 @@ namespace RoverControlApp.Core
 			public float DrillAction { get; set; } = 0f;
 			public bool ExtendContainer1 { get; set; } = false;
 			public bool ExtendContainer2 { get; set; } = false;
+			public bool OpenSkibidi { get; set; } = false;
 			
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
