@@ -224,6 +224,10 @@ namespace RoverControlApp.MVVM.Model
 
 		private void HandleDriveModeChange()
 		{
+			if (LocalSettings.Singleton.Joystick.RoverDriveController != 3) return;
+
+			//if (LocalSettings.Singleton.Joystick.ToggleableKinematics)
+
 			if (!Input.IsActionJustPressed("crab_mode", true) &&
 			    !Input.IsActionJustPressed("spinner_mode", true) &&
 			    !Input.IsActionJustPressed("ackermann_mode", true) &&
