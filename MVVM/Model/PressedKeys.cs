@@ -158,7 +158,8 @@ namespace RoverControlApp.MVVM.Model
 			HandleMovementInputEvent();
 			HandleManipulatorInputEvent();
 			HandleContainerInputEvent();
-			HandleDriveModeChange();
+			HandleDriveModeChangeToggle();
+			HandleDriveModeChangePressed();
 		}
 
 		private void HandleContainerInputEvent()
@@ -201,6 +202,7 @@ namespace RoverControlApp.MVVM.Model
 			if (ControlMode != ControlMode.Rover) return;
 
 			RoverControl roverControl = _roverDriveControllerPreset.CalculateMoveVector();
+
 			roverControl.Mode = _roverDriveControllerPreset.Mode;
 
 			if (_roverDriveControllerPreset.IsMoveVectorChanged(roverControl, RoverMovement) || RoverMovement.Mode != roverControl.Mode)
@@ -222,19 +224,14 @@ namespace RoverControlApp.MVVM.Model
 			StopAll();
 		}
 
-		private void HandleDriveModeChange()
+		private void HandleDriveModeChangeToggle()
 		{
 			if (LocalSettings.Singleton.Joystick.RoverDriveController != 3) return;
 
-			//if (LocalSettings.Singleton.Joystick.ToggleableKinematics)
-
-			if (!Input.IsActionJustPressed("crab_mode", true) &&
-			    !Input.IsActionJustPressed("spinner_mode", true) &&
-			    !Input.IsActionJustPressed("ackermann_mode", true) &&
-			    !Input.IsActionJustPressed("ebrake_mode", true)) return;
+			if (!LocalSettings.Singleton.Joystick.ToggleableKinematics) return;
 
 			if (ControlMode != ControlMode.Rover) return;
-			
+
 			if (Input.IsActionJustPressed("crab_mode", true))
 				KinematicMode = KinematicMode.Crab;
 			else if (Input.IsActionJustPressed("spinner_mode", true))
@@ -244,10 +241,29 @@ namespace RoverControlApp.MVVM.Model
 			else if (Input.IsActionJustPressed("ebrake_mode", true))
 				KinematicMode = KinematicMode.EBrake;
 			
-			
 			_roverDriveControllerPreset.Mode = KinematicMode;
 
 			StopAll();
+		}
+
+		void HandleDriveModeChangePressed()
+		{
+			if (LocalSettings.Singleton.Joystick.RoverDriveController != 3) return;
+
+			if (LocalSettings.Singleton.Joystick.ToggleableKinematics) return;
+
+			if (ControlMode != ControlMode.Rover) return;
+
+			KinematicMode = KinematicMode.Ackermann;
+
+			if (Input.IsActionPressed("crab_mode", true))
+				KinematicMode = KinematicMode.Crab;
+			else if (Input.IsActionPressed("spinner_mode", true))
+				KinematicMode = KinematicMode.Spinner;
+			else if (Input.IsActionPressed("ebrake_mode", true))
+				KinematicMode = KinematicMode.EBrake;
+
+			_roverDriveControllerPreset.Mode = KinematicMode;
 		}
 
 		private void StopAll()

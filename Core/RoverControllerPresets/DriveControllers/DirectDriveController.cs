@@ -17,8 +17,6 @@ public class DirectDriveController : IRoverDriveController
 			Convert.ToSingle(LocalSettings.Singleton.Joystick.Deadzone)
 		);
 
-		//if (!LocalSettings.Singleton.Joystick.ToggleableKinematics) HandleKinematics();
-
 		Vector3 vec;
 
 		switch (Mode)
@@ -58,18 +56,6 @@ public class DirectDriveController : IRoverDriveController
 		vec.Z = Mathf.IsEqualApprox(vec.Z, 0f, joyDeadZone) ? 0 : vec.Z;
 
 		return RoverControlVec3Extension.ToRoverControl(vec);
-	}
-
-	void HandleKinematics()
-	{
-		Mode = KinematicMode.Ackermann;
-
-		if (Input.IsActionJustPressed("crab_mode", true))
-			Mode = KinematicMode.Crab;
-		else if (Input.IsActionJustPressed("spinner_mode", true))
-			Mode = KinematicMode.Spinner;
-		else if (Input.IsActionJustPressed("ebrake_mode", true))
-			Mode = KinematicMode.EBrake;
 	}
 }
 
