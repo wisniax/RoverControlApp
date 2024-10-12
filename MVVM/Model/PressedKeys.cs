@@ -224,34 +224,6 @@ namespace RoverControlApp.MVVM.Model
 			StopAll();
 		}
 
-		private void HandleDriveModeChange()
-		{
-			if (LocalSettings.Singleton.Joystick.RoverDriveController != 3) return;
-
-			if (ControlMode != ControlMode.Rover) return;
-
-			if (!LocalSettings.Singleton.Joystick.ToggleableKinematics)
-			{
-				KinematicMode = KinematicMode.Ackermann;
-			}
-			else
-			{
-				if (Input.IsActionJustPressed("ackermann_mode", true))
-					KinematicMode = KinematicMode.Ackermann;
-			}
-
-			if (Input.IsActionJustPressed("crab_mode", true))
-				KinematicMode = KinematicMode.Crab;
-			else if (Input.IsActionJustPressed("spinner_mode", true))
-				KinematicMode = KinematicMode.Spinner;
-			else if (Input.IsActionJustPressed("ebrake_mode", true))
-				KinematicMode = KinematicMode.EBrake;
-			
-			_roverDriveControllerPreset.Mode = KinematicMode;
-
-			StopAll();
-		}
-
 		private void HandleDriveModeChangeToggle()
 		{
 			if (LocalSettings.Singleton.Joystick.RoverDriveController != 3) return;
@@ -271,7 +243,6 @@ namespace RoverControlApp.MVVM.Model
 			
 			_roverDriveControllerPreset.Mode = KinematicMode;
 
-			StopAll();
 		}
 
 		void HandleDriveModeChangePressed()
