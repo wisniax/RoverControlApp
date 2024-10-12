@@ -259,8 +259,9 @@ namespace RoverControlApp.MVVM.ViewModel
 			string? rtspAge = rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 			string? ptzAge = ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
-			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode},\t" +
-						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication?.RoverStatus?.CommunicationState}[/color],\t" +
+			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode}, " + 
+			              $"{(RoverCommunication?.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
+						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication?.RoverStatus?.CommunicationState}[/color], " +
 						  $"Pad connected: {RoverCommunication?.RoverStatus?.PadConnected}\n");
 			switch (RoverCommunication?.RoverStatus?.ControlMode)
 			{

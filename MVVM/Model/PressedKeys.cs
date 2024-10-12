@@ -159,7 +159,7 @@ namespace RoverControlApp.MVVM.Model
 			HandleManipulatorInputEvent();
 			HandleContainerInputEvent();
 			HandleDriveModeChangeToggle();
-			HandleDriveModeChangePressed();
+			HandleDriveModeChangeHold();
 		}
 
 		private void HandleContainerInputEvent()
@@ -245,7 +245,7 @@ namespace RoverControlApp.MVVM.Model
 
 		}
 
-		void HandleDriveModeChangePressed()
+		void HandleDriveModeChangeHold()
 		{
 			if (LocalSettings.Singleton.Joystick.RoverDriveController != 3) return;
 
