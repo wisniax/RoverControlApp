@@ -13,13 +13,15 @@ public partial class Joystick : SettingBase, ICloneable
 	public Joystick()
 	{
 		_roverDriveController = 3;
+		_toggleableKinematics = false;
 		_deadzone = 0.15f;
 		_vibrateOnModeChange = true;
 	}
 
-	public Joystick(int roverDriveController, float deadzone, bool vibrateOnModeChange)
+	public Joystick(int roverDriveController, bool toggleableKinematics, float deadzone, bool vibrateOnModeChange)
 	{
 		_roverDriveController = roverDriveController;
+		_toggleableKinematics = toggleableKinematics;
 		_deadzone = deadzone;
 		_vibrateOnModeChange = vibrateOnModeChange;
 	}
@@ -29,6 +31,7 @@ public partial class Joystick : SettingBase, ICloneable
 		return new Joystick()
 		{
 			RoverDriveController = _roverDriveController,
+			ToggleableKinematics = _toggleableKinematics,
 			Deadzone = _deadzone,
 			VibrateOnModeChange = _vibrateOnModeChange
 		};
@@ -48,6 +51,13 @@ public partial class Joystick : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _roverDriveController, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+	public bool ToggleableKinematics
+	{
+		get => _toggleableKinematics;
+		set => EmitSignal_SettingChanged(ref _toggleableKinematics, value);
+	}
+
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
 	public float Deadzone
 	{
@@ -63,6 +73,7 @@ public partial class Joystick : SettingBase, ICloneable
 	}
 
 	int _roverDriveController;
+	private bool _toggleableKinematics;
 	float _deadzone;
 	bool _vibrateOnModeChange;
 }
