@@ -253,15 +253,18 @@ namespace RoverControlApp.MVVM.Model
 
 			if (ControlMode != ControlMode.Rover) return;
 
-			KinematicMode = KinematicMode.Ackermann;
+			KinematicMode tempKM = KinematicMode.Ackermann;
+
+			tempKM = KinematicMode.Ackermann;
 
 			if (Input.IsActionPressed("crab_mode", true))
-				KinematicMode = KinematicMode.Crab;
+				tempKM = KinematicMode.Crab;
 			else if (Input.IsActionPressed("spinner_mode", true))
-				KinematicMode = KinematicMode.Spinner;
+				tempKM = KinematicMode.Spinner;
 			else if (Input.IsActionPressed("ebrake_mode", true))
-				KinematicMode = KinematicMode.EBrake;
+				tempKM = KinematicMode.EBrake;
 
+			if (tempKM != KinematicMode) KinematicMode = tempKM;
 			_roverDriveControllerPreset.Mode = KinematicMode;
 		}
 
