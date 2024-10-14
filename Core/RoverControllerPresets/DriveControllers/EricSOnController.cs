@@ -38,6 +38,6 @@ public class EricSOnController : IRoverDriveController
 
 		Vector3 vector = new Vector3(vec.X, vec.Y, 0);
 
-		return RoverControlVec3Extension.ToRoverControl(vector);
+		return vector.ToRoverControl();
 	}
 }

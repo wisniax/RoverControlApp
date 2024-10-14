@@ -53,13 +53,13 @@ public partial class SafeMode_UIOverlay : UIOverlay
 
 	void UpdateSafeModeIndicatator()
 	{
-		if (_inputMode != 1)
+		if (_inputMode != (int)MqttClasses.ControlMode.Rover)
 		{
-			_panelContainer.Visible = false; 
+			this.Visible = false; 
 			return;
 		}
 		
-		_panelContainer.Visible = true;
+		this.Visible = true;
 		
 		ControlMode = LocalSettings.Singleton.SpeedLimiter.Enabled ? 0 : 1;
 	}

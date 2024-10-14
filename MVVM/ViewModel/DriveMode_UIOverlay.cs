@@ -46,7 +46,12 @@ public partial class DriveMode_UIOverlay : UIOverlay
 
 	void UpdateIndicatorVisibility()
 	{
-		if (_inputMode != 1) { _panelContainer.Visible = false; return; }
-		_panelContainer.Visible = true;
+		if (_inputMode != 1)
+		{
+			this.Visible = false; 
+			return;
+		}
+
+		this.Visible = true;
 	}
 }

@@ -142,6 +142,7 @@ offset_left = -2.0
 offset_right = 178.0
 
 [node name="DriveModeUIDis" parent="." node_paths=PackedStringArray("_panelContainer", "Animator") instance=ExtResource("3_mtbtk")]
+visible = false
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -158,12 +159,12 @@ BackgroundNodePath = NodePath("RoverMode/Background")
 LabelNodePath = NodePath("RoverMode/Label")
 
 [node name="RoverMode" parent="DriveModeUIDis" index="0"]
-visible = false
 custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
 offset_right = 178.0
 
 [node name="SpeedLimiterUIDis" parent="." node_paths=PackedStringArray("_panelContainer", "Animator") instance=ExtResource("3_mtbtk")]
+visible = false
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -180,7 +181,6 @@ BackgroundNodePath = NodePath("RoverMode/Background")
 LabelNodePath = NodePath("RoverMode/Label")
 
 [node name="RoverMode" parent="SpeedLimiterUIDis" index="0"]
-visible = false
 custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
 offset_right = 178.0

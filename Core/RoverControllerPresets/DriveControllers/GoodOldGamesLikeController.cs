@@ -24,6 +24,6 @@ public class GoodOldGamesLikeController : IRoverDriveController
 		velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, joyDeadZone) ? 0 : velocity.X;
 		velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, joyDeadZone) ? 0 : velocity.Y;
 
-		return RoverControlVec3Extension.ToRoverControl(velocity);
+		return velocity.ToRoverControl();
 	}
 }

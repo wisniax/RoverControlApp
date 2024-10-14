@@ -226,7 +226,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private void HandleDriveModeChangeToggle()
 		{
-			if (LocalSettings.Singleton.Joystick.RoverDriveController != 3) return;
+			if (LocalSettings.Singleton.Joystick.RoverDriveController != (int)RoverDriveControllerSelector.Controller.DirectDrive) return;
 
 			if (!LocalSettings.Singleton.Joystick.ToggleableKinematics) return;
 
@@ -247,7 +247,7 @@ namespace RoverControlApp.MVVM.Model
 
 		void HandleDriveModeChangeHold()
 		{
-			if (LocalSettings.Singleton.Joystick.RoverDriveController != 3) return;
+			if (LocalSettings.Singleton.Joystick.RoverDriveController != (int)RoverDriveControllerSelector.Controller.DirectDrive) return;
 
 			if (LocalSettings.Singleton.Joystick.ToggleableKinematics) return;
 
