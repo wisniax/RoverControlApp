@@ -15,6 +15,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 			throw new JsonException("Expected start of an object.");
 
 		int? roverDriveController = null;
+		bool? toggleableKinematics = null;
 		float? deadzone = null;
 		bool? vibrateOnModeChange = null;
 
@@ -34,6 +35,9 @@ public class JoystickConverter : JsonConverter<Joystick>
 				case nameof(Joystick.RoverDriveController):
 					roverDriveController = reader.GetInt32();
 					break;
+				case nameof(Joystick.ToggleableKinematics):
+					toggleableKinematics = reader.GetBoolean();
+					break;
 				case nameof(Joystick.Deadzone):
 					deadzone = reader.GetSingle();
 					break;
@@ -49,6 +53,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 		return new Joystick
 		(
 			roverDriveController ?? Default.RoverDriveController,
+			toggleableKinematics ?? Default.ToggleableKinematics,
 			deadzone ?? Default.Deadzone,
 			vibrateOnModeChange ?? Default.VibrateOnModeChange
 		);
@@ -58,6 +63,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 	{
 		writer.WriteStartObject();
 		writer.WriteNumber(nameof(Joystick.RoverDriveController), value.RoverDriveController);
+		writer.WriteBoolean(nameof(Joystick.ToggleableKinematics), value.ToggleableKinematics);
 		writer.WriteNumber(nameof(Joystick.Deadzone), value.Deadzone);
 		writer.WriteBoolean(nameof(Joystick.VibrateOnModeChange), value.VibrateOnModeChange);
 		writer.WriteEndObject();

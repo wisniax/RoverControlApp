@@ -17,6 +17,14 @@ namespace RoverControlApp.Core
 			Manipulator = 2,
 			Autonomy = 3
 		}
+		public enum KinematicMode
+		{
+			Compatibility = 0,
+			Ackermann = 1,
+			Crab = 2,
+			Spinner = 3,
+			EBrake = 4
+		}
 		public enum MissionStatus
 		{
 			Created = 0,
@@ -52,8 +60,10 @@ namespace RoverControlApp.Core
 
 		public class RoverControl
 		{
-			public double XVelAxis { get; set; }
-			public double ZRotAxis { get; set; }
+			public double Vel { get; set; }
+			public double XAxis { get; set; }
+			public double YAxis { get; set; }
+			public KinematicMode Mode { get; set; } = KinematicMode.Compatibility;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
