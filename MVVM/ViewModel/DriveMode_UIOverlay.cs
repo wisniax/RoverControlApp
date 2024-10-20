@@ -41,12 +41,12 @@ public partial class DriveMode_UIOverlay : UIOverlay
 	public override void _Ready()
 	{
 		base._Ready();
-		ControlMode = 1;
+		ControlMode = (int)MqttClasses.KinematicMode.Ackermann;
 	}
 
 	void UpdateIndicatorVisibility()
 	{
-		if (_inputMode != 1)
+		if (_inputMode != (int)MqttClasses.ControlMode.Rover)
 		{
 			this.Visible = false; 
 			return;
