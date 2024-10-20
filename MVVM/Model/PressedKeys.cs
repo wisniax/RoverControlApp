@@ -45,6 +45,7 @@ namespace RoverControlApp.MVVM.Model
 			get => _kinematicMode;
 			private set
 			{
+				if(_kinematicMode == value) return;
 				_kinematicMode = value;
 				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Kinematic Mode changed {value}");
 				OnKinematicModeChanged?.Invoke(value);
@@ -253,18 +254,15 @@ namespace RoverControlApp.MVVM.Model
 
 			if (ControlMode != ControlMode.Rover) return;
 
-			KinematicMode tempKM = KinematicMode.Ackermann;
-
-			tempKM = KinematicMode.Ackermann;
+			KinematicMode = KinematicMode.Ackermann;
 
 			if (Input.IsActionPressed("crab_mode", true))
-				tempKM = KinematicMode.Crab;
+				KinematicMode = KinematicMode.Crab;
 			else if (Input.IsActionPressed("spinner_mode", true))
-				tempKM = KinematicMode.Spinner;
+				KinematicMode = KinematicMode.Spinner;
 			else if (Input.IsActionPressed("ebrake_mode", true))
-				tempKM = KinematicMode.EBrake;
+				KinematicMode = KinematicMode.EBrake;
 
-			if (tempKM != KinematicMode) KinematicMode = tempKM;
 			_roverDriveControllerPreset.Mode = KinematicMode;
 		}
 
