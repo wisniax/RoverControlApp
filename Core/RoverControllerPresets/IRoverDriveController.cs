@@ -16,5 +16,5 @@ public interface IRoverDriveController
 	/// </summary>
 	/// <returns>true if changed</returns>
 	public bool IsMoveVectorChanged(RoverControl currentState, RoverControl lastState) =>
-		!currentState.FromRoverControl().IsEqualApprox(lastState.FromRoverControl());
+		!currentState.ToVector3().IsEqualApprox(lastState.ToVector3());
 }

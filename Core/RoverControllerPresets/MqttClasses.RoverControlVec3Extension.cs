@@ -6,7 +6,7 @@ namespace RoverControlApp.Core.RoverControllerPresets;
 
 public static class RoverControlVec3Extension
 {
-	public static Vector3 FromRoverControl(this RoverControl roverControl) =>
+	public static Vector3 ToVector3(this RoverControl roverControl) =>
 		new((float)roverControl.Vel, (float)roverControl.XAxis, (float)roverControl.YAxis);
 
 	public static RoverControl ToRoverControl(this Vector3 vector) =>
