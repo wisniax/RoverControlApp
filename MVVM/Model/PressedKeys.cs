@@ -116,7 +116,7 @@ namespace RoverControlApp.MVVM.Model
 					(RoverDriveControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverDriveController
 				);
 			_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
-			_roverSamplerControllerPreset = new SamplerControler();
+			_roverSamplerControllerPreset = new SamplerController();
 		}
 
 		/*

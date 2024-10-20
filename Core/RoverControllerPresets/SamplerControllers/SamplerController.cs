@@ -10,7 +10,7 @@ using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets.SamplerControllers;
 
-public class SamplerControler : IRoverSamplerController
+public class SamplerController : IRoverSamplerController
 {
 	public MqttClasses.SamplerControl CalculateMoveVector(SamplerControl lastState)
 	{
