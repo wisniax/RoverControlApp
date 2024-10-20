@@ -244,6 +244,7 @@ namespace RoverControlApp.MVVM.Model
 			
 			_roverDriveControllerPreset.Mode = KinematicMode;
 
+			HandleMovementInputEvent();
 		}
 
 		void HandleDriveModeChangeHold()
@@ -264,6 +265,8 @@ namespace RoverControlApp.MVVM.Model
 				KinematicMode = KinematicMode.EBrake;
 
 			_roverDriveControllerPreset.Mode = KinematicMode;
+
+			HandleMovementInputEvent();
 		}
 
 		private void StopAll()
