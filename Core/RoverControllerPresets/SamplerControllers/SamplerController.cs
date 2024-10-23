@@ -26,7 +26,7 @@ public class SamplerController : IRoverSamplerController
 		{
 			DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
 			PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
-			DrillAction = drillSpeed,
+			DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
 			ExtendContainer1 = Input.IsActionJustPressed("sampler_container_1") ? !lastState.ExtendContainer1 : lastState.ExtendContainer1,
 			ExtendContainer2 = Input.IsActionJustPressed("sampler_container_2") ? !lastState.ExtendContainer2 : lastState.ExtendContainer2,
 			OpenSkibidi = Input.IsActionJustPressed("sampler_open_skibidi") ? !lastState.OpenSkibidi : lastState.OpenSkibidi,
