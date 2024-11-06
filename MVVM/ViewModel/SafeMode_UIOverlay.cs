@@ -22,7 +22,7 @@ public partial class SafeMode_UIOverlay : UIOverlay
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
 		_inputMode = (int)newMode;
-		CallDeferred(MethodName.UpdateSafeModeIndicatator);
+		CallDeferred(MethodName.UpdateSafeModeIndicator);
 		return Task.CompletedTask;
 	}
 
@@ -40,7 +40,7 @@ public partial class SafeMode_UIOverlay : UIOverlay
 			return;
 		UpdateDictionary();
 
-		UpdateSafeModeIndicatator();
+		UpdateSafeModeIndicator();
 	}
 
 	void UpdateDictionary()
@@ -48,7 +48,7 @@ public partial class SafeMode_UIOverlay : UIOverlay
 		Presets[0] = new(Colors.Blue, Colors.LightBlue, $"SpeedLimiter: ON {_speedLimit:P0}", "SpeedLimiter: ");
 	}
 
-	void UpdateSafeModeIndicatator()
+	void UpdateSafeModeIndicator()
 	{
 		if (_inputMode != (int)MqttClasses.ControlMode.Rover)
 		{
