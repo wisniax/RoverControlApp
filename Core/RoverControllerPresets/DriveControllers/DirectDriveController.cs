@@ -6,7 +6,7 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class DirectDriveController : IRoverDriveController
 {
-	public float SpeedModifier => LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : 1f;
+	public static float SpeedModifier => LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : 1f;
 	public KinematicMode Mode { get; set; } = KinematicMode.Ackermann;
 
 	public RoverControl CalculateMoveVector()
