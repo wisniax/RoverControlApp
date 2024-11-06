@@ -8,9 +8,6 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class SafeMode_UIOverlay : UIOverlay
 {
-	[Export]
-	PanelContainer _panelContainer;
-
 	private int _inputMode;
 
 	private static float _speedLimit => LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
