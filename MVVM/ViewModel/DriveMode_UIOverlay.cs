@@ -32,7 +32,6 @@ public partial class DriveMode_UIOverlay : UIOverlay
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
 		_inputMode = (int)newMode;
-		ControlMode = ControlMode;
 		UpdateIndicatorVisibility();
 
 		return Task.CompletedTask;
