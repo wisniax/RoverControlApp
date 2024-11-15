@@ -27,9 +27,15 @@ public class SamplerController : IRoverSamplerController
 			DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
 			PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
 			DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
-			ExtendContainer1 = Input.IsActionJustPressed("sampler_container_1") ? !lastState.ExtendContainer1 : lastState.ExtendContainer1,
-			ExtendContainer2 = Input.IsActionJustPressed("sampler_container_2") ? !lastState.ExtendContainer2 : lastState.ExtendContainer2,
-			OpenSkibidi = Input.IsActionJustPressed("sampler_open_skibidi") ? !lastState.OpenSkibidi : lastState.OpenSkibidi,
+			ContainerDegrees0 = Input.IsActionJustPressed("sampler_container_0") ? FloatSwapper(lastState.ContainerDegrees0,
+					LocalSettings.Singleton.Sampler.ContainerDegreesOpened0, LocalSettings.Singleton.Sampler.ContainerDegreesClosed0)
+							: lastState.ContainerDegrees0,
+			ContainerDegrees1 = Input.IsActionJustPressed("sampler_container_1") ? FloatSwapper(lastState.ContainerDegrees1, 
+				LocalSettings.Singleton.Sampler.ContainerDegreesOpened1, LocalSettings.Singleton.Sampler.ContainerDegreesClosed1) 
+							: lastState.ContainerDegrees1,
+			ContainerDegrees2 = Input.IsActionJustPressed("sampler_container_2") ? FloatSwapper(lastState.ContainerDegrees2,
+					LocalSettings.Singleton.Sampler.ContainerDegreesOpened2, LocalSettings.Singleton.Sampler.ContainerDegreesClosed2)
+							: lastState.ContainerDegrees2,
 
 			Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
 		};
@@ -37,4 +43,8 @@ public class SamplerController : IRoverSamplerController
 		return samplerControl;
 	}
 
+	private float FloatSwapper(float lastState, float openState, float closeState)
+	{
+		return 0f;
+	}
 }

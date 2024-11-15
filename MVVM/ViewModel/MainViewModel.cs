@@ -267,9 +267,9 @@ namespace RoverControlApp.MVVM.ViewModel
 					FancyDebugViewRLab.AppendText($"PressedKeys: Sampler DrillAction: {PressedKeys.SamplerMovement.DrillAction:F2}, " +
 					                              $"DrillMov: {PressedKeys.SamplerMovement.DrillMovement:F2}, " +
 					                              $"PlatformMov: {PressedKeys.SamplerMovement.PlatformMovement:F2}, " +
-					                              $"Container1: {((PressedKeys.SamplerMovement.ExtendContainer1) ? "Extended" : "Retracted")}, " +
-					                              $"Container2: {((PressedKeys.SamplerMovement.ExtendContainer2) ? "Extended" : "Retracted")}, " +
-					                              $"Skibidi: {((PressedKeys.SamplerMovement.OpenSkibidi) ? "Opened" : "Closed")}\n");
+												  $"Container0: {PressedKeys.SamplerMovement.ContainerDegrees0:F1}, " +
+					                              $"Container1: {PressedKeys.SamplerMovement.ContainerDegrees1:F1}, " +
+					                              $"Container2: {PressedKeys.SamplerMovement.ContainerDegrees2:F1}\n");
 					break;
 			}
 
