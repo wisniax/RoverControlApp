@@ -27,24 +27,16 @@ public class SamplerController : IRoverSamplerController
 			DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
 			PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
 			DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
-			ContainerDegrees0 = Input.IsActionJustPressed("sampler_container_0") ? FloatSwapper(lastState.ContainerDegrees0,
-					LocalSettings.Singleton.Sampler.ContainerDegreesOpened0, LocalSettings.Singleton.Sampler.ContainerDegreesClosed0)
-							: lastState.ContainerDegrees0,
-			ContainerDegrees1 = Input.IsActionJustPressed("sampler_container_1") ? FloatSwapper(lastState.ContainerDegrees1, 
-				LocalSettings.Singleton.Sampler.ContainerDegreesOpened1, LocalSettings.Singleton.Sampler.ContainerDegreesClosed1) 
-							: lastState.ContainerDegrees1,
-			ContainerDegrees2 = Input.IsActionJustPressed("sampler_container_2") ? FloatSwapper(lastState.ContainerDegrees2,
-					LocalSettings.Singleton.Sampler.ContainerDegreesOpened2, LocalSettings.Singleton.Sampler.ContainerDegreesClosed2)
-							: lastState.ContainerDegrees2,
+			ContainerDegrees0 = Input.IsActionJustPressed("sampler_container_0") ? (lastState.ContainerDegrees0 == LocalSettings.Singleton.Sampler.ContainerDegreesOpened0)
+					? LocalSettings.Singleton.Sampler.ContainerDegreesClosed0 : LocalSettings.Singleton.Sampler.ContainerDegreesOpened0 : lastState.ContainerDegrees0,
+			ContainerDegrees1 = Input.IsActionJustPressed("sampler_container_1") ? (lastState.ContainerDegrees1 == LocalSettings.Singleton.Sampler.ContainerDegreesOpened1)
+					? LocalSettings.Singleton.Sampler.ContainerDegreesClosed1 : LocalSettings.Singleton.Sampler.ContainerDegreesOpened1 : lastState.ContainerDegrees1,
+			ContainerDegrees2 = Input.IsActionJustPressed("sampler_container_2") ? (lastState.ContainerDegrees2 == LocalSettings.Singleton.Sampler.ContainerDegreesOpened2)
+					? LocalSettings.Singleton.Sampler.ContainerDegreesClosed2 : LocalSettings.Singleton.Sampler.ContainerDegreesOpened2 : lastState.ContainerDegrees2,
 
 			Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
 		};
 
 		return samplerControl;
-	}
-
-	private float FloatSwapper(float lastState, float openState, float closeState)
-	{
-		return 0f;
 	}
 }
