@@ -12,120 +12,50 @@ public partial class Sampler : SettingBase, ICloneable
 
 	public Sampler()
 	{
-		_containerDegreesClosed0 = 0f;
-		_containerDegreesOpened0 = 180f;
-		_containerDegreesClosed1 = 0f;
-		_containerDegreesOpened1 = 180f;
-		_containerDegreesClosed2 = 0f;
-		_containerDegreesOpened2 = 180f;
+		_container0 = new();
+		_container1 = new();
+		_container2 = new();
 	}
 
-	public Sampler(int roverDriveController, float deadzone, bool vibrateOnModeChange, float containerDegreesClosed0, float containerDegreesOpened0, float containerDegreesClosed1, float containerDegreesOpened1, float containerDegreesClosed2, float containerDegreesOpened2)
+	public Sampler(SamplerContainer container0, SamplerContainer container1, SamplerContainer container2)
 	{
-		_roverDriveController = roverDriveController;
-		_deadzone = deadzone;
-		_vibrateOnModeChange = vibrateOnModeChange;
-		ContainerDegreesClosed0 = containerDegreesClosed0;
-		ContainerDegreesOpened0 = containerDegreesOpened0;
-		ContainerDegreesClosed1 = containerDegreesClosed1;
-		ContainerDegreesOpened1 = containerDegreesOpened1;
-		ContainerDegreesClosed2 = containerDegreesClosed2;
-		ContainerDegreesOpened2 = containerDegreesOpened2;
+		_container0 = container0;
+		_container1 = container1;
+		_container2 = container2;
 	}
 
 	public object Clone()
 	{
 		return new Sampler()
 		{
-			RoverDriveController = _roverDriveController,
-			Deadzone = _deadzone,
-			VibrateOnModeChange = _vibrateOnModeChange,
-			ContainerDegreesClosed0 = _containerDegreesClosed0,
-			ContainerDegreesOpened0 = _containerDegreesOpened0,
-			ContainerDegreesClosed1 = _containerDegreesClosed1,
-			ContainerDegreesOpened1 = _containerDegreesOpened1,
-			ContainerDegreesClosed2 = _containerDegreesClosed2,
-			ContainerDegreesOpened2 = _containerDegreesOpened2
+			Container0 = _container0,
+			Container1 = _container1,
+			Container2 = _container2
 		};
 	}
 
-	[SettingsManagerVisible(
-		cellMode: TreeItem.TreeCellMode.Range,
-		formatData: "0;3;1;f;i",
-		customTooltip: "0 - GoodOldGamesLikeController\n" +
-		               "1 - EricSOnController\n" +
-		               "2 - ForzaLikeController\n" +
-		               "3 - DirectDriveController (Default)"
-	)]
-	public int RoverDriveController
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
+	public SamplerContainer Container0
 	{
-		get => _roverDriveController;
-		set => EmitSignal_SettingChanged(ref _roverDriveController, value);
+		get => _container0;
+		set => EmitSignal_SectionChanged(ref _container0, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
-	public float Deadzone
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
+	public SamplerContainer Container1
 	{
-		get => _deadzone;
-		set => EmitSignal_SettingChanged(ref _deadzone, value);
+		get => _container1;
+		set => EmitSignal_SectionChanged(ref _container1, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-	public bool VibrateOnModeChange
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
+	public SamplerContainer Container2
 	{
-		get => _vibrateOnModeChange;
-		set => EmitSignal_SettingChanged(ref _vibrateOnModeChange, value);
+		get => _container2;
+		set => EmitSignal_SectionChanged(ref _container2, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;180;0.1;f;f")]
-	public float ContainerDegreesClosed0
-	{
-		get => _containerDegreesClosed0;
-		set => EmitSignal_SettingChanged(ref _containerDegreesClosed0, value);
-	}
-
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;180;0.1;f;f")]
-	public float ContainerDegreesOpened0
-	{
-		get => _containerDegreesOpened0;
-		set => EmitSignal_SettingChanged(ref _containerDegreesOpened0, value);
-	}
-
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;180;0.1;f;f")]
-	public float ContainerDegreesClosed1
-	{
-		get => _containerDegreesClosed1;
-		set => EmitSignal_SettingChanged(ref _containerDegreesClosed1, value);
-	}
-
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;180;0.1;f;f")]
-	public float ContainerDegreesOpened1
-	{
-		get => _containerDegreesOpened1;
-		set => EmitSignal_SettingChanged(ref _containerDegreesOpened1, value);
-	}
-
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;180;0.1;f;f")]
-	public float ContainerDegreesClosed2
-	{
-		get => _containerDegreesClosed2;
-		set => EmitSignal_SettingChanged(ref _containerDegreesClosed2, value);
-	}
-
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;180;0.1;f;f")]
-	public float ContainerDegreesOpened2
-	{
-		get => _containerDegreesOpened2;
-		set => EmitSignal_SettingChanged(ref _containerDegreesOpened2, value);
-	}
-
-	int _roverDriveController;
-	float _deadzone;
-	bool _vibrateOnModeChange;
-	float _containerDegreesClosed0;
-	float _containerDegreesOpened0;
-	float _containerDegreesClosed1;
-	float _containerDegreesOpened1;
-	float _containerDegreesClosed2;
-	float _containerDegreesOpened2;
+	SamplerContainer _container0;
+	SamplerContainer _container1;
+	SamplerContainer _container2;
 }

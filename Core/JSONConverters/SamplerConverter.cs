@@ -14,15 +14,9 @@ public class SamplerConverter : JsonConverter<Sampler>
 		if (reader.TokenType != JsonTokenType.StartObject)
 			throw new JsonException("Expected start of an object.");
 
-		int? roverDriveController = null;
-		float? deadzone = null;
-		bool? vibrateOnModeChange = null;
-		float? containerDegreesClosed0 = null;
-		float? containerDegreesOpened0 = null;
-		float? containerDegreesClosed1 = null;
-		float? containerDegreesOpened1 = null;
-		float? containerDegreesClosed2 = null;
-		float? containerDegreesOpened2 = null;
+		SamplerContainer? container0 = null;
+		SamplerContainer? container1 = null;
+		SamplerContainer? container2 = null;
 
 		while (reader.Read())
 		{
@@ -37,33 +31,16 @@ public class SamplerConverter : JsonConverter<Sampler>
 
 			switch (propertyName)
 			{
-				case nameof(Sampler.RoverDriveController):
-					roverDriveController = reader.GetInt32();
+				case nameof(Sampler.Container0):
+					container0 = JsonSerializer.Deserialize<SamplerContainer>(ref reader, options);
 					break;
-				case nameof(Sampler.Deadzone):
-					deadzone = reader.GetSingle();
+				case nameof(Sampler.Container1):
+					container1 = JsonSerializer.Deserialize<SamplerContainer>(ref reader, options);
 					break;
-				case nameof(Sampler.VibrateOnModeChange):
-					vibrateOnModeChange = reader.GetBoolean();
+				case nameof(Sampler.Container2):
+					container2 = JsonSerializer.Deserialize<SamplerContainer>(ref reader, options);
 					break;
-				case nameof(Sampler.ContainerDegreesClosed0):
-					containerDegreesClosed0 = reader.GetSingle();
-					break;
-				case nameof(Sampler.ContainerDegreesOpened0):
-					containerDegreesOpened0 = reader.GetSingle();
-					break;
-				case nameof(Sampler.ContainerDegreesClosed1):
-					containerDegreesClosed1 = reader.GetSingle();
-					break;
-				case nameof(Sampler.ContainerDegreesOpened1):
-					containerDegreesOpened1 = reader.GetSingle();
-					break;
-				case nameof(Sampler.ContainerDegreesClosed2):
-					containerDegreesClosed2 = reader.GetSingle();
-					break;
-				case nameof(Sampler.ContainerDegreesOpened2):
-					containerDegreesOpened2 = reader.GetSingle();
-					break;
+				
 				default:
 					reader.Skip();
 					break;
@@ -72,31 +49,21 @@ public class SamplerConverter : JsonConverter<Sampler>
 
 		return new Sampler
 		(
-			roverDriveController ?? Default.RoverDriveController,
-			deadzone ?? Default.Deadzone,
-			vibrateOnModeChange ?? Default.VibrateOnModeChange,
-			containerDegreesClosed0 ?? Default.ContainerDegreesClosed0,
-			containerDegreesOpened0 ?? Default.ContainerDegreesOpened0,
-			containerDegreesClosed1 ?? Default.ContainerDegreesClosed1,
-			containerDegreesOpened1 ?? Default.ContainerDegreesOpened1,
-			containerDegreesClosed2 ?? Default.ContainerDegreesClosed2,
-			containerDegreesOpened2 ?? Default.ContainerDegreesOpened2
-
+			container0 ?? Default.Container0,
+			container1 ?? Default.Container1,
+			container2 ?? Default.Container2
 		);
 	}
 
 	public override void Write(Utf8JsonWriter writer, Sampler value, JsonSerializerOptions options)
 	{
 		writer.WriteStartObject();
-		writer.WriteNumber(nameof(Sampler.RoverDriveController), value.RoverDriveController);
-		writer.WriteNumber(nameof(Sampler.Deadzone), value.Deadzone);
-		writer.WriteBoolean(nameof(Sampler.VibrateOnModeChange), value.VibrateOnModeChange);
-		writer.WriteNumber(nameof(Sampler.ContainerDegreesClosed0), value.ContainerDegreesClosed0);
-		writer.WriteNumber(nameof(Sampler.ContainerDegreesOpened0), value.ContainerDegreesOpened0);
-		writer.WriteNumber(nameof(Sampler.ContainerDegreesClosed1), value.ContainerDegreesClosed1);
-		writer.WriteNumber(nameof(Sampler.ContainerDegreesOpened1), value.ContainerDegreesOpened1);
-		writer.WriteNumber(nameof(Sampler.ContainerDegreesClosed2), value.ContainerDegreesClosed2);
-		writer.WriteNumber(nameof(Sampler.ContainerDegreesOpened2), value.ContainerDegreesOpened2);
+		writer.WritePropertyName(nameof(Sampler.Container0));
+		JsonSerializer.Serialize(writer, value.Container0, options);
+		writer.WritePropertyName(nameof(Sampler.Container1));
+		JsonSerializer.Serialize(writer, value.Container1, options);
+		writer.WritePropertyName(nameof(Sampler.Container2));
+		JsonSerializer.Serialize(writer, value.Container2, options);
 		writer.WriteEndObject();
 	}
 }

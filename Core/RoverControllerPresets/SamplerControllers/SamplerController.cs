@@ -27,12 +27,12 @@ public class SamplerController : IRoverSamplerController
 			DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
 			PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
 			DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
-			ContainerDegrees0 = Input.IsActionJustPressed("sampler_container_0") ? (lastState.ContainerDegrees0 == LocalSettings.Singleton.Sampler.ContainerDegreesOpened0)
-					? LocalSettings.Singleton.Sampler.ContainerDegreesClosed0 : LocalSettings.Singleton.Sampler.ContainerDegreesOpened0 : lastState.ContainerDegrees0,
-			ContainerDegrees1 = Input.IsActionJustPressed("sampler_container_1") ? (lastState.ContainerDegrees1 == LocalSettings.Singleton.Sampler.ContainerDegreesOpened1)
-					? LocalSettings.Singleton.Sampler.ContainerDegreesClosed1 : LocalSettings.Singleton.Sampler.ContainerDegreesOpened1 : lastState.ContainerDegrees1,
-			ContainerDegrees2 = Input.IsActionJustPressed("sampler_container_2") ? (lastState.ContainerDegrees2 == LocalSettings.Singleton.Sampler.ContainerDegreesOpened2)
-					? LocalSettings.Singleton.Sampler.ContainerDegreesClosed2 : LocalSettings.Singleton.Sampler.ContainerDegreesOpened2 : lastState.ContainerDegrees2,
+			ContainerDegrees0 = Input.IsActionJustPressed("sampler_container_0") ? Mathf.IsEqualApprox(lastState.ContainerDegrees0, LocalSettings.Singleton.Sampler.Container0.OpenDegrees)
+					? LocalSettings.Singleton.Sampler.Container0.ClosedDegrees : LocalSettings.Singleton.Sampler.Container0.OpenDegrees : lastState.ContainerDegrees0,
+			ContainerDegrees1 = Input.IsActionJustPressed("sampler_container_1") ? Mathf.IsEqualApprox(lastState.ContainerDegrees1, LocalSettings.Singleton.Sampler.Container1.OpenDegrees)
+					? LocalSettings.Singleton.Sampler.Container1.ClosedDegrees : LocalSettings.Singleton.Sampler.Container1.OpenDegrees : lastState.ContainerDegrees1,
+			ContainerDegrees2 = Input.IsActionJustPressed("sampler_container_2") ? Mathf.IsEqualApprox(lastState.ContainerDegrees2, LocalSettings.Singleton.Sampler.Container2.OpenDegrees)
+					? LocalSettings.Singleton.Sampler.Container2.ClosedDegrees : LocalSettings.Singleton.Sampler.Container2.OpenDegrees : lastState.ContainerDegrees2,
 
 			Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds()
 		};
