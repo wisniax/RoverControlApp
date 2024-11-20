@@ -31,6 +31,10 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private RoverMode_UIOverlay RoverModeUIDis = null!;
 		[Export]
+		private DriveMode_UIOverlay DriveModeUIDis = null!;
+		[Export]
+		private SafeMode_UIOverlay SafeModeUIDis = null!;
+		[Export]
 		private Grzyb_UIOverlay GrzybUIDis = null!;
 		[Export]
 		private MissionStatus_UIOverlay MissionStatusUIDis = null!;
@@ -63,6 +67,9 @@ namespace RoverControlApp.MVVM.ViewModel
 			SettingsManagerNode.Target = LocalSettings.Singleton;
 
 			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.OnKinematicModeChanged += DriveModeUIDis.KinematicModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
@@ -90,6 +97,9 @@ namespace RoverControlApp.MVVM.ViewModel
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 
 			PressedKeys.OnControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.OnKinematicModeChanged -= DriveModeUIDis.KinematicModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged -= DriveModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
@@ -249,16 +259,18 @@ namespace RoverControlApp.MVVM.ViewModel
 			string? rtspAge = rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 			string? ptzAge = ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
-			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode},\t" +
-						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication?.RoverStatus?.CommunicationState}[/color],\t" +
+			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode}, " + 
+			              $"{(RoverCommunication?.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
+						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication?.RoverStatus?.CommunicationState}[/color], " +
 						  $"Pad connected: {RoverCommunication?.RoverStatus?.PadConnected}\n");
 			switch (RoverCommunication?.RoverStatus?.ControlMode)
 			{
 				case MqttClasses.ControlMode.Rover:
-					var vecc = new Vector2((float)PressedKeys.RoverMovement.XVelAxis, (float)PressedKeys.RoverMovement.ZRotAxis);
-					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {vecc.Length():F3}, " +
-												  $"Angle: " +
-												  $"{vecc.Angle() * 180 / Mathf.Pi:F1}\n");
+					var vecc = new Vector3((float)PressedKeys.RoverMovement.Vel, (float)PressedKeys.RoverMovement.XAxis,
+						(float)PressedKeys.RoverMovement.YAxis);
+
+					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {vecc.X:F2}, XAxis: {vecc.Y:F2}, YAxis: {vecc.Z:F2}, Mode: {PressedKeys.RoverMovement.Mode}\n");
+					
 					break;
 				case MqttClasses.ControlMode.Manipulator:
 					FancyDebugViewRLab.AppendText($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys?.ManipulatorMovement)}\n");
