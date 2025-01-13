@@ -52,6 +52,7 @@ namespace RoverControlApp.MVVM.Model
 			pressedKeys.OnPadConnectionChanged += OnPadConnectionChanged;
 			pressedKeys.OnRoverMovementVector += RoverMovementVectorChanged;
 			pressedKeys.OnManipulatorMovement += RoverManipulatorVectorChanged;
+			pressedKeys.OnSamplerMovement += RoverSamplerVectorChanged;
 			pressedKeys.OnContainerMovement += PressedKeysOnOnContainerMovement;
 
 			missionStatus.OnRoverMissionStatusChanged += OnRoverMissionStatusChanged;
@@ -108,6 +109,11 @@ namespace RoverControlApp.MVVM.Model
 		{
 			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicManipulatorControl,
 				JsonSerializer.Serialize(manipulatorControl));
+		}
+		private async Task RoverSamplerVectorChanged(MqttClasses.SamplerControl samplerControl)
+		{
+			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicSamplerControl,
+				JsonSerializer.Serialize(samplerControl));
 		}
 
 		protected virtual void Dispose(bool disposing)

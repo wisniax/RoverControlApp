@@ -15,7 +15,8 @@ namespace RoverControlApp.Core
 			EStop = 0,
 			Rover = 1,
 			Manipulator = 2,
-			Autonomy = 3
+			Sampler = 3,
+			Autonomy = 4
 		}
 		public enum KinematicMode
 		{
@@ -97,6 +98,18 @@ namespace RoverControlApp.Core
 			}
 		}
 
+		public class SamplerControl
+		{
+			public float DrillMovement { get; set; } = 0f;
+			public float PlatformMovement { get; set; } = 0f;
+			public float DrillAction { get; set; } = 0f;
+			public float ContainerDegrees0 { get; set; } = 0f;
+			public float ContainerDegrees1 { get; set; } = 0f;
+			public float ContainerDegrees2 { get; set; } = 0f;
+			
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+		
 		public class RoverContainer
 		{
 			public float Axis1 { get; set; } = 0f;

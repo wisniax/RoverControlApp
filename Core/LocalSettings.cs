@@ -18,6 +18,7 @@ public partial class LocalSettings : Node
 		public Settings.Joystick? Joystick { get; set; } = null;
 		public Settings.SpeedLimiter? SpeedLimiter { get; set; } = null;
 		public Settings.General? General { get; set; } = null;
+		public Settings.Sampler? Sampler { get; set; } = null;
 	}
 
 	private JsonSerializerOptions serializerOptions = new() { WriteIndented = true };
@@ -53,6 +54,7 @@ public partial class LocalSettings : Node
 		_joystick = new();
 		_speedLimiter = new();
 		_general = new();
+		_sampler = new();
 
 		if (LoadSettings()) return;
 
@@ -87,6 +89,7 @@ public partial class LocalSettings : Node
 			Joystick = packedSettings.Joystick ?? new();
 			SpeedLimiter = packedSettings.SpeedLimiter ?? new();
 			General = packedSettings.General ?? new();
+			Sampler = packedSettings.Sampler ?? new();
 		}
 		catch (Exception e)
 		{
@@ -116,7 +119,8 @@ public partial class LocalSettings : Node
 				Mqtt = Mqtt,
 				Joystick = Joystick,
 				SpeedLimiter = SpeedLimiter,
-				General = General
+				General = General,
+				Sampler = Sampler
 			};
 
 			settingsFileAccess.StoreString(JsonSerializer.Serialize(packedSettings, serializerOptions));
@@ -142,6 +146,7 @@ public partial class LocalSettings : Node
 		Joystick = new();
 		SpeedLimiter = new();
 		General = new();
+		Sampler = new();
 	}
 
 	private void EmitSignalCategoryChanged(string sectionName)
@@ -279,11 +284,33 @@ public partial class LocalSettings : Node
 		}
 	}
 
+	[SettingsManagerVisible(customName: "Sampler Settings")]
+	public Settings.Sampler Sampler
+	{
+		get => _sampler;
+		set
+		{
+			_sampler = value;
+
+			_sampler.Connect(
+				Settings.Sampler.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
+			);
+			_sampler.Connect(
+				Settings.Sampler.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(Sampler));
+		}
+	}
+
 	Settings.Camera _camera;
 	Settings.Mqtt _mqtt;
 	Settings.Joystick _joystick;
 	Settings.SpeedLimiter _speedLimiter;
 	Settings.General _general;
+	Settings.Sampler _sampler;
 }
 
 
