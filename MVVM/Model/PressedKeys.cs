@@ -13,6 +13,7 @@ namespace RoverControlApp.MVVM.Model
 	public class PressedKeys : IDisposable
 	{
 		private volatile ControlMode _controlMode;
+		private volatile KinematicMode _kinematicMode;
 		private Vector4 _lastAbsoluteVector;
 		private RoverControl _roverMovement;
 		private ManipulatorControl _manipulatorMovement;
@@ -30,6 +31,7 @@ namespace RoverControlApp.MVVM.Model
 		public event Func<RoverContainer, Task>? OnContainerMovement;
 		public event Func<bool, Task>? OnPadConnectionChanged;
 		public event Func<ControlMode, Task>? OnControlModeChanged;
+		public event Func<KinematicMode, Task>? OnKinematicModeChanged;
 
 		public ControlMode ControlMode
 		{
@@ -39,6 +41,18 @@ namespace RoverControlApp.MVVM.Model
 				_controlMode = value;
 				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Control Mode changed {value}");
 				OnControlModeChanged?.Invoke(value);
+			}
+		}
+
+		public KinematicMode KinematicMode
+		{
+			get => _kinematicMode;
+			private set
+			{
+				if(_kinematicMode == value) return;
+				_kinematicMode = value;
+				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Kinematic Mode changed {value}");
+				OnKinematicModeChanged?.Invoke(value);
 			}
 		}
 
@@ -162,6 +176,8 @@ namespace RoverControlApp.MVVM.Model
 			HandleManipulatorInputEvent();
 			HandleContainerInputEvent();
 			HandleSamplerInputEvent();
+			HandleDriveModeChangeToggle();
+			HandleDriveModeChangeHold();
 		}
 
 		private void HandleContainerInputEvent()
@@ -204,12 +220,6 @@ namespace RoverControlApp.MVVM.Model
 			absoluteVector4.Z = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, LocalSettings.Singleton.Joystick.Deadzone)) ? 0 : velocity.X;
 			absoluteVector4.W = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, LocalSettings.Singleton.Joystick.Deadzone)) ? 0 : velocity.Y;
 
-			if (Input.IsActionPressed("camera_zoom_mod"))
-			{
-				absoluteVector4.X /= 8f;
-				absoluteVector4.Y /= 8f;
-			}
-
 			absoluteVector4 = absoluteVector4.Clamp(new Vector4(-1f, -1f, -1f, -1f), new Vector4(1f, 1f, 1f, 1f));
 			LastAbsoluteVector = absoluteVector4;
 		}
@@ -217,9 +227,12 @@ namespace RoverControlApp.MVVM.Model
 		private void HandleMovementInputEvent()
 		{
 			if (ControlMode != ControlMode.Rover) return;
-			
+
 			RoverControl roverControl = _roverDriveControllerPreset.CalculateMoveVector();
-			if (_roverDriveControllerPreset.IsMoveVectorChanged(roverControl, RoverMovement))
+
+			roverControl.Mode = _roverDriveControllerPreset.Mode;
+
+			if (_roverDriveControllerPreset.IsMoveVectorChanged(roverControl, RoverMovement) || RoverMovement.Mode != roverControl.Mode)
 				RoverMovement = roverControl;
 		}
 		private void HandleFunctionInputEvent()
@@ -239,10 +252,55 @@ namespace RoverControlApp.MVVM.Model
 			StopAll();
 		}
 
+		private void HandleDriveModeChangeToggle()
+		{
+			if (LocalSettings.Singleton.Joystick.RoverDriveController != (int)RoverDriveControllerSelector.Controller.DirectDrive) return;
+
+			if (!LocalSettings.Singleton.Joystick.ToggleableKinematics) return;
+
+			if (ControlMode != ControlMode.Rover) return;
+
+			if (Input.IsActionJustPressed("crab_mode", true))
+				KinematicMode = KinematicMode.Crab;
+			else if (Input.IsActionJustPressed("spinner_mode", true))
+				KinematicMode = KinematicMode.Spinner;
+			else if (Input.IsActionJustPressed("ackermann_mode", true))
+				KinematicMode = KinematicMode.Ackermann;
+			else if (Input.IsActionJustPressed("ebrake_mode", true))
+				KinematicMode = KinematicMode.EBrake;
+			
+			_roverDriveControllerPreset.Mode = KinematicMode;
+
+			HandleMovementInputEvent();
+		}
+
+		void HandleDriveModeChangeHold()
+		{
+			if (LocalSettings.Singleton.Joystick.RoverDriveController != (int)RoverDriveControllerSelector.Controller.DirectDrive) return;
+
+			if (LocalSettings.Singleton.Joystick.ToggleableKinematics) return;
+
+			if (ControlMode != ControlMode.Rover) return;
+
+
+			if (Input.IsActionPressed("crab_mode", true))
+				KinematicMode = KinematicMode.Crab;
+			else if (Input.IsActionPressed("spinner_mode", true))
+				KinematicMode = KinematicMode.Spinner;
+			else if (Input.IsActionPressed("ebrake_mode", true))
+				KinematicMode = KinematicMode.EBrake;
+			else
+				KinematicMode = KinematicMode.Ackermann;
+
+			_roverDriveControllerPreset.Mode = KinematicMode;
+
+			HandleMovementInputEvent();
+		}
+
 		private void StopAll()
 		{
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
-			RoverMovement = new RoverControl() { XVelAxis = 0, ZRotAxis = 0 };
+			RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = _kinematicMode};
 			ContainerMovement = new RoverContainer { Axis1 = 0f };
 			ManipulatorMovement = new ManipulatorControl();
 
