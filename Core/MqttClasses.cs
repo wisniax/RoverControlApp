@@ -109,7 +109,20 @@ namespace RoverControlApp.Core
 			
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
-		
+
+		public class BatteryInfo
+		{
+			public int Slot { get; set; }
+			public int ID { get; set; }
+			public float ChargePercent { get; set; }
+			public float Voltage { get; set; }
+
+			public int Status { get; set; }
+			public float Current { get; set; }
+			public int Temperature { get; set; }
+			public int Time { get; set; }
+		}
+
 		public class RoverContainer
 		{
 			public float Axis1 { get; set; } = 0f;
