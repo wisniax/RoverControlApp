@@ -25,6 +25,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicZedImuData = "TopicZedImuData";
 		_topicKmlListOfActiveObj = "KMLNode/ActiveKMLObjects";
 		_topicSamplerControlControl = "SamplerControl";
+		_topicBatteryInfo = "BatteryInfo";
 	}
 
 	public Mqtt
@@ -41,7 +42,8 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicEStopStatus,
 		string topicZedImuData,
 		string topicKmlListOfActiveObj,
-		string topicSamplerControlControl
+		string topicSamplerControlControl,
+		string topicBatteryInfo
 
 	)
 	{
@@ -58,6 +60,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicZedImuData = topicZedImuData;
 		_topicKmlListOfActiveObj = topicKmlListOfActiveObj;
 		_topicSamplerControlControl = topicSamplerControlControl;
+		_topicBatteryInfo = TopicBatteryInfo;
 	}
 
 	public object Clone()
@@ -77,7 +80,8 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicZedImuData = _topicZedImuData,
 			TopicEStopStatus = _topicEStopStatus,
 			TopicKmlListOfActiveObj = _topicKmlListOfActiveObj,
-			TopicSamplerControl = _topicSamplerControlControl
+			TopicSamplerControl = _topicSamplerControlControl,
+			TopicBatteryInfo = _topicBatteryInfo
 		};
 	}
 
@@ -172,6 +176,13 @@ public partial class Mqtt : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _topicSamplerControlControl, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicBatteryInfo
+	{
+		get => _topicBatteryInfo;
+		set => EmitSignal_SettingChanged(ref _topicBatteryInfo, value);
+	}
+
 
 	MqttClientOptions _clientSettings;
 
@@ -187,6 +198,7 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicZedImuData;
 	string _topicKmlListOfActiveObj;
 	string _topicSamplerControlControl;
+	string _topicBatteryInfo;
 }
 
 

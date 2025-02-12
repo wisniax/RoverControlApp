@@ -50,7 +50,16 @@ namespace RoverControlApp.Core
 			Generic = 1,
 			Spheric = 2
 		}
-
+		public enum BatteryStatus
+		{
+			Disconnected = 0,
+			Charging = 1,
+			Discharging = 2,
+			Full = 3,
+			Rest = 4,
+			Fault = 5,
+			Empty = 6
+		}
 		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
@@ -117,7 +126,7 @@ namespace RoverControlApp.Core
 			public float ChargePercent { get; set; }
 			public float Voltage { get; set; }
 
-			public int Status { get; set; }
+			public BatteryStatus Status { get; set; }
 			public float Current { get; set; }
 			public int Temperature { get; set; }
 			public int Time { get; set; }
