@@ -1,15 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://b708qfhwxacw0"]
+[gd_scene format=3 uid="uid://b708qfhwxacw0"]
 
-[ext_resource type="Script" path="res://MVVM/ViewModel/BatteryMonitor.cs" id="1_i5gou"]
-
-[node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("batBox1", "batBox2", "batBox3", "batBox4")]
+[node name="BatteryMonitor" type="Panel"]
 offset_right = 400.0
 offset_bottom = 189.0
-script = ExtResource("1_i5gou")
-batBox1 = NodePath("BatBoxes/Batt1/HBoxContainer/BatBox1")
-batBox2 = NodePath("BatBoxes/Batt2/HBoxContainer/BatBox2")
-batBox3 = NodePath("BatBoxes/Batt3/HBoxContainer/BatBox3")
-batBox4 = NodePath("BatBoxes/Batt4/HBoxContainer/BatBox4")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
