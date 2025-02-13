@@ -299,10 +299,10 @@ offset_bottom = -40.0
 
 [node name="BatteryMonitor" parent="." instance=ExtResource("13_gec13")]
 layout_mode = 0
-offset_left = 5.0
-offset_top = 38.0
-offset_right = 405.0
-offset_bottom = 261.0
+offset_left = 7.0
+offset_top = 35.0
+offset_right = 407.0
+offset_bottom = 224.0
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
