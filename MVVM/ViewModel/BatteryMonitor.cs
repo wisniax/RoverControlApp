@@ -17,6 +17,13 @@ public partial class BatteryMonitor : Panel
 
 	public event Func<MqttClasses.BatteryInfo?, Task>? BatteryInfoChanged;
 
+	private MqttClasses.BatteryInfo data;
+
+	private MqttClasses.BatteryInfo batt1;
+	private MqttClasses.BatteryInfo batt2;
+	private MqttClasses.BatteryInfo batt3;
+	private MqttClasses.BatteryInfo batt4;
+
 	public override void _EnterTree()
 	{
 		MqttNode.Singleton.MessageReceivedAsync += OnBatteryInfoChanged;
@@ -38,21 +45,25 @@ public partial class BatteryMonitor : Panel
 		}
 
 		VBoxContainer updateBox = null;
-		MqttClasses.BatteryInfo data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
+		data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
 
 		switch (data.Slot)
 		{
 			case 1:
-				UpdateLabels(batBox1, data);
+				CallDeferred("UpdateLabels",batBox1);
+				batt1 = data;
 				break;
 			case 2:
-				UpdateLabels(batBox2, data);
+				CallDeferred("UpdateLabels", batBox2);
+				batt2 = data;
 				break;
 			case 3:
-				UpdateLabels(batBox3, data);
+				CallDeferred("UpdateLabels", batBox3);
+				batt3 = data;
 				break;
 			case 4:
-				UpdateLabels(batBox4, data);
+				CallDeferred("UpdateLabels", batBox4);
+				batt4 = data;
 				break;
 			default:
 				EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Invalid battery slot");
@@ -63,7 +74,7 @@ public partial class BatteryMonitor : Panel
 		return Task.CompletedTask;
 	}
 
-	void UpdateLabels(VBoxContainer container, MqttClasses.BatteryInfo data)
+	void UpdateLabels(VBoxContainer container)
 	{
 		container.GetNode<Label>("IdLabel").Text = "Battery ID: " + data.ID;
 		container.GetNode<Label>("PercLabel").Text = "Battery %: " + data.ChargePercent.ToString("F1") + "%";
