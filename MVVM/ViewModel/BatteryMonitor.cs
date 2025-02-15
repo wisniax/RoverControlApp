@@ -78,8 +78,15 @@ public partial class BatteryMonitor : Panel
 	{
 		container.GetNode<Label>("IdLabel").Text = "Battery ID: " + data.ID;
 		container.GetNode<Label>("PercLabel").Text = "Battery %: " + data.ChargePercent.ToString("F1") + "%";
-		container.GetNode<Label>("VbatLabel").Text = "VBat: " + data.Voltage.ToString("F2") + "V";
-		//todo czerwony kolor dla niskiego poziomu baterii
+		
+		container.GetNode<Label>("VbatLabel").Text = "VBat: " + data.Voltage.ToString("F1") + "V";
+		if(data.Voltage < 6*3.6)
+			container.GetNode<Label>("VbatLabel").SetModulate(Colors.Yellow);
+		else if(data.Voltage < 6*3.3)
+			container.GetNode<Label>("VbatLabel").SetModulate(Colors.Red);
+		else
+			container.GetNode<Label>("VbatLabel").SetModulate(Colors.White);
+
 		container.GetNode<Label>("StatusLabel").Text = "Status: " + data.Status.ToString();
 		container.GetNode<Label>("CurrentLabel").Text = "Current: " + data.Current.ToString() + "A";
 		container.GetNode<Label>("TemperatureLabel").Text = "Temperature: " + data.Temperature.ToString("F0") + "C";
