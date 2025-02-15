@@ -289,6 +289,13 @@ offset_bottom = 236.0
 grow_horizontal = 0
 grow_vertical = 1
 
+[node name="BatteryMonitor" parent="." instance=ExtResource("13_gec13")]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 35.0
+offset_right = 407.0
+offset_bottom = 224.0
+
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false
 layout_mode = 1
@@ -297,22 +304,15 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
-[node name="BatteryMonitor" parent="." instance=ExtResource("13_gec13")]
-layout_mode = 0
-offset_left = 7.0
-offset_top = 35.0
-offset_right = 407.0
-offset_bottom = 224.0
-
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]

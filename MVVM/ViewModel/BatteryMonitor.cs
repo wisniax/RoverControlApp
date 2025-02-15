@@ -6,12 +6,16 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using RoverControlApp.MVVM.Model;
 
+namespace RoverControlApp.MVVM.ViewModel;
+
 public partial class BatteryMonitor : Panel
 {
-	[Export] VBoxContainer batBox1;
-	[Export] VBoxContainer batBox2;
-	[Export] VBoxContainer batBox3;
-	[Export] VBoxContainer batBox4;
+	[Export] VBoxContainer batBox1 = null!;
+	[Export] VBoxContainer batBox2 = null!;
+	[Export] VBoxContainer batBox3 = null!;
+	[Export] VBoxContainer batBox4 = null!;
+
+	public event Func<MqttClasses.BatteryInfo?, Task>? BatteryInfoChanged;
 
 	public override void _EnterTree()
 	{
@@ -33,37 +37,43 @@ public partial class BatteryMonitor : Panel
 			return Task.CompletedTask;
 		}
 
-		VBoxContainer updateBox;
+		VBoxContainer updateBox = null;
 		MqttClasses.BatteryInfo data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
 
 		switch (data.Slot)
 		{
 			case 1:
-				updateBox = batBox1;
+				UpdateLabels(batBox1, data);
 				break;
 			case 2:
-				updateBox = batBox2;
+				UpdateLabels(batBox2, data);
 				break;
 			case 3:
-				updateBox = batBox3;
+				UpdateLabels(batBox3, data);
 				break;
 			case 4:
-				updateBox = batBox4;
+				UpdateLabels(batBox4, data);
 				break;
 			default:
 				EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Invalid battery slot");
 				return Task.CompletedTask;
 		}
 
-		updateBox.GetNode<Label>("IdLabel").Text = "Battery ID: " + data.ID;
-		updateBox.GetNode<Label>("PercLabel").Text = "Battery %: " + data.ChargePercent.ToString("F1") + "%";
-		updateBox.GetNode<Label>("VbatLabel").Text = "VBat: " + data.Voltage.ToString("F2") + "V";
-		//todo czerwony kolor dla niskiego poziomu baterii
-		updateBox.GetNode<Label>("StatusLabel").Text = "Status: " + data.Status.ToString();
-		updateBox.GetNode<Label>("CurrentLabel").Text = "Current: " + data.Current.ToString() + "A";
-		updateBox.GetNode<Label>("TemperatureLabel").Text = "Temperature: " + data.Temperature.ToString("F2") + "°C";
-		updateBox.GetNode<Label>("TimeLabel").Text = "Est. Time: " + data.Time.ToString("F2") + "h";
+		
 		return Task.CompletedTask;
+	}
+
+	void UpdateLabels(VBoxContainer container, MqttClasses.BatteryInfo data)
+	{
+		container.GetNode<Label>("IdLabel").Text = "Battery ID: " + data.ID;
+		container.GetNode<Label>("PercLabel").Text = "Battery %: " + data.ChargePercent.ToString("F1") + "%";
+		container.GetNode<Label>("VbatLabel").Text = "VBat: " + data.Voltage.ToString("F2") + "V";
+		//todo czerwony kolor dla niskiego poziomu baterii
+		container.GetNode<Label>("StatusLabel").Text = "Status: " + data.Status.ToString();
+		container.GetNode<Label>("CurrentLabel").Text = "Current: " + data.Current.ToString() + "A";
+		container.GetNode<Label>("TemperatureLabel").Text = "Temperature: " + data.Temperature.ToString("F0") + "C";
+		container.GetNode<Label>("TimeLabel").Text = "Est. Time: " + data.Time.ToString("F0") + "min";
+		//todo wysrodkowanie lub resize panelu
 	}
 
 	// Called when the node enters the scene tree for the first time.

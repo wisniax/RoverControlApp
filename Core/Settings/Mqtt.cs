@@ -60,7 +60,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicZedImuData = topicZedImuData;
 		_topicKmlListOfActiveObj = topicKmlListOfActiveObj;
 		_topicSamplerControlControl = topicSamplerControlControl;
-		_topicBatteryInfo = TopicBatteryInfo;
+		_topicBatteryInfo = topicBatteryInfo;
 	}
 
 	public object Clone()
