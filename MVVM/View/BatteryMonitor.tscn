@@ -36,6 +36,13 @@ theme_override_font_sizes/font_size = 13
 text = "Battery slot: 1"
 horizontal_alignment = 1
 
+[node name="SlotEmpty" type="Label" parent="BatBoxes/Batt1"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Slot Empty!"
+horizontal_alignment = 1
+
 [node name="HBoxContainer" type="HBoxContainer" parent="BatBoxes/Batt1"]
 layout_mode = 2
 alignment = 1
@@ -115,6 +122,13 @@ layout_mode = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 text = "Battery slot: 2"
+horizontal_alignment = 1
+
+[node name="SlotEmpty" type="Label" parent="BatBoxes/Batt2"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Slot Empty!"
 horizontal_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="BatBoxes/Batt2"]
@@ -198,6 +212,13 @@ theme_override_font_sizes/font_size = 13
 text = "Battery slot: 3"
 horizontal_alignment = 1
 
+[node name="SlotEmpty" type="Label" parent="BatBoxes/Batt3"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Slot Empty!"
+horizontal_alignment = 1
+
 [node name="HBoxContainer" type="HBoxContainer" parent="BatBoxes/Batt3"]
 layout_mode = 2
 alignment = 1
@@ -277,6 +298,13 @@ layout_mode = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 text = "Battery slot: 4"
+horizontal_alignment = 1
+
+[node name="SlotEmpty" type="Label" parent="BatBoxes/Batt4"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Slot Empty!"
 horizontal_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="BatBoxes/Batt4"]

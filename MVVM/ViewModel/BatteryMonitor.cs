@@ -17,6 +17,11 @@ public partial class BatteryMonitor : Panel
 
 	private MqttClasses.BatteryInfo data;
 
+	private MqttClasses.BatteryInfo battery1;
+	private MqttClasses.BatteryInfo battery2;
+	private MqttClasses.BatteryInfo battery3;
+	private MqttClasses.BatteryInfo battery4;
+
 	public override void _EnterTree()
 	{
 		MqttNode.Singleton.MessageReceivedAsync += BatteryInfoChanged;
@@ -64,15 +69,29 @@ public partial class BatteryMonitor : Panel
 
 	void UpdateLabels(VBoxContainer outContainer)
 	{
+		
 		VBoxContainer container = outContainer.GetNode<HBoxContainer>("HBoxContainer").GetNode<VBoxContainer>("BatBox");
+
+		if (data.Status == MqttClasses.BatteryStatus.Disconnected)
+		{
+			container.Visible = false;
+			outContainer.GetNode<Label>("SlotEmpty").Visible = true;
+		}
+		else
+		{
+			container.Visible = true;
+			outContainer.GetNode<Label>("SlotEmpty").Visible = false;
+		}
+
 		container.GetNode<Label>("IdLabel").Text = "Battery ID: " + data.ID;
 		container.GetNode<Label>("PercLabel").Text = "Battery %: " + data.ChargePercent.ToString("F1") + "%";
 		
 		container.GetNode<Label>("VbatLabel").Text = "VBat: " + data.Voltage.ToString("F1") + "V";
-		if(data.Voltage < 6*LocalSettings.Singleton.Battery.WarningVoltage)
-			container.GetNode<Label>("VbatLabel").SetModulate(Colors.Yellow);
-		else if(data.Voltage < 6*LocalSettings.Singleton.Battery.CriticalVoltage)
+
+		if(data.Voltage < 6*LocalSettings.Singleton.Battery.CriticalVoltage)
 			container.GetNode<Label>("VbatLabel").SetModulate(Colors.Red);
+		else if(data.Voltage < 6*LocalSettings.Singleton.Battery.WarningVoltage)
+			container.GetNode<Label>("VbatLabel").SetModulate(Colors.Yellow);
 		else
 			container.GetNode<Label>("VbatLabel").SetModulate(Colors.White);
 
