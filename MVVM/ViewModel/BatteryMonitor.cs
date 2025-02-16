@@ -15,21 +15,21 @@ public partial class BatteryMonitor : Panel
 	[Export] VBoxContainer batt3 = null!;
 	[Export] VBoxContainer batt4 = null!;
 
-	public event Func<MqttClasses.BatteryInfo?, Task>? BatteryInfoChanged;
+	public event Func<MqttClasses.BatteryControl?, Task>? OnBatteryControlChanged;
 
 	private MqttClasses.BatteryInfo data;
 
 	public override void _EnterTree()
 	{
-		MqttNode.Singleton.MessageReceivedAsync += OnBatteryInfoChanged;
+		MqttNode.Singleton.MessageReceivedAsync += BatteryInfoChanged;
 	}
 
 	public override void _ExitTree()
 	{
-		MqttNode.Singleton.MessageReceivedAsync -= OnBatteryInfoChanged;
+		MqttNode.Singleton.MessageReceivedAsync -= BatteryInfoChanged;
 	}
 
-	public Task OnBatteryInfoChanged(string subTopic, MqttApplicationMessage? msg)
+	public Task BatteryInfoChanged(string subTopic, MqttApplicationMessage? msg)
 	{
 		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicBatteryInfo) || subTopic != LocalSettings.Singleton.Mqtt.TopicBatteryInfo)
 			return Task.CompletedTask;
@@ -98,6 +98,7 @@ public partial class BatteryMonitor : Panel
 			Set = set
 		};
 		GD.Print($"{slot}dupa{set}");
+		OnBatteryControlChanged?.Invoke(control);
 		//MqttNode.Singleton.PublishMessage(LocalSettings.Singleton.Mqtt.TopicBatteryControl, control);
 	}
 
