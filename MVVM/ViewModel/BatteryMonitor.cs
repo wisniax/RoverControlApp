@@ -22,6 +22,8 @@ public partial class BatteryMonitor : Panel
 	private MqttClasses.BatteryInfo battery3;
 	private MqttClasses.BatteryInfo battery4;
 
+	public event Func<int, Task>? OnBatteryPercentageChanged;
+
 	public override void _EnterTree()
 	{
 		MqttNode.Singleton.MessageReceivedAsync += BatteryInfoChanged;
@@ -48,21 +50,26 @@ public partial class BatteryMonitor : Panel
 		{
 			case 1:
 				CallDeferred("UpdateLabels", batt1);
+				battery1 = data;
 				break;
 			case 2:
 				CallDeferred("UpdateLabels", batt2);
+				battery2 = data;
 				break;
 			case 3:
 				CallDeferred("UpdateLabels", batt3);
+				battery3 = data;
 				break;
 			case 4:
 				CallDeferred("UpdateLabels", batt4);
+				battery4 = data;
 				break;
 			default:
 				EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Invalid battery slot");
 				return Task.CompletedTask;
 		}
 
+		OnBatteryPercentageChanged.Invoke(CalculateAverageBatteryPercent());
 		
 		return Task.CompletedTask;
 	}
@@ -123,7 +130,35 @@ public partial class BatteryMonitor : Panel
 			JsonSerializer.Serialize(arg));
 	}
 
-	// Called when the node enters the scene tree for the first time.
+	int CalculateAverageBatteryPercent()
+	{
+				int sum = 0;
+		int count = 0;
+		if (battery1 != null && battery1.Status != MqttClasses.BatteryStatus.Fault && battery1.Status != MqttClasses.BatteryStatus.Disconnected)
+		{
+			sum += (int)battery1.ChargePercent;
+			count++;
+		}
+		if (battery2 != null && battery2.Status != MqttClasses.BatteryStatus.Fault && battery2.Status != MqttClasses.BatteryStatus.Disconnected)
+		{
+			sum += (int)battery2.ChargePercent;
+			count++;
+		}
+		if (battery3 != null && battery3.Status != MqttClasses.BatteryStatus.Fault && battery3.Status != MqttClasses.BatteryStatus.Disconnected)
+		{
+			sum += (int)battery3.ChargePercent;
+			count++;
+		}
+		if (battery4 != null && battery4.Status != MqttClasses.BatteryStatus.Fault && battery4.Status != MqttClasses.BatteryStatus.Disconnected)
+		{
+			sum += (int)battery4.ChargePercent;
+			count++;
+		}
+		if (count == 0)
+			return 0;
+		return sum / count;
+	}
+
 	public override void _Ready()
 	{
 		//batt1.GetNode<Button>("RequestDataButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.RequestData);
