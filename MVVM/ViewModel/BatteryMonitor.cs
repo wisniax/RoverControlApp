@@ -95,7 +95,6 @@ public partial class BatteryMonitor : Panel
 			Slot = slot,
 			Set = set
 		};
-		GD.Print($"{slot}dupa{set}");
 		OnBatteryControlChanged(control);
 	}
 

@@ -244,6 +244,13 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_x20sx")
 text = "VEL MONITOR"
 
+[node name="ShowBatteryMonitor" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+shortcut = SubResource("Shortcut_x20sx")
+text = "BATTERY"
+
 [node name="ShowZedMonitor" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
@@ -291,11 +298,19 @@ grow_horizontal = 0
 grow_vertical = 1
 
 [node name="BatteryMonitor" parent="." instance=ExtResource("13_gec13")]
-layout_mode = 0
-offset_left = 536.0
-offset_top = 336.0
-offset_right = 936.0
-offset_bottom = 603.0
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -618.0
+offset_top = -312.0
+offset_right = -218.0
+offset_bottom = -45.0
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false
@@ -310,6 +325,7 @@ offset_bottom = -40.0
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
