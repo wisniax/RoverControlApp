@@ -4,7 +4,7 @@
 
 [node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("batt1", "batt2", "batt3", "batt4")]
 offset_right = 400.0
-offset_bottom = 267.0
+offset_bottom = 237.0
 script = ExtResource("1_ktc3a")
 batt1 = NodePath("BatBoxes/Batt1")
 batt2 = NodePath("BatBoxes/Batt2")
@@ -87,11 +87,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Set: xxxx"
 
-[node name="RequestDataButton1" type="Button" parent="BatBoxes/Batt1"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "Gimme data"
-
 [node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt1"]
 layout_mode = 2
 
@@ -172,11 +167,6 @@ text = "Est. Time: xx min"
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Set: xxxx"
-
-[node name="RequestDataButton2" type="Button" parent="BatBoxes/Batt2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "Gimme data"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt2"]
 layout_mode = 2
@@ -259,11 +249,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Set: xxxx"
 
-[node name="RequestDataButton3" type="Button" parent="BatBoxes/Batt3"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "Gimme data"
-
 [node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt3"]
 layout_mode = 2
 
@@ -344,11 +329,6 @@ text = "Est. Time: xx min"
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Set: xxxx"
-
-[node name="RequestDataButton4" type="Button" parent="BatBoxes/Batt4"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "Gimme data"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt4"]
 layout_mode = 2

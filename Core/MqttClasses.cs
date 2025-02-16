@@ -66,7 +66,7 @@ namespace RoverControlApp.Core
 			Auto = 0,
 			On = 1,
 			Off = 2,
-			RequestData = 3
+			//RequestData = 3
 		}
 
 		public class RoverStatus

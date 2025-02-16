@@ -107,10 +107,10 @@ public partial class BatteryMonitor : Panel
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		batt1.GetNode<Button>("RequestDataButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.RequestData);
-		batt2.GetNode<Button>("RequestDataButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.RequestData);
-		batt3.GetNode<Button>("RequestDataButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.RequestData);
-		batt4.GetNode<Button>("RequestDataButton4").Pressed += () => OnBatteryControl(4, MqttClasses.BatterySet.RequestData);
+		//batt1.GetNode<Button>("RequestDataButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.RequestData);
+		//batt2.GetNode<Button>("RequestDataButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.RequestData);
+		//batt3.GetNode<Button>("RequestDataButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.RequestData);
+		//batt4.GetNode<Button>("RequestDataButton4").Pressed += () => OnBatteryControl(4, MqttClasses.BatterySet.RequestData);
 
 		batt1.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("AutoButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.Auto);
 		batt2.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("AutoButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.Auto);
@@ -126,11 +126,6 @@ public partial class BatteryMonitor : Panel
 		batt2.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.Off);
 		batt3.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.Off);
 		batt4.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton4").Pressed += () => OnBatteryControl(4, MqttClasses.BatterySet.Off);
-	}
-
-	private void OnBatteryMonitorPressed()
-	{
-		throw new NotImplementedException();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
