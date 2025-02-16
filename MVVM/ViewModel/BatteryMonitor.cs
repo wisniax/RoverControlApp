@@ -10,19 +10,14 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class BatteryMonitor : Panel
 {
-	[Export] VBoxContainer batBox1 = null!;
-	[Export] VBoxContainer batBox2 = null!;
-	[Export] VBoxContainer batBox3 = null!;
-	[Export] VBoxContainer batBox4 = null!;
+	[Export] VBoxContainer batt1 = null!;
+	[Export] VBoxContainer batt2 = null!;
+	[Export] VBoxContainer batt3 = null!;
+	[Export] VBoxContainer batt4 = null!;
 
 	public event Func<MqttClasses.BatteryInfo?, Task>? BatteryInfoChanged;
 
 	private MqttClasses.BatteryInfo data;
-
-	private MqttClasses.BatteryInfo batt1;
-	private MqttClasses.BatteryInfo batt2;
-	private MqttClasses.BatteryInfo batt3;
-	private MqttClasses.BatteryInfo batt4;
 
 	public override void _EnterTree()
 	{
@@ -44,26 +39,21 @@ public partial class BatteryMonitor : Panel
 			return Task.CompletedTask;
 		}
 
-		VBoxContainer updateBox = null;
 		data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
 
 		switch (data.Slot)
 		{
 			case 1:
-				CallDeferred("UpdateLabels", batBox1);
-				batt1 = data;
+				CallDeferred("UpdateLabels", batt1);
 				break;
 			case 2:
-				CallDeferred("UpdateLabels", batBox2);
-				batt2 = data;
+				CallDeferred("UpdateLabels", batt2);
 				break;
 			case 3:
-				CallDeferred("UpdateLabels", batBox3);
-				batt3 = data;
+				CallDeferred("UpdateLabels", batt3);
 				break;
 			case 4:
-				CallDeferred("UpdateLabels", batBox4);
-				batt4 = data;
+				CallDeferred("UpdateLabels", batt4);
 				break;
 			default:
 				EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Invalid battery slot");
@@ -74,8 +64,9 @@ public partial class BatteryMonitor : Panel
 		return Task.CompletedTask;
 	}
 
-	void UpdateLabels(VBoxContainer container)
+	void UpdateLabels(VBoxContainer outContainer)
 	{
+		VBoxContainer container = outContainer.GetNode<HBoxContainer>("HBoxContainer").GetNode<VBoxContainer>("BatBox");
 		container.GetNode<Label>("IdLabel").Text = "Battery ID: " + data.ID;
 		container.GetNode<Label>("PercLabel").Text = "Battery %: " + data.ChargePercent.ToString("F1") + "%";
 		
@@ -99,9 +90,44 @@ public partial class BatteryMonitor : Panel
 		container.GetNode<Label>("SetLabel").Text = "Set: " + data.Set.ToString();
 	}
 
+	void OnBatteryControl(int slot, MqttClasses.BatterySet set)
+	{
+		MqttClasses.BatteryControl control = new MqttClasses.BatteryControl()
+		{
+			Slot = slot,
+			Set = set
+		};
+		GD.Print($"{slot}dupa{set}");
+		//MqttNode.Singleton.PublishMessage(LocalSettings.Singleton.Mqtt.TopicBatteryControl, control);
+	}
+
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		batt1.GetNode<Button>("RequestDataButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.RequestData);
+		batt2.GetNode<Button>("RequestDataButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.RequestData);
+		batt3.GetNode<Button>("RequestDataButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.RequestData);
+		batt4.GetNode<Button>("RequestDataButton4").Pressed += () => OnBatteryControl(4, MqttClasses.BatterySet.RequestData);
+
+		batt1.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("AutoButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.Auto);
+		batt2.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("AutoButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.Auto);
+		batt3.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("AutoButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.Auto);
+		batt4.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("AutoButton4").Pressed += () => OnBatteryControl(4, MqttClasses.BatterySet.Auto);
+
+		batt1.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OnButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.On);
+		batt2.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OnButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.On);
+		batt3.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OnButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.On);
+		batt4.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OnButton4").Pressed += () => OnBatteryControl(4, MqttClasses.BatterySet.On);
+
+		batt1.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.Off);
+		batt2.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.Off);
+		batt3.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.Off);
+		batt4.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton4").Pressed += () => OnBatteryControl(4, MqttClasses.BatterySet.Off);
+	}
+
+	private void OnBatteryMonitorPressed()
+	{
+		throw new NotImplementedException();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

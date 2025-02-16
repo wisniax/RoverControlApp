@@ -262,7 +262,6 @@ visible = false
 layout_mode = 0
 
 [node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
-visible = false
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -291,10 +290,10 @@ grow_vertical = 1
 
 [node name="BatteryMonitor" parent="." instance=ExtResource("13_gec13")]
 layout_mode = 0
-offset_left = 7.0
-offset_top = 35.0
-offset_right = 407.0
-offset_bottom = 224.0
+offset_left = 536.0
+offset_top = 336.0
+offset_right = 936.0
+offset_bottom = 603.0
 
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false
