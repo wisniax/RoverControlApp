@@ -187,6 +187,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _topicBatteryInfo, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicBatteryControl
 	{
 		get => _topicBatteryControl; 

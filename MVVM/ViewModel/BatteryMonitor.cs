@@ -127,9 +127,4 @@ public partial class BatteryMonitor : Panel
 		batt3.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.Off);
 		batt4.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton4").Pressed += () => OnBatteryControl(4, MqttClasses.BatterySet.Off);
 	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-	}
 }
