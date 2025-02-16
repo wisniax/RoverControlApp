@@ -15,8 +15,6 @@ public partial class BatteryMonitor : Panel
 	[Export] VBoxContainer batt3 = null!;
 	[Export] VBoxContainer batt4 = null!;
 
-	public event Func<MqttClasses.BatteryControl?, Task>? OnBatteryControlChanged;
-
 	private MqttClasses.BatteryInfo data;
 
 	public override void _EnterTree()
@@ -98,8 +96,13 @@ public partial class BatteryMonitor : Panel
 			Set = set
 		};
 		GD.Print($"{slot}dupa{set}");
-		OnBatteryControlChanged?.Invoke(control);
-		//MqttNode.Singleton.PublishMessage(LocalSettings.Singleton.Mqtt.TopicBatteryControl, control);
+		OnBatteryControlChanged(control);
+	}
+
+	private async Task OnBatteryControlChanged(MqttClasses.BatteryControl arg)
+	{
+		await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicBatteryControl,
+			JsonSerializer.Serialize(arg));
 	}
 
 	// Called when the node enters the scene tree for the first time.
