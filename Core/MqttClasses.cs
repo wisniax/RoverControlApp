@@ -60,6 +60,15 @@ namespace RoverControlApp.Core
 			Fault = 5,
 			Empty = 6
 		}
+
+		public enum BatterySet
+		{
+			Auto = 0,
+			On = 1,
+			Off = 2,
+			RequestData = 3
+		}
+
 		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
@@ -130,6 +139,14 @@ namespace RoverControlApp.Core
 			public float Current { get; set; }
 			public int Temperature { get; set; }
 			public int Time { get; set; }
+			public BatterySet Set { get; set; }
+		}
+
+		public class BatteryControl
+		{
+			public int Slot { get; set; }
+			public BatterySet Set { get; set; } = BatterySet.Auto;
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
 		public class RoverContainer

@@ -4,7 +4,7 @@
 
 [node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("batBox1", "batBox2", "batBox3", "batBox4")]
 offset_right = 400.0
-offset_bottom = 189.0
+offset_bottom = 267.0
 script = ExtResource("1_ktc3a")
 batBox1 = NodePath("BatBoxes/Batt1/HBoxContainer/BatBox1")
 batBox2 = NodePath("BatBoxes/Batt2/HBoxContainer/BatBox2")
@@ -82,6 +82,34 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Est. Time: xx min"
 
+[node name="SetLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox1"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Set: xxxx"
+
+[node name="RequestDataButton1" type="Button" parent="BatBoxes/Batt1"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Gimme data"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt1"]
+layout_mode = 2
+
+[node name="AutoButton1" type="Button" parent="BatBoxes/Batt1/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Auto"
+
+[node name="OnButton1" type="Button" parent="BatBoxes/Batt1/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "ON"
+
+[node name="OffButton1" type="Button" parent="BatBoxes/Batt1/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "OFF"
+
 [node name="Separator1" type="Control" parent="BatBoxes"]
 layout_mode = 2
 
@@ -139,6 +167,34 @@ text = "Temperature: xxC"
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Est. Time: xx min"
+
+[node name="SetLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Set: xxxx"
+
+[node name="RequestDataButton2" type="Button" parent="BatBoxes/Batt2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Gimme data"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt2"]
+layout_mode = 2
+
+[node name="AutoButton2" type="Button" parent="BatBoxes/Batt2/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Auto"
+
+[node name="OnButton2" type="Button" parent="BatBoxes/Batt2/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "ON"
+
+[node name="OffButton2" type="Button" parent="BatBoxes/Batt2/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "OFF"
 
 [node name="Separator2" type="Control" parent="BatBoxes"]
 layout_mode = 2
@@ -198,6 +254,34 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Est. Time: xx min"
 
+[node name="SetLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox3"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Set: xxxx"
+
+[node name="RequestDataButton3" type="Button" parent="BatBoxes/Batt3"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Gimme data"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt3"]
+layout_mode = 2
+
+[node name="AutoButton3" type="Button" parent="BatBoxes/Batt3/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Auto"
+
+[node name="OnButton3" type="Button" parent="BatBoxes/Batt3/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "ON"
+
+[node name="OffButton3" type="Button" parent="BatBoxes/Batt3/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "OFF"
+
 [node name="Separator3" type="Control" parent="BatBoxes"]
 layout_mode = 2
 
@@ -255,3 +339,31 @@ text = "Temperature: xxC"
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Est. Time: xx min"
+
+[node name="SetLabel" type="Label" parent="BatBoxes/Batt4/HBoxContainer/BatBox4"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Set: xxxx"
+
+[node name="RequestDataButton4" type="Button" parent="BatBoxes/Batt4"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Gimme data"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt4"]
+layout_mode = 2
+
+[node name="AutoButton4" type="Button" parent="BatBoxes/Batt4/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Auto"
+
+[node name="OnButton4" type="Button" parent="BatBoxes/Batt4/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "ON"
+
+[node name="OffButton4" type="Button" parent="BatBoxes/Batt4/HBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 9
+text = "OFF"

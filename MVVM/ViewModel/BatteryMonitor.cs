@@ -96,7 +96,7 @@ public partial class BatteryMonitor : Panel
 			container.GetNode<Label>("TemperatureLabel").SetModulate(Colors.White);
 
 		container.GetNode<Label>("TimeLabel").Text = "Est. Time: " + data.Time.ToString("F0") + "min";
-		//todo wysrodkowanie lub resize panelu
+		container.GetNode<Label>("SetLabel").Text = "Set: " + data.Set.ToString();
 	}
 
 	// Called when the node enters the scene tree for the first time.
