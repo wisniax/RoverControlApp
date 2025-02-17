@@ -17,12 +17,9 @@ public partial class BatteryMonitor : Panel
 
 	private MqttClasses.BatteryInfo data;
 
-	private MqttClasses.BatteryInfo battery1;
-	private MqttClasses.BatteryInfo battery2;
-	private MqttClasses.BatteryInfo battery3;
-	private MqttClasses.BatteryInfo battery4;
+	private MqttClasses.BatteryInfo[] battery = new MqttClasses.BatteryInfo[4];
 
-	public event Func<int, Task>? OnBatteryPercentageChanged;
+	public event Func<int, int, Task>? OnBatteryPercentageChanged;
 
 	public override void _EnterTree()
 	{
@@ -50,28 +47,42 @@ public partial class BatteryMonitor : Panel
 		{
 			case 1:
 				CallDeferred("UpdateLabels", batt1);
-				battery1 = data;
+				battery[1] = data;
 				break;
 			case 2:
 				CallDeferred("UpdateLabels", batt2);
-				battery2 = data;
+				battery[2] = data;
 				break;
 			case 3:
 				CallDeferred("UpdateLabels", batt3);
-				battery3 = data;
+				battery[3] = data;
 				break;
 			case 4:
 				CallDeferred("UpdateLabels", batt4);
-				battery4 = data;
+				battery[4] = data;
 				break;
 			default:
 				EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Invalid battery slot");
 				return Task.CompletedTask;
 		}
 
-		OnBatteryPercentageChanged.Invoke(CalculateAverageBatteryPercent());
+		OnBatteryPercentageChanged.Invoke(CalculateAverageBatteryPercent(), CheckForWarnings());
 		
 		return Task.CompletedTask;
+	}
+
+	int CheckForWarnings()
+	{
+		bool warning = false;
+		foreach (var batt in battery)
+		{
+			if(batt == null) continue;
+			if (batt.Temperature > LocalSettings.Singleton.Battery.WarningTemperature) return 2;
+			if (batt.Voltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage) return 2;
+			if (batt.Voltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage) warning = true;
+		}
+
+		return warning ? 1 : 0;
 	}
 
 	void UpdateLabels(VBoxContainer outContainer)
@@ -106,7 +117,10 @@ public partial class BatteryMonitor : Panel
 		container.GetNode<Label>("CurrentLabel").Text = "Current: " + data.Current.ToString("F1") + "A";
 		container.GetNode<Label>("TemperatureLabel").Text = "Temperature: " + data.Temperature.ToString("F1") + "C";
 		if (data.Temperature > LocalSettings.Singleton.Battery.WarningTemperature)
-			container.GetNode<Label>("TemperatureLabel").SetModulate(Colors.Red);
+		{
+			container.GetNode<Label>("TemperatureLabel").SetModulate(Colors.Orange);
+			
+		}
 		else
 			container.GetNode<Label>("TemperatureLabel").SetModulate(Colors.White);
 
@@ -132,30 +146,18 @@ public partial class BatteryMonitor : Panel
 
 	int CalculateAverageBatteryPercent()
 	{
-				int sum = 0;
+		int sum = 0;
 		int count = 0;
-		if (battery1 != null && battery1.Status != MqttClasses.BatteryStatus.Fault && battery1.Status != MqttClasses.BatteryStatus.Disconnected)
+		foreach (var batt in battery)
 		{
-			sum += (int)battery1.ChargePercent;
-			count++;
+			if (batt != null && batt.Status != MqttClasses.BatteryStatus.Fault && batt.Status != MqttClasses.BatteryStatus.Disconnected)
+			{
+				sum += (int)batt.ChargePercent;
+				count++;
+			}
 		}
-		if (battery2 != null && battery2.Status != MqttClasses.BatteryStatus.Fault && battery2.Status != MqttClasses.BatteryStatus.Disconnected)
-		{
-			sum += (int)battery2.ChargePercent;
-			count++;
-		}
-		if (battery3 != null && battery3.Status != MqttClasses.BatteryStatus.Fault && battery3.Status != MqttClasses.BatteryStatus.Disconnected)
-		{
-			sum += (int)battery3.ChargePercent;
-			count++;
-		}
-		if (battery4 != null && battery4.Status != MqttClasses.BatteryStatus.Fault && battery4.Status != MqttClasses.BatteryStatus.Disconnected)
-		{
-			sum += (int)battery4.ChargePercent;
-			count++;
-		}
-		if (count == 0)
-			return 0;
+
+		if(LocalSettings.Singleton.Battery.AverageAll) count = 4;
 		return sum / count;
 	}
 

@@ -310,11 +310,34 @@ namespace RoverControlApp.MVVM.ViewModel
 				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
 		}
 
-		Task HandleBatteryPercentageChanged(int percentage)
+		Task HandleBatteryPercentageChanged(int percentage, int warnings)
 		{
-			ShowBatteryMonitor.SetText($"BATTERY {percentage}%");
+			Color color;
+			switch (warnings)
+			{
+				case 2:
+					color = Colors.Red;
+					break;
+				case 1:
+					color = Colors.Orange;
+					break;
+				default:
+					color = Colors.White;
+					break;
+			}
+
+			CallDeferred("HandleBatteryButtonUi", color, percentage);
 
 			return Task.CompletedTask;
+		}
+
+		void HandleBatteryButtonUi(Color color, int percentage)
+		{
+			ShowBatteryMonitor.SetText($"BATTERY {percentage}%");
+			ShowBatteryMonitor.SetModulate(color);
+			if(color != Colors.Red) return;
+			ShowBatteryMonitor.SetPressed(true);
+			BatteryMonitor.SetVisible(true);
 		}
 
 		public async Task<bool> CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")

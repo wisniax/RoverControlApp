@@ -14,13 +14,15 @@ public partial class Battery : SettingBase, ICloneable
 		_warningVoltage = 3.6f;
 		_criticalVoltage = 3.2f;
 		_warningTemperature = 70f;
+		_averageAll = false;
 	}
 
-	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature)
+	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature, bool averageAll)
 	{
 		_warningVoltage = warningVoltage;
 		_criticalVoltage = criticalVoltage;
 		_warningTemperature = warningTemperature;
+		_averageAll = averageAll;
 	}
 
 	public object Clone()
@@ -54,10 +56,17 @@ public partial class Battery : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _warningTemperature, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+	public bool AverageAll
+	{
+		get => _averageAll;
+		set => EmitSignal_SettingChanged(ref _averageAll, value);
+	}
 
 	float _warningVoltage;
 	float _criticalVoltage;
 	float _warningTemperature;
+	bool _averageAll;
 }
 
 
