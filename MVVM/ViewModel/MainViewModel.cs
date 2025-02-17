@@ -77,7 +77,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
-			BatteryMonitor.OnBatteryPercentageChanged += HandleBatteryPercentageChanged;
+			BatteryMonitor.OnBatteryPercentageChanged += HandleBatteryPercentageChangedHandler;
 
 
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
@@ -110,7 +110,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
-			BatteryMonitor.OnBatteryPercentageChanged -= HandleBatteryPercentageChanged;
+			BatteryMonitor.OnBatteryPercentageChanged -= HandleBatteryPercentageChangedHandler;
 
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -310,28 +310,13 @@ namespace RoverControlApp.MVVM.ViewModel
 				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
 		}
 
-		Task HandleBatteryPercentageChanged(int percentage, int warnings)
+		Task HandleBatteryPercentageChangedHandler(int percentage, Color color)
 		{
-			Color color;
-			switch (warnings)
-			{
-				case 2:
-					color = Colors.Red;
-					break;
-				case 1:
-					color = Colors.Orange;
-					break;
-				default:
-					color = Colors.White;
-					break;
-			}
-
-			CallDeferred("HandleBatteryButtonUi", color, percentage);
-
+			CallDeferred("HandleBatteryPercentageChanged", color, percentage);
 			return Task.CompletedTask;
 		}
 
-		void HandleBatteryButtonUi(Color color, int percentage)
+		void HandleBatteryPercentageChanged(Color color, int percentage)
 		{
 			ShowBatteryMonitor.SetText($"BATTERY {percentage}%");
 			ShowBatteryMonitor.SetModulate(color);

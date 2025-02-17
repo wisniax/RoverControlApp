@@ -19,7 +19,7 @@ public partial class BatteryMonitor : Panel
 
 	private MqttClasses.BatteryInfo[] battery = new MqttClasses.BatteryInfo[4];
 
-	public event Func<int, int, Task>? OnBatteryPercentageChanged;
+	public event Func<int, Color, Task>? OnBatteryPercentageChanged;
 
 	public override void _EnterTree()
 	{
@@ -71,18 +71,18 @@ public partial class BatteryMonitor : Panel
 		return Task.CompletedTask;
 	}
 
-	int CheckForWarnings()
+	Color CheckForWarnings()
 	{
 		bool warning = false;
 		foreach (var batt in battery)
 		{
 			if(batt == null) continue;
-			if (batt.Temperature > LocalSettings.Singleton.Battery.WarningTemperature) return 2;
-			if (batt.Voltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage) return 2;
+			if (batt.Temperature > LocalSettings.Singleton.Battery.WarningTemperature) return Colors.Red;
+			if (batt.Voltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage) return Colors.Red;
 			if (batt.Voltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage) warning = true;
 		}
 
-		return warning ? 1 : 0;
+		return warning ? Colors.Yellow : Colors.White;
 	}
 
 	void UpdateLabels(VBoxContainer outContainer)
