@@ -61,6 +61,14 @@ namespace RoverControlApp.Core
 			Empty = 6
 		}
 
+		public enum HotswapStatus
+		{
+			OffMan = 0,
+			OnMan = 1,
+			OffAuto = 2,
+			OnAuto = 3
+		}
+
 		public enum BatterySet
 		{
 			Auto = 0,
@@ -136,10 +144,10 @@ namespace RoverControlApp.Core
 			public float Voltage { get; set; }
 
 			public BatteryStatus Status { get; set; }
+			public HotswapStatus HotswapStatus { get; set; }
 			public float Current { get; set; }
 			public int Temperature { get; set; }
 			public int Time { get; set; }
-			public BatterySet Set { get; set; }
 		}
 
 		public class BatteryControl
@@ -147,6 +155,30 @@ namespace RoverControlApp.Core
 			public int Slot { get; set; }
 			public BatterySet Set { get; set; } = BatterySet.Auto;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+
+		public class WheelFeedback
+		{
+			public int ERPM { get; set; }
+			public int VescId { get; set; }
+			public double ADC1 { get; set; }
+			public double ADC2 { get; set; }
+			public double ADC3 { get; set; }
+			public double AhCharged { get; set; }
+			public double AhUsed { get; set; }
+			public double Current { get; set; }
+			public double CurrentIn { get; set; }
+			public double DutyCycle { get; set; }
+			public double PPM { get; set; }
+			public double PidPos { get; set; }
+			public double PrecisePos { get; set; }
+			public double Tachometer { get; set; }
+			public double TempFet { get; set; }
+			public double TempMotor { get; set; }
+			public double VoltsIn { get; set; }
+			public double WhCharged { get; set; }
+			public double WhUsed { get; set; }
+			public long Timestamp { get; set; }
 		}
 
 		public class RoverContainer

@@ -15,14 +15,16 @@ public partial class Battery : SettingBase, ICloneable
 		_criticalVoltage = 3.2f;
 		_warningTemperature = 70f;
 		_averageAll = false;
+		_altMode = false;
 	}
 
-	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature, bool averageAll)
+	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature, bool averageAll, bool altMode)
 	{
 		_warningVoltage = warningVoltage;
 		_criticalVoltage = criticalVoltage;
 		_warningTemperature = warningTemperature;
 		_averageAll = averageAll;
+		_altMode = altMode;
 	}
 
 	public object Clone()
@@ -31,7 +33,9 @@ public partial class Battery : SettingBase, ICloneable
 		{
 			WarningVoltage = _warningVoltage,
 			CriticalVoltage = _criticalVoltage,
-			WarningTemperature = _warningTemperature
+			WarningTemperature = _warningTemperature,
+			AverageAll = _averageAll,
+			AltMode = _altMode
 		};
 	}
 
@@ -63,10 +67,17 @@ public partial class Battery : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _averageAll, value);
 	}
 
+	public bool AltMode
+	{
+		get => _altMode;
+		set => EmitSignal_SettingChanged(ref _altMode, value);
+	}
+
 	float _warningVoltage;
 	float _criticalVoltage;
 	float _warningTemperature;
 	bool _averageAll;
+	private bool _altMode;
 }
 
 

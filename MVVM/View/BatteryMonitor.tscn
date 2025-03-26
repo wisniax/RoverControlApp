@@ -1,15 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://b708qfhwxacw0"]
+[gd_scene load_steps=2 format=3 uid="uid://c78k3jqowm3q0"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/BatteryMonitor.cs" id="1_ktc3a"]
 
-[node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("batt1", "batt2", "batt3", "batt4")]
+[node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("batt1", "batt2", "batt3", "altDisp")]
 offset_right = 400.0
 offset_bottom = 237.0
 script = ExtResource("1_ktc3a")
 batt1 = NodePath("BatBoxes/Batt1")
 batt2 = NodePath("BatBoxes/Batt2")
 batt3 = NodePath("BatBoxes/Batt3")
-batt4 = NodePath("BatBoxes/Batt4")
+altDisp = NodePath("BatBoxes/AltData")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 0
@@ -69,6 +69,11 @@ text = "VBAT: xx.x V"
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 
+[node name="HotswapLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Hotswap: xxxx"
+
 [node name="StatusLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
@@ -88,11 +93,6 @@ text = "Temperature: xxC"
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Est. Time: xx min"
-
-[node name="SetLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Set: xxxx"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt1"]
 layout_mode = 2
@@ -157,6 +157,11 @@ text = "VBAT: xx.x V"
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 
+[node name="HotswapLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Hotswap: xxxx"
+
 [node name="StatusLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
@@ -176,11 +181,6 @@ text = "Temperature: xxC"
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Est. Time: xx min"
-
-[node name="SetLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Set: xxxx"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt2"]
 layout_mode = 2
@@ -245,6 +245,11 @@ text = "VBAT: xx.x V"
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 
+[node name="HotswapLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Hotswap: xxxx"
+
 [node name="StatusLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
@@ -264,11 +269,6 @@ text = "Temperature: xxC"
 layout_mode = 2
 theme_override_font_sizes/font_size = 10
 text = "Est. Time: xx min"
-
-[node name="SetLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Set: xxxx"
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt3"]
 layout_mode = 2
@@ -291,87 +291,17 @@ text = "OFF"
 [node name="Separator3" type="Control" parent="BatBoxes"]
 layout_mode = 2
 
-[node name="Batt4" type="VBoxContainer" parent="BatBoxes"]
+[node name="AltData" type="VBoxContainer" parent="BatBoxes"]
 layout_mode = 2
 
-[node name="Slot" type="Label" parent="BatBoxes/Batt4"]
+[node name="Name" type="Label" parent="BatBoxes/AltData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
-text = "Battery slot: 4"
+text = "Vesc Voltage:"
 horizontal_alignment = 1
 
-[node name="SlotEmpty" type="Label" parent="BatBoxes/Batt4"]
-visible = false
+[node name="Voltage" type="Label" parent="BatBoxes/AltData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "Slot Empty!"
+text = "00.0V"
 horizontal_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="BatBoxes/Batt4"]
-layout_mode = 2
-alignment = 1
-
-[node name="BatBox" type="VBoxContainer" parent="BatBoxes/Batt4/HBoxContainer"]
-layout_mode = 2
-
-[node name="IdLabel" type="Label" parent="BatBoxes/Batt4/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Battery ID: xxx"
-
-[node name="PercLabel" type="Label" parent="BatBoxes/Batt4/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Battery %: xx%"
-
-[node name="VbatLabel" type="Label" parent="BatBoxes/Batt4/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "VBAT: xx.x V"
-
-[node name="Separator" type="Label" parent="BatBoxes/Batt4/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-
-[node name="StatusLabel" type="Label" parent="BatBoxes/Batt4/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Status: xxxxxxxxxx"
-
-[node name="CurrentLabel" type="Label" parent="BatBoxes/Batt4/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Current: -xx A"
-
-[node name="TemperatureLabel" type="Label" parent="BatBoxes/Batt4/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Temperature: xxC"
-
-[node name="TimeLabel" type="Label" parent="BatBoxes/Batt4/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Est. Time: xx min"
-
-[node name="SetLabel" type="Label" parent="BatBoxes/Batt4/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Set: xxxx"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt4"]
-layout_mode = 2
-
-[node name="AutoButton4" type="Button" parent="BatBoxes/Batt4/HBoxContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "Auto"
-
-[node name="OnButton4" type="Button" parent="BatBoxes/Batt4/HBoxContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 9
-text = "ON"
-
-[node name="OffButton4" type="Button" parent="BatBoxes/Batt4/HBoxContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 9
-text = "OFF"
