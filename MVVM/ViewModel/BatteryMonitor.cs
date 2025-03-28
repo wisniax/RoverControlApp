@@ -18,6 +18,7 @@ public partial class BatteryMonitor : Panel
 	private MqttClasses.BatteryInfo data;
 
 	private MqttClasses.BatteryInfo[] battery = new MqttClasses.BatteryInfo[3];
+	private float _currentVoltage = 0;
 
 	public event Func<int, Color, Task>? OnBatteryPercentageChanged;
 
@@ -70,7 +71,6 @@ public partial class BatteryMonitor : Panel
 	}
 	public Task AltBatteryInfoChanged(string subTopic, MqttApplicationMessage? msg)
 	{
-			var altData = new MqttClasses.WheelFeedback();
 
 		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicWheelFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicWheelFeedback)
 			return Task.CompletedTask;
@@ -79,12 +79,21 @@ public partial class BatteryMonitor : Panel
 			EventLogger.LogMessage("AltBatteryMonitor", EventLogger.LogLevel.Error, "Empty payload");
 			return Task.CompletedTask;
 		}
+		
+		var altData = JsonSerializer.Deserialize<MqttClasses.WheelFeedback>(msg.ConvertPayloadToString());
+		
+		if (!(altData.VescId == 0x50 || altData.VescId == 0x51 || altData.VescId == 0x52 || altData.VescId == 0x53)) return Task.CompletedTask;
 
-		altData = JsonSerializer.Deserialize<MqttClasses.WheelFeedback>(msg.ConvertPayloadToString());
-
-		altDisp.GetNode<Label>("Voltage").SetText($"{altData.VoltsIn:F1} V"); ;
+		_currentVoltage = _currentVoltage * 0.9f + 0.1f * (float)altData.VoltsIn;
+		GD.Print($"{altData.VescId}:{altData.VoltsIn}");
+		CallDeferred("ShowAltVoltage");
 		
 		return Task.CompletedTask;
+	}
+
+	void ShowAltVoltage()
+	{
+		altDisp.GetNode<Label>("Voltage").SetText($"{_currentVoltage:F2} V");
 	}
 
 	Color CheckForWarnings()
@@ -104,19 +113,6 @@ public partial class BatteryMonitor : Panel
 	void UpdateLabels(VBoxContainer outContainer)
 	{
 		VBoxContainer container = outContainer.GetNode<HBoxContainer>("HBoxContainer").GetNode<VBoxContainer>("BatBox");
-
-		/*
-		if (data.HotswapStatus == MqttClasses.HotswapStatus.DisconnectedAuto || data.HotswapStatus == MqttClasses.HotswapStatus.DisconnectedManual)
-		{
-			container.Visible = false;
-			outContainer.GetNode<Label>("SlotEmpty").Visible = true;
-		}
-		else
-		{
-			container.Visible = true;
-			outContainer.GetNode<Label>("SlotEmpty").Visible = false;
-		}
-		*/
 
 		container.GetNode<Label>("IdLabel").Text = "Battery ID: " + data.ID;
 		container.GetNode<Label>("PercLabel").Text = "Battery %: " + data.ChargePercent.ToString("F1") + "%";

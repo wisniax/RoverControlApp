@@ -20,7 +20,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicRoverContainer = "RoverContainer";
 		_topicMissionStatus = "MissionStatus";
 		_topicKmlSetPoint = "KMLNode/SetPoint";
-		_topicWheelFeedback = "wheel_feedback";
+		_topicWheelFeedback = "VescStatus";
 		_topicEStopStatus = "button_stop";
 		_topicZedImuData = "TopicZedImuData";
 		_topicKmlListOfActiveObj = "KMLNode/ActiveKMLObjects";
