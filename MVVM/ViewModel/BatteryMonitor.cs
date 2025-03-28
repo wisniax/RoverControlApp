@@ -34,6 +34,27 @@ public partial class BatteryMonitor : Panel
 		MqttNode.Singleton.MessageReceivedAsync -= AltBatteryInfoChanged;
 	}
 
+	public override void _Process(double delta)
+	{
+		if (LocalSettings.Singleton.Battery.AltMode)
+		{
+			altDisp.SetVisible(true);
+			this.Size = new Vector2(400, Size.Y);
+			
+			GetNode<HBoxContainer>("BatBoxes").Size = new Vector2(400, Size.Y);
+			GetNode<Label>("Label").Size = new Vector2(400, GetNode<Label>("Label").Size.Y);
+		}
+		else
+		{
+			altDisp.SetVisible(false);
+			this.Size = new Vector2(310, Size.Y);
+			
+			GetNode<HBoxContainer>("BatBoxes").Size = new Vector2(310, Size.Y);
+			GetNode<Label>("Label").Size = new Vector2(310, GetNode<Label>("Label").Size.Y);
+		}
+
+	}
+
 	public Task BatteryInfoChanged(string subTopic, MqttApplicationMessage? msg)
 	{
 		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicBatteryInfo) || subTopic != LocalSettings.Singleton.Mqtt.TopicBatteryInfo)

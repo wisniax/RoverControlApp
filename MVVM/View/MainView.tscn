@@ -270,21 +270,6 @@ text = "SETTINGS"
 visible = false
 layout_mode = 0
 
-[node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
-visible = false
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -213.41
-offset_top = -204.38
-offset_right = -5.40991
-offset_bottom = -45.38
-grow_horizontal = 0
-grow_vertical = 0
-
 [node name="VelMonitor" parent="." instance=ExtResource("6_wqihy")]
 visible = false
 layout_mode = 1
@@ -299,19 +284,35 @@ grow_horizontal = 0
 grow_vertical = 1
 
 [node name="BatteryMonitor" parent="." instance=ExtResource("13_gec13")]
+visible = false
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -761.0
-offset_top = -365.0
-offset_right = -361.0
-offset_bottom = -129.0
+offset_left = -638.0
+offset_top = -368.0
+offset_right = -334.0
+offset_bottom = -132.0
 grow_horizontal = 0
 grow_vertical = 0
 scale = Vector2(1.36, 1.36)
+
+[node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -213.41
+offset_top = -204.38
+offset_right = -5.40991
+offset_bottom = -45.38
+grow_horizontal = 0
+grow_vertical = 0
 
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false
@@ -328,8 +329,8 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 
 [editable path="GrzybUIDis"]
