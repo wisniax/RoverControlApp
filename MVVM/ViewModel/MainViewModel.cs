@@ -318,7 +318,14 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		void HandleBatteryPercentageChanged(Color color, int percentage)
 		{
-			ShowBatteryMonitor.SetText($"BATTERY {percentage}%");
+			if (!LocalSettings.Singleton.Battery.AltMode)
+			{
+				ShowBatteryMonitor.SetText($"BATTERY {percentage}%");
+			}
+			else
+			{
+				ShowBatteryMonitor.SetText($"BATTERY {(float)percentage/10}V");
+			}
 			ShowBatteryMonitor.SetModulate(color);
 			if(color != Colors.Red) return;
 			ShowBatteryMonitor.SetPressed(true);

@@ -67,6 +67,7 @@ public partial class Battery : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _averageAll, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
 	public bool AltMode
 	{
 		get => _altMode;

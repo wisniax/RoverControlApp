@@ -18,7 +18,7 @@ public partial class BatteryMonitor : Panel
 	private MqttClasses.BatteryInfo data;
 
 	private MqttClasses.BatteryInfo[] battery = new MqttClasses.BatteryInfo[3];
-	private float _currentVoltage = 0;
+	private float _currentVoltageAlt = 0;
 
 	public event Func<int, Color, Task>? OnBatteryPercentageChanged;
 
@@ -71,7 +71,8 @@ public partial class BatteryMonitor : Panel
 	}
 	public Task AltBatteryInfoChanged(string subTopic, MqttApplicationMessage? msg)
 	{
-
+		if (!LocalSettings.Singleton.Battery.AltMode)
+			return Task.CompletedTask;
 		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicWheelFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicWheelFeedback)
 			return Task.CompletedTask;
 		if (msg is null || msg.PayloadSegment.Count == 0)
@@ -84,16 +85,18 @@ public partial class BatteryMonitor : Panel
 		
 		if (!(altData.VescId == 0x50 || altData.VescId == 0x51 || altData.VescId == 0x52 || altData.VescId == 0x53)) return Task.CompletedTask;
 
-		_currentVoltage = _currentVoltage * 0.9f + 0.1f * (float)altData.VoltsIn;
+		_currentVoltageAlt = _currentVoltageAlt * 0.9f + 0.1f * (float)altData.VoltsIn;
 		GD.Print($"{altData.VescId}:{altData.VoltsIn}");
 		CallDeferred("ShowAltVoltage");
-		
+
+		OnBatteryPercentageChanged.Invoke((int)(_currentVoltageAlt*10),CheckForWarningsAlt());
+
 		return Task.CompletedTask;
 	}
 
 	void ShowAltVoltage()
 	{
-		altDisp.GetNode<Label>("Voltage").SetText($"{_currentVoltage:F2} V");
+		altDisp.GetNode<Label>("Voltage").SetText($"{_currentVoltageAlt:F2} V");
 	}
 
 	Color CheckForWarnings()
@@ -108,6 +111,18 @@ public partial class BatteryMonitor : Panel
 		}
 
 		return warning ? Colors.Yellow : Colors.White;
+	}
+
+	Color CheckForWarningsAlt()
+	{
+		if (_currentVoltageAlt < LocalSettings.Singleton.Battery.CriticalVoltage)
+		{
+			return Colors.Red;
+		}
+		else
+		{
+			return Colors.White;
+		}
 	}
 
 	void UpdateLabels(VBoxContainer outContainer)
