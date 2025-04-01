@@ -105,7 +105,7 @@ public partial class VelMonitor : Panel
 
 	public void MqttSubscriber(string subTopic, MqttNodeMessage msg)
 	{
-
+		return;
 		if (LocalSettings.Singleton.Mqtt.TopicWheelFeedback is null || subTopic != LocalSettings.Singleton.Mqtt.TopicWheelFeedback)
 			return;
 

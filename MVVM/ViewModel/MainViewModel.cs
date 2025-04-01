@@ -40,7 +40,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private MissionStatus_UIOverlay MissionStatusUIDis = null!;
 
 		[Export]
-		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!;
+		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!, ShowBatteryMonitor;
 		[Export]
 		private SettingsManager SettingsManagerNode = null!;
 		[Export]
@@ -54,6 +54,9 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		[Export]
 		private ZedMonitor ZedMonitor = null!;
+		[Export]
+		private BatteryMonitor BatteryMonitor = null!;
+
 		public MainViewModel()
 		{
 			PressedKeys = new PressedKeys();
@@ -73,6 +76,9 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
+
+			BatteryMonitor.OnBatteryPercentageChanged += HandleBatteryPercentageChangedHandler;
+
 
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
 		}
@@ -103,6 +109,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
+
+			BatteryMonitor.OnBatteryPercentageChanged -= HandleBatteryPercentageChangedHandler;
 
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -300,6 +308,28 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			else
 				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
+		}
+
+		Task HandleBatteryPercentageChangedHandler(int percentage, Color color)
+		{
+			CallDeferred("HandleBatteryPercentageChanged", color, percentage);
+			return Task.CompletedTask;
+		}
+
+		void HandleBatteryPercentageChanged(Color color, int percentage)
+		{
+			if (!LocalSettings.Singleton.Battery.AltMode)
+			{
+				ShowBatteryMonitor.SetText($"BATTERY {percentage}%");
+			}
+			else
+			{
+				ShowBatteryMonitor.SetText($"BATTERY {(float)percentage/10}V");
+			}
+			ShowBatteryMonitor.SetModulate(color);
+			if(color != Colors.Red) return;
+			ShowBatteryMonitor.SetPressed(true);
+			BatteryMonitor.SetVisible(true);
 		}
 
 		public async Task<bool> CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")

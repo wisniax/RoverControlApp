@@ -20,11 +20,13 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicRoverContainer = "RoverContainer";
 		_topicMissionStatus = "MissionStatus";
 		_topicKmlSetPoint = "KMLNode/SetPoint";
-		_topicWheelFeedback = "wheel_feedback";
+		_topicWheelFeedback = "VescStatus";
 		_topicEStopStatus = "button_stop";
 		_topicZedImuData = "TopicZedImuData";
 		_topicKmlListOfActiveObj = "KMLNode/ActiveKMLObjects";
 		_topicSamplerControlControl = "SamplerControl";
+		_topicBatteryInfo = "BatteryInfo";
+		_topicBatteryControl = "BatteryControl";
 	}
 
 	public Mqtt
@@ -41,8 +43,9 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicEStopStatus,
 		string topicZedImuData,
 		string topicKmlListOfActiveObj,
-		string topicSamplerControlControl
-
+		string topicSamplerControlControl,
+		string topicBatteryInfo,
+		string topicBatteryControl
 	)
 	{
 		_clientSettings = clientSettings;
@@ -58,6 +61,9 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicZedImuData = topicZedImuData;
 		_topicKmlListOfActiveObj = topicKmlListOfActiveObj;
 		_topicSamplerControlControl = topicSamplerControlControl;
+		_topicBatteryInfo = topicBatteryInfo;
+		_topicBatteryControl = topicBatteryControl;
+		
 	}
 
 	public object Clone()
@@ -77,7 +83,9 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicZedImuData = _topicZedImuData,
 			TopicEStopStatus = _topicEStopStatus,
 			TopicKmlListOfActiveObj = _topicKmlListOfActiveObj,
-			TopicSamplerControl = _topicSamplerControlControl
+			TopicSamplerControl = _topicSamplerControlControl,
+			TopicBatteryInfo = _topicBatteryInfo,
+			TopicBatteryControl = _topicBatteryControl
 		};
 	}
 
@@ -172,6 +180,20 @@ public partial class Mqtt : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _topicSamplerControlControl, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicBatteryInfo
+	{
+		get => _topicBatteryInfo;
+		set => EmitSignal_SettingChanged(ref _topicBatteryInfo, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicBatteryControl
+	{
+		get => _topicBatteryControl; 
+		set => EmitSignal_SettingChanged(ref _topicBatteryControl, value);
+	}
+
 
 	MqttClientOptions _clientSettings;
 
@@ -187,6 +209,8 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicZedImuData;
 	string _topicKmlListOfActiveObj;
 	string _topicSamplerControlControl;
+	string _topicBatteryInfo;
+	string _topicBatteryControl;
 }
 
 
