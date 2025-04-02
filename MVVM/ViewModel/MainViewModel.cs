@@ -107,7 +107,6 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		protected override void Dispose(bool disposing)
 		{
-			PressedKeys.Singleton.Dispose();
 			RoverCommunication.Dispose();
 			_rtspClient?.Dispose();
 			_ptzClient?.Dispose();
