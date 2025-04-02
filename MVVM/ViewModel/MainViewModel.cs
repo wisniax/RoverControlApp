@@ -11,8 +11,6 @@ namespace RoverControlApp.MVVM.ViewModel
 {
 	public partial class MainViewModel : Control
 	{
-		public MissionSetPoint MissionSetPoint { get; private set; }
-
 		private WeakReference<RtspStreamClient>? _rtspClientWeak;
 		private WeakReference<OnvifPtzCameraController>? _ptzClientWeak;
 
@@ -51,10 +49,6 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		[Export]
 		private ZedMonitor ZedMonitor = null!;
-		public MainViewModel()
-		{
-			MissionSetPoint = new MissionSetPoint();
-		}
 
 		public override void _EnterTree()
 		{
