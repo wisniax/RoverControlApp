@@ -24,6 +24,7 @@ config/icon="res://Resources/icon.svg"
 
 LocalSettings="res://Core/LocalSettings.cs"
 MqttNode="res://MVVM/Model/MqttNode.cs"
+PressedKeys="res://MVVM/Model/PressedKeys.cs"
 
 [debug]
 

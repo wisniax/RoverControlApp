@@ -15,7 +15,7 @@ using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.MVVM.Model;
 
-public class PressedKeys : IDisposable
+public partial class PressedKeys : Node
 {
 	#region Fields
 	private ControlMode _controlMode;
@@ -28,7 +28,6 @@ public class PressedKeys : IDisposable
 	private IRoverManipulatorController _roverManipulatorControllerPreset = null!;
 	private IRoverSamplerController _roverSamplerControllerPreset = null!;
 	private ICameraController _roverCameraControllerPreset = null!;
-	private bool _disposedValue;
 	private ulong _autoEstop_lastInput = 0;
 
 	#endregion Fields
@@ -51,6 +50,10 @@ public class PressedKeys : IDisposable
 	#endregion Events
 
 	#region Properties
+
+	#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+	public static PressedKeys Singleton { get; private set; }
+	#pragma warning restore CS8618
 
 	public ControlMode ControlMode
 	{
@@ -133,19 +136,54 @@ public class PressedKeys : IDisposable
 
 	public PressedKeys()
 	{
+		_cameraMoveVector = Vector4.Zero;
+		_roverMovement = new();
+		_manipulatorMovement = new();
+		_samplerControl = new();
+	}
+
+	#endregion Ctor
+
+	#region GodotOverride
+
+	public override void _Ready()
+	{
+		base._Ready();
+		Singleton ??= this;
+
 		Input.JoyConnectionChanged += InputOnJoyConnectionChanged;
+		LocalSettings.Singleton.CategoryChanged += OnSettingsCategoryChanged;
+		LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
 
 		_cameraMoveVector = Vector4.Zero;
 		_roverMovement = new();
 		_manipulatorMovement = new();
 		_samplerControl = new();
 		SetupControllerPresets();
-
-		LocalSettings.Singleton.CategoryChanged += OnSettingsCategoryChanged;
-		LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
 	}
 
-	#endregion Ctor
+	public override void _UnhandledInput(InputEvent @event)
+	{
+		if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion))
+			return;
+
+		if (HandleInputEvent(@event))
+			GetViewport().SetInputAsHandled();
+	}
+
+	public override void _Process(double delta)
+	{
+		HandleEstop();
+	}
+
+	public override void _ExitTree()
+	{
+		LocalSettings.Singleton.CategoryChanged -= OnSettingsCategoryChanged;
+		LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
+		Singleton = null!;
+	}
+
+	#endregion GodotOverride
 
 	#region Methods.Settings
 
@@ -317,27 +355,4 @@ public class PressedKeys : IDisposable
 	}
 
 	#endregion Methods
-
-	#region IDisposable
-
-	public void Dispose()
-	{
-		Dispose(disposing: true);
-		GC.SuppressFinalize(this);
-	}
-
-	protected virtual void Dispose(bool disposing)
-	{
-		if (_disposedValue) return;
-
-		if (disposing)
-		{
-			LocalSettings.Singleton.CategoryChanged -= OnSettingsCategoryChanged;
-			LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
-		}
-
-		_disposedValue = true;
-	}
-
-	#endregion IDisposable
 }

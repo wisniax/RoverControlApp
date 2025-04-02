@@ -14,9 +14,8 @@ namespace RoverControlApp.MVVM.Model
 	public class RoverCommunication : IDisposable
 	{
 		public event Func<MqttClasses.RoverStatus?, Task>? OnRoverStatusChanged;
-		private MqttClasses.ControlMode ControlMode => _pressedKeys.ControlMode;
+		private MqttClasses.ControlMode ControlMode => PressedKeys.Singleton.ControlMode;
 
-		private readonly PressedKeys _pressedKeys;
 		private readonly MissionStatus _missionStatus;
 
 		private MqttClasses.RoverStatus? _roverStatus;
@@ -45,17 +44,16 @@ namespace RoverControlApp.MVVM.Model
 		}
 
 
-		public RoverCommunication(PressedKeys pressedKeys, MissionStatus missionStatus)
+		public RoverCommunication(MissionStatus missionStatus)
 		{
-			_pressedKeys = pressedKeys;
 			_missionStatus = missionStatus;
 
-			pressedKeys.OnControlModeChanged += PressedKeys_OnControlModeChanged;
+			PressedKeys.Singleton.OnControlModeChanged += PressedKeys_OnControlModeChanged;
 
-			pressedKeys.OnPadConnectionChanged += OnPadConnectionChanged;
-			pressedKeys.OnRoverMovementVector += RoverMovementVectorChanged;
-			pressedKeys.OnManipulatorMovement += RoverManipulatorVectorChanged;
-			pressedKeys.OnSamplerMovement += RoverSamplerVectorChanged;
+			PressedKeys.Singleton.OnPadConnectionChanged += OnPadConnectionChanged;
+			PressedKeys.Singleton.OnRoverMovementVector += RoverMovementVectorChanged;
+			PressedKeys.Singleton.OnManipulatorMovement += RoverManipulatorVectorChanged;
+			PressedKeys.Singleton.OnSamplerMovement += RoverSamplerVectorChanged;
 
 			missionStatus.OnRoverMissionStatusChanged += OnRoverMissionStatusChanged;
 
@@ -79,8 +77,8 @@ namespace RoverControlApp.MVVM.Model
 				default:
 					return; // poker face
 			}
-			await RoverMovementVectorChanged(_pressedKeys.RoverMovement);
-			await RoverCommunication_OnControlStatusChanged(RoverStatus!);
+			await RoverMovementVectorChanged(PressedKeys.Singleton.RoverMovement);
+			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(connection: arg));
 		}
 
 		private async Task OnPadConnectionChanged(bool arg)
@@ -128,11 +126,11 @@ namespace RoverControlApp.MVVM.Model
 
 			if (disposing)
 			{
-				_pressedKeys.OnControlModeChanged -= PressedKeys_OnControlModeChanged;
+				PressedKeys.Singleton.OnControlModeChanged -= PressedKeys_OnControlModeChanged;
 
-				_pressedKeys.OnPadConnectionChanged -= OnPadConnectionChanged;
-				_pressedKeys.OnRoverMovementVector -= RoverMovementVectorChanged;
-				_pressedKeys.OnManipulatorMovement -= RoverManipulatorVectorChanged;
+				PressedKeys.Singleton.OnPadConnectionChanged -= OnPadConnectionChanged;
+				PressedKeys.Singleton.OnRoverMovementVector -= RoverMovementVectorChanged;
+				PressedKeys.Singleton.OnManipulatorMovement -= RoverManipulatorVectorChanged;
 
 				_missionStatus.OnRoverMissionStatusChanged -= OnRoverMissionStatusChanged;
 			}
