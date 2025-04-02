@@ -27,6 +27,7 @@ MqttNode="res://MVVM/Model/MqttNode.cs"
 PressedKeys="res://MVVM/Model/PressedKeys.cs"
 MissionStatus="res://MVVM/Model/MissionStatus.cs"
 RoverCommunication="res://MVVM/Model/RoverCommunication.cs"
+MissionSetPoint="res://MVVM/Model/MissionSetPoint.cs"
 
 [debug]
 
