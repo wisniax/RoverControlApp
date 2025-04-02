@@ -1,0 +1,51 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Godot (Linux)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "dotnet: build",
+            "program": "Godot_v4.3-stable_mono",
+            "args": ["--remote-debug", "tcp://127.0.0.1:6007", "--path", "."],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "Godot (Win)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "dotnet: build",
+            "program": "Godot_v4.3-stable_mono_win64.exe",
+            "args": ["--remote-debug", "tcp://127.0.0.1:6007", "--path", "."],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+
+        {
+            "name": "Godot EDITOR (Linux)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "Godot_v4.3-stable_mono",
+            "args": ["-e", "--debug-server", "tcp://127.0.0.1:6007", "--path", "."],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
+            "name": "Godot EDITOR (Win)",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "Godot_v4.3-stable_mono_win64.exe",
+            "args": ["-e", "--debug-server", "tcp://127.0.0.1:6007", "--path", "."],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+    ]
+}
