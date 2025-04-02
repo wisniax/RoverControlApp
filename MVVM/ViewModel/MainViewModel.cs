@@ -58,8 +58,6 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private RichTextLabel FancyDebugViewRLab = null!;
 
-		[Export]
-		private VelMonitor VelMonitor = null!;
 
 		[Export]
 		private ZedMonitor ZedMonitor = null!;
