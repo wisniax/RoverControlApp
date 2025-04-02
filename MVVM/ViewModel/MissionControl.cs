@@ -121,9 +121,9 @@ public partial class MissionControl : Panel
 	private async void OnSPoiAddConfirmPressed()
 	{
 		var request = MissionSetPoint.GenerateNewPointRequest((MqttClasses.PointType)SPoiAddTypeOpBtn.GetSelectedId(), SPoiAddTargetStrLEdit.Text, SPoiAddDescriptionStrLEdit.Text, (MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.GetSelectedId());
-		if (mainView.MissionSetPoint is null)
+		if (MissionSetPoint.Singleton is null)
 		{
-			EventLogger.LogMessage("MissionControl", EventLogger.LogLevel.Error, "Cannot add POIs, mainView.MissionSetPoint is null!");
+			EventLogger.LogMessage("MissionControl", EventLogger.LogLevel.Error, "Cannot add POIs, MissionSetPoint.Singleton is null!");
 			return;
 		}
 
@@ -133,7 +133,7 @@ public partial class MissionControl : Panel
 		}
 
 		PendingSend = true;
-		await mainView.MissionSetPoint.SendNewPointRequest(request);
+		await MissionSetPoint.Singleton.SendNewPointRequest(request);
 		PendingSend = false;
 
 		SPoiAddReset();
@@ -157,10 +157,10 @@ public partial class MissionControl : Panel
 	{
 		SPoiRemoveTargetOpBtn.Clear();
 
-		if (mainView.MissionSetPoint.ActiveKmlObjects is null)
+		if (MissionSetPoint.Singleton.ActiveKmlObjects is null)
 			return;
 
-		var KmlList = mainView.MissionSetPoint.ActiveKmlObjects;
+		var KmlList = MissionSetPoint.Singleton.ActiveKmlObjects;
 
 		switch((MqttClasses.PointType)SPoiRemoveTypeOpBtn.GetItemId(index))
 		{
@@ -181,13 +181,13 @@ public partial class MissionControl : Panel
 
 	private async void OnSPoiRemoveConfirmPressed()
 	{
-		if (mainView.MissionSetPoint.ActiveKmlObjects is null)
+		if (MissionSetPoint.Singleton.ActiveKmlObjects is null)
 		{
-			EventLogger.LogMessage("MissionControl", EventLogger.LogLevel.Error, "Cannot remove POIs, mainView.MissionSetPoint is null!");
+			EventLogger.LogMessage("MissionControl", EventLogger.LogLevel.Error, "Cannot remove POIs, MissionSetPoint.Singleton is null!");
 			return;
 		}
 
-		var KmlList = mainView.MissionSetPoint.ActiveKmlObjects;
+		var KmlList = MissionSetPoint.Singleton.ActiveKmlObjects;
 		string targetStr = null!;
 		switch ((MqttClasses.PointType)SPoiRemoveTypeOpBtn.GetSelectedId())
 		{
@@ -202,7 +202,7 @@ public partial class MissionControl : Panel
 		var request = MissionSetPoint.GenerateNewPointRequest((MqttClasses.PointType)SPoiRemoveTypeOpBtn.GetSelectedId(), targetStr, string.Empty, MqttClasses.PhotoType.None);
 
 		PendingSend = true;
-		await mainView.MissionSetPoint.SendNewPointRequest(request);
+		await MissionSetPoint.Singleton.SendNewPointRequest(request);
 		PendingSend = false;
 
 		OnSMissionControlRefreshBtn();
@@ -292,11 +292,11 @@ public partial class MissionControl : Panel
 				break;
 		}
 
-		SMissionControlRefreshBtn.Disabled = mainView.MissionSetPoint is null;
+		//SMissionControlRefreshBtn.Disabled = MissionSetPoint.Singleton is null;
 		string? timestampStr = 
-			mainView.MissionSetPoint?.ActiveKmlObjects?.Timestamp is null 
+			MissionSetPoint.Singleton.ActiveKmlObjects?.Timestamp is null 
 			? null 
-			: DateTimeOffset.FromUnixTimeSeconds(mainView.MissionSetPoint!.ActiveKmlObjects!.Timestamp ?? 0).ToLocalTime().ToString("s");
+			: DateTimeOffset.FromUnixTimeSeconds(MissionSetPoint.Singleton.ActiveKmlObjects!.Timestamp ?? 0).ToLocalTime().ToString("s");
 		SMissionControlPOITimestampLab.Text = $"ActiveKmlObject Timestamp: {timestampStr ?? "N/A"}";
 	}
 }

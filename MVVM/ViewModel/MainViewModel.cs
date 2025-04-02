@@ -23,8 +23,6 @@ namespace RoverControlApp.MVVM.ViewModel
 			SkipCameraAndNotes = 3,
 		}
 
-		public MissionSetPoint MissionSetPoint { get; private set; }
-
 		private WeakReference<RtspStreamClient>? _rtspClientWeak;
 		private WeakReference<OnvifPtzCameraController>? _ptzClientWeak;
 
@@ -71,10 +69,6 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private InputHelpMaster InputHelpMaster = null!;
 
-		public MainViewModel()
-		{
-			MissionSetPoint = new MissionSetPoint();
-		}
 
 		public override void _EnterTree()
 		{
