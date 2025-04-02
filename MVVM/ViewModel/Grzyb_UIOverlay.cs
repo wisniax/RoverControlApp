@@ -34,7 +34,7 @@ public partial class Grzyb_UIOverlay : UIOverlay
 			return;
 
 		//skip first 4bytes dunno what it is
-		string payloadStingified = Encoding.UTF8.GetString(msg.Message.PayloadSegment.Array, 4, msg.Message.PayloadSegment.Count - 4);
+		string payloadStingified = Encoding.UTF8.GetString(msg.Message.PayloadSegment.Array!, 4, msg.Message.PayloadSegment.Count - 4);
 
 		var doc = JsonDocument.Parse(payloadStingified);
 		doc.RootElement.GetProperty("mushroom");
