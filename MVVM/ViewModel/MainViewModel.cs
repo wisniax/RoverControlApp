@@ -11,7 +11,6 @@ namespace RoverControlApp.MVVM.ViewModel
 {
 	public partial class MainViewModel : Control
 	{
-		public PressedKeys PressedKeys { get; private set; }
 		public RoverCommunication RoverCommunication { get; private set; }
 		public MissionStatus MissionStatus { get; private set; }
 		public MissionSetPoint MissionSetPoint { get; private set; }
@@ -56,9 +55,8 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ZedMonitor ZedMonitor = null!;
 		public MainViewModel()
 		{
-			PressedKeys = new PressedKeys();
 			MissionStatus = new MissionStatus();
-			RoverCommunication = new RoverCommunication(PressedKeys, MissionStatus);
+			RoverCommunication = new RoverCommunication(MissionStatus);
 			MissionSetPoint = new MissionSetPoint();
 		}
 
@@ -66,15 +64,15 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			SettingsManagerNode.Target = LocalSettings.Singleton;
 
-			PressedKeys.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.OnKinematicModeChanged += DriveModeUIDis.KinematicModeChangedSubscriber;
-			PressedKeys.OnControlModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnKinematicModeChanged += DriveModeUIDis.KinematicModeChangedSubscriber;
+			PressedKeys.Singleton.OnControlModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
-			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
+			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys.Singleton!.ControlMode));
 		}
 
 		// Called when the node enters the scene tree for the first time.
@@ -83,7 +81,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionControlNode.LoadSizeAndPos();
 			MissionControlNode.SMissionControlVisualUpdate();
 
-			RoverModeUIDis.ControlMode = (int)PressedKeys.ControlMode;
+			RoverModeUIDis.ControlMode = (int)PressedKeys.Singleton.ControlMode;
 
 			ManagePtzStatus();
 			ManageRtspStatus();
@@ -96,11 +94,11 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 
-			PressedKeys.OnControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.OnKinematicModeChanged -= DriveModeUIDis.KinematicModeChangedSubscriber;
-			PressedKeys.OnControlModeChanged -= DriveModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.OnControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnKinematicModeChanged -= DriveModeUIDis.KinematicModeChangedSubscriber;
+			PressedKeys.Singleton.OnControlModeChanged -= DriveModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
@@ -110,7 +108,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		protected override void Dispose(bool disposing)
 		{
-			PressedKeys.Dispose();
+			PressedKeys.Singleton.Dispose();
 			RoverCommunication.Dispose();
 			_rtspClient?.Dispose();
 			_ptzClient?.Dispose();
@@ -120,7 +118,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		public override void _Input(InputEvent @event)
 		{
 			if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return;
-			PressedKeys?.HandleInputEvent(@event);
+
 
 			if (@event.IsActionPressed("app_backcapture_save"))
 			{
@@ -204,10 +202,10 @@ namespace RoverControlApp.MVVM.ViewModel
 				case true when _ptzClient is null:
 					_ptzClient = new OnvifPtzCameraController();
 					_ptzClientWeak = new(_ptzClient);
-					PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
+					PressedKeys.Singleton.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
 					break;
 				case false when _ptzClient is not null:
-					PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
+					PressedKeys.Singleton.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
 					_ptzClient.Dispose();
 					_ptzClient = null;
 					break;
@@ -266,25 +264,25 @@ namespace RoverControlApp.MVVM.ViewModel
 			switch (RoverCommunication?.RoverStatus?.ControlMode)
 			{
 				case MqttClasses.ControlMode.Rover:
-					var vecc = new Vector3((float)PressedKeys.RoverMovement.Vel, (float)PressedKeys.RoverMovement.XAxis,
-						(float)PressedKeys.RoverMovement.YAxis);
+					var vecc = new Vector3((float)PressedKeys.Singleton.RoverMovement.Vel, (float)PressedKeys.Singleton.RoverMovement.XAxis,
+						(float)PressedKeys.Singleton.RoverMovement.YAxis);
 
-					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {vecc.X:F2}, XAxis: {vecc.Y:F2}, YAxis: {vecc.Z:F2}, Mode: {PressedKeys.RoverMovement.Mode}\n");
+					FancyDebugViewRLab.AppendText($"PressedKeys.Singleton: Rover Mov: Vel: {vecc.X:F2}, XAxis: {vecc.Y:F2}, YAxis: {vecc.Z:F2}, Mode: {PressedKeys.Singleton.RoverMovement.Mode}\n");
 					
 					break;
 				case MqttClasses.ControlMode.Manipulator:
-					FancyDebugViewRLab.AppendText($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys?.ManipulatorMovement)}\n");
+					FancyDebugViewRLab.AppendText($"PressedKeys.Singleton: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys.Singleton?.ManipulatorMovement)}\n");
 					break;
 				case MqttClasses.ControlMode.Sampler:
-					FancyDebugViewRLab.AppendText($"PressedKeys: Sampler DrillAction: {PressedKeys.SamplerMovement.DrillAction:F2}, " +
-					                              $"DrillMov: {PressedKeys.SamplerMovement.DrillMovement:F2}, " +
-					                              $"PlatformMov: {PressedKeys.SamplerMovement.PlatformMovement:F2}, " +
+					FancyDebugViewRLab.AppendText($"PressedKeys.Singleton: Sampler DrillAction: {PressedKeys.Singleton.SamplerMovement.DrillAction:F2}, " +
+					                              $"DrillMov: {PressedKeys.Singleton.SamplerMovement.DrillMovement:F2}, " +
+					                              $"PlatformMov: {PressedKeys.Singleton.SamplerMovement.PlatformMovement:F2}, " +
 												  $"{(LocalSettings.Singleton.Sampler.Container0.CustomName == "-" ? "Container0" : LocalSettings.Singleton.Sampler.Container0.CustomName)}" +
-																$": {PressedKeys.SamplerMovement.ContainerDegrees0:F1}, " +
+																$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees0:F1}, " +
 												  $"{(LocalSettings.Singleton.Sampler.Container1.CustomName == "-" ? "Container1" : LocalSettings.Singleton.Sampler.Container1.CustomName)}" +
-																$": {PressedKeys.SamplerMovement.ContainerDegrees1:F1}, " +
+																$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees1:F1}, " +
 					                              $"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "Container2" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
-																$": {PressedKeys.SamplerMovement.ContainerDegrees2:F1}\n");
+																$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees2:F1}\n");
 					break;
 			}
 

@@ -10,7 +10,7 @@ using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class PressedKeys : IDisposable
+	public partial class PressedKeys : Node
 	{
 		private volatile ControlMode _controlMode;
 		private volatile KinematicMode _kinematicMode;
@@ -108,18 +108,18 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+	public static PressedKeys Singleton { get; private set; }
+#pragma warning restore CS8618
+
 		public PressedKeys()
 		{
-			Input.JoyConnectionChanged += InputOnJoyConnectionChanged;
+			
 			_lastAbsoluteVector = Vector4.Zero;
 			_roverMovement = new();
 			_manipulatorMovement = new();
 			_samplerControl = new();
 			_containerMovement = new();
-			SetupControllerPresets();
-
-			LocalSettings.Singleton.CategoryChanged += OnSettingsCategoryChanged;
-			LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
 		}
 
 		void SetupControllerPresets()
@@ -131,6 +131,49 @@ namespace RoverControlApp.MVVM.Model
 				);
 			_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
 			_roverSamplerControllerPreset = new SamplerController();
+		}
+
+        /*
+		*	Godot overrides
+		*/
+
+        public override void _Ready()
+        {
+            base._Ready();
+			Singleton ??= this;
+
+			Input.JoyConnectionChanged += InputOnJoyConnectionChanged;
+			LocalSettings.Singleton.CategoryChanged += OnSettingsCategoryChanged;
+			LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
+
+			SetupControllerPresets();
+        }
+
+		public override void _Input(InputEvent @event)
+		{
+			if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return;
+			HandleFunctionInputEvent();
+			HandleCameraInputEvent();
+			HandleMovementInputEvent();
+			HandleManipulatorInputEvent();
+			HandleContainerInputEvent();
+			HandleSamplerInputEvent();
+			HandleDriveModeChangeToggle();
+			HandleDriveModeChangeHold();
+		}
+
+		protected override void Dispose(bool disposing)
+		{
+			if (_disposedValue)	return;
+
+			if (disposing)
+			{
+				LocalSettings.Singleton.CategoryChanged -= OnSettingsCategoryChanged;
+				LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
+			}
+			Singleton = null!;
+			_disposedValue = true;
+			base.Dispose(disposing);
 		}
 
 		/*
@@ -166,18 +209,6 @@ namespace RoverControlApp.MVVM.Model
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Pad {status}");
 			OnPadConnectionChanged?.Invoke(PadConnected);
 			StopAll();
-		}
-
-		public void HandleInputEvent(InputEvent _)
-		{
-			HandleFunctionInputEvent();
-			HandleCameraInputEvent();
-			HandleMovementInputEvent();
-			HandleManipulatorInputEvent();
-			HandleContainerInputEvent();
-			HandleSamplerInputEvent();
-			HandleDriveModeChangeToggle();
-			HandleDriveModeChangeHold();
 		}
 
 		private void HandleContainerInputEvent()
@@ -305,25 +336,6 @@ namespace RoverControlApp.MVVM.Model
 			ManipulatorMovement = new ManipulatorControl();
 
 			LastAbsoluteVector = Vector4.Zero;
-		}
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (_disposedValue)	return;
-
-			if (disposing)
-			{
-				LocalSettings.Singleton.CategoryChanged -= OnSettingsCategoryChanged;
-				LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
-			}
-
-			_disposedValue = true;
-		}
-
-		public void Dispose()
-		{
-			Dispose(disposing: true);
-			GC.SuppressFinalize(this);
 		}
 	}
 }
