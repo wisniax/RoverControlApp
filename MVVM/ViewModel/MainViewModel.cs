@@ -24,7 +24,6 @@ namespace RoverControlApp.MVVM.ViewModel
 		}
 
 		public RoverCommunication RoverCommunication { get; private set; }
-		public MissionStatus MissionStatus { get; private set; }
 		public MissionSetPoint MissionSetPoint { get; private set; }
 
 		private WeakReference<RtspStreamClient>? _rtspClientWeak;
@@ -75,8 +74,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		public MainViewModel()
 		{
-			MissionStatus = new MissionStatus();
-			RoverCommunication = new RoverCommunication(MissionStatus);
+			RoverCommunication = new RoverCommunication();
 			MissionSetPoint = new MissionSetPoint();
 		}
 
@@ -91,8 +89,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.Singleton.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged += InputHelp_HandleControlModeChanged;
 			PressedKeys.Singleton.ControllerPresetChanged += InputHelp_HandleInputPresetChanged;
-			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
-			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
+			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
+			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			BatteryMonitor.OnBatteryDataChanged += HandleBatteryPercentageChangedHandler;
 			BatteryMonitor.SetMushroomState += GrzybUIDis.SetMushroom;
@@ -106,6 +104,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			MissionControlNode.LoadSizeAndPos();
 			MissionControlNode.SMissionControlVisualUpdate();
+			Task.Run(async () => await MissionStatusUIDis.StatusChangeSubscriber(MissionStatus.Singleton.Status));
 
 			RoverModeUIDis.ControlMode = (int)PressedKeys.Singleton.ControlMode;
 
@@ -129,8 +128,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.Singleton.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged -= InputHelp_HandleControlModeChanged;
 			PressedKeys.Singleton.ControllerPresetChanged -= InputHelp_HandleInputPresetChanged;
-			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
-			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
+			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
+			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			BatteryMonitor.OnBatteryDataChanged -= HandleBatteryPercentageChangedHandler;
 
