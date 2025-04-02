@@ -76,12 +76,12 @@ public partial class MissionControl : Panel
 
 	private void OnSMissionControlStartBtn()
 	{
-		switch (mainView.MissionStatus.Status?.MissionStatus)
+		switch (MissionStatus.Singleton.Status?.MissionStatus)
 		{
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Created:
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Stopped:
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Interrupted:
-				mainView.MissionStatus!.StartMission();
+				MissionStatus.Singleton.StartMission();
 				break;
 		}
 	}
@@ -89,13 +89,13 @@ public partial class MissionControl : Panel
 
 	private void OnSMissionControlStopBtn()
 	{
-		switch (mainView.MissionStatus.Status?.MissionStatus)
+		switch (MissionStatus.Singleton.Status?.MissionStatus)
 		{
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Started:
-				mainView.MissionStatus.PauseMission();
+				MissionStatus.Singleton.PauseMission();
 				break;
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Interrupted:
-				mainView.MissionStatus.StopMission();
+				MissionStatus.Singleton.StopMission();
 				break;
 		}
 	}
@@ -253,8 +253,8 @@ public partial class MissionControl : Panel
 
 	public void SMissionControlVisualUpdate()
 	{
-		SMissionControlStatusLabel.Text = $"Status: {mainView.MissionStatus.Status?.MissionStatus.ToString() ?? "N/A"}";
-		switch (mainView.MissionStatus?.Status?.MissionStatus)
+		SMissionControlStatusLabel.Text = $"Status: {MissionStatus.Singleton.Status?.MissionStatus.ToString() ?? "N/A"}";
+		switch (MissionStatus.Singleton.Status?.MissionStatus)
 		{
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Created:
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Stopped:

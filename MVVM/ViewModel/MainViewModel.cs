@@ -12,7 +12,6 @@ namespace RoverControlApp.MVVM.ViewModel
 	public partial class MainViewModel : Control
 	{
 		public RoverCommunication RoverCommunication { get; private set; }
-		public MissionStatus MissionStatus { get; private set; }
 		public MissionSetPoint MissionSetPoint { get; private set; }
 
 		private WeakReference<RtspStreamClient>? _rtspClientWeak;
@@ -55,8 +54,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ZedMonitor ZedMonitor = null!;
 		public MainViewModel()
 		{
-			MissionStatus = new MissionStatus();
-			RoverCommunication = new RoverCommunication(MissionStatus);
+			RoverCommunication = new RoverCommunication();
 			MissionSetPoint = new MissionSetPoint();
 		}
 
@@ -69,8 +67,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.Singleton.OnControlModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
-			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
-			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
+			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
+			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys.Singleton!.ControlMode));
 		}
@@ -80,6 +78,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			MissionControlNode.LoadSizeAndPos();
 			MissionControlNode.SMissionControlVisualUpdate();
+			Task.Run(async () => await MissionStatusUIDis.StatusChangeSubscriber(MissionStatus.Singleton.Status));
 
 			RoverModeUIDis.ControlMode = (int)PressedKeys.Singleton.ControlMode;
 
@@ -99,8 +98,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.Singleton.OnControlModeChanged -= DriveModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
-			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
-			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
+			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
+			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));

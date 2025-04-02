@@ -13,8 +13,6 @@ namespace RoverControlApp.MVVM.Model
 		public event Func<MqttClasses.RoverStatus?, Task>? OnRoverStatusChanged;
 		private MqttClasses.ControlMode ControlMode => PressedKeys.Singleton.ControlMode;
 
-		private readonly MissionStatus _missionStatus;
-
 		private MqttClasses.RoverStatus? _roverStatus;
 		private bool _disposedValue = false;
 
@@ -41,10 +39,8 @@ namespace RoverControlApp.MVVM.Model
 		}
 
 
-		public RoverCommunication(MissionStatus missionStatus)
+		public RoverCommunication()
 		{
-			_missionStatus = missionStatus;
-
 			PressedKeys.Singleton.OnControlModeChanged += PressedKeys_OnControlModeChanged;
 
 			PressedKeys.Singleton.OnPadConnectionChanged += OnPadConnectionChanged;
@@ -53,7 +49,7 @@ namespace RoverControlApp.MVVM.Model
 			PressedKeys.Singleton.OnSamplerMovement += RoverSamplerVectorChanged;
 			PressedKeys.Singleton.OnContainerMovement += PressedKeysOnOnContainerMovement;
 
-			missionStatus.OnRoverMissionStatusChanged += OnRoverMissionStatusChanged;
+			MissionStatus.Singleton.OnRoverMissionStatusChanged += OnRoverMissionStatusChanged;
 
 			MqttNode.Singleton.Connect(MqttNode.SignalName.ConnectionChanged, Callable.From<CommunicationState>(OnMqttConnectionChanged));
 
@@ -126,7 +122,7 @@ namespace RoverControlApp.MVVM.Model
 				PressedKeys.Singleton.OnRoverMovementVector -= RoverMovementVectorChanged;
 				PressedKeys.Singleton.OnManipulatorMovement -= RoverManipulatorVectorChanged;
 
-				_missionStatus.OnRoverMissionStatusChanged -= OnRoverMissionStatusChanged;
+				MissionStatus.Singleton.OnRoverMissionStatusChanged -= OnRoverMissionStatusChanged;
 			}
 
 			_disposedValue = true;

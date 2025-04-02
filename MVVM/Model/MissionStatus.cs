@@ -1,4 +1,5 @@
 ﻿using RoverControlApp.Core;
+using Godot;
 using System;
 using System.ServiceModel;
 using System.Text.Json;
@@ -7,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class MissionStatus
+	public partial class MissionStatus : Node
 	{
 		public event Func<MqttClasses.RoverMissionStatus?, Task>? OnRoverMissionStatusChanged;
 
-		private CancellationTokenSource _cts;
+		private CancellationTokenSource _cts = new CancellationTokenSource();
 		private Thread? _retriveMisionStatusThread;
 
 		private MqttClasses.RoverMissionStatus? _status;
@@ -27,14 +28,32 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-		public MissionStatus()
-		{
-			_cts = new CancellationTokenSource();
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+		public static MissionStatus Singleton { get; private set; }
+#pragma warning restore CS8618
+
+        /*
+		*	Godot overrides
+		*/
+
+        public override void _Ready()
+        {
+            base._Ready();
 			_retriveMisionStatusThread = new Thread(ThreadWork) { IsBackground = true, Name = "RetriveMisionStatusThread", Priority = ThreadPriority.BelowNormal };
 			_retriveMisionStatusThread.Start();
-			//if (!TryRetrieveOldStatus())
-			//	Status = new MqttClasses.RoverMissionStatus() { MissionStatus = MqttClasses.MissionStatus.Created };
-		}
+			Singleton ??= this;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+			_cts.Cancel();
+			Singleton = null!;
+            base.Dispose(disposing);
+        }
+
+       /*
+		*	Godot overrides end
+		*/
 
 		private void ThreadWork()
 		{
