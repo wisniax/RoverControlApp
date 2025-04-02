@@ -9,7 +9,7 @@ namespace RoverControlApp.MVVM.ViewModel;
 public partial class DriveMode_UIOverlay : UIOverlay
 {
 	[Export] 
-	PanelContainer _panelContainer;
+	PanelContainer _panelContainer = null!;
 
 	private int _inputMode; 
 

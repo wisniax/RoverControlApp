@@ -289,7 +289,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
 		}
 
-		public async Task<bool> CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
+		public bool CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
 		{
 			if (_rtspClient is null)
 				return false;
@@ -362,7 +362,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void OnRTSPCapture()
 		{
-			CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
+			Task.Run(() => CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()));
 		}
 	}
 }

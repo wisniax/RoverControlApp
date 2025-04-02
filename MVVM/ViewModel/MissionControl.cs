@@ -127,7 +127,7 @@ public partial class MissionControl : Panel
 
 		if ( (MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.GetSelectedId() != MqttClasses.PhotoType.None	)
 		{
-			await mainView.CaptureCameraImage("POIImages", SPoiAddTargetStrLEdit.Text, "jpg");
+			await Task.Run(() => mainView.CaptureCameraImage("POIImages", SPoiAddTargetStrLEdit.Text, "jpg"));
 		}
 
 		PendingSend = true;
