@@ -11,7 +11,6 @@ namespace RoverControlApp.MVVM.ViewModel
 {
 	public partial class MainViewModel : Control
 	{
-		public RoverCommunication RoverCommunication { get; private set; }
 		public MissionSetPoint MissionSetPoint { get; private set; }
 
 		private WeakReference<RtspStreamClient>? _rtspClientWeak;
@@ -54,7 +53,6 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ZedMonitor ZedMonitor = null!;
 		public MainViewModel()
 		{
-			RoverCommunication = new RoverCommunication();
 			MissionSetPoint = new MissionSetPoint();
 		}
 
@@ -107,7 +105,6 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		protected override void Dispose(bool disposing)
 		{
-			RoverCommunication.Dispose();
 			_rtspClient?.Dispose();
 			_ptzClient?.Dispose();
 			base.Dispose(disposing);
@@ -240,7 +237,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			_rtspClientWeak?.TryGetTarget(out rtspClient);
 			_ptzClientWeak?.TryGetTarget(out ptzClient);
 
-			Color mqttStatusColor = GetColorForCommunicationState(RoverCommunication?.RoverStatus?.CommunicationState);
+			Color mqttStatusColor = GetColorForCommunicationState(RoverCommunication.Singleton.RoverStatus?.CommunicationState);
 
 			Color rtspStatusColor = GetColorForCommunicationState(rtspClient?.State);
 
@@ -255,11 +252,11 @@ namespace RoverControlApp.MVVM.ViewModel
 			string? rtspAge = rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 			string? ptzAge = ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
-			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode}, " + 
-			              $"{(RoverCommunication?.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
-						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication?.RoverStatus?.CommunicationState}[/color], " +
-						  $"Pad connected: {RoverCommunication?.RoverStatus?.PadConnected}\n");
-			switch (RoverCommunication?.RoverStatus?.ControlMode)
+			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication.Singleton.RoverStatus?.ControlMode}, " + 
+			              $"{(RoverCommunication.Singleton.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
+						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication.Singleton.RoverStatus?.CommunicationState}[/color], " +
+						  $"Pad connected: {RoverCommunication.Singleton.RoverStatus?.PadConnected}\n");
+			switch (RoverCommunication.Singleton.RoverStatus?.ControlMode)
 			{
 				case MqttClasses.ControlMode.Rover:
 					var vecc = new Vector3((float)PressedKeys.Singleton.RoverMovement.Vel, (float)PressedKeys.Singleton.RoverMovement.XAxis,
