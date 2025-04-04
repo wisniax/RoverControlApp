@@ -10,17 +10,16 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class BatteryMonitor : Panel
 {
-	[Export] VBoxContainer batt1 = null!;
-	[Export] VBoxContainer batt2 = null!;
-	[Export] VBoxContainer batt3 = null!;
-	[Export] VBoxContainer altDisp = null!;
+	[Export] SubBattery batt1 = new SubBattery(1);
+	[Export] SubBattery batt2 = new SubBattery(2);
+	[Export] SubBattery batt3 = new SubBattery(3);
 
 	private MqttClasses.BatteryInfo data;
 
 	private MqttClasses.BatteryInfo[] battery = new MqttClasses.BatteryInfo[3];
 	private float _currentVoltageAlt = 0;
 
-	public event Func<int, Color, Task>? OnBatteryPercentageChanged;
+	public event Func<int, int, Color, Task>? OnBatteryPercentageChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
 
 	public override void _EnterTree()
 	{
@@ -34,26 +33,26 @@ public partial class BatteryMonitor : Panel
 		MqttNode.Singleton.MessageReceivedAsync -= AltBatteryInfoChanged;
 	}
 
-	public override void _Process(double delta)
-	{
-		if (LocalSettings.Singleton.Battery.AltMode)
-		{
-			altDisp.SetVisible(true);
-			this.Size = new Vector2(400, Size.Y);
+	//public override void _Process(double delta)
+	//{
+	//	if (LocalSettings.Singleton.Battery.AltMode)
+	//	{
+	//		altDisp.SetVisible(true);
+	//		this.Size = new Vector2(400, Size.Y);
 			
-			GetNode<HBoxContainer>("BatBoxes").Size = new Vector2(400, Size.Y);
-			GetNode<Label>("Label").Size = new Vector2(400, GetNode<Label>("Label").Size.Y);
-		}
-		else
-		{
-			altDisp.SetVisible(false);
-			this.Size = new Vector2(310, Size.Y);
+	//		GetNode<HBoxContainer>("BatBoxes").Size = new Vector2(400, Size.Y);
+	//		GetNode<Label>("Label").Size = new Vector2(400, GetNode<Label>("Label").Size.Y);
+	//	}
+	//	else
+	//	{
+	//		altDisp.SetVisible(false);
+	//		this.Size = new Vector2(310, Size.Y);
 			
-			GetNode<HBoxContainer>("BatBoxes").Size = new Vector2(310, Size.Y);
-			GetNode<Label>("Label").Size = new Vector2(310, GetNode<Label>("Label").Size.Y);
-		}
+	//		GetNode<HBoxContainer>("BatBoxes").Size = new Vector2(310, Size.Y);
+	//		GetNode<Label>("Label").Size = new Vector2(310, GetNode<Label>("Label").Size.Y);
+	//	}
 
-	}
+	//}
 
 	public Task BatteryInfoChanged(string subTopic, MqttApplicationMessage? msg)
 	{
@@ -70,19 +69,16 @@ public partial class BatteryMonitor : Panel
 		switch (data.Slot)
 		{
 			case 1:
-				CallDeferred("UpdateLabels", batt1);
-				battery[0] = data;
+				batt1.UpdateBattInfo(data);
 				break;
 			case 2:
-				CallDeferred("UpdateLabels", batt2);
-				battery[1] = data;
+				batt2.UpdateBattInfo(data);
 				break;
 			case 3:
-				CallDeferred("UpdateLabels", batt3);
-				battery[2] = data;
+				batt3.UpdateBattInfo(data);
 				break;
 			default:
-				EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Invalid battery slot");
+				EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Invalid battery slot. Expected 1, 2 or 3");
 				return Task.CompletedTask;
 		}
 
@@ -117,7 +113,7 @@ public partial class BatteryMonitor : Panel
 
 	void ShowAltVoltage()
 	{
-		altDisp.GetNode<Label>("Voltage").SetText($"{_currentVoltageAlt:F2} V");
+		//altDisp.GetNode<Label>("Voltage").SetText($"{_currentVoltageAlt:F2} V");
 	}
 
 	Color CheckForWarnings()
@@ -144,34 +140,6 @@ public partial class BatteryMonitor : Panel
 		{
 			return Colors.White;
 		}
-	}
-
-	void UpdateLabels(VBoxContainer outContainer)
-	{
-		VBoxContainer container = outContainer.GetNode<HBoxContainer>("HBoxContainer").GetNode<VBoxContainer>("BatBox");
-
-		container.GetNode<Label>("IdLabel").Text = "Battery ID: " + data.ID;
-		container.GetNode<Label>("PercLabel").Text = "Battery %: " + data.ChargePercent.ToString("F1") + "%";
-		
-		container.GetNode<Label>("VbatLabel").Text = "VBat: " + data.Voltage.ToString("F1") + "V";
-
-		if(data.Voltage < 6*LocalSettings.Singleton.Battery.CriticalVoltage)
-			container.GetNode<Label>("VbatLabel").SetModulate(Colors.Red);
-		else if(data.Voltage < 6*LocalSettings.Singleton.Battery.WarningVoltage)
-			container.GetNode<Label>("VbatLabel").SetModulate(Colors.Yellow);
-		else
-			container.GetNode<Label>("VbatLabel").SetModulate(Colors.White);
-
-		container.GetNode<Label>("HotswapLabel").Text = "Hotswap: " + data.HotswapStatus.ToString();
-		container.GetNode<Label>("StatusLabel").Text = "Status: " + data.Status.ToString();
-		container.GetNode<Label>("CurrentLabel").Text = "Current: " + data.Current.ToString("F1") + "A";
-		container.GetNode<Label>("TemperatureLabel").Text = "Temperature: " + data.Temperature.ToString("F1") + "C";
-		if (data.Temperature > LocalSettings.Singleton.Battery.WarningTemperature)
-			container.GetNode<Label>("TemperatureLabel").SetModulate(Colors.Orange);
-		else
-			container.GetNode<Label>("TemperatureLabel").SetModulate(Colors.White);
-
-		container.GetNode<Label>("TimeLabel").Text = "Est. Time: " + data.Time.ToString("F0") + "min";
 	}
 
 	void OnBatteryControl(int slot, MqttClasses.BatterySet set)
@@ -202,6 +170,20 @@ public partial class BatteryMonitor : Panel
 			JsonSerializer.Serialize(arg));
 	}
 
+	int CountConnectedBatts()
+	{
+		int count = 0;
+		foreach (var batt in battery)
+		{
+			if (batt != null && batt.Status != MqttClasses.BatteryStatus.Fault)
+			{
+				count++;
+			}
+		}
+
+		return count;
+	}
+
 	int CalculateAverageBatteryPercent()
 	{
 		int sum = 0;
@@ -222,20 +204,5 @@ public partial class BatteryMonitor : Panel
 
 	public override void _Ready()
 	{
-		//batt1.GetNode<Button>("RequestDataButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.RequestData);
-		//batt2.GetNode<Button>("RequestDataButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.RequestData);
-		//batt3.GetNode<Button>("RequestDataButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.RequestData);
-
-		batt1.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("AutoButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.Auto);
-		batt2.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("AutoButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.Auto);
-		batt3.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("AutoButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.Auto);
-		
-		batt1.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OnButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.On);
-		batt2.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OnButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.On);
-		batt3.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OnButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.On);
-		
-		batt1.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton1").Pressed += () => OnBatteryControl(1, MqttClasses.BatterySet.Off);
-		batt2.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton2").Pressed += () => OnBatteryControl(2, MqttClasses.BatterySet.Off);
-		batt3.GetNode<HBoxContainer>("HBoxContainer2").GetNode<Button>("OffButton3").Pressed += () => OnBatteryControl(3, MqttClasses.BatterySet.Off);
 	}
 }
