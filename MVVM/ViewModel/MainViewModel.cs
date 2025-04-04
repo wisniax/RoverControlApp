@@ -77,7 +77,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
-			BatteryMonitor.OnBatteryPercentageChanged += HandleBatteryPercentageChangedHandler;
+			BatteryMonitor.OnBatteryDataChanged += HandleBatteryDataChangedHandler;
 
 
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
@@ -110,7 +110,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
-			BatteryMonitor.OnBatteryPercentageChanged -= HandleBatteryPercentageChangedHandler;
+			BatteryMonitor.OnBatteryDataChanged -= HandleBatteryDataChangedHandler;
 
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -310,21 +310,21 @@ namespace RoverControlApp.MVVM.ViewModel
 				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
 		}
 
-		Task HandleBatteryPercentageChangedHandler(int percentage, Color color)
+		Task HandleBatteryDataChangedHandler(int connectedBatts, int data, Color color)
 		{
-			CallDeferred("HandleBatteryPercentageChanged", color, percentage);
+			CallDeferred("HandleBatteryPercentageChanged", connectedBatts, data, color);
 			return Task.CompletedTask;
 		}
 
-		void HandleBatteryPercentageChanged(Color color, int percentage)
+		void HandleBatteryPercentageChanged(int connectedBatts, int data, Color color)
 		{
 			if (!LocalSettings.Singleton.Battery.AltMode)
 			{
-				ShowBatteryMonitor.SetText($"BATTERY {percentage}%");
+				ShowBatteryMonitor.SetText($"BATTERY {data}%:{connectedBatts}");
 			}
 			else
 			{
-				ShowBatteryMonitor.SetText($"BATTERY {(float)percentage/10}V");
+				ShowBatteryMonitor.SetText($"BATTERY {(float)data/10}V");
 			}
 			ShowBatteryMonitor.SetModulate(color);
 			if(color != Colors.Red) return;

@@ -20,7 +20,7 @@ _offButton = NodePath("Buttons/OffButton")
 
 [node name="Slot" type="Label" parent="."]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 19
 text = "Battery slot: 1"
 horizontal_alignment = 1
 
@@ -36,17 +36,17 @@ layout_mode = 2
 
 [node name="IdLabel" type="Label" parent="BatBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 14
 text = "Battery ID: xxx"
 
 [node name="PercLabel" type="Label" parent="BatBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 14
 text = "Battery %: xx%"
 
 [node name="VbatLabel" type="Label" parent="BatBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 14
 text = "VBAT: xx.x V"
 
 [node name="Separator" type="Label" parent="BatBox"]
@@ -55,43 +55,44 @@ theme_override_font_sizes/font_size = 10
 
 [node name="HotswapLabel" type="Label" parent="BatBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 14
 text = "Hotswap: xxxx"
 
 [node name="StatusLabel" type="Label" parent="BatBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 14
 text = "Status: xxxxxxxxxx"
 
 [node name="CurrentLabel" type="Label" parent="BatBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 14
 text = "Current: -xx A"
 
 [node name="TemperatureLabel" type="Label" parent="BatBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 14
 text = "Temperature: xxC"
 
 [node name="TimeLabel" type="Label" parent="BatBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 10
+theme_override_font_sizes/font_size = 14
 text = "Est. Time: xx min"
 
 [node name="Buttons" type="HBoxContainer" parent="."]
 layout_mode = 2
+alignment = 1
 
 [node name="AutoButton" type="Button" parent="Buttons"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 18
 text = "Auto"
 
 [node name="OnButton" type="Button" parent="Buttons"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 9
+theme_override_font_sizes/font_size = 14
 text = "ON"
 
 [node name="OffButton" type="Button" parent="Buttons"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 9
+theme_override_font_sizes/font_size = 14
 text = "OFF"

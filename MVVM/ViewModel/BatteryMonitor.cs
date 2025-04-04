@@ -10,16 +10,15 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class BatteryMonitor : Panel
 {
-	[Export] SubBattery batt1 = new SubBattery(1);
-	[Export] SubBattery batt2 = new SubBattery(2);
-	[Export] SubBattery batt3 = new SubBattery(3);
+	//[Export] SubBattery batt1 = new SubBattery(1);
+	//[Export] SubBattery batt2 = new SubBattery(2);
+	//[Export] SubBattery batt3 = new SubBattery(3);
 
-	private MqttClasses.BatteryInfo data;
+	[Export] SubBattery[] battery = new SubBattery[3];
 
-	private MqttClasses.BatteryInfo[] battery = new MqttClasses.BatteryInfo[3];
 	private float _currentVoltageAlt = 0;
 
-	public event Func<int, int, Color, Task>? OnBatteryPercentageChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
+	public event Func<int, int, Color, Task>? OnBatteryDataChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
 
 	public override void _EnterTree()
 	{
@@ -31,6 +30,12 @@ public partial class BatteryMonitor : Panel
 	{
 		MqttNode.Singleton.MessageReceivedAsync -= BatteryInfoChanged;
 		MqttNode.Singleton.MessageReceivedAsync -= AltBatteryInfoChanged;
+	}
+
+	public override void _Ready()
+	{
+		for(int i = 0; i < 3; i++)
+		{ battery[i].Slot = i + 1; }
 	}
 
 	//public override void _Process(double delta)
@@ -63,26 +68,22 @@ public partial class BatteryMonitor : Panel
 			EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Empty payload");
 			return Task.CompletedTask;
 		}
-
+		
+		MqttClasses.BatteryInfo data;
+		
 		data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
 
-		switch (data.Slot)
+		try
 		{
-			case 1:
-				batt1.UpdateBattInfo(data);
-				break;
-			case 2:
-				batt2.UpdateBattInfo(data);
-				break;
-			case 3:
-				batt3.UpdateBattInfo(data);
-				break;
-			default:
-				EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Invalid battery slot. Expected 1, 2 or 3");
-				return Task.CompletedTask;
+			battery[data.Slot - 1].UpdateBattInfo(data);
+		}
+		catch (Exception e)
+		{
+			EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Invalid battery slot. Expected 1, 2 or 3");
+			throw;
 		}
 
-		OnBatteryPercentageChanged.Invoke(CalculateAverageBatteryPercent(), CheckForWarnings());
+		OnBatteryDataChanged.Invoke(CountConnectedBatts(), CalculateBatteryPercentSum(), CheckForWarnings());
 		
 		return Task.CompletedTask;
 	}
@@ -106,25 +107,25 @@ public partial class BatteryMonitor : Panel
 		GD.Print($"{altData.VescId}:{altData.VoltsIn}");
 		CallDeferred("ShowAltVoltage");
 
-		OnBatteryPercentageChanged.Invoke((int)(_currentVoltageAlt*10),CheckForWarningsAlt());
+		OnBatteryDataChanged.Invoke(0,(int)(_currentVoltageAlt*10),CheckForWarningsAlt());
 
 		return Task.CompletedTask;
 	}
 
-	void ShowAltVoltage()
-	{
-		//altDisp.GetNode<Label>("Voltage").SetText($"{_currentVoltageAlt:F2} V");
-	}
-
 	Color CheckForWarnings()
 	{
+		float battVoltage = 0;
+		if (LocalSettings.Singleton.Battery.AltMode)
+		{
+			
+		}
 		bool warning = false;
 		foreach (var batt in battery)
 		{
 			if(batt == null) continue;
-			if (batt.Temperature > LocalSettings.Singleton.Battery.WarningTemperature) return Colors.Red;
-			if (batt.Voltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage) return Colors.Red;
-			if (batt.Voltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage) warning = true;
+			if (batt.myData.Temperature > LocalSettings.Singleton.Battery.WarningTemperature) return Colors.Red;
+			if (batt.myData.Voltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage) return Colors.Red;
+			if (batt.myData.Voltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage) warning = true;
 		}
 
 		return warning ? Colors.Yellow : Colors.White;
@@ -147,8 +148,8 @@ public partial class BatteryMonitor : Panel
 		int temp = 0;
 		foreach (var batt in battery)
 		{
-			if (batt.HotswapStatus == MqttClasses.HotswapStatus.OnMan ||
-			    batt.HotswapStatus == MqttClasses.HotswapStatus.OnAuto)
+			if (batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan ||
+			    batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto)
 			{
 				temp++;
 			}
@@ -173,36 +174,28 @@ public partial class BatteryMonitor : Panel
 	int CountConnectedBatts()
 	{
 		int count = 0;
+
 		foreach (var batt in battery)
 		{
-			if (batt != null && batt.Status != MqttClasses.BatteryStatus.Fault)
-			{
+			if(batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto || 
+			   batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) 
 				count++;
-			}
 		}
 
 		return count;
 	}
 
-	int CalculateAverageBatteryPercent()
+	int CalculateBatteryPercentSum()
 	{
 		int sum = 0;
-		int count = 0;
+
 		foreach (var batt in battery)
 		{
-			if (batt != null && batt.Status != MqttClasses.BatteryStatus.Fault)
-			{
-				sum += (int)batt.ChargePercent;
-				count++;
-			}
+			if(batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto || 
+			    batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) 
+				sum += (int)batt.myData.ChargePercent;
 		}
 
-		if(LocalSettings.Singleton.Battery.AverageAll) count = 3;
-
-		return count == 0 ? 0 : sum / count;
-	}
-
-	public override void _Ready()
-	{
+		return sum;
 	}
 }

@@ -1,312 +1,69 @@
-[gd_scene load_steps=2 format=3 uid="uid://c78k3jqowm3q0"]
+[gd_scene load_steps=3 format=3 uid="uid://c78k3jqowm3q0"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/BatteryMonitor.cs" id="1_ktc3a"]
+[ext_resource type="PackedScene" uid="uid://cdbeb0yegexne" path="res://MVVM/View/SubBattery.tscn" id="2_4ptu6"]
 
-[node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("batt1", "batt2", "batt3", "altDisp")]
+[node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("battery")]
 anchors_preset = -1
 anchor_left = 0.269
 anchor_right = 0.269
 offset_left = -310.426
-offset_right = -0.426025
-offset_bottom = 237.0
+offset_right = 123.574
+offset_bottom = 332.0
 script = ExtResource("1_ktc3a")
-batt1 = NodePath("BatBoxes/Batt1")
-batt2 = NodePath("BatBoxes/Batt2")
-batt3 = NodePath("BatBoxes/Batt3")
-altDisp = NodePath("BatBoxes/AltData")
+battery = [NodePath("BatBoxes/Batt1"), NodePath("BatBoxes/Batt2"), NodePath("BatBoxes/Batt3")]
 
-[node name="Label" type="Label" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
-offset_right = 310.0
-offset_bottom = 23.0
+offset_right = 434.0
+offset_bottom = 40.0
+alignment = 1
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+custom_minimum_size = Vector2(261.465, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
 text = "Battery menu"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BatBoxes" type="HBoxContainer" parent="."]
-layout_mode = 0
-offset_top = 23.0
-offset_right = 310.0
-offset_bottom = 232.0
-rotation = 0.000224471
-alignment = 1
-
-[node name="Batt1" type="VBoxContainer" parent="BatBoxes"]
-layout_mode = 2
-
-[node name="Slot" type="Label" parent="BatBoxes/Batt1"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 13
-text = "Battery slot: 1"
-horizontal_alignment = 1
-
-[node name="SlotEmpty" type="Label" parent="BatBoxes/Batt1"]
+[node name="AltData" type="VBoxContainer" parent="HBoxContainer"]
 visible = false
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Slot Empty!"
-horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="BatBoxes/Batt1"]
-layout_mode = 2
-alignment = 1
-
-[node name="BatBox" type="VBoxContainer" parent="BatBoxes/Batt1/HBoxContainer"]
-layout_mode = 2
-
-[node name="IdLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Battery ID: xxx"
-
-[node name="PercLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Battery %: xx%"
-
-[node name="VbatLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "VBAT: xx.x V"
-
-[node name="Separator" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-
-[node name="HotswapLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Hotswap: xxxx"
-
-[node name="StatusLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Status: xxxxxxxxxx"
-
-[node name="CurrentLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Current: -xx A"
-
-[node name="TemperatureLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Temperature: xxC"
-
-[node name="TimeLabel" type="Label" parent="BatBoxes/Batt1/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Est. Time: xx min"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt1"]
-layout_mode = 2
-
-[node name="AutoButton1" type="Button" parent="BatBoxes/Batt1/HBoxContainer2"]
+[node name="Name" type="Label" parent="HBoxContainer/AltData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-text = "Auto"
-
-[node name="OnButton1" type="Button" parent="BatBoxes/Batt1/HBoxContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 9
-text = "ON"
-
-[node name="OffButton1" type="Button" parent="BatBoxes/Batt1/HBoxContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 9
-text = "OFF"
-
-[node name="Separator1" type="Control" parent="BatBoxes"]
-layout_mode = 2
-
-[node name="Batt2" type="VBoxContainer" parent="BatBoxes"]
-layout_mode = 2
-
-[node name="Slot" type="Label" parent="BatBoxes/Batt2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 13
-text = "Battery slot: 2"
-horizontal_alignment = 1
-
-[node name="SlotEmpty" type="Label" parent="BatBoxes/Batt2"]
-visible = false
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Slot Empty!"
-horizontal_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="BatBoxes/Batt2"]
-layout_mode = 2
-alignment = 1
-
-[node name="BatBox" type="VBoxContainer" parent="BatBoxes/Batt2/HBoxContainer"]
-layout_mode = 2
-
-[node name="IdLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Battery ID: xxx"
-
-[node name="PercLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Battery %: xx%"
-
-[node name="VbatLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "VBAT: xx.x V"
-
-[node name="Separator" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-
-[node name="HotswapLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Hotswap: xxxx"
-
-[node name="StatusLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Status: xxxxxxxxxx"
-
-[node name="CurrentLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Current: -xx A"
-
-[node name="TemperatureLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Temperature: xxC"
-
-[node name="TimeLabel" type="Label" parent="BatBoxes/Batt2/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Est. Time: xx min"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt2"]
-layout_mode = 2
-
-[node name="AutoButton2" type="Button" parent="BatBoxes/Batt2/HBoxContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "Auto"
-
-[node name="OnButton2" type="Button" parent="BatBoxes/Batt2/HBoxContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 9
-text = "ON"
-
-[node name="OffButton2" type="Button" parent="BatBoxes/Batt2/HBoxContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 9
-text = "OFF"
-
-[node name="Separator2" type="Control" parent="BatBoxes"]
-layout_mode = 2
-
-[node name="Batt3" type="VBoxContainer" parent="BatBoxes"]
-layout_mode = 2
-
-[node name="Slot" type="Label" parent="BatBoxes/Batt3"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 13
-text = "Battery slot: 3"
-horizontal_alignment = 1
-
-[node name="SlotEmpty" type="Label" parent="BatBoxes/Batt3"]
-visible = false
-layout_mode = 2
-theme_override_font_sizes/font_size = 16
-text = "Slot Empty!"
-horizontal_alignment = 1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="BatBoxes/Batt3"]
-layout_mode = 2
-alignment = 1
-
-[node name="BatBox" type="VBoxContainer" parent="BatBoxes/Batt3/HBoxContainer"]
-layout_mode = 2
-
-[node name="IdLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Battery ID: xxx"
-
-[node name="PercLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Battery %: xx%"
-
-[node name="VbatLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "VBAT: xx.x V"
-
-[node name="Separator" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-
-[node name="HotswapLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Hotswap: xxxx"
-
-[node name="StatusLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Status: xxxxxxxxxx"
-
-[node name="CurrentLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Current: -xx A"
-
-[node name="TemperatureLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Temperature: xxC"
-
-[node name="TimeLabel" type="Label" parent="BatBoxes/Batt3/HBoxContainer/BatBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 10
-text = "Est. Time: xx min"
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="BatBoxes/Batt3"]
-layout_mode = 2
-
-[node name="AutoButton3" type="Button" parent="BatBoxes/Batt3/HBoxContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 12
-text = "Auto"
-
-[node name="OnButton3" type="Button" parent="BatBoxes/Batt3/HBoxContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 9
-text = "ON"
-
-[node name="OffButton3" type="Button" parent="BatBoxes/Batt3/HBoxContainer2"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 9
-text = "OFF"
-
-[node name="Separator3" type="Control" parent="BatBoxes"]
-layout_mode = 2
-
-[node name="AltData" type="VBoxContainer" parent="BatBoxes"]
-visible = false
-layout_mode = 2
-
-[node name="Name" type="Label" parent="BatBoxes/AltData"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 13
 text = "Vesc Voltage:"
 horizontal_alignment = 1
 
-[node name="Voltage" type="Label" parent="BatBoxes/AltData"]
+[node name="Voltage" type="Label" parent="HBoxContainer/AltData"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_font_sizes/font_size = 14
 text = "00.0V"
 horizontal_alignment = 1
+
+[node name="BatBoxes" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_top = 35.0
+offset_right = 434.0
+offset_bottom = 332.0
+rotation = 0.000224471
+alignment = 1
+
+[node name="Batt1" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
+layout_mode = 2
+
+[node name="Separator1" type="Control" parent="BatBoxes"]
+custom_minimum_size = Vector2(4.81, 0)
+layout_mode = 2
+
+[node name="Batt2" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
+layout_mode = 2
+
+[node name="Separator2" type="Control" parent="BatBoxes"]
+custom_minimum_size = Vector2(4.81, 0)
+layout_mode = 2
+
+[node name="Batt3" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
+layout_mode = 2

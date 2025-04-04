@@ -283,22 +283,6 @@ offset_bottom = 236.0
 grow_horizontal = 0
 grow_vertical = 1
 
-[node name="BatteryMonitor" parent="." instance=ExtResource("13_gec13")]
-visible = false
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -638.0
-offset_top = -368.0
-offset_right = -334.0
-offset_bottom = -132.0
-grow_horizontal = 0
-grow_vertical = 0
-scale = Vector2(1.36, 1.36)
-
 [node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
 visible = false
 layout_mode = 1
@@ -322,6 +306,18 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
+[node name="BatteryMonitor" parent="." node_paths=PackedStringArray("battery") instance=ExtResource("13_gec13")]
+visible = false
+layout_mode = 0
+anchors_preset = 0
+anchor_left = 0.0
+anchor_right = 0.0
+offset_left = 250.148
+offset_top = 273.0
+offset_right = 684.148
+offset_bottom = 605.0
+battery = [null, null, null]
+
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
@@ -329,8 +325,8 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 
 [editable path="GrzybUIDis"]

@@ -21,15 +21,20 @@ public partial class SubBattery : VBoxContainer
 	[Export] private Button _onButton;
 	[Export] private Button _offButton;
 
-	private MqttClasses.BatteryInfo myData;
+	public volatile MqttClasses.BatteryInfo myData;
 
-	private int _slot;
-
-	public SubBattery(int slot)
+	private int _slot = 0;
+	public int Slot
 	{
-		_slot = slot;
-		_slotLabel.SetText($"Battery slot: {_slot}");
+		get => _slot;
+		set
+		{
+			_slot = value;
+			_slotLabel.SetText($"Battery slot: {_slot}");
+		}
 	}
+
+	public volatile bool UpToDate = false;
 
 	public override void _Ready()
 	{
