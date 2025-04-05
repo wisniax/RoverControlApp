@@ -23,7 +23,8 @@ public partial class BatteryMonitor : Panel
 		foreach (var batt in battery)
 		{
 			batt.NewBatteryInfo += SendToHUD;
-			//batt.OnBatteryControl += OnBatteryControl;
+			batt.RequestConnectedBatts += CountConnectedBatts;
+			batt.OnBatteryControl += OnBatteryControl;
 		
 		}
 	}
@@ -32,6 +33,12 @@ public partial class BatteryMonitor : Panel
 	{
 		MqttNode.Singleton.MessageReceivedAsync -= BatteryInfoChanged;
 		MqttNode.Singleton.MessageReceivedAsync -= AltBatteryInfoChanged;
+		foreach (var batt in battery)
+		{
+			batt.NewBatteryInfo -= SendToHUD;
+			batt.RequestConnectedBatts -= CountConnectedBatts;
+			batt.OnBatteryControl -= OnBatteryControl;
+		}
 	}
 
 	public override void _Ready()
@@ -89,7 +96,7 @@ public partial class BatteryMonitor : Panel
 		GD.Print($"{altData.VescId}:{altData.VoltsIn}");
 		CallDeferred("ShowAltVoltage");
 
-		OnBatteryDataChanged.Invoke(0,(int)(_currentVoltageAlt*10),CheckForWarningsAlt());
+		OnBatteryDataChanged.Invoke(0,(int)(_currentVoltageAlt*10),CheckForWarnings());
 
 		return Task.CompletedTask;
 	}
@@ -131,21 +138,9 @@ public partial class BatteryMonitor : Panel
 		return Colors.White;
 	}
 
-	Color CheckForWarningsAlt()
+	Task OnBatteryControl(int slot, MqttClasses.BatterySet set)
 	{
-		if (_currentVoltageAlt < LocalSettings.Singleton.Battery.CriticalVoltage)
-		{
-			return Colors.Red;
-		}
-		else
-		{
-			return Colors.White;
-		}
-	}
-
-	void OnBatteryControl(int slot, MqttClasses.BatterySet set)
-	{
-		if(CountConnectedBatts() < 2 && set == MqttClasses.BatterySet.Off) return;
+		if(CountConnectedBatts() < 2 && set == MqttClasses.BatterySet.Off) return Task.CompletedTask;
 
 		MqttClasses.BatteryControl control = new MqttClasses.BatteryControl()
 		{
@@ -153,6 +148,7 @@ public partial class BatteryMonitor : Panel
 			Set = set
 		};
 		OnBatteryControlChanged(control);
+		return Task.CompletedTask;
 	}
 
 	private async Task OnBatteryControlChanged(MqttClasses.BatteryControl arg)
@@ -168,8 +164,8 @@ public partial class BatteryMonitor : Panel
 		foreach (var batt in battery)
 		{
 			if (batt.myData == null) continue;
-			if (batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
-				batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan)
+			if ((batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
+				batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) && batt.UpToDate)
 				count++;
 		}
 
@@ -183,8 +179,8 @@ public partial class BatteryMonitor : Panel
 		foreach (var batt in battery)
 		{
 			if (batt.myData == null) continue;
-			if (batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
-				batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan)
+			if ((batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
+				batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) && batt.UpToDate)
 				sum += (int)batt.myData.ChargePercent;
 		}
 

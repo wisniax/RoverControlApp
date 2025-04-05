@@ -96,3 +96,7 @@ text = "ON"
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "OFF"
+
+[connection signal="pressed" from="Buttons/AutoButton" to="." method="BatteryControl" binds= [0]]
+[connection signal="pressed" from="Buttons/OnButton" to="." method="BatteryControl" binds= [1]]
+[connection signal="pressed" from="Buttons/OffButton" to="." method="BatteryControl" binds= [2]]

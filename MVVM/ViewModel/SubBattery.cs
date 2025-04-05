@@ -28,14 +28,10 @@ public partial class SubBattery : VBoxContainer
 	private volatile int _slot;
 
 	public event Func<Task>? NewBatteryInfo;
-	public event Func<int, MqttClasses.BatteryControl, Task>? OnBatteryControl; //slot, command
+	public event Func<int, MqttClasses.BatterySet, Task>? OnBatteryControl; //slot, command
+	public event Func<int>? RequestConnectedBatts; 
 
-	public SubBattery()
-	{
-		
-	}
-
-	public volatile bool UpToDate = false;
+	public volatile bool UpToDate = true;
 
 	public void SetSlotNumber(int slot)
 	{
@@ -86,6 +82,16 @@ public partial class SubBattery : VBoxContainer
 		NewBatteryInfo.Invoke();
 
 		//todo reset timer
+	}
+
+	void BatteryControl(MqttClasses.BatterySet set)
+	{
+		if(set == MqttClasses.BatterySet.Off)
+		{
+			if (RequestConnectedBatts.Invoke() < 2) return;
+		}
+
+		OnBatteryControl?.Invoke(_slot, set);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
