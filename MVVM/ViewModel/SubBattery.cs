@@ -1,47 +1,53 @@
 using Godot;
 using System;
+using System.Text.Json;
 using RoverControlApp.Core;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
 
 public partial class SubBattery : VBoxContainer
 {
-	[Export] private Label _slotLabel;
-	[Export] private Label _slotEmptyLabel;
-	[Export] private Label _idLabel;
-	[Export] private Label _percLabel;
-	[Export] private Label _vbatLabel;
-	[Export] private Label _hotswapLabel;
-	[Export] private Label _statusLabel;
-	[Export] private Label _currentLabel;
-	[Export] private Label _temperatureLabel;
-	[Export] private Label _timeLabel;
+	[Export] private Label _slotLabel = new ();
+	[Export] private Label _slotEmptyLabel = new ();
+	[Export] private Label _idLabel = new();
+	[Export] private Label _percLabel = new();
+	[Export] private Label _vbatLabel = new();
+	[Export] private Label _hotswapLabel = new();
+	[Export] private Label _statusLabel = new();
+	[Export] private Label _currentLabel = new();
+	[Export] private Label _temperatureLabel = new();
+	[Export] private Label _timeLabel = new();
 
-	[Export] private Button _autoButton;
-	[Export] private Button _onButton;
-	[Export] private Button _offButton;
+	[Export] private Button _autoButton = new();
+	[Export] private Button _onButton = new();
+	[Export] private Button _offButton = new();
 
 	public volatile MqttClasses.BatteryInfo myData;
 
-	private int _slot = 0;
-	public int Slot
+	private volatile int _slot;
+
+	public SubBattery()
 	{
-		get => _slot;
-		set
-		{
-			_slot = value;
-			_slotLabel.SetText($"Battery slot: {_slot}");
-		}
+		
 	}
 
 	public volatile bool UpToDate = false;
 
-	public override void _Ready()
+	public void SetSlotNumber(int slot)
 	{
+		_slot = slot;
+		_slotLabel.SetText($"Battery slot: {slot}");
 	}
 
-	public void UpdateBattInfo(MqttClasses.BatteryInfo data)
+	public override void _Ready()
 	{
+		SetSlotNumber(_slot);
+	}
+
+	public void UpdateBattInfo(string msg)
+	{
+		var data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg);
+
 		myData = data;
 
 		_idLabel.Text = "Battery ID: " + data.ID;
@@ -66,6 +72,8 @@ public partial class SubBattery : VBoxContainer
 			_temperatureLabel.SetModulate(Colors.White);
 
 		_timeLabel.Text = "Est. Time: " + data.Time.ToString("F0") + "min";
+
+		//todo reset timer
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

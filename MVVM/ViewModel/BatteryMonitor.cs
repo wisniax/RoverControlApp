@@ -10,9 +10,13 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class BatteryMonitor : Panel
 {
-	//[Export] SubBattery batt1 = new SubBattery(1);
-	//[Export] SubBattery batt2 = new SubBattery(2);
-	//[Export] SubBattery batt3 = new SubBattery(3);
+	//[Export] SubBattery batt1 = new (1);
+	//[Export] SubBattery batt2 = new (2);
+	//[Export] SubBattery batt3 = new (3);
+
+	//[Export] SubBattery batt1;
+	//[Export] SubBattery batt2;
+	//[Export] SubBattery batt3;
 
 	[Export] SubBattery[] battery = new SubBattery[3];
 
@@ -34,17 +38,23 @@ public partial class BatteryMonitor : Panel
 
 	public override void _Ready()
 	{
-		for(int i = 0; i < 3; i++)
-		{ battery[i].Slot = i + 1; }
+		for (int i = 0; i < 3; i++)
+		{
+			battery[i].SetSlotNumber(i+1);
+		}
 	}
 
+	public override void _Process(double delta)
+	{
+		
+	}
 	//public override void _Process(double delta)
 	//{
 	//	if (LocalSettings.Singleton.Battery.AltMode)
 	//	{
 	//		altDisp.SetVisible(true);
 	//		this.Size = new Vector2(400, Size.Y);
-			
+
 	//		GetNode<HBoxContainer>("BatBoxes").Size = new Vector2(400, Size.Y);
 	//		GetNode<Label>("Label").Size = new Vector2(400, GetNode<Label>("Label").Size.Y);
 	//	}
@@ -52,7 +62,7 @@ public partial class BatteryMonitor : Panel
 	//	{
 	//		altDisp.SetVisible(false);
 	//		this.Size = new Vector2(310, Size.Y);
-			
+
 	//		GetNode<HBoxContainer>("BatBoxes").Size = new Vector2(310, Size.Y);
 	//		GetNode<Label>("Label").Size = new Vector2(310, GetNode<Label>("Label").Size.Y);
 	//	}
@@ -75,7 +85,7 @@ public partial class BatteryMonitor : Panel
 
 		try
 		{
-			battery[data.Slot - 1].UpdateBattInfo(data);
+			battery[data.Slot - 1].CallDeferred("UpdateBattInfo", msg.ConvertPayloadToString());
 		}
 		catch (Exception e)
 		{
@@ -87,6 +97,7 @@ public partial class BatteryMonitor : Panel
 		
 		return Task.CompletedTask;
 	}
+
 	public Task AltBatteryInfoChanged(string subTopic, MqttApplicationMessage? msg)
 	{
 		if (!LocalSettings.Singleton.Battery.AltMode)
@@ -117,18 +128,28 @@ public partial class BatteryMonitor : Panel
 		float battVoltage = 0;
 		if (LocalSettings.Singleton.Battery.AltMode)
 		{
-			
+			battVoltage = _currentVoltageAlt;
 		}
-		bool warning = false;
-		foreach (var batt in battery)
+		else
 		{
-			if(batt == null) continue;
-			if (batt.myData.Temperature > LocalSettings.Singleton.Battery.WarningTemperature) return Colors.Red;
-			if (batt.myData.Voltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage) return Colors.Red;
-			if (batt.myData.Voltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage) warning = true;
+			battVoltage = battery[0].myData.Voltage;
+			foreach (var batt in battery)
+			{
+				if((batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto || batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) &&
+				   battVoltage > batt.myData.Voltage)
+				{
+					battVoltage = batt.myData.Voltage;
+				}
+
+				if (batt.myData.Temperature > LocalSettings.Singleton.Battery.WarningTemperature) return Colors.Red;
+			}
 		}
 
-		return warning ? Colors.Yellow : Colors.White;
+		if (battVoltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage) return Colors.Red;
+		if (battVoltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage) return Colors.Yellow;
+		
+
+		return Colors.White;
 	}
 
 	Color CheckForWarningsAlt()
@@ -145,17 +166,7 @@ public partial class BatteryMonitor : Panel
 
 	void OnBatteryControl(int slot, MqttClasses.BatterySet set)
 	{
-		int temp = 0;
-		foreach (var batt in battery)
-		{
-			if (batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan ||
-			    batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto)
-			{
-				temp++;
-			}
-		}
-
-		if(temp < 2 && set == MqttClasses.BatterySet.Off) return;
+		if(CountConnectedBatts() < 2 && set == MqttClasses.BatterySet.Off) return;
 
 		MqttClasses.BatteryControl control = new MqttClasses.BatteryControl()
 		{
@@ -175,10 +186,20 @@ public partial class BatteryMonitor : Panel
 	{
 		int count = 0;
 
+		//if (batt1.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
+		//    batt1.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan)
+		//	count++;
+		//if (batt2.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
+		//    batt2.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan)
+		//	count++;
+		//if (batt3.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
+		//    batt3.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan)
+		//	count++;
+
 		foreach (var batt in battery)
 		{
-			if(batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto || 
-			   batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) 
+			if (batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
+				batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan)
 				count++;
 		}
 
@@ -189,10 +210,20 @@ public partial class BatteryMonitor : Panel
 	{
 		int sum = 0;
 
+		//if (batt1.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
+		//    batt1.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan)
+		//	sum += (int)batt1.myData.ChargePercent;
+		//if (batt2.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
+		//    batt2.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan)
+		//	sum += (int)batt2.myData.ChargePercent;
+		//if (batt3.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
+		//    batt3.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan)
+		//	sum += (int)batt3.myData.ChargePercent;
+
 		foreach (var batt in battery)
 		{
-			if(batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto || 
-			    batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) 
+			if (batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
+				batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan)
 				sum += (int)batt.myData.ChargePercent;
 		}
 
