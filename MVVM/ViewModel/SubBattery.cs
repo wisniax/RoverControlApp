@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Text.Json;
+using System.Threading.Tasks;
 using RoverControlApp.Core;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
@@ -26,6 +27,9 @@ public partial class SubBattery : VBoxContainer
 
 	private volatile int _slot;
 
+	public event Func<Task>? NewBatteryInfo;
+	public event Func<int, MqttClasses.BatteryControl, Task>? OnBatteryControl; //slot, command
+
 	public SubBattery()
 	{
 		
@@ -41,7 +45,13 @@ public partial class SubBattery : VBoxContainer
 
 	public override void _Ready()
 	{
-		SetSlotNumber(_slot);
+		//SetSlotNumber(_slot);
+	}
+
+	public Task UpdateBattInfoHandler(string msg)
+	{
+		CallDeferred("UpdateBattInfo", msg);
+		return Task.CompletedTask;
 	}
 
 	public void UpdateBattInfo(string msg)
@@ -72,6 +82,8 @@ public partial class SubBattery : VBoxContainer
 			_temperatureLabel.SetModulate(Colors.White);
 
 		_timeLabel.Text = "Est. Time: " + data.Time.ToString("F0") + "min";
+
+		NewBatteryInfo.Invoke();
 
 		//todo reset timer
 	}
