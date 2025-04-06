@@ -11,7 +11,7 @@ namespace RoverControlApp.MVVM.ViewModel;
 public partial class BatteryMonitor : Panel
 {
 	[Export] volatile SubBattery[] battery = new SubBattery[3];
-	[Export] private volatile VBoxContainer altData;
+	[Export] private volatile VBoxContainer altDataDisp = new ();
 
 	private volatile float _currentVoltageAlt = 0;
 
@@ -79,8 +79,11 @@ public partial class BatteryMonitor : Panel
 
 	public Task AltBatteryInfoChanged(string subTopic, MqttApplicationMessage? msg)
 	{
-		if (!LocalSettings.Singleton.Battery.AltMode && CountConnectedBatts() == 0) 
+		if (!LocalSettings.Singleton.Battery.AltMode && CountConnectedBatts() != 0)
+		{
+			altDataDisp.SetVisible(false);
 			return Task.CompletedTask;
+		}
 		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicWheelFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicWheelFeedback)
 			return Task.CompletedTask;
 		if (msg is null || msg.PayloadSegment.Count == 0)
@@ -104,8 +107,8 @@ public partial class BatteryMonitor : Panel
 
 	void ShowAltVoltage()
 	{
-		altData.SetVisible(true);
-		altData.GetChild(1).Set("text", "VBat: " + _currentVoltageAlt.ToString("F1") + "V");
+		altDataDisp.SetVisible(true);
+		altDataDisp.GetChild(1).Set("text", "VBat: " + _currentVoltageAlt.ToString("F1") + "V");
 	}
 
 	Task SendToHUD()

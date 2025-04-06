@@ -318,7 +318,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		void HandleBatteryPercentageChanged(int connectedBatts, int data, Color color)
 		{
-			if (!LocalSettings.Singleton.Battery.AltMode)
+			if (!LocalSettings.Singleton.Battery.AltMode && connectedBatts != 0)
 			{
 				ShowBatteryMonitor.SetText($"BATTERY {data}%:{connectedBatts}");
 			}
