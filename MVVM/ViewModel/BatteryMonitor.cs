@@ -26,7 +26,6 @@ public partial class BatteryMonitor : Panel
 			batt.NewBatteryInfo += SendToHUD;
 			batt.RequestConnectedBatts += CountConnectedBatts;
 			batt.OnBatteryControl += OnBatteryControl;
-		
 		}
 	}
 

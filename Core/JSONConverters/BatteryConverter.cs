@@ -17,6 +17,7 @@ public class BatteryConverter : JsonConverter<Battery>
 		float? warningVoltage = null;
 		float? criticalVoltage = null;
 		float? warningTemperature = null;
+		int? expectedMessageInterval = null;
 		bool? averageAll = null;
 		bool? altMode = null;
 
@@ -56,6 +57,7 @@ public class BatteryConverter : JsonConverter<Battery>
 			warningVoltage ?? Default.WarningVoltage,
 			criticalVoltage ?? Default.CriticalVoltage,
 			warningTemperature ?? Default.WarningTemperature,
+			expectedMessageInterval ?? Default.ExpectedMessageInterval,
 			averageAll ?? Default.AverageAll,
 			altMode ?? Default.AltMode
 		);
@@ -67,6 +69,7 @@ public class BatteryConverter : JsonConverter<Battery>
 		writer.WriteNumber(nameof(Battery.WarningVoltage), value.WarningVoltage);
 		writer.WriteNumber(nameof(Battery.CriticalVoltage), value.CriticalVoltage);
 		writer.WriteNumber(nameof(Battery.WarningTemperature), value.WarningTemperature);
+		writer.WriteNumber(nameof(Battery.ExpectedMessageInterval), value.ExpectedMessageInterval);
 		writer.WriteBoolean(nameof(Battery.AverageAll), value.AverageAll);
 		writer.WriteBoolean(nameof(Battery.AltMode), value.AltMode);
 		writer.WriteEndObject();

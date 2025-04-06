@@ -87,6 +87,7 @@ public partial class SubBattery : VBoxContainer
 		
 		
 		batteryDetectedHandler(true);
+		_timer.SetWaitTime(LocalSettings.Singleton.Battery.ExpectedMessageInterval);
 		_timer.Start();
 	}
 

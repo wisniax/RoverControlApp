@@ -14,15 +14,17 @@ public partial class Battery : SettingBase, ICloneable
 		_warningVoltage = 3.6f;
 		_criticalVoltage = 3.2f;
 		_warningTemperature = 70f;
+		_expectedMessageInterval = 10;
 		_averageAll = false;
 		_altMode = false;
 	}
 
-	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature, bool averageAll, bool altMode)
+	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature, int expectedMessageInterval, bool averageAll, bool altMode)
 	{
 		_warningVoltage = warningVoltage;
 		_criticalVoltage = criticalVoltage;
 		_warningTemperature = warningTemperature;
+		_expectedMessageInterval = expectedMessageInterval;
 		_averageAll = averageAll;
 		_altMode = altMode;
 	}
@@ -34,6 +36,7 @@ public partial class Battery : SettingBase, ICloneable
 			WarningVoltage = _warningVoltage,
 			CriticalVoltage = _criticalVoltage,
 			WarningTemperature = _warningTemperature,
+			ExpectedMessageInterval = _expectedMessageInterval,
 			AverageAll = _averageAll,
 			AltMode = _altMode
 		};
@@ -51,6 +54,13 @@ public partial class Battery : SettingBase, ICloneable
 	{
 		get => _criticalVoltage;
 		set => EmitSignal_SettingChanged(ref _criticalVoltage, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "30;120;5;f;f")]
+	public int ExpectedMessageInterval
+	{
+		get => _expectedMessageInterval;
+		set => EmitSignal_SettingChanged(ref _expectedMessageInterval, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "30;120;5;f;f")]
@@ -77,6 +87,7 @@ public partial class Battery : SettingBase, ICloneable
 	float _warningVoltage;
 	float _criticalVoltage;
 	float _warningTemperature;
+	private int _expectedMessageInterval;
 	bool _averageAll;
 	private bool _altMode;
 }
