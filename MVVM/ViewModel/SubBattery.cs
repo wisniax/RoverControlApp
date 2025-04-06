@@ -23,6 +23,10 @@ public partial class SubBattery : VBoxContainer
 	[Export] private Button _onButton = new();
 	[Export] private Button _offButton = new();
 
+	[Export] private Timer _timer;
+	[Export] private VBoxContainer labels;
+	[Export] private HBoxContainer buttons;
+
 	public volatile MqttClasses.BatteryInfo myData;
 
 	private volatile int _slot;
@@ -31,7 +35,7 @@ public partial class SubBattery : VBoxContainer
 	public event Func<int, MqttClasses.BatterySet, Task>? OnBatteryControl; //slot, command
 	public event Func<int>? RequestConnectedBatts; 
 
-	public volatile bool UpToDate = true;
+	public volatile bool UpToDate = false;
 
 	public void SetSlotNumber(int slot)
 	{
@@ -41,7 +45,7 @@ public partial class SubBattery : VBoxContainer
 
 	public override void _Ready()
 	{
-		//SetSlotNumber(_slot);
+		batteryDetectedHandler(UpToDate);
 	}
 
 	public Task UpdateBattInfoHandler(string msg)
@@ -80,8 +84,10 @@ public partial class SubBattery : VBoxContainer
 		_timeLabel.Text = "Est. Time: " + data.Time.ToString("F0") + "min";
 
 		NewBatteryInfo.Invoke();
-
-		//todo reset timer
+		
+		
+		batteryDetectedHandler(true);
+		_timer.Start();
 	}
 
 	void BatteryControl(MqttClasses.BatterySet set)
@@ -94,8 +100,12 @@ public partial class SubBattery : VBoxContainer
 		OnBatteryControl?.Invoke(_slot, set);
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	void batteryDetectedHandler(bool detected)
 	{
+		UpToDate = detected;
+		_slotEmptyLabel.SetVisible(!detected);
+		labels.SetVisible(detected);                //buttons stay visible so that we can force close the hotswap even if bms died or we use a non-bms battery
+
+		NewBatteryInfo.Invoke();
 	}
 }
