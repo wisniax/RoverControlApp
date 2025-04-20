@@ -1,0 +1,11 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://dkaw0etm2jwwa"]
+
+[ext_resource type="Shader" path="res://Resources/Widget/Drag.gdshader" id="1_oqg51"]
+[ext_resource type="Texture2D" uid="uid://ch5fhm60qpifr" path="res://Resources/Widget/Drag.gradient2d.tres" id="2_tg3de"]
+
+[resource]
+shader = ExtResource("1_oqg51")
+shader_parameter/is1D = false
+shader_parameter/angle = 0
+shader_parameter/color = Vector4(1, 1, 1, 1)
+shader_parameter/gradient_texture = ExtResource("2_tg3de")
