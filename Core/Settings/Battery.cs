@@ -87,9 +87,9 @@ public partial class Battery : SettingBase, ICloneable
 	float _warningVoltage;
 	float _criticalVoltage;
 	float _warningTemperature;
-	private int _expectedMessageInterval;
+	int _expectedMessageInterval;
 	bool _averageAll;
-	private bool _altMode;
+	bool _altMode;
 }
 
 
