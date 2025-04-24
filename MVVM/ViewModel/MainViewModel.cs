@@ -77,7 +77,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
-			BatteryMonitor.OnBatteryDataChanged += HandleBatteryDataChangedHandler;
+			BatteryMonitor.OnBatteryDataChanged += HandleBatteryPercentageChanged;
 
 
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
@@ -110,7 +110,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
-			BatteryMonitor.OnBatteryDataChanged -= HandleBatteryDataChangedHandler;
+			BatteryMonitor.OnBatteryDataChanged -= HandleBatteryPercentageChanged;
 
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -308,12 +308,6 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			else
 				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
-		}
-
-		Task HandleBatteryDataChangedHandler(int connectedBatts, int data, Color color)
-		{
-			CallDeferred("HandleBatteryPercentageChanged", connectedBatts, data, color);
-			return Task.CompletedTask;
 		}
 
 		void HandleBatteryPercentageChanged(int connectedBatts, int data, Color color)

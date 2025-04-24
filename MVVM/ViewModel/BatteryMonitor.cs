@@ -15,7 +15,7 @@ public partial class BatteryMonitor : Panel
 
 	private volatile float _currentVoltageAlt = 0;
 
-	public event Func<int, int, Color, Task>? OnBatteryDataChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
+	public event Action<int, int, Color>? OnBatteryDataChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
 
 	public override void _EnterTree()
 	{
