@@ -49,6 +49,12 @@ public partial class SubBattery : VBoxContainer
 		batteryDetectedHandler(UpToDate);
 	}
 
+	public Task UpdateBattInfoHandler(string msg)
+	{
+		CallDeferred("UpdateBattInfo", msg);
+		return Task.CompletedTask;
+	}
+
 	public void UpdateBattInfo(string msg)
 	{
 		var data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg);
