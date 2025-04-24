@@ -3,8 +3,8 @@ using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 using RoverControlApp.Core;
-using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
+using RoverControlApp.MVVM.ViewModel;
 
 public partial class SubBattery : VBoxContainer
 {
@@ -24,8 +24,9 @@ public partial class SubBattery : VBoxContainer
 	[Export] private Button _offButton = new();
 
 	[Export] private Timer _timer;
-	[Export] private VBoxContainer labels;
-	[Export] private HBoxContainer buttons;
+	[Export] private VBoxContainer _labels;
+
+	private BatteryMonitor _batteryMonitor;
 
 	public volatile MqttClasses.BatteryInfo myData;
 
@@ -33,7 +34,6 @@ public partial class SubBattery : VBoxContainer
 
 	public event Func<Task>? NewBatteryInfo;
 	public event Func<int, MqttClasses.BatterySet, Task>? OnBatteryControl; //slot, command
-	public event Func<int>? RequestConnectedBatts; 
 
 	public volatile bool UpToDate = false;
 
@@ -45,13 +45,8 @@ public partial class SubBattery : VBoxContainer
 
 	public override void _Ready()
 	{
+		_batteryMonitor = GetParent<HBoxContainer>().GetParent<BatteryMonitor>();
 		batteryDetectedHandler(UpToDate);
-	}
-
-	public Task UpdateBattInfoHandler(string msg)
-	{
-		CallDeferred("UpdateBattInfo", msg);
-		return Task.CompletedTask;
 	}
 
 	public void UpdateBattInfo(string msg)
@@ -95,7 +90,7 @@ public partial class SubBattery : VBoxContainer
 	{
 		if(set == MqttClasses.BatterySet.Off)
 		{
-			if (RequestConnectedBatts.Invoke() < 2) return;
+			if (_batteryMonitor.ConnectedBatts < 2) return;
 		}
 
 		OnBatteryControl?.Invoke(_slot, set);
@@ -105,7 +100,7 @@ public partial class SubBattery : VBoxContainer
 	{
 		UpToDate = detected;
 		_slotEmptyLabel.SetVisible(!detected);
-		labels.SetVisible(detected);                //buttons stay visible so that we can force close the hotswap even if bms died or we use a non-bms battery
+		_labels.SetVisible(detected);                //buttons stay visible so that we can force close the hotswap even if bms died or we use a non-bms battery
 
 		NewBatteryInfo.Invoke();
 	}

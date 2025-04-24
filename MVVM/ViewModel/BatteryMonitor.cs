@@ -17,6 +17,24 @@ public partial class BatteryMonitor : Panel
 
 	public event Action<int, int, Color>? OnBatteryDataChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
 
+	public int ConnectedBatts
+	{
+		get
+		{
+			int connectedBatts = 0;
+			foreach (var battery in battery)
+			{
+				if (battery.myData == null) continue;
+				if(battery.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan ||
+				   battery.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto)
+				{
+					connectedBatts++;
+				}
+			}
+			return connectedBatts;
+		}
+	}
+
 	public override void _EnterTree()
 	{
 		MqttNode.Singleton.MessageReceivedAsync += BatteryInfoChanged;
@@ -24,7 +42,6 @@ public partial class BatteryMonitor : Panel
 		foreach (var batt in battery)
 		{
 			batt.NewBatteryInfo += SendToHUD;
-			batt.RequestConnectedBatts += CountConnectedBatts;
 			batt.OnBatteryControl += OnBatteryControl;
 		}
 	}
@@ -36,7 +53,6 @@ public partial class BatteryMonitor : Panel
 		foreach (var batt in battery)
 		{
 			batt.NewBatteryInfo -= SendToHUD;
-			batt.RequestConnectedBatts -= CountConnectedBatts;
 			batt.OnBatteryControl -= OnBatteryControl;
 		}
 	}

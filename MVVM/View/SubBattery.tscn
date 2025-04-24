@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/SubBattery.cs" id="1_d5uhs"]
 
-[node name="SubBattery" type="VBoxContainer" node_paths=PackedStringArray("_slotLabel", "_slotEmptyLabel", "_idLabel", "_percLabel", "_vbatLabel", "_hotswapLabel", "_statusLabel", "_currentLabel", "_temperatureLabel", "_timeLabel", "_autoButton", "_onButton", "_offButton", "_timer", "labels", "buttons")]
+[node name="SubBattery" type="VBoxContainer" node_paths=PackedStringArray("_slotLabel", "_slotEmptyLabel", "_idLabel", "_percLabel", "_vbatLabel", "_hotswapLabel", "_statusLabel", "_currentLabel", "_temperatureLabel", "_timeLabel", "_autoButton", "_onButton", "_offButton", "_timer", "_labels")]
 script = ExtResource("1_d5uhs")
 _slotLabel = NodePath("Slot")
 _slotEmptyLabel = NodePath("SlotEmpty")
@@ -18,8 +18,7 @@ _autoButton = NodePath("Buttons/AutoButton")
 _onButton = NodePath("Buttons/OnButton")
 _offButton = NodePath("Buttons/OffButton")
 _timer = NodePath("Timer")
-labels = NodePath("BatBox")
-buttons = NodePath("Buttons")
+_labels = NodePath("BatBox")
 
 [node name="Slot" type="Label" parent="."]
 layout_mode = 2
