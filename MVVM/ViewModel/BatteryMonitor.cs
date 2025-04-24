@@ -63,15 +63,7 @@ public partial class BatteryMonitor : Panel
 		
 		data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
 
-		try
-		{
-			await (battery[data.Slot - 1].UpdateBattInfoHandler(msg.ConvertPayloadToString()));
-		}
-		catch (Exception e)
-		{
-			EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Invalid battery slot. Expected 1, 2 or 3");
-			throw;
-		}
+		await (battery[data.Slot - 1].UpdateBattInfoHandler(msg.ConvertPayloadToString()));
 		
 		return;
 	}
