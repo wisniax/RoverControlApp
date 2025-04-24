@@ -20,6 +20,7 @@ public class BatteryConverter : JsonConverter<Battery>
 		int? expectedMessageInterval = null;
 		bool? averageAll = null;
 		bool? altMode = null;
+		bool? showOnLow = null;
 
 		while (reader.Read())
 		{
@@ -49,6 +50,9 @@ public class BatteryConverter : JsonConverter<Battery>
 				case nameof(Battery.AltMode):
 					altMode = reader.GetBoolean();
 					break;
+				case nameof(Battery.ShowOnLow):
+					showOnLow = reader.GetBoolean();
+					break;
 			}
 		}
 
@@ -59,7 +63,8 @@ public class BatteryConverter : JsonConverter<Battery>
 			warningTemperature ?? Default.WarningTemperature,
 			expectedMessageInterval ?? Default.ExpectedMessageInterval,
 			averageAll ?? Default.AverageAll,
-			altMode ?? Default.AltMode
+			altMode ?? Default.AltMode,
+			showOnLow ?? Default.ShowOnLow
 		);
 	}
 
@@ -72,6 +77,7 @@ public class BatteryConverter : JsonConverter<Battery>
 		writer.WriteNumber(nameof(Battery.ExpectedMessageInterval), value.ExpectedMessageInterval);
 		writer.WriteBoolean(nameof(Battery.AverageAll), value.AverageAll);
 		writer.WriteBoolean(nameof(Battery.AltMode), value.AltMode);
+		writer.WriteBoolean(nameof(Battery.ShowOnLow), value.ShowOnLow);
 		writer.WriteEndObject();
 	}
 }

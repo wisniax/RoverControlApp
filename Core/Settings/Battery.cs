@@ -17,9 +17,10 @@ public partial class Battery : SettingBase, ICloneable
 		_expectedMessageInterval = 10;
 		_averageAll = false;
 		_altMode = false;
+		_showOnLow = false;
 	}
 
-	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature, int expectedMessageInterval, bool averageAll, bool altMode)
+	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature, int expectedMessageInterval, bool averageAll, bool altMode, bool showOnLow)
 	{
 		_warningVoltage = warningVoltage;
 		_criticalVoltage = criticalVoltage;
@@ -27,6 +28,7 @@ public partial class Battery : SettingBase, ICloneable
 		_expectedMessageInterval = expectedMessageInterval;
 		_averageAll = averageAll;
 		_altMode = altMode;
+		_showOnLow = showOnLow;
 	}
 
 	public object Clone()
@@ -38,7 +40,8 @@ public partial class Battery : SettingBase, ICloneable
 			WarningTemperature = _warningTemperature,
 			ExpectedMessageInterval = _expectedMessageInterval,
 			AverageAll = _averageAll,
-			AltMode = _altMode
+			AltMode = _altMode,
+			ShowOnLow = _showOnLow
 		};
 	}
 
@@ -84,12 +87,21 @@ public partial class Battery : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _altMode, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check, 
+		 customTooltip: "Always show battery monitor when battery is low")]
+	public bool ShowOnLow
+	{
+		get => _showOnLow;
+		set => EmitSignal_SettingChanged(ref _showOnLow, value);
+	}
+
 	float _warningVoltage;
 	float _criticalVoltage;
 	float _warningTemperature;
 	int _expectedMessageInterval;
 	bool _averageAll;
 	bool _altMode;
+	bool _showOnLow;
 }
 
 

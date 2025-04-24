@@ -322,8 +322,11 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			ShowBatteryMonitor.SetModulate(color);
 			if(color != Colors.Red) return;
-			ShowBatteryMonitor.SetPressed(true);
-			BatteryMonitor.SetVisible(true);
+			if(LocalSettings.Singleton.Battery.ShowOnLow)
+			{
+				ShowBatteryMonitor.SetPressed(true);
+				BatteryMonitor.SetVisible(true);
+			}
 		}
 
 		public async Task<bool> CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
