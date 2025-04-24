@@ -91,7 +91,6 @@ public partial class BatteryMonitor : Panel
 		if (!(altData.VescId == 0x50 || altData.VescId == 0x51 || altData.VescId == 0x52 || altData.VescId == 0x53)) return Task.CompletedTask;
 
 		_currentVoltageAlt = _currentVoltageAlt * 0.9f + 0.1f * (float)altData.VoltsIn;
-		GD.Print($"{altData.VescId}:{altData.VoltsIn}");
 		CallDeferred("ShowAltVoltage");
 
 		OnBatteryDataChanged.Invoke(0,(int)(_currentVoltageAlt*10),CheckForWarnings());
