@@ -19,20 +19,7 @@ public partial class BatteryMonitor : Panel
 
 	public int ConnectedBatts
 	{
-		get
-		{
-			int connectedBatts = 0;
-			foreach (var battery in battery)
-			{
-				if (battery.myData == null) continue;
-				if(battery.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan ||
-				   battery.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto)
-				{
-					connectedBatts++;
-				}
-			}
-			return connectedBatts;
-		}
+		get => CountConnectedBatts();
 	}
 
 	public override void _EnterTree()
