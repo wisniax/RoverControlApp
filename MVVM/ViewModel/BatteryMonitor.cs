@@ -75,7 +75,7 @@ public partial class BatteryMonitor : Panel
 	{
 		if (!LocalSettings.Singleton.Battery.AltMode && CountConnectedBatts() != 0)
 		{
-			altDataDisp.SetVisible(false);
+			CallDeferred("ShowAltVoltage", false);
 			return Task.CompletedTask;
 		}
 		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicWheelFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicWheelFeedback)
@@ -91,16 +91,16 @@ public partial class BatteryMonitor : Panel
 		if (!(altData.VescId == 0x50 || altData.VescId == 0x51 || altData.VescId == 0x52 || altData.VescId == 0x53)) return Task.CompletedTask;
 
 		_currentVoltageAlt = _currentVoltageAlt * 0.9f + 0.1f * (float)altData.VoltsIn;
-		CallDeferred("ShowAltVoltage");
+		CallDeferred("ShowAltVoltage", true);
 
 		OnBatteryDataChanged.Invoke(0,(int)(_currentVoltageAlt*10),CheckForWarnings());
 
 		return Task.CompletedTask;
 	}
 
-	void ShowAltVoltage()
+	void ShowAltVoltage(bool show)
 	{
-		altDataDisp.SetVisible(true);
+		altDataDisp.SetVisible(show);
 		altDataDisp.GetChild(1).Set("text", "VBat: " + _currentVoltageAlt.ToString("F1") + "V");
 	}
 
