@@ -45,21 +45,25 @@ public partial class Battery : SettingBase, ICloneable
 		};
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "3.2;4.3;0.1;f;f")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "3.2;4.3;0.1;f;f",
+		 customTooltip: "Warning per cell voltage 3.6*6=21.6 (below that point battery label goes yellow)")]
 	public float WarningVoltage
 	{
 		get => _warningVoltage;
 		set => EmitSignal_SettingChanged(ref _warningVoltage, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "3.2;4.3;0.1;f;f")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "3.2;4.3;0.1;f;f",
+		 customTooltip: "Warning per cell voltage 3.2*6=19.2 (below that point battery label goes red)")]
 	public float CriticalVoltage
 	{
 		get => _criticalVoltage;
 		set => EmitSignal_SettingChanged(ref _criticalVoltage, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "30;120;5;f;f")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "30;120;5;f;f",
+		 customTooltip: "Time interval the app would wait, before assuming that BMS communication died,\n"+
+						"and pulling voltage data from alt source (vesc)")]
 	public int ExpectedMessageInterval
 	{
 		get => _expectedMessageInterval;
@@ -73,22 +77,28 @@ public partial class Battery : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _warningTemperature, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check,
+		 customTooltip: "(REQUIRES Alt Mode OFF)\n" +
+						"When enabled shows average battery percentage and amount of (active) batteries.\n" +
+						"When disabled shows a sum of battery percentages and number of (active) batteries")]
 	public bool AverageAll
 	{
 		get => _averageAll;
 		set => EmitSignal_SettingChanged(ref _averageAll, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check,
+		 customTooltip: "When enabled always shows vesc voltage in HUD.\n" +
+						"When disabled shows battery charge percent (if available)")]
 	public bool AltMode
 	{
 		get => _altMode;
 		set => EmitSignal_SettingChanged(ref _altMode, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check, 
-		 customTooltip: "Always show battery monitor when battery is low")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check,
+		 customTooltip: "When enabled every time a message, that warrants a warning arrives (overtemperature, undervoltage), the battery monitor shows up.\n" +
+						"When disabled it doesn't do that")]
 	public bool ShowOnLow
 	{
 		get => _showOnLow;
