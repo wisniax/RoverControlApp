@@ -61,6 +61,7 @@ public partial class LocalSettings : Node
 		if (LoadSettings()) return;
 
 		ForceDefaultSettings();
+		SaveSettings();
 	}
 
 	public override void _Ready()

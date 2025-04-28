@@ -9,7 +9,7 @@
     },
     "Godot Console": {
       "commandName": "Executable",
-      "executablePath": "Godot_v4.3-stable_mono_win64.exe",
+      "executablePath": "Godot_v4.3-stable_mono_win64_console.exe",
       "commandLineArgs": "--path . --verbose",
       "workingDirectory": ".",
       "nativeDebugging": true
