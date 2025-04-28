@@ -50,6 +50,32 @@ namespace RoverControlApp.Core
 			Generic = 1,
 			Spheric = 2
 		}
+		public enum BatteryStatus
+		{
+			Disconnected = 0,
+			Charging = 1,
+			Discharging = 2,
+			Full = 3,
+			Rest = 4,
+			Fault = 5,
+			Empty = 6
+		}
+
+		public enum HotswapStatus
+		{
+			OffMan = 0,
+			OnMan = 1,
+			OffAuto = 2,
+			OnAuto = 3
+		}
+
+		public enum BatterySet
+		{
+			Auto = 0,
+			On = 1,
+			Off = 2,
+			//RequestData = 3
+		}
 
 		public class RoverStatus
 		{
@@ -109,7 +135,52 @@ namespace RoverControlApp.Core
 			
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
-		
+
+		public class BatteryInfo
+		{
+			public int Slot { get; set; }
+			public int ID { get; set; }
+			public float ChargePercent { get; set; }
+			public float Voltage { get; set; }
+
+			public BatteryStatus Status { get; set; }
+			public HotswapStatus HotswapStatus { get; set; }
+			public float Current { get; set; }
+			public int Temperature { get; set; }
+			public int Time { get; set; }
+		}
+
+		public class BatteryControl
+		{
+			public int Slot { get; set; }
+			public BatterySet Set { get; set; } = BatterySet.Auto;
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+
+		public class WheelFeedback
+		{
+			public int ERPM { get; set; }
+			public int VescId { get; set; }
+			public double ADC1 { get; set; }
+			public double ADC2 { get; set; }
+			public double ADC3 { get; set; }
+			public double AhCharged { get; set; }
+			public double AhUsed { get; set; }
+			public double Current { get; set; }
+			public double CurrentIn { get; set; }
+			public double DutyCycle { get; set; }
+			public double PPM { get; set; }
+			public double PidPos { get; set; }
+			public double PrecisePos { get; set; }
+			public double Tachometer { get; set; }
+			public double TempFet { get; set; }
+			public double TempMotor { get; set; }
+			public double VoltsIn { get; set; }
+			public double WhCharged { get; set; }
+			public double WhUsed { get; set; }
+			public long Timestamp { get; set; }
+		}
+
 		public class RoverContainer
 		{
 			public float Axis1 { get; set; } = 0f;

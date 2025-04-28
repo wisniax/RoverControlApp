@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=23 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SafeMode_UIOverlay.cs" id="7_ssyiv"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
+[ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -48,7 +49,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -65,11 +66,13 @@ MissionStatusUIDis = NodePath("MissonStatusUIDis")
 ShowSettingsBtn = NodePath("HBoxContainer/ShowSettingsBtn")
 ShowVelMonitor = NodePath("HBoxContainer/ShowVelMonitor")
 ShowMissionControlBrn = NodePath("HBoxContainer/ShowMissionControl")
+ShowBatteryMonitor = NodePath("HBoxContainer/ShowBatteryMonitor")
 SettingsManagerNode = NodePath("SettingsManager")
 MissionControlNode = NodePath("MissionControl")
 FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
+BatteryMonitor = NodePath("BatteryMonitor")
 
 [node name="CameraView" type="TextureRect" parent="."]
 layout_mode = 1
@@ -242,6 +245,13 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_x20sx")
 text = "VEL MONITOR"
 
+[node name="ShowBatteryMonitor" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+shortcut = SubResource("Shortcut_x20sx")
+text = "BATTERY"
+
 [node name="ShowZedMonitor" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
@@ -260,7 +270,7 @@ text = "SETTINGS"
 visible = false
 layout_mode = 0
 
-[node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
+[node name="BatteryMonitor" parent="." instance=ExtResource("13_gec13")]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -268,10 +278,10 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -213.41
-offset_top = -204.38
-offset_right = -5.40991
-offset_bottom = -45.38
+offset_left = -652.0
+offset_top = -377.0
+offset_right = -218.0
+offset_bottom = -45.0
 grow_horizontal = 0
 grow_vertical = 0
 
@@ -288,6 +298,21 @@ offset_bottom = 236.0
 grow_horizontal = 0
 grow_vertical = 1
 
+[node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -213.41
+offset_top = -204.38
+offset_right = -5.40991
+offset_bottom = -45.38
+grow_horizontal = 0
+grow_vertical = 0
+
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false
 layout_mode = 1
@@ -301,6 +326,7 @@ offset_bottom = -40.0
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]

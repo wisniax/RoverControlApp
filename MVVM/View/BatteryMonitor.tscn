@@ -1,0 +1,70 @@
+[gd_scene load_steps=3 format=3 uid="uid://c78k3jqowm3q0"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/BatteryMonitor.cs" id="1_ktc3a"]
+[ext_resource type="PackedScene" uid="uid://cdbeb0yegexne" path="res://MVVM/View/SubBattery.tscn" id="2_4ptu6"]
+
+[node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("battery", "altDataDisp")]
+anchors_preset = -1
+anchor_left = 0.269
+anchor_right = 0.269
+offset_left = -310.426
+offset_right = 123.574
+offset_bottom = 332.0
+script = ExtResource("1_ktc3a")
+battery = [NodePath("BatBoxes/Batt1"), NodePath("BatBoxes/Batt2"), NodePath("BatBoxes/Batt3")]
+altDataDisp = NodePath("HBoxContainer/AltData")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 434.0
+offset_bottom = 40.0
+alignment = 1
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+custom_minimum_size = Vector2(261.465, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "Battery menu"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AltData" type="VBoxContainer" parent="HBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Name" type="Label" parent="HBoxContainer/AltData"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Vesc Voltage:"
+horizontal_alignment = 1
+
+[node name="Voltage" type="Label" parent="HBoxContainer/AltData"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "00.0V"
+horizontal_alignment = 1
+
+[node name="BatBoxes" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_top = 35.0
+offset_right = 434.0
+offset_bottom = 332.0
+rotation = 0.000224471
+alignment = 1
+
+[node name="Batt1" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
+layout_mode = 2
+
+[node name="Separator1" type="Control" parent="BatBoxes"]
+custom_minimum_size = Vector2(4.81, 0)
+layout_mode = 2
+
+[node name="Batt2" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
+layout_mode = 2
+
+[node name="Separator2" type="Control" parent="BatBoxes"]
+custom_minimum_size = Vector2(4.81, 0)
+layout_mode = 2
+
+[node name="Batt3" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
+layout_mode = 2
