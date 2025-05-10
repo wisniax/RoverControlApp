@@ -16,8 +16,8 @@ grow_vertical = 2
 script = ExtResource("1_3iyhe")
 _flLabel = NodePath("FLData")
 _frLabel = NodePath("FRData")
-_brLabel = NodePath("BLData")
-_blLabel = NodePath("BRData")
+_brLabel = NodePath("BRData")
+_blLabel = NodePath("BLData")
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
