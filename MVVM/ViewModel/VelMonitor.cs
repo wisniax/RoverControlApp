@@ -21,9 +21,9 @@ public partial class VelMonitor : Panel
 	[Export] private Label[] _rotationLabel;
 
 	[Export] private Sprite2D[] _wheelSprites;
-	[Export] private VSlider[] _wheelSlider;
+	[Export] private VSlider[] _wheelSlider = new VSlider[4];
 
-	[Export] private Sprite2D[] _ghostSprites;
+	[Export] private Sprite2D[] _ghostSprites = new Sprite2D[4];
 
 	int[] driveMotorID = new int[4];
 	int[] rotationMotorID = new int[4];
@@ -98,7 +98,8 @@ public partial class VelMonitor : Panel
 			{
 				if (driveMotorID[i] == velData.VescId)
 				{
-					UpdateDriveMotorInfo(i, velData);
+					UpdateDriveMotorInfoHandler(i, velData);
+					break;
 				}
 				continue;
 			}
@@ -106,28 +107,39 @@ public partial class VelMonitor : Panel
 			{
 				if (rotationMotorID[i - 4] == velData.VescId)
 				{
-					UpdateRotationMotorInfo(i - 4, velData);
+					UpdateRotationMotorInfoHandler(i - 4, velData);
+					break;
 				}
 				continue;
 			}
 		}
 	}
 
-	void UpdateDriveMotorInfo(int motor, MqttClasses.WheelFeedback data)
+	void UpdateDriveMotorInfoHandler(int motor, MqttClasses.WheelFeedback data)
 	{
-		_driveLabel[motor].SetText($"Drive:\n" +
-						 $"RPM: {data.ERPM} rpm\n" +
-						 $"Current: {data.Current:F0} A");
-		_wheelSlider[motor].Value = (float)data.ERPM;
+		CallDeferred("UpdateDriveMotorInfo", motor, (int)data.ERPM, (int)data.Current);
 	}
 
-	void UpdateRotationMotorInfo(int motor, MqttClasses.WheelFeedback data)
+	void UpdateDriveMotorInfo(int motor, int erpm, int current)
+	{
+		_driveLabel[motor].SetText($"Drive:\n" +
+						 $"RPM: {erpm} rpm\n" +
+						 $"Current: {current} A");
+		_wheelSlider[motor].Value = (float)erpm;
+	}
+
+	void UpdateRotationMotorInfoHandler(int motor, MqttClasses.WheelFeedback data)
+	{
+		CallDeferred("UpdateRotationMotorInfo", motor, (int)data.ERPM, (int)data.Current, (int)data.PrecisePos, (int)data.PidPos);
+	}
+
+	void UpdateRotationMotorInfo(int motor, int erpm, int current, int precisePos, int pidPos)
 	{
 		_rotationLabel[motor].SetText($"Rotation:\n" +
-						 $"RPM: {data.ERPM} rpm\n" +
-						 $"Current: {data.Current:F0} A");
-		_wheelSprites[motor].RotationDegrees = (float)data.PrecisePos + ((motor == 0 || motor == 3) ? 90f : -90f);
-		_ghostSprites[motor].RotationDegrees = (float)data.PidPos + ((motor == 0 || motor == 3) ? 90f : -90f);
+						 $"RPM: {erpm} rpm\n" +
+						 $"Current: {current:F0} A");
+		_wheelSprites[motor].RotationDegrees = (float)precisePos + ((motor == 0 || motor == 3) ? 90f : -90f);
+		_ghostSprites[motor].RotationDegrees = (float)pidPos + ((motor == 0 || motor == 3) ? 90f : -90f);
 	}
 
 	private int StringToHexInt(string hexString)
