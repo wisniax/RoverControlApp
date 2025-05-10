@@ -4,13 +4,13 @@
 [ext_resource type="Texture2D" uid="uid://cra73rn2ne7aj" path="res://Resources/rover_wheel.png" id="2_lfwv6"]
 [ext_resource type="Texture2D" uid="uid://cluv3fvjs73t2" path="res://Resources/rover_no_wheels.png" id="3_haasr"]
 
-[node name="VelMonitor" type="Panel" node_paths=PackedStringArray("_flLabel", "_frLabel", "_brLabel", "_blLabel")]
+[node name="VelMonitor" type="Panel" node_paths=PackedStringArray("_flLabel", "_frLabel", "_brLabel", "_blLabel", "_driveLabel", "_rotationLabel", "_wheelSprites", "_wheelSlider", "_ghostSprites")]
 custom_minimum_size = Vector2(340, 200)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 814.0
-offset_bottom = -289.0
+offset_left = 724.0
+offset_bottom = -250.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_3iyhe")
@@ -18,6 +18,11 @@ _flLabel = NodePath("FLData")
 _frLabel = NodePath("FRData")
 _brLabel = NodePath("BRData")
 _blLabel = NodePath("BLData")
+_driveLabel = [NodePath("HBoxContainer/VBoxContainer1/FrontLeftContainer/DriveLabel"), NodePath("HBoxContainer/VBoxContainer2/FrontRightContainer/DriveLabel"), NodePath("HBoxContainer/VBoxContainer2/BackRightContainer/DriveLabel"), NodePath("HBoxContainer/VBoxContainer1/BackLeftContainer/DriveLabel")]
+_rotationLabel = [NodePath("HBoxContainer/VBoxContainer1/FrontLeftContainer/RotationLabel"), NodePath("HBoxContainer/VBoxContainer2/FrontRightContainer/RotationLabel"), NodePath("HBoxContainer/VBoxContainer2/BackRightContainer/RotationLabel"), NodePath("HBoxContainer/VBoxContainer1/BackLeftContainer/RotationLabel")]
+_wheelSprites = [NodePath("WheelFrontLeft"), NodePath("WheelFrontRight"), NodePath("WheelBackRight"), NodePath("WheelBackLeft")]
+_wheelSlider = [NodePath("WheelFrontLeft/VSlider"), NodePath("WheelFrontRight/VSlider"), NodePath("WheelBackRight/VSlider"), NodePath("WheelBackLeft/VSlider")]
+_ghostSprites = [NodePath("GhostFrontLeft"), NodePath("GhostFrontRight"), NodePath("GhostBackRight"), NodePath("GhostBackLeft")]
 
 [node name="Label" type="Label" parent="."]
 layout_mode = 1
@@ -28,131 +33,275 @@ offset_left = -20.0
 offset_right = 20.0
 offset_bottom = 23.0
 grow_horizontal = 2
+theme_override_font_sizes/font_size = 22
 text = "VelMonitor"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 3.0
 offset_top = 27.0
-offset_right = 337.0
-offset_bottom = 361.0
+offset_right = 428.0
+offset_bottom = 395.0
 
 [node name="VBoxContainer1" type="VBoxContainer" parent="HBoxContainer"]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(145, 0)
 layout_mode = 2
 
 [node name="Separator" type="Control" parent="HBoxContainer/VBoxContainer1"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="FrontLeftContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer1"]
 custom_minimum_size = Vector2(0, 94.405)
 layout_mode = 2
 
+[node name="DriveLabel" type="Label" parent="HBoxContainer/VBoxContainer1/FrontLeftContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Drive:
+ERPM: ???? rpm
+Current: ??? A
+"
+
+[node name="RotationLabel" type="Label" parent="HBoxContainer/VBoxContainer1/FrontLeftContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Rotation:
+ERPM: ???? rpm
+Current: ??? A"
+
 [node name="Separator2" type="Control" parent="HBoxContainer/VBoxContainer1"]
-custom_minimum_size = Vector2(0, 42)
+custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 
 [node name="BackLeftContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer1"]
 custom_minimum_size = Vector2(0, 94.405)
 layout_mode = 2
 
+[node name="DriveLabel" type="Label" parent="HBoxContainer/VBoxContainer1/BackLeftContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Drive:
+ERPM: ???? rpm
+Current: ??? A
+"
+
+[node name="RotationLabel" type="Label" parent="HBoxContainer/VBoxContainer1/BackLeftContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Rotation:
+ERPM: ???? rpm
+Current: ??? A"
+
 [node name="Control" type="Control" parent="HBoxContainer"]
 custom_minimum_size = Vector2(126, 0)
 layout_mode = 2
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
-custom_minimum_size = Vector2(100, 0)
+custom_minimum_size = Vector2(145, 0)
 layout_mode = 2
 
 [node name="Separator" type="Control" parent="HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="FrontRightContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 94.405)
+layout_mode = 2
+
+[node name="DriveLabel" type="Label" parent="HBoxContainer/VBoxContainer2/FrontRightContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Drive:
+ERPM: ???? rpm
+Current: ??? A
+"
+horizontal_alignment = 2
+
+[node name="RotationLabel" type="Label" parent="HBoxContainer/VBoxContainer2/FrontRightContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Rotation:
+ERPM: ???? rpm
+Current: ??? A"
+horizontal_alignment = 2
+
+[node name="Separator2" type="Control" parent="HBoxContainer/VBoxContainer2"]
 custom_minimum_size = Vector2(0, 60)
 layout_mode = 2
 
-[node name="FrontLeftContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2"]
+[node name="BackRightContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2"]
 custom_minimum_size = Vector2(0, 94.405)
 layout_mode = 2
 
-[node name="Separator2" type="Control" parent="HBoxContainer/VBoxContainer2"]
-custom_minimum_size = Vector2(0, 42)
+[node name="DriveLabel" type="Label" parent="HBoxContainer/VBoxContainer2/BackRightContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Drive:
+ERPM: ???? rpm
+Current: ??? A
+"
+horizontal_alignment = 2
 
-[node name="BackLeftContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2"]
-custom_minimum_size = Vector2(0, 94.405)
+[node name="RotationLabel" type="Label" parent="HBoxContainer/VBoxContainer2/BackRightContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Rotation:
+ERPM: ???? rpm
+Current: ??? A"
+horizontal_alignment = 2
 
 [node name="WheelFrontLeft" type="Sprite2D" parent="."]
-position = Vector2(123.44, 148.08)
+position = Vector2(168.441, 157.08)
 rotation = 1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
 offset = Vector2(-105.4, -17.8)
+
+[node name="VSlider" type="VSlider" parent="WheelFrontLeft"]
+offset_left = -105.0
+offset_top = 202.0
+offset_right = 39.0
+offset_bottom = 341.0
+rotation = -1.5708
+scale = Vector2(1.5, 1.5)
+min_value = -100.0
+editable = false
+scrollable = false
+metadata/_edit_use_anchors_ = true
 
 [node name="WheelBackLeft" type="Sprite2D" parent="."]
-position = Vector2(123.44, 294.08)
+position = Vector2(168.441, 303.08)
 rotation = 1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
 offset = Vector2(-105.4, -17.8)
 
+[node name="VSlider" type="VSlider" parent="WheelBackLeft"]
+offset_left = -105.0
+offset_top = 202.0
+offset_right = 39.0
+offset_bottom = 341.0
+rotation = -1.5708
+scale = Vector2(1.5, 1.5)
+min_value = -100.0
+editable = false
+scrollable = false
+metadata/_edit_use_anchors_ = true
+
 [node name="WheelFrontRight" type="Sprite2D" parent="."]
-position = Vector2(214.64, 148.08)
+position = Vector2(259.641, 157.08)
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
 offset = Vector2(-105.4, -17.8)
 
+[node name="VSlider" type="VSlider" parent="WheelFrontRight"]
+offset_left = 105.401
+offset_top = -8.20279
+offset_right = 249.401
+offset_bottom = 130.797
+rotation = 1.5708
+scale = Vector2(1.5, 1.5)
+min_value = -100.0
+editable = false
+scrollable = false
+metadata/_edit_use_anchors_ = true
+
 [node name="WheelBackRight" type="Sprite2D" parent="."]
-position = Vector2(214.64, 294.08)
+position = Vector2(259.641, 303.08)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_lfwv6")
+offset = Vector2(-105.4, -17.8)
+
+[node name="VSlider" type="VSlider" parent="WheelBackRight"]
+offset_left = 105.401
+offset_top = -8.20279
+offset_right = 249.401
+offset_bottom = 130.797
+rotation = 1.5708
+scale = Vector2(1.5, 1.5)
+min_value = -100.0
+editable = false
+scrollable = false
+
+[node name="GhostFrontLeft" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.439216)
+position = Vector2(168.441, 157.08)
+rotation = 1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_lfwv6")
+offset = Vector2(-105.4, -17.8)
+
+[node name="GhostBackLeft" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.439216)
+position = Vector2(168.441, 303.08)
+rotation = 1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_lfwv6")
+offset = Vector2(-105.4, -17.8)
+
+[node name="GhostFrontRight" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.439216)
+position = Vector2(259.641, 157.08)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_lfwv6")
+offset = Vector2(-105.4, -17.8)
+
+[node name="GhostBackRight" type="Sprite2D" parent="."]
+modulate = Color(1, 1, 1, 0.439216)
+position = Vector2(259.641, 303.08)
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
 offset = Vector2(-105.4, -17.8)
 
 [node name="RoverBody" type="Sprite2D" parent="."]
-position = Vector2(169.44, 174.08)
+position = Vector2(214.441, 183.08)
 rotation = 1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("3_haasr")
 
 [node name="FLData" type="Label" parent="."]
 layout_mode = 0
-offset_left = 111.0
-offset_top = 92.0
-offset_right = 155.0
-offset_bottom = 127.0
-theme_override_font_sizes/font_size = 11
+offset_left = 156.0
+offset_top = 91.0
+offset_right = 200.0
+offset_bottom = 130.0
+theme_override_font_sizes/font_size = 13
 text = "D: 0x??
 R: 0x??"
 
 [node name="FRData" type="Label" parent="."]
 layout_mode = 0
-offset_left = 183.0
-offset_top = 91.0
-offset_right = 228.0
-offset_bottom = 126.0
-theme_override_font_sizes/font_size = 11
+offset_left = 228.0
+offset_top = 90.0
+offset_right = 273.0
+offset_bottom = 129.0
+theme_override_font_sizes/font_size = 13
 text = "D: 0x??
 R: 0x??"
 horizontal_alignment = 2
 
 [node name="BLData" type="Label" parent="."]
 layout_mode = 0
-offset_left = 111.0
-offset_top = 315.0
-offset_right = 155.0
-offset_bottom = 350.0
-theme_override_font_sizes/font_size = 11
+offset_left = 155.0
+offset_top = 332.0
+offset_right = 199.0
+offset_bottom = 371.0
+theme_override_font_sizes/font_size = 13
 text = "D: 0x??
 R: 0x??"
 
 [node name="BRData" type="Label" parent="."]
 layout_mode = 0
-offset_left = 183.0
-offset_top = 314.0
-offset_right = 228.0
-offset_bottom = 349.0
-theme_override_font_sizes/font_size = 11
+offset_left = 227.0
+offset_top = 331.0
+offset_right = 272.0
+offset_bottom = 370.0
+theme_override_font_sizes/font_size = 13
 text = "D: 0x??
 R: 0x??"
 horizontal_alignment = 2
