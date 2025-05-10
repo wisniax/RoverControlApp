@@ -1,5 +1,6 @@
 using Godot;
 using RoverControlApp.Core;
+using RoverControlApp.Core.Settings;
 
 namespace RoverControlApp.MVVM.ViewModel;
 public partial class VelMonitor : Panel
@@ -12,8 +13,13 @@ public partial class VelMonitor : Panel
 	public override void _EnterTree()
 	{
 		UpdateCanIDLabels();
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+	}
 
-
+	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
+	{
+		if (category != nameof(WheelData)) return;
+		UpdateCanIDLabels();
 	}
 
 	private void UpdateCanIDLabels()
