@@ -20,7 +20,7 @@ public partial class VelMonitor : Panel
 	[Export] private Label[] _driveLabel;
 	[Export] private Label[] _rotationLabel;
 
-	[Export] private Sprite2D[] _wheelSprites;
+	[Export] private Sprite2D[] _wheelSprites = new Sprite2D[4];
 	[Export] private VSlider[] _wheelSlider = new VSlider[4];
 
 	[Export] private Sprite2D[] _ghostSprites = new Sprite2D[4];
@@ -92,7 +92,7 @@ public partial class VelMonitor : Panel
 
 		int vescID = velData.VescId;
 
-		for (int i = 0; i < 7; i++)
+		for (int i = 0; i < 8; i++)
 		{
 			if (i <= 3)
 			{
