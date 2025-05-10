@@ -346,11 +346,11 @@ public partial class LocalSettings : Node
 			_wheelData = value;
 
 			_wheelData.Connect(
-				Settings.Battery.SignalName.SubcategoryChanged,
+				Settings.WheelData.SignalName.SubcategoryChanged,
 				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
 			);
 			_wheelData.Connect(
-				Settings.Battery.SignalName.PropertyChanged,
+				Settings.WheelData.SignalName.PropertyChanged,
 				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
 			);
 
