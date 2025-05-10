@@ -19,6 +19,9 @@ public partial class VelMonitor : Panel
 
 	[Export] private Label[] _driveLabel;
 	[Export] private Label[] _rotationLabel;
+	[Export] private Label[] _delayLabel;
+	DateTime[] _lastUpdate = new DateTime[8];
+	TimeSpan[] _lastDelay = new TimeSpan[8];
 
 	[Export] private Sprite2D[] _wheelSprites = new Sprite2D[4];
 	[Export] private VSlider[] _wheelSlider = new VSlider[4];
@@ -27,8 +30,7 @@ public partial class VelMonitor : Panel
 
 	int[] driveMotorID = new int[4];
 	int[] rotationMotorID = new int[4];
-	int temp = 3;
-
+	
 	enum Pos
 	{
 		FrontLeft = 0,
@@ -40,8 +42,12 @@ public partial class VelMonitor : Panel
 	public override void _EnterTree()
 	{
 		UpdateCanIDLabels();
-		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		foreach (var i in _lastUpdate)
+		{
+			_lastUpdate[Array.IndexOf(_lastUpdate, i)] = DateTime.Now - TimeSpan.FromSeconds(10);
+		}
 
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		MqttNode.Singleton.MessageReceivedAsync += VelInfoChanged;
 
 	}
@@ -49,6 +55,33 @@ public partial class VelMonitor : Panel
 	{
 		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		MqttNode.Singleton.MessageReceivedAsync -= VelInfoChanged;
+	}
+
+	public override void _Process(double delta)
+	{
+		foreach (var i in _lastUpdate)
+		{
+			TimeSpan delay = DateTime.Now - i;
+
+			if (delay > TimeSpan.FromSeconds(5))
+			{
+				if (Array.IndexOf(_lastUpdate, i) <= 3)
+				{
+					_driveLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Drive:\n" +
+																	   $"RPM: ??? rpm\n" +
+																	   $"Current: ??? A");	
+				}
+				else
+				{
+					_rotationLabel[Array.IndexOf(_lastUpdate, i)-4].SetText($"Rotation:\n" +
+																		    $"RPM: ??? rpm\n" +
+																			$"Current: ??? A");
+				}
+				_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Delay: ??? s");
+			}
+			else
+				_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Delay: {((int)Math.Round((delay).TotalMilliseconds, 0)/10)/100f} s");
+		}
 	}
 
 	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
@@ -99,6 +132,7 @@ public partial class VelMonitor : Panel
 				if (driveMotorID[i] == velData.VescId)
 				{
 					UpdateDriveMotorInfoHandler(i, velData);
+					_lastUpdate[i] = DateTime.Now;
 					break;
 				}
 				continue;
@@ -108,6 +142,7 @@ public partial class VelMonitor : Panel
 				if (rotationMotorID[i - 4] == velData.VescId)
 				{
 					UpdateRotationMotorInfoHandler(i - 4, velData);
+					_lastUpdate[i] = DateTime.Now;
 					break;
 				}
 				continue;

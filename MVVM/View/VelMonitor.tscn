@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cra73rn2ne7aj" path="res://Resources/rover_wheel.png" id="2_lfwv6"]
 [ext_resource type="Texture2D" uid="uid://cluv3fvjs73t2" path="res://Resources/rover_no_wheels.png" id="3_haasr"]
 
-[node name="VelMonitor" type="Panel" node_paths=PackedStringArray("_flLabel", "_frLabel", "_brLabel", "_blLabel", "_driveLabel", "_rotationLabel", "_wheelSprites", "_wheelSlider", "_ghostSprites")]
+[node name="VelMonitor" type="Panel" node_paths=PackedStringArray("_flLabel", "_frLabel", "_brLabel", "_blLabel", "_driveLabel", "_rotationLabel", "_delayLabel", "_wheelSprites", "_wheelSlider", "_ghostSprites")]
 custom_minimum_size = Vector2(340, 200)
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,6 +20,7 @@ _brLabel = NodePath("BRData")
 _blLabel = NodePath("BLData")
 _driveLabel = [NodePath("HBoxContainer/VBoxContainer1/FrontLeftContainer/DriveLabel"), NodePath("HBoxContainer/VBoxContainer2/FrontRightContainer/DriveLabel"), NodePath("HBoxContainer/VBoxContainer2/BackRightContainer/DriveLabel"), NodePath("HBoxContainer/VBoxContainer1/BackLeftContainer/DriveLabel")]
 _rotationLabel = [NodePath("HBoxContainer/VBoxContainer1/FrontLeftContainer/RotationLabel"), NodePath("HBoxContainer/VBoxContainer2/FrontRightContainer/RotationLabel"), NodePath("HBoxContainer/VBoxContainer2/BackRightContainer/RotationLabel"), NodePath("HBoxContainer/VBoxContainer1/BackLeftContainer/RotationLabel")]
+_delayLabel = [NodePath("HBoxContainer/VBoxContainer1/FrontLeftContainer/DelayLabel"), NodePath("HBoxContainer/VBoxContainer2/FrontRightContainer/DelayLabel"), NodePath("HBoxContainer/VBoxContainer2/BackRightContainer/DelayLabel"), NodePath("HBoxContainer/VBoxContainer1/BackLeftContainer/DelayLabel"), NodePath("HBoxContainer/VBoxContainer1/FrontLeftContainer/DelayLabel2"), NodePath("HBoxContainer/VBoxContainer2/FrontRightContainer/DelayLabel2"), NodePath("HBoxContainer/VBoxContainer2/BackRightContainer/DelayLabel2"), NodePath("HBoxContainer/VBoxContainer1/BackLeftContainer/DelayLabel2")]
 _wheelSprites = [NodePath("WheelFrontLeft"), NodePath("WheelFrontRight"), NodePath("WheelBackRight"), NodePath("WheelBackLeft")]
 _wheelSlider = [NodePath("WheelFrontLeft/VSlider"), NodePath("WheelFrontRight/VSlider"), NodePath("WheelBackRight/VSlider"), NodePath("WheelBackLeft/VSlider")]
 _ghostSprites = [NodePath("GhostFrontLeft"), NodePath("GhostFrontRight"), NodePath("GhostBackRight"), NodePath("GhostBackLeft")]
@@ -47,10 +48,6 @@ offset_bottom = 395.0
 custom_minimum_size = Vector2(145, 0)
 layout_mode = 2
 
-[node name="Separator" type="Control" parent="HBoxContainer/VBoxContainer1"]
-custom_minimum_size = Vector2(0, 20)
-layout_mode = 2
-
 [node name="FrontLeftContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer1"]
 custom_minimum_size = Vector2(0, 94.405)
 layout_mode = 2
@@ -63,6 +60,11 @@ ERPM: ???? rpm
 Current: ??? A
 "
 
+[node name="DelayLabel" type="Label" parent="HBoxContainer/VBoxContainer1/FrontLeftContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Last Update: ?? ms"
+
 [node name="RotationLabel" type="Label" parent="HBoxContainer/VBoxContainer1/FrontLeftContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
@@ -70,8 +72,13 @@ text = "Rotation:
 ERPM: ???? rpm
 Current: ??? A"
 
+[node name="DelayLabel2" type="Label" parent="HBoxContainer/VBoxContainer1/FrontLeftContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Last Update: ?? ms"
+
 [node name="Separator2" type="Control" parent="HBoxContainer/VBoxContainer1"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 16.785)
 layout_mode = 2
 
 [node name="BackLeftContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer1"]
@@ -86,6 +93,11 @@ ERPM: ???? rpm
 Current: ??? A
 "
 
+[node name="DelayLabel" type="Label" parent="HBoxContainer/VBoxContainer1/BackLeftContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Last Update: ?? ms"
+
 [node name="RotationLabel" type="Label" parent="HBoxContainer/VBoxContainer1/BackLeftContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
@@ -93,16 +105,17 @@ text = "Rotation:
 ERPM: ???? rpm
 Current: ??? A"
 
+[node name="DelayLabel2" type="Label" parent="HBoxContainer/VBoxContainer1/BackLeftContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Last Update: ?? ms"
+
 [node name="Control" type="Control" parent="HBoxContainer"]
 custom_minimum_size = Vector2(126, 0)
 layout_mode = 2
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="HBoxContainer"]
 custom_minimum_size = Vector2(145, 0)
-layout_mode = 2
-
-[node name="Separator" type="Control" parent="HBoxContainer/VBoxContainer2"]
-custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 
 [node name="FrontRightContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2"]
@@ -118,6 +131,12 @@ Current: ??? A
 "
 horizontal_alignment = 2
 
+[node name="DelayLabel" type="Label" parent="HBoxContainer/VBoxContainer2/FrontRightContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Last Update: ?? ms"
+horizontal_alignment = 2
+
 [node name="RotationLabel" type="Label" parent="HBoxContainer/VBoxContainer2/FrontRightContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
@@ -126,8 +145,14 @@ ERPM: ???? rpm
 Current: ??? A"
 horizontal_alignment = 2
 
+[node name="DelayLabel2" type="Label" parent="HBoxContainer/VBoxContainer2/FrontRightContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Last Update: ?? ms"
+horizontal_alignment = 2
+
 [node name="Separator2" type="Control" parent="HBoxContainer/VBoxContainer2"]
-custom_minimum_size = Vector2(0, 60)
+custom_minimum_size = Vector2(0, 16.785)
 layout_mode = 2
 
 [node name="BackRightContainer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer2"]
@@ -143,12 +168,24 @@ Current: ??? A
 "
 horizontal_alignment = 2
 
+[node name="DelayLabel" type="Label" parent="HBoxContainer/VBoxContainer2/BackRightContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Last Update: ?? ms"
+horizontal_alignment = 2
+
 [node name="RotationLabel" type="Label" parent="HBoxContainer/VBoxContainer2/BackRightContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "Rotation:
 ERPM: ???? rpm
 Current: ??? A"
+horizontal_alignment = 2
+
+[node name="DelayLabel2" type="Label" parent="HBoxContainer/VBoxContainer2/BackRightContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Last Update: ?? ms"
 horizontal_alignment = 2
 
 [node name="WheelFrontLeft" type="Sprite2D" parent="."]
