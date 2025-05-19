@@ -2,7 +2,8 @@
 
 [sub_resource type="Gradient" id="Gradient_j8lsp"]
 interpolation_mode = 2
-colors = PackedColorArray(0, 0, 0, 0, 1, 1, 1, 1)
+interpolation_color_space = 2
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
 
 [resource]
 gradient = SubResource("Gradient_j8lsp")

@@ -1,13 +1,13 @@
-[gd_scene load_steps=16 format=3 uid="uid://kr3phomvuj1f"]
+[gd_scene load_steps=12 format=3 uid="uid://kr3phomvuj1f"]
 
 [ext_resource type="Shader" path="res://Resources/Widget/Drag.gdshader" id="1_0t65n"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/WidgetDragControl.cs" id="1_ro6pi"]
 [ext_resource type="Texture2D" uid="uid://ch5fhm60qpifr" path="res://Resources/Widget/Drag.gradient2d.tres" id="2_m4te0"]
-[ext_resource type="Texture2D" uid="uid://dbywl05oxtwey" path="res://Resources/Widget/DragMini.gradient2d.tres" id="3_nvaq7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_4vk5j"]
 shader = ExtResource("1_0t65n")
 shader_parameter/is1D = true
-shader_parameter/angle = 3
+shader_parameter/angle = -1
 shader_parameter/color = Vector4(1, 0.5, 0, 1)
 shader_parameter/gradient_texture = ExtResource("2_m4te0")
 
@@ -18,7 +18,7 @@ shader_parameter/angle = 0
 shader_parameter/color = Vector4(1, 0.5, 0, 1)
 shader_parameter/gradient_texture = ExtResource("2_m4te0")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_mxk11"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_3bata"]
 shader = ExtResource("1_0t65n")
 shader_parameter/is1D = true
 shader_parameter/angle = 1
@@ -60,53 +60,19 @@ shader_parameter/angle = 0
 shader_parameter/color = Vector4(1, 0, 0, 1)
 shader_parameter/gradient_texture = ExtResource("2_m4te0")
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_suegq"]
-shader = ExtResource("1_0t65n")
-shader_parameter/is1D = false
-shader_parameter/angle = 3
-shader_parameter/color = Vector4(1, 0, 0, 1)
-shader_parameter/gradient_texture = ExtResource("3_nvaq7")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_y3d6k"]
-shader = ExtResource("1_0t65n")
-shader_parameter/is1D = false
-shader_parameter/angle = 2
-shader_parameter/color = Vector4(1, 0, 0, 1)
-shader_parameter/gradient_texture = ExtResource("3_nvaq7")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_mktu6"]
-shader = ExtResource("1_0t65n")
-shader_parameter/is1D = false
-shader_parameter/angle = 1
-shader_parameter/color = Vector4(1, 0, 0, 1)
-shader_parameter/gradient_texture = ExtResource("3_nvaq7")
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_ybe5q"]
-shader = ExtResource("1_0t65n")
-shader_parameter/is1D = false
-shader_parameter/angle = 0
-shader_parameter/color = Vector4(1, 0, 0, 1)
-shader_parameter/gradient_texture = ExtResource("3_nvaq7")
-
-[node name="Widget" type="Control"]
+[node name="WidgetDragControls" type="Control"]
+custom_minimum_size = Vector2(80, 80)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 6
+script = ExtResource("1_ro6pi")
 
-[node name="DragControls" type="Control" parent="."]
-z_index = 10
-custom_minimum_size = Vector2(80, 80)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Top" type="Control" parent="DragControls"]
+[node name="Top" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -114,8 +80,9 @@ offset_left = 40.0
 offset_right = -40.0
 offset_bottom = 40.0
 grow_horizontal = 2
+mouse_default_cursor_shape = 9
 
-[node name="Visuals" type="ColorRect" parent="DragControls/Top"]
+[node name="Visuals" type="ColorRect" parent="Top"]
 material = SubResource("ShaderMaterial_4vk5j")
 layout_mode = 1
 anchors_preset = 15
@@ -123,16 +90,20 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
 
-[node name="Left" type="Control" parent="DragControls"]
+[node name="Left" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
 offset_top = 40.0
 offset_right = 40.0
 offset_bottom = -40.0
+grow_vertical = 2
+mouse_default_cursor_shape = 10
 
-[node name="Visuals" type="ColorRect" parent="DragControls/Left"]
+[node name="Visuals" type="ColorRect" parent="Left"]
 material = SubResource("ShaderMaterial_heo1t")
 layout_mode = 1
 anchors_preset = 15
@@ -140,8 +111,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
 
-[node name="Bottom" type="Control" parent="DragControls"]
+[node name="Bottom" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -152,17 +125,21 @@ offset_top = -40.0
 offset_right = -40.0
 grow_horizontal = 2
 grow_vertical = 0
+mouse_default_cursor_shape = 9
 
-[node name="Visuals" type="ColorRect" parent="DragControls/Bottom"]
-material = SubResource("ShaderMaterial_mxk11")
+[node name="Visuals" type="ColorRect" parent="Bottom"]
+material = SubResource("ShaderMaterial_3bata")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+mouse_default_cursor_shape = 9
+metadata/_edit_lock_ = true
 
-[node name="Right" type="Control" parent="DragControls"]
+[node name="Right" type="Control" parent="."]
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
@@ -173,8 +150,9 @@ offset_top = 40.0
 offset_bottom = -40.0
 grow_horizontal = 0
 grow_vertical = 2
+mouse_default_cursor_shape = 10
 
-[node name="Visuals" type="ColorRect" parent="DragControls/Right"]
+[node name="Visuals" type="ColorRect" parent="Right"]
 material = SubResource("ShaderMaterial_t74hu")
 layout_mode = 1
 anchors_preset = 15
@@ -182,15 +160,18 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
 
-[node name="TopLeft" type="Control" parent="DragControls"]
+[node name="TopLeft" type="Control" parent="."]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 1
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_default_cursor_shape = 12
 
-[node name="Visuals" type="ColorRect" parent="DragControls/TopLeft"]
+[node name="Visuals" type="ColorRect" parent="TopLeft"]
 material = SubResource("ShaderMaterial_n5vwl")
 layout_mode = 1
 anchors_preset = 15
@@ -198,8 +179,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
 
-[node name="TopRight" type="Control" parent="DragControls"]
+[node name="TopRight" type="Control" parent="."]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 1
 anchors_preset = 1
@@ -208,8 +191,9 @@ anchor_right = 1.0
 offset_left = -40.0
 offset_bottom = 40.0
 grow_horizontal = 0
+mouse_default_cursor_shape = 11
 
-[node name="Visuals" type="ColorRect" parent="DragControls/TopRight"]
+[node name="Visuals" type="ColorRect" parent="TopRight"]
 material = SubResource("ShaderMaterial_qmabs")
 layout_mode = 1
 anchors_preset = 15
@@ -217,8 +201,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
 
-[node name="BottomRight" type="Control" parent="DragControls"]
+[node name="BottomRight" type="Control" parent="."]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 1
 anchors_preset = 3
@@ -230,8 +216,9 @@ offset_left = -40.0
 offset_top = -40.0
 grow_horizontal = 0
 grow_vertical = 0
+mouse_default_cursor_shape = 12
 
-[node name="Visuals" type="ColorRect" parent="DragControls/BottomRight"]
+[node name="Visuals" type="ColorRect" parent="BottomRight"]
 material = SubResource("ShaderMaterial_ewm1j")
 layout_mode = 1
 anchors_preset = 15
@@ -239,8 +226,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
 
-[node name="BottomLeft" type="Control" parent="DragControls"]
+[node name="BottomLeft" type="Control" parent="."]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 1
 anchors_preset = 2
@@ -249,8 +238,9 @@ anchor_bottom = 1.0
 offset_top = -40.0
 offset_right = 40.0
 grow_vertical = 0
+mouse_default_cursor_shape = 11
 
-[node name="Visuals" type="ColorRect" parent="DragControls/BottomLeft"]
+[node name="Visuals" type="ColorRect" parent="BottomLeft"]
 material = SubResource("ShaderMaterial_u5vc1")
 layout_mode = 1
 anchors_preset = 15
@@ -258,97 +248,24 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
 
-[node name="DragControlsMini" type="Control" parent="."]
-z_index = 10
-custom_minimum_size = Vector2(10, 10)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="TopLeft" type="Control" parent="DragControlsMini"]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 1
-anchors_preset = 0
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
-
-[node name="Visuals" type="ColorRect" parent="DragControlsMini/TopLeft"]
-material = SubResource("ShaderMaterial_suegq")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="TopRight" type="Control" parent="DragControlsMini"]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
-grow_horizontal = 0
-
-[node name="Visuals" type="ColorRect" parent="DragControlsMini/TopRight"]
-material = SubResource("ShaderMaterial_y3d6k")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="BottomRight" type="Control" parent="DragControlsMini"]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
-grow_horizontal = 0
-grow_vertical = 0
-
-[node name="Visuals" type="ColorRect" parent="DragControlsMini/BottomRight"]
-material = SubResource("ShaderMaterial_mktu6")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="BottomLeft" type="Control" parent="DragControlsMini"]
-custom_minimum_size = Vector2(40, 40)
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
-grow_vertical = 0
-
-[node name="Visuals" type="ColorRect" parent="DragControlsMini/BottomLeft"]
-material = SubResource("ShaderMaterial_ybe5q")
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[connection signal="mouse_entered" from="." to="." method="SetResizeZoneVisiblility" binds= [true]]
+[connection signal="mouse_exited" from="." to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
+[connection signal="gui_input" from="Top" to="." method="OnResizeZoneGuiEvent" binds= [10]]
+[connection signal="mouse_exited" from="Top" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
+[connection signal="gui_input" from="Left" to="." method="OnResizeZoneGuiEvent" binds= [9]]
+[connection signal="mouse_exited" from="Left" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
+[connection signal="gui_input" from="Bottom" to="." method="OnResizeZoneGuiEvent" binds= [12]]
+[connection signal="mouse_exited" from="Bottom" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
+[connection signal="gui_input" from="Right" to="." method="OnResizeZoneGuiEvent" binds= [11]]
+[connection signal="mouse_exited" from="Right" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
+[connection signal="gui_input" from="TopLeft" to="." method="OnResizeZoneGuiEvent" binds= [0]]
+[connection signal="mouse_exited" from="TopLeft" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
+[connection signal="gui_input" from="TopRight" to="." method="OnResizeZoneGuiEvent" binds= [1]]
+[connection signal="mouse_exited" from="TopRight" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
+[connection signal="gui_input" from="BottomRight" to="." method="OnResizeZoneGuiEvent" binds= [3]]
+[connection signal="mouse_exited" from="BottomRight" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
+[connection signal="gui_input" from="BottomLeft" to="." method="OnResizeZoneGuiEvent" binds= [2]]
+[connection signal="mouse_exited" from="BottomLeft" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]

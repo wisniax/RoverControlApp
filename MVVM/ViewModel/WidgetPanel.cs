@@ -1,7 +1,8 @@
 using Godot;
 using System;
+using System.Linq;
 
-public partial class WidgetPanel : Control
+public partial class WidgetPanel : Container
 {
 	struct WidgetPos
 	{
@@ -10,12 +11,12 @@ public partial class WidgetPanel : Control
 		/// <summary>
 		/// Target position for widget.
 		/// </summary>
-		public Vector2 Position {get; set;}
+		public Vector2 Position { get; set; }
 		/// <summary>
 		/// Target size for widget.
 		/// </summary>
-		public Vector2 Size {get; set;}
-		
+		public Vector2 Size { get; set; }
+
 		/// <summary>
 		/// Anchor point. Should be one of:<br/>
 		/// <list type="bullet">
@@ -26,20 +27,20 @@ public partial class WidgetPanel : Control
 		/// 	<item><term><see cref="Godot.LayoutPreset.Center"/></term></item>
 		/// </list>
 		/// </summary>
-		public LayoutPreset AnchorPoint 
+		public LayoutPreset AnchorPoint
 		{
 			readonly get => _anchorPoint;
 			set
 			{
-				switch(value)
+				switch (value)
 				{
 					case LayoutPreset.TopLeft:
 					case LayoutPreset.TopRight:
 					case LayoutPreset.BottomLeft:
 					case LayoutPreset.BottomRight:
 					case LayoutPreset.Center:
-					_anchorPoint = value;
-					break;
+						_anchorPoint = value;
+						break;
 				}
 			}
 		}
@@ -54,6 +55,9 @@ public partial class WidgetPanel : Control
 
 	const float CENTER_ERROR = 20f;
 
+	[Export]
+	private WidgetDragControl widgetDragControl = null!;
+
 	private LayoutPreset ClosestAnchorPoint(Rect2 rect)
 	{
 		float leftDistance = rect.Position.X;
@@ -65,37 +69,37 @@ public partial class WidgetPanel : Control
 		EasyAnchor xPos, yPos;
 
 		//xPos
-		if(Mathf.IsEqualApprox(leftDistance, rightDistance, CENTER_ERROR))
+		if (Mathf.IsEqualApprox(leftDistance, rightDistance, CENTER_ERROR))
 			xPos = EasyAnchor.Center;
 		else
 			xPos = leftDistance < rightDistance ? EasyAnchor.Begin : EasyAnchor.End;
 
 		//yPos
-		if(Mathf.IsEqualApprox(topDistance, bottomDistance, CENTER_ERROR))
+		if (Mathf.IsEqualApprox(topDistance, bottomDistance, CENTER_ERROR))
 			yPos = EasyAnchor.Center;
 		else
 			yPos = topDistance < bottomDistance ? EasyAnchor.Begin : EasyAnchor.End;
 
 		return (xPos, yPos) switch
-        {
-            // xPos = Begin (0)
-            (EasyAnchor.Begin, EasyAnchor.Begin) => LayoutPreset.TopLeft,
-            (EasyAnchor.Begin, EasyAnchor.End) => LayoutPreset.BottomLeft,
-            (EasyAnchor.Begin, EasyAnchor.Center) => LayoutPreset.CenterLeft,
+		{
+			// xPos = Begin (0)
+			(EasyAnchor.Begin, EasyAnchor.Begin) => LayoutPreset.TopLeft,
+			(EasyAnchor.Begin, EasyAnchor.End) => LayoutPreset.BottomLeft,
+			(EasyAnchor.Begin, EasyAnchor.Center) => LayoutPreset.CenterLeft,
 
-            // xPos = End (1)
-            (EasyAnchor.End, EasyAnchor.Begin) => LayoutPreset.TopRight,
-            (EasyAnchor.End, EasyAnchor.End) => LayoutPreset.BottomRight,
-            (EasyAnchor.End, EasyAnchor.Center) => LayoutPreset.CenterRight,
+			// xPos = End (1)
+			(EasyAnchor.End, EasyAnchor.Begin) => LayoutPreset.TopRight,
+			(EasyAnchor.End, EasyAnchor.End) => LayoutPreset.BottomRight,
+			(EasyAnchor.End, EasyAnchor.Center) => LayoutPreset.CenterRight,
 
-            // xPos = Center (2)
-            (EasyAnchor.Center, EasyAnchor.Begin) => LayoutPreset.CenterTop,
-            (EasyAnchor.Center, EasyAnchor.End) => LayoutPreset.CenterBottom,
-            (EasyAnchor.Center, EasyAnchor.Center) => LayoutPreset.Center,
+			// xPos = Center (2)
+			(EasyAnchor.Center, EasyAnchor.Begin) => LayoutPreset.CenterTop,
+			(EasyAnchor.Center, EasyAnchor.End) => LayoutPreset.CenterBottom,
+			(EasyAnchor.Center, EasyAnchor.Center) => LayoutPreset.Center,
 
 			//Some possible case by Linter.
-            _ => throw new NotImplementedException()
-        };
+			_ => throw new NotImplementedException()
+		};
 
 	}
 
@@ -116,16 +120,27 @@ public partial class WidgetPanel : Control
 		base._Process(delta);
 	}
 
-    public override void _Notification(int what)
-    {
-		switch((long)what)
+	public override void _Notification(int what)
+	{
+		switch ((long)what)
 		{
 			case NotificationResized:
-			return;
+				return;
+			case NotificationSortChildren:
+				MoveChild(widgetDragControl, -1);
+				widgetDragControl.Position = Vector2.Zero;
+				widgetDragControl.Size = Size;
+				
+				foreach (var child in GetChildren().SkipLast(1).Cast<Control>())
+				{
+					child.Position = new Vector2(40f, 40f);
+					child.Size = Size - new Vector2(40f, 40f) * 2f;
+				}
+				break;
 		}
 
 		base._Notification(what);
-    }
+	}
 
-	
+
 }
