@@ -61,7 +61,7 @@ shader_parameter/color = Vector4(1, 0, 0, 1)
 shader_parameter/gradient_texture = ExtResource("2_m4te0")
 
 [node name="WidgetDragControls" type="Control"]
-custom_minimum_size = Vector2(80, 80)
+custom_minimum_size = Vector2(60, 60)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -76,8 +76,8 @@ script = ExtResource("1_ro6pi")
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
-offset_left = 40.0
-offset_right = -40.0
+offset_left = 30.0
+offset_right = -30.0
 offset_bottom = 40.0
 grow_horizontal = 2
 mouse_default_cursor_shape = 9
@@ -85,11 +85,10 @@ mouse_default_cursor_shape = 9
 [node name="Visuals" type="ColorRect" parent="Top"]
 material = SubResource("ShaderMaterial_4vk5j")
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 10
 anchor_right = 1.0
-anchor_bottom = 1.0
+offset_bottom = 30.0
 grow_horizontal = 2
-grow_vertical = 2
 mouse_filter = 2
 metadata/_edit_lock_ = true
 
@@ -97,19 +96,18 @@ metadata/_edit_lock_ = true
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
-offset_top = 40.0
+offset_top = 30.0
 offset_right = 40.0
-offset_bottom = -40.0
+offset_bottom = -30.0
 grow_vertical = 2
 mouse_default_cursor_shape = 10
 
 [node name="Visuals" type="ColorRect" parent="Left"]
 material = SubResource("ShaderMaterial_heo1t")
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = 9
 anchor_bottom = 1.0
-grow_horizontal = 2
+offset_right = 30.0
 grow_vertical = 2
 mouse_filter = 2
 metadata/_edit_lock_ = true
@@ -120,9 +118,9 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 40.0
+offset_left = 30.0
 offset_top = -40.0
-offset_right = -40.0
+offset_right = -30.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_default_cursor_shape = 9
@@ -130,11 +128,13 @@ mouse_default_cursor_shape = 9
 [node name="Visuals" type="ColorRect" parent="Bottom"]
 material = SubResource("ShaderMaterial_3bata")
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = -30.0
 grow_horizontal = 2
-grow_vertical = 2
+grow_vertical = 0
 mouse_filter = 2
 mouse_default_cursor_shape = 9
 metadata/_edit_lock_ = true
@@ -146,8 +146,8 @@ anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -40.0
-offset_top = 40.0
-offset_bottom = -40.0
+offset_top = 30.0
+offset_bottom = -30.0
 grow_horizontal = 0
 grow_vertical = 2
 mouse_default_cursor_shape = 10
@@ -155,10 +155,12 @@ mouse_default_cursor_shape = 10
 [node name="Visuals" type="ColorRect" parent="Right"]
 material = SubResource("ShaderMaterial_t74hu")
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = 11
+anchor_left = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
+offset_left = -30.0
+grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 2
 metadata/_edit_lock_ = true
@@ -177,6 +179,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = -10.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -199,6 +203,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 10.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -224,6 +230,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -246,26 +254,19 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 10.0
+offset_right = -10.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 metadata/_edit_lock_ = true
 
-[connection signal="mouse_entered" from="." to="." method="SetResizeZoneVisiblility" binds= [true]]
-[connection signal="mouse_exited" from="." to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
+[connection signal="gui_input" from="." to="." method="OnDragGuiEvent"]
 [connection signal="gui_input" from="Top" to="." method="OnResizeZoneGuiEvent" binds= [10]]
-[connection signal="mouse_exited" from="Top" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
 [connection signal="gui_input" from="Left" to="." method="OnResizeZoneGuiEvent" binds= [9]]
-[connection signal="mouse_exited" from="Left" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
 [connection signal="gui_input" from="Bottom" to="." method="OnResizeZoneGuiEvent" binds= [12]]
-[connection signal="mouse_exited" from="Bottom" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
 [connection signal="gui_input" from="Right" to="." method="OnResizeZoneGuiEvent" binds= [11]]
-[connection signal="mouse_exited" from="Right" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
 [connection signal="gui_input" from="TopLeft" to="." method="OnResizeZoneGuiEvent" binds= [0]]
-[connection signal="mouse_exited" from="TopLeft" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
 [connection signal="gui_input" from="TopRight" to="." method="OnResizeZoneGuiEvent" binds= [1]]
-[connection signal="mouse_exited" from="TopRight" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
 [connection signal="gui_input" from="BottomRight" to="." method="OnResizeZoneGuiEvent" binds= [3]]
-[connection signal="mouse_exited" from="BottomRight" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]
 [connection signal="gui_input" from="BottomLeft" to="." method="OnResizeZoneGuiEvent" binds= [2]]
-[connection signal="mouse_exited" from="BottomLeft" to="." method="SetResizeZoneVisibilityOffOnMouseLeave"]

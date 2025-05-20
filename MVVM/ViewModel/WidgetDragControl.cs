@@ -4,37 +4,36 @@ using System.Linq;
 
 public partial class WidgetDragControl : Control
 {
+	private bool _isResized = false;
 
 	[Signal]
-	public delegate void ResizeZoneEventHandler(InputEvent inputEvent, LayoutPreset layoutPreset);
+	public delegate void ResizeZoneEventHandler(InputEventMouseMotion eventMouseMotion, LayoutPreset layoutPreset);
 
 	[Signal]
-	public delegate void DragEventHandler(InputEvent inputEvent);
+	public delegate void DragEventHandler(InputEventMouseMotion eventMouseMotion);
+
 
 	private void OnResizeZoneGuiEvent(InputEvent inputEvent, LayoutPreset layoutPreset)
 	{
-		EmitSignal(SignalName.ResizeZone, inputEvent, (int)layoutPreset);
+		if (inputEvent is not InputEventMouseMotion eventMouseMotion)
+		{
+			return;
+		}
+
+		AcceptEvent();
+
+		EmitSignal(SignalName.ResizeZone, eventMouseMotion, (int)layoutPreset);
 	}
 
 	private void OnDragGuiEvent(InputEvent inputEvent)
 	{
-		EmitSignal(SignalName.Drag, inputEvent);
-	}
-
-	private void SetResizeZoneVisibilityOffOnMouseLeave()
-	{
-		if (new Godot.Rect2(Vector2.Zero, Size).HasPoint(GetLocalMousePosition()))
-			return;
-
-		SetResizeZoneVisiblility(false);
-	}
-
-	public void SetResizeZoneVisiblility(bool state)
-	{
-		foreach (Control child in GetChildren().Cast<Control>())
+		if (inputEvent is not InputEventMouseMotion eventMouseMotion)
 		{
-			child.Visible = state;
+			return;
 		}
-	}
 
+		AcceptEvent();
+
+		EmitSignal(SignalName.Drag, eventMouseMotion);
+	}
 }

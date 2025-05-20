@@ -7,10 +7,10 @@
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 291.0
-offset_top = 184.0
-offset_right = -75.0
-offset_bottom = -62.0
+offset_left = 258.0
+offset_top = 108.0
+offset_right = -142.0
+offset_bottom = -142.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -19,6 +19,7 @@ widgetDragControl = NodePath("WidgetDragControl")
 
 [node name="TEMP-DELME" type="Panel" parent="."]
 clip_contents = true
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 
 [node name="Label" type="Label" parent="TEMP-DELME"]
@@ -38,5 +39,9 @@ text = "Hfast Liściasty"
 metadata/_edit_lock_ = true
 
 [node name="WidgetDragControl" parent="." instance=ExtResource("2_uaj7n")]
-custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
+
+[connection signal="Drag" from="WidgetDragControl" to="." method="OnDrag"]
+[connection signal="ResizeZone" from="WidgetDragControl" to="." method="OnResizeZone"]
+[connection signal="focus_exited" from="WidgetDragControl" to="WidgetDragControl" method="PrintMessageHuj"]
+[connection signal="mouse_exited" from="WidgetDragControl" to="WidgetDragControl" method="SetResizeZoneVisibilityOffOnMouseLeave"]
