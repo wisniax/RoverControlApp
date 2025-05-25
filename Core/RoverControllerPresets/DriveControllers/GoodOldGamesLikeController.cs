@@ -25,7 +25,7 @@ public class GoodOldGamesLikeController : IRoverDriveController
 		velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, joyDeadZone) ? 0 : velocity.Y;
 
 		var ret = velocity.ToRoverControl();
-		ret.Mode = lastState.Mode;
+		ret.Mode = OperateKinematicMode(inputEvent, lastState);
 
 		return ret;
 	}

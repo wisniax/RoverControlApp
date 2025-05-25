@@ -27,7 +27,7 @@ public class ForzaLikeController : IRoverDriveController
 			vec.Y = forcedSteer / 5f;
 
 		var ret = vec.ToRoverControl();
-		ret.Mode = lastState.Mode;
+		ret.Mode = OperateKinematicMode(inputEvent, lastState);
 
 		return ret;
 	}

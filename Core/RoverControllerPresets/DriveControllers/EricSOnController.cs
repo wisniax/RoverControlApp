@@ -40,7 +40,7 @@ public class EricSOnController : IRoverDriveController
 		Vector3 vector = new Vector3(vec.X, vec.Y, 0);
 
 		var ret = vector.ToRoverControl();
-		ret.Mode = lastState.Mode;
+		ret.Mode = OperateKinematicMode(inputEvent, lastState);
 
 		return ret;
 	}
