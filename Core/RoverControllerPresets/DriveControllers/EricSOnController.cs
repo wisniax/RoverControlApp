@@ -1,5 +1,7 @@
 ﻿using System;
+
 using Godot;
+
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
@@ -7,9 +9,8 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 public class EricSOnController : IRoverDriveController
 {
 	private const float TURN_ANGLE = 89;
-	public KinematicMode Mode { get; set; } = KinematicMode.Compatibility;
 
-	public RoverControl CalculateMoveVector()
+	public RoverControl CalculateMoveVector(InputEvent inputEvent, in RoverControl lastState)
 	{
 		float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
 		velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
@@ -38,6 +39,12 @@ public class EricSOnController : IRoverDriveController
 
 		Vector3 vector = new Vector3(vec.X, vec.Y, 0);
 
-		return vector.ToRoverControl();
+		var ret = vector.ToRoverControl();
+		ret.Mode = lastState.Mode;
+
+		return ret;
 	}
+
+	public KinematicMode OperateKinematicMode(InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
+
 }

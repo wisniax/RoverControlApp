@@ -1,5 +1,7 @@
 ﻿using System;
+
 using Godot;
+
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
@@ -7,9 +9,8 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 public class DirectDriveController : IRoverDriveController
 {
 	public static float SpeedModifier => LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : 1f;
-	public KinematicMode Mode { get; set; } = KinematicMode.Ackermann;
 
-	public RoverControl CalculateMoveVector()
+	public RoverControl CalculateMoveVector(InputEvent inputEvent, in RoverControl lastState)
 	{
 		//deadzone have to be non zero for IsEqualApprox
 		var joyDeadZone = Mathf.Max(
@@ -17,9 +18,11 @@ public class DirectDriveController : IRoverDriveController
 			Convert.ToSingle(LocalSettings.Singleton.Joystick.Deadzone)
 		);
 
+		KinematicMode kinematicMode = OperateKinematicMode(inputEvent, lastState);
+
 		Vector3 vec;
 
-		switch (Mode)
+		switch (kinematicMode)
 		{
 			case KinematicMode.Ackermann:
 				vec = new(
@@ -55,7 +58,37 @@ public class DirectDriveController : IRoverDriveController
 		vec.Y = Mathf.IsEqualApprox(vec.Y, 0f, joyDeadZone) ? 0 : vec.Y;
 		vec.Z = Mathf.IsEqualApprox(vec.Z, 0f, joyDeadZone) ? 0 : vec.Z;
 
-		return vec.ToRoverControl();
+		var ret = vec.ToRoverControl();
+		ret.Mode = kinematicMode;
+
+		return ret;
 	}
+
+    public KinematicMode OperateKinematicMode(InputEvent inputEvent, in RoverControl lastState)
+    {
+		switch (LocalSettings.Singleton.Joystick.ToggleableKinematics)
+		{
+			// Toggle
+			case true when inputEvent.IsActionPressed("crab_mode", allowEcho: false, exactMatch: true):
+				return KinematicMode.Crab;
+			case true when inputEvent.IsActionPressed("spinner_mode", allowEcho: false, exactMatch: true):
+				return KinematicMode.Spinner;
+			case true when inputEvent.IsActionPressed("ebrake_mode", allowEcho: false, exactMatch: true):
+				return KinematicMode.EBrake;
+			case true when inputEvent.IsActionPressed("ackermann_mode", allowEcho: false, exactMatch: true):
+				return KinematicMode.Ackermann;
+			case true: // Toggle with no action
+				return lastState.Mode;
+			// Hold
+			case false when Input.IsActionPressed("crab_mode", exactMatch: true):
+				return KinematicMode.Crab;
+			case false when Input.IsActionPressed("spinner_mode", exactMatch: true):
+				return KinematicMode.Spinner;
+			case false when Input.IsActionPressed("ebrake_mode", exactMatch: true):
+				return KinematicMode.EBrake;
+			case false: //default for hold
+				return KinematicMode.Ackermann;
+		}
+    }
 }
 

@@ -1,11 +1,13 @@
-using Godot;
-using RoverControlApp.Core;
-using RoverControlApp.MVVM.Model;
 using System;
 using System.Globalization;
 using System.ServiceModel;
 using System.Text.Json;
 using System.Threading.Tasks;
+
+using Godot;
+
+using RoverControlApp.Core;
+using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.MVVM.ViewModel
 {
@@ -128,7 +130,11 @@ namespace RoverControlApp.MVVM.ViewModel
 		public override void _Input(InputEvent @event)
 		{
 			if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return;
-			PressedKeys?.HandleInputEvent(@event);
+			if (PressedKeys.HandleInputEvent(@event))
+			{
+				AcceptEvent();
+				return;
+			}
 
 			if (@event.IsActionPressed("app_backcapture_save"))
 			{
@@ -212,10 +218,10 @@ namespace RoverControlApp.MVVM.ViewModel
 				case true when _ptzClient is null:
 					_ptzClient = new OnvifPtzCameraController();
 					_ptzClientWeak = new(_ptzClient);
-					PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
+					PressedKeys.CameraMoveVectorChanged += _ptzClient.ChangeMoveVector;
 					break;
 				case false when _ptzClient is not null:
-					PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
+					PressedKeys.CameraMoveVectorChanged -= _ptzClient.ChangeMoveVector;
 					_ptzClient.Dispose();
 					_ptzClient = null;
 					break;
@@ -267,8 +273,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			string? rtspAge = rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 			string? ptzAge = ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
-			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode}, " + 
-			              $"{(RoverCommunication?.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
+			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode}, " +
+						  $"{(RoverCommunication?.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
 						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication?.RoverStatus?.CommunicationState}[/color], " +
 						  $"Pad connected: {RoverCommunication?.RoverStatus?.PadConnected}\n");
 			switch (RoverCommunication?.RoverStatus?.ControlMode)
@@ -278,20 +284,20 @@ namespace RoverControlApp.MVVM.ViewModel
 						(float)PressedKeys.RoverMovement.YAxis);
 
 					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {vecc.X:F2}, XAxis: {vecc.Y:F2}, YAxis: {vecc.Z:F2}, Mode: {PressedKeys.RoverMovement.Mode}\n");
-					
+
 					break;
 				case MqttClasses.ControlMode.Manipulator:
 					FancyDebugViewRLab.AppendText($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys?.ManipulatorMovement)}\n");
 					break;
 				case MqttClasses.ControlMode.Sampler:
 					FancyDebugViewRLab.AppendText($"PressedKeys: Sampler DrillAction: {PressedKeys.SamplerMovement.DrillAction:F2}, " +
-					                              $"DrillMov: {PressedKeys.SamplerMovement.DrillMovement:F2}, " +
-					                              $"PlatformMov: {PressedKeys.SamplerMovement.PlatformMovement:F2}, " +
+												  $"DrillMov: {PressedKeys.SamplerMovement.DrillMovement:F2}, " +
+												  $"PlatformMov: {PressedKeys.SamplerMovement.PlatformMovement:F2}, " +
 												  $"{(LocalSettings.Singleton.Sampler.Container0.CustomName == "-" ? "Container0" : LocalSettings.Singleton.Sampler.Container0.CustomName)}" +
 																$": {PressedKeys.SamplerMovement.ContainerDegrees0:F1}, " +
 												  $"{(LocalSettings.Singleton.Sampler.Container1.CustomName == "-" ? "Container1" : LocalSettings.Singleton.Sampler.Container1.CustomName)}" +
 																$": {PressedKeys.SamplerMovement.ContainerDegrees1:F1}, " +
-					                              $"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "Container2" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
+												  $"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "Container2" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
 																$": {PressedKeys.SamplerMovement.ContainerDegrees2:F1}\n");
 					break;
 			}

@@ -1,14 +1,14 @@
 ﻿using System;
+
 using Godot;
+
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class ForzaLikeController : IRoverDriveController
 {
-	public KinematicMode Mode { get; set; } = KinematicMode.Compatibility;
-
-	public RoverControl CalculateMoveVector()
+	public RoverControl CalculateMoveVector(InputEvent inputEvent, in RoverControl lastState)
 	{
 		float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
 		velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
@@ -26,6 +26,12 @@ public class ForzaLikeController : IRoverDriveController
 		if (!Mathf.IsEqualApprox(forcedSteer, 0f, 0.05f))
 			vec.Y = forcedSteer / 5f;
 
-		return vec.ToRoverControl();
+		var ret = vec.ToRoverControl();
+		ret.Mode = lastState.Mode;
+
+		return ret;
 	}
+
+	public KinematicMode OperateKinematicMode(InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
+
 }

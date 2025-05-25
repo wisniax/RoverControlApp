@@ -1,14 +1,14 @@
 ﻿using System;
+
 using Godot;
+
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class GoodOldGamesLikeController : IRoverDriveController
 {
-	public KinematicMode Mode { get; set; } = KinematicMode.Compatibility;
-
-	public RoverControl CalculateMoveVector()
+	public RoverControl CalculateMoveVector(InputEvent inputEvent, in RoverControl lastState)
 	{
 		//deadzone have to be non zero for IsEqualApprox
 		var joyDeadZone = Mathf.Max(
@@ -24,6 +24,11 @@ public class GoodOldGamesLikeController : IRoverDriveController
 		velocity.X = Mathf.IsEqualApprox(velocity.X, 0f, joyDeadZone) ? 0 : velocity.X;
 		velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, joyDeadZone) ? 0 : velocity.Y;
 
-		return velocity.ToRoverControl();
+		var ret = velocity.ToRoverControl();
+		ret.Mode = lastState.Mode;
+
+		return ret;
 	}
+
+	public KinematicMode OperateKinematicMode(InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
 }

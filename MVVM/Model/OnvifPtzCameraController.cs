@@ -1,11 +1,15 @@
-﻿using Godot;
-using Onvif.Core.Client;
-using Onvif.Core.Client.Common;
-using RoverControlApp.Core;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.ServiceModel;
 using System.Threading;
+
+using Godot;
+
+using Onvif.Core.Client;
+using Onvif.Core.Client.Common;
+
+using RoverControlApp.Core;
+
 using DateTime = System.DateTime;
 using Mutex = System.Threading.Mutex;
 
@@ -41,8 +45,6 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-
-
 		public CommunicationState State
 		{
 			get => _state;
@@ -53,7 +55,6 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
-
 		public double ElapsedSecondsOnCurrentState => _generalPurposeStopwatch.Elapsed.TotalSeconds;
 
 		public TimeSpan MinSpanEveryCom =>
@@ -61,20 +62,17 @@ namespace RoverControlApp.MVVM.Model
 		public TimeSpan MaxSpanEveryCom => 1.5 * MinSpanEveryCom;
 
 
-
-
-
-		public void ChangeMoveVector(object? sender, Vector4 vector)
-		{
-			CameraMotion = vector;
-		}
-
 		public OnvifPtzCameraController()
 		{
 			_generalPurposeStopwatch = Stopwatch.StartNew();
 			_cts = new CancellationTokenSource();
 			_ptzThread = new Thread(ThreadWork) { IsBackground = true, Name = "PtzController_Thread", Priority = ThreadPriority.AboveNormal };
 			_ptzThread.Start();
+		}
+
+		public void ChangeMoveVector(Vector4 vector)
+		{
+			CameraMotion = vector;
 		}
 
 		private void ThreadWork()
