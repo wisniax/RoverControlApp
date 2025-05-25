@@ -1,12 +1,4 @@
-﻿using Godot;
-using MQTTnet;
-using MQTTnet.Client;
-using MQTTnet.Extensions.ManagedClient;
-using MQTTnet.Protocol;
-using MQTTnet.Server;
-using RoverControlApp.Core;
-using RoverControlApp.Core.Settings;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -14,6 +6,17 @@ using System.ServiceModel;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Godot;
+
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Extensions.ManagedClient;
+using MQTTnet.Protocol;
+using MQTTnet.Server;
+
+using RoverControlApp.Core;
+using RoverControlApp.Core.Settings;
 
 namespace RoverControlApp.MVVM.Model;
 
@@ -115,14 +118,15 @@ public partial class MqttNode : Node
 
 	public async Task EnqueueMessageAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
-		await _managedMqttClient.EnqueueAsync(TopicFull(subtopic),arg, qos, retain);
-		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued at subtopic: \"{subtopic}\" with:\n{arg}");
+		await _managedMqttClient.EnqueueAsync(TopicFull(subtopic), arg, qos, retain);
+		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (async) at subtopic: \"{subtopic}\" with:\n{arg}");
 	}
 
 	public void EnqueueMessage(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
-		Task.Run(async () => await _managedMqttClient.EnqueueAsync(subtopic, arg, qos, retain));
-		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued at subtopic: \"{subtopic}\" with:\n{arg}");
+		//await completion
+		_managedMqttClient.EnqueueAsync(subtopic, arg, qos, retain).ConfigureAwait(false).GetAwaiter().GetResult();
+		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (sync) at subtopic: \"{subtopic}\" with:\n{arg}");
 	}
 
 	public MqttApplicationMessage? GetReceivedMessageOnTopic(string? subtopic)
