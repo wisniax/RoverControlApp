@@ -17,6 +17,16 @@ public interface IRoverDriveController
 	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState);
 
 	/// <summary>
+	/// Processes input
+	/// </summary>
+	/// <returns>True when input causes state change</returns>
+	public bool HandleInput(in InputEvent inputEvent, RoverControl lastState, out RoverControl newState)
+	{
+		newState = CalculateMoveVector(inputEvent, lastState);
+		return IsMoveVectorChanged(newState, lastState) || IsKinematicModeChanged(newState.Mode, lastState.Mode);
+	}
+
+	/// <summary>
 	/// Compares two RoverControl states and determines if change is big enough, to be considered
 	/// </summary>
 	/// <returns>true if changed</returns>

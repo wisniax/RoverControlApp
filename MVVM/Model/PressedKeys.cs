@@ -16,7 +16,6 @@ public class PressedKeys : IDisposable
 {
 	#region Fields
 	private ControlMode _controlMode;
-	private KinematicMode _kinematicMode;
 	private Vector4 _cameraMoveVector;
 	private RoverControl _roverMovement;
 	private ManipulatorControl _manipulatorMovement;
@@ -90,8 +89,11 @@ public class PressedKeys : IDisposable
 		get => _manipulatorMovement;
 		private set
 		{
-			_manipulatorMovement = value;
-			OnManipulatorMovement?.Invoke(value);
+			if (_roverManipulatorControllerPreset.IsMoveVectorChanged(value, _manipulatorMovement))
+			{
+				_manipulatorMovement = value;
+				OnManipulatorMovement?.Invoke(value);
+			}
 		}
 	}
 
@@ -100,8 +102,11 @@ public class PressedKeys : IDisposable
 		get => _samplerControl;
 		private set
 		{
-			_samplerControl = value;
-			OnSamplerMovement?.Invoke(value);
+			if (_roverSamplerControllerPreset.IsMoveVectorChanged(value, _samplerControl))
+			{
+				_samplerControl = value;
+				OnSamplerMovement?.Invoke(value);
+			}
 		}
 	}
 
@@ -189,13 +194,29 @@ public class PressedKeys : IDisposable
 		switch (this.ControlMode)
 		{
 			case ControlMode.Rover:
-				RoverMovement = _roverDriveControllerPreset.CalculateMoveVector(inputEvent, RoverMovement);
-				return true;
+				if (_roverDriveControllerPreset.HandleInput(inputEvent, _roverMovement, out _roverMovement))
+				{
+					OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
+					OnRoverMovementVector?.Invoke(_roverMovement);
+					return true;
+				}
+				break;
+			case ControlMode.Manipulator:
+				if (_roverManipulatorControllerPreset.HandleInput(inputEvent, _manipulatorMovement, out _manipulatorMovement))
+				{
+					OnManipulatorMovement?.Invoke(_manipulatorMovement);
+					return true;
+				}
+				break;
+			case ControlMode.Sampler:
+				if (_roverSamplerControllerPreset.HandleInput(inputEvent, _samplerControl, out _samplerControl))
+				{
+					OnSamplerMovement?.Invoke(_samplerControl);
+					return true;
+				}
+				break;
 		}
 
-		HandleManipulatorInputEvent();
-		HandleContainerInputEvent();
-		HandleSamplerInputEvent();
 
 		return true;
 	}
@@ -233,27 +254,7 @@ public class PressedKeys : IDisposable
 		CameraMoveVector = absoluteVector4;
 	}
 
-
-
-	private void HandleManipulatorInputEvent()
-	{
-		if (ControlMode != ControlMode.Manipulator) return;
-
-		ManipulatorControl manipulatorControl = _roverManipulatorControllerPreset.CalculateMoveVector();
-		if (_roverManipulatorControllerPreset.IsMoveVectorChanged(manipulatorControl, ManipulatorMovement))
-			ManipulatorMovement = manipulatorControl;
-	}
-
-	private void HandleSamplerInputEvent()
-	{
-		if (ControlMode != ControlMode.Sampler) return;
-
-		SamplerControl samplerControl = _roverSamplerControllerPreset.CalculateMoveVector(SamplerMovement);
-		if (_roverSamplerControllerPreset.IsMoveVectorChanged(samplerControl, SamplerMovement))
-			SamplerMovement = samplerControl;
-
-	}
-
+	//TODO: https://github.com/wisniax/RoverControlApp/issues/43
 	private void HandleContainerInputEvent()
 	{
 		if (ControlMode != ControlMode.Manipulator) return;
@@ -266,7 +267,7 @@ public class PressedKeys : IDisposable
 	private void StopAll()
 	{
 		EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
-		RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = _kinematicMode };
+		RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = KinematicMode.Ackermann };
 		ContainerMovement = new RoverContainer { Axis1 = 0f };
 		ManipulatorMovement = new ManipulatorControl();
 

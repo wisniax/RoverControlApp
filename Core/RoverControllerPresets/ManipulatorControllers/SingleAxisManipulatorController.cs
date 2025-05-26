@@ -1,15 +1,15 @@
-﻿using System;
-using Godot;
+﻿using Godot;
+
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 
 public class SingleAxisManipulatorController : IRoverManipulatorController
 {
-	public ManipulatorControl CalculateMoveVector()
+	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, in ManipulatorControl lastState)
 	{
 		float velocity = Input.GetAxis("manipulator_speed_backward", "manipulator_speed_forward");
-		if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.Deadzone) 
+		if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.Deadzone)
 			velocity = 0f;
 
 		ManipulatorControl manipulatorControl;
