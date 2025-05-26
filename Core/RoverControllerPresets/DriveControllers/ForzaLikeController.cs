@@ -8,7 +8,7 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class ForzaLikeController : IRoverDriveController
 {
-	public RoverControl CalculateMoveVector(InputEvent inputEvent, in RoverControl lastState)
+	public RoverControl CalculateMoveVector(in InputEvent inputEvent, in RoverControl lastState)
 	{
 		float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
 		velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
@@ -32,6 +32,6 @@ public class ForzaLikeController : IRoverDriveController
 		return ret;
 	}
 
-	public KinematicMode OperateKinematicMode(InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
+	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
 
 }

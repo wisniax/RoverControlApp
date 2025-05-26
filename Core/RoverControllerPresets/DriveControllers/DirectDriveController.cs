@@ -10,7 +10,7 @@ public class DirectDriveController : IRoverDriveController
 {
 	public static float SpeedModifier => LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : 1f;
 
-	public RoverControl CalculateMoveVector(InputEvent inputEvent, in RoverControl lastState)
+	public RoverControl CalculateMoveVector(in InputEvent inputEvent, in RoverControl lastState)
 	{
 		//deadzone have to be non zero for IsEqualApprox
 		var joyDeadZone = Mathf.Max(
@@ -64,7 +64,7 @@ public class DirectDriveController : IRoverDriveController
 		return ret;
 	}
 
-    public KinematicMode OperateKinematicMode(InputEvent inputEvent, in RoverControl lastState)
+    public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState)
     {
 		switch (LocalSettings.Singleton.Joystick.ToggleableKinematics)
 		{

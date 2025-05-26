@@ -10,7 +10,7 @@ public class EricSOnController : IRoverDriveController
 {
 	private const float TURN_ANGLE = 89;
 
-	public RoverControl CalculateMoveVector(InputEvent inputEvent, in RoverControl lastState)
+	public RoverControl CalculateMoveVector(in InputEvent inputEvent, in RoverControl lastState)
 	{
 		float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
 		velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
@@ -45,6 +45,6 @@ public class EricSOnController : IRoverDriveController
 		return ret;
 	}
 
-	public KinematicMode OperateKinematicMode(InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
+	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
 
 }

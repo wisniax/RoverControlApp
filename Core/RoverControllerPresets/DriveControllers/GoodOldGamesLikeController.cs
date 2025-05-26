@@ -8,7 +8,7 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class GoodOldGamesLikeController : IRoverDriveController
 {
-	public RoverControl CalculateMoveVector(InputEvent inputEvent, in RoverControl lastState)
+	public RoverControl CalculateMoveVector(in InputEvent inputEvent, in RoverControl lastState)
 	{
 		//deadzone have to be non zero for IsEqualApprox
 		var joyDeadZone = Mathf.Max(
@@ -30,5 +30,5 @@ public class GoodOldGamesLikeController : IRoverDriveController
 		return ret;
 	}
 
-	public KinematicMode OperateKinematicMode(InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
+	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
 }

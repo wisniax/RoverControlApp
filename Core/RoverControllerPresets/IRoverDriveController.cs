@@ -9,12 +9,12 @@ public interface IRoverDriveController
 	/// <summary>
 	/// Checks InputEvent and returns RoverControl
 	/// </summary>
-	public RoverControl CalculateMoveVector(InputEvent inputEvent, in RoverControl lastState);
+	public RoverControl CalculateMoveVector(in InputEvent inputEvent, in RoverControl lastState);
 
 	/// <summary>
 	/// Checks InputEvent and returns active KinematicMode
 	/// </summary>
-	public KinematicMode OperateKinematicMode(InputEvent inputEvent, in RoverControl lastState);
+	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState);
 
 	/// <summary>
 	/// Compares two RoverControl states and determines if change is big enough, to be considered
