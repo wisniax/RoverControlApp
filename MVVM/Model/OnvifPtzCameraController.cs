@@ -38,7 +38,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 			private set
 			{
-				EventLogger.LogMessageDebug("OnvifPtzCameraController",EventLogger.LogLevel.Verbose, $"CameraMotion update: {value}");
+				EventLogger.LogMessage("OnvifPtzCameraController",EventLogger.LogLevel.Verbose, $"CameraMotion update: {value}");
 				_dataMutex.WaitOne();
 				_cameraMotion = value;
 				_dataMutex.ReleaseMutex();

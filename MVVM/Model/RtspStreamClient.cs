@@ -204,7 +204,7 @@ namespace RoverControlApp.MVVM.Model
 			_newFrameSaved = true;
 			UnLockGrabbingFrames();
 
-			EventLogger.LogMessageDebug("RtspStreamClient", EventLogger.LogLevel.Verbose, $"Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
+			EventLogger.LogMessage("RtspStreamClient", EventLogger.LogLevel.Verbose, $"Frame received in: {_generalPurposeStopwatch.ElapsedMilliseconds}ms");
 
 			return true;
 		}

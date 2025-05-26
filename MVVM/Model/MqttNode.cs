@@ -40,7 +40,7 @@ public partial class MqttNode : Node
 			if (_connectionState == value) return;
 			_connectionState = value;
 			CallDeferred(MethodName.EmitSignal, SignalName.ConnectionChanged, (int)_connectionState);
-			EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Connection state changed to \"{value}\"");
+			EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Verbose, $"Connection state changed to \"{value}\"");
 		}
 	}
 
@@ -119,14 +119,14 @@ public partial class MqttNode : Node
 	public async Task EnqueueMessageAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
 		await _managedMqttClient.EnqueueAsync(TopicFull(subtopic), arg, qos, retain);
-		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (async) at subtopic: \"{subtopic}\" with:\n{arg}");
+		EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (async) at subtopic: \"{subtopic}\" with:\n{arg}");
 	}
 
 	public void EnqueueMessage(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
 		//await completion
 		_managedMqttClient.EnqueueAsync(subtopic, arg, qos, retain).ConfigureAwait(false).GetAwaiter().GetResult();
-		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (sync) at subtopic: \"{subtopic}\" with:\n{arg}");
+		EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (sync) at subtopic: \"{subtopic}\" with:\n{arg}");
 	}
 
 	public MqttApplicationMessage? GetReceivedMessageOnTopic(string? subtopic)
@@ -151,13 +151,13 @@ public partial class MqttNode : Node
 	{
 		if (ConnectionState == CommunicationState.Created)
 		{
-			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is already starting!");
+			EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is already starting!");
 			return false;
 		}
 
 		if (ConnectionState != CommunicationState.Closed)
 		{
-			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is not fully closed!");
+			EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is not fully closed!");
 			return false;
 		}
 
@@ -176,24 +176,24 @@ public partial class MqttNode : Node
 		switch (ConnectionState)
 		{
 			case CommunicationState.Closed:
-				EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is stopped!");
+				EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is stopped!");
 				return false;
 			case CommunicationState.Closing:
-				EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is already stopping!");
+				EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is already stopping!");
 				return false;
 		}
 
-		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, "Requesting thread stop");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Requesting thread stop");
 		_cts!.Cancel();
 
 		if(awaitFullStop)
 		{
 			_mqttThread!.Join();
-			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
+			EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
 			return true;
 		}
 
-		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose,
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose,
 			_mqttThread!.Join(200) ? "Thread stop confirmed!" : "Thread stop not confirmed. Proceeding");
 
 		return true;
@@ -367,7 +367,7 @@ public partial class MqttNode : Node
 
 	private Task ThOnApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
 	{
-		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, $"Message received on topic {arg.ApplicationMessage.Topic} with:\n   {arg.ApplicationMessage.ConvertPayloadToString()}");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, $"Message received on topic {arg.ApplicationMessage.Topic} with:\n   {arg.ApplicationMessage.ConvertPayloadToString()}");
 
 		if (_responses == null) return Task.CompletedTask;
 

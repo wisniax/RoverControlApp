@@ -158,7 +158,7 @@ public partial class LocalSettings : Node
 	private void EmitSignalCategoryChanged(string sectionName)
 	{
 		EmitSignal(SignalName.CategoryChanged, sectionName);
-		EventLogger.LogMessageDebug("LocalSettings", EventLogger.LogLevel.Verbose, $"Section \"{sectionName}\" was overwritten");
+		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Verbose, $"Section \"{sectionName}\" was overwritten");
 	}
 
 	private void PropagateSignal(StringName signal, StringName category, params Variant[] args)
@@ -168,7 +168,7 @@ public partial class LocalSettings : Node
 		combined[0] = category;
 		args.CopyTo(combined, 1);
 
-		EventLogger.LogMessageDebug("LocalSettings", EventLogger.LogLevel.Verbose, $"Field \"{args[0].AsStringName()}\" from \"{combined[0]}\" was changed. Signal propagated to LocalSettings.");
+		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Verbose, $"Field \"{args[0].AsStringName()}\" from \"{combined[0]}\" was changed. Signal propagated to LocalSettings.");
 		
 		EmitSignal(signal, combined);
 	}

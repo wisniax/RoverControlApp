@@ -17,7 +17,7 @@ namespace RoverControlApp.Core.Settings
 			Variant oldValue = Variant.From(field);
 			field = @value;
 			
-			EventLogger.LogMessageDebug("SettingsBase", EventLogger.LogLevel.Verbose, $"Property \"{propertyName}\" was changed from:\n{oldValue.As<FieldType>()}\n   to:\n{@value}");
+			EventLogger.LogMessage("SettingsBase", EventLogger.LogLevel.Verbose, $"Property \"{propertyName}\" was changed from:\n{oldValue.As<FieldType>()}\n   to:\n{@value}");
 			
 			EmitSignal(SignalName.PropertyChanged, propertyName, oldValue, Variant.From(@value));
 		}
@@ -27,7 +27,7 @@ namespace RoverControlApp.Core.Settings
 			Variant oldValue = Variant.From(field);
 			field = @value;
 
-			EventLogger.LogMessageDebug("SettingsBase", EventLogger.LogLevel.Verbose, $"Section \"{propertyName}\" was changed from:\n{oldValue.As<FieldType>()}\n   to:\n{@value}");
+			EventLogger.LogMessage("SettingsBase", EventLogger.LogLevel.Verbose, $"Section \"{propertyName}\" was changed from:\n{oldValue.As<FieldType>()}\n   to:\n{@value}");
 
 			EmitSignal(SignalName.SubcategoryChanged, propertyName, oldValue, Variant.From(@value));
 		}
