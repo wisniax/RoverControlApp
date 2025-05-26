@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 
 using Godot;
@@ -68,17 +68,9 @@ public class PressedKeys : IDisposable
 		get => _roverMovement;
 		private set
 		{
-			if (_roverDriveControllerPreset.IsMoveVectorChanged(value, _roverMovement))
-			{
+			_roverMovement = value;
 				OnKinematicModeChanged?.Invoke(value.Mode);
 				OnRoverMovementVector?.Invoke(value);
-				_roverMovement = value;
-			}
-			else if (_roverDriveControllerPreset.IsKinematicModeChanged(value.Mode, _roverMovement.Mode))
-			{
-				OnKinematicModeChanged?.Invoke(value.Mode);
-				_roverMovement.Mode = value.Mode;
-			}
 		}
 	}
 
@@ -86,12 +78,9 @@ public class PressedKeys : IDisposable
 	{
 		get => _manipulatorMovement;
 		private set
-		{
-			if (_roverManipulatorControllerPreset.IsMoveVectorChanged(value, _manipulatorMovement))
 			{
 				_manipulatorMovement = value;
 				OnManipulatorMovement?.Invoke(value);
-			}
 		}
 	}
 
@@ -99,12 +88,9 @@ public class PressedKeys : IDisposable
 	{
 		get => _samplerControl;
 		private set
-		{
-			if (_roverSamplerControllerPreset.IsMoveVectorChanged(value, _samplerControl))
 			{
 				_samplerControl = value;
 				OnSamplerMovement?.Invoke(value);
-			}
 		}
 	}
 
@@ -246,6 +232,7 @@ public class PressedKeys : IDisposable
 		EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
 		RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = KinematicMode.Ackermann };
 		ManipulatorMovement = new ManipulatorControl();
+		SamplerMovement = new SamplerControl();
 
 		CameraMoveVector = Vector4.Zero;
 	}
