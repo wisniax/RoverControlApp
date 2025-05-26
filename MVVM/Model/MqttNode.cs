@@ -118,12 +118,22 @@ public partial class MqttNode : Node
 
 	public async Task EnqueueMessageAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
+		if (_managedMqttClient is null)
+		{
+			EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Warning, $"Message was not enqueued (async) MqttClient not ready - state {ConnectionState}");
+			return;
+		}
 		await _managedMqttClient.EnqueueAsync(TopicFull(subtopic), arg, qos, retain);
 		EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (async) at subtopic: \"{subtopic}\" with:\n{arg}");
 	}
 
 	public void EnqueueMessage(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
+		if (_managedMqttClient is null)
+		{
+			EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Warning, $"Message was NOT enqueued (sync). MqttClient not ready - state {ConnectionState}");
+			return;
+		}
 		//await completion
 		_managedMqttClient.EnqueueAsync(subtopic, arg, qos, retain).ConfigureAwait(false).GetAwaiter().GetResult();
 		EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (sync) at subtopic: \"{subtopic}\" with:\n{arg}");
