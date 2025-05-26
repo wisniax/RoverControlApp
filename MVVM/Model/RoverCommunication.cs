@@ -69,6 +69,14 @@ namespace RoverControlApp.MVVM.Model
 
 		private async void OnMqttConnectionChanged(CommunicationState arg)
 		{
+			switch (arg)
+			{
+				case CommunicationState.Opened:
+				case CommunicationState.Faulted:
+					break; // continue as normal
+				default:
+					return; // poker face
+			}
 			await RoverMovementVectorChanged(_pressedKeys.RoverMovement);
 			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(connection: arg));
 		}
