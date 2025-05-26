@@ -1,7 +1,8 @@
-﻿using RoverControlApp.Core.Settings;
-using System;
+﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
+using RoverControlApp.Core.Settings;
 
 namespace RoverControlApp.Core.JSONConverters;
 
@@ -19,7 +20,6 @@ public class MqttConverter : JsonConverter<Mqtt>
 		string? topicManipulatorControl = null;
 		string? topicRoverFeedback = null;
 		string? topicRoverStatus = null;
-		string? topicRoverContainer = null;
 		string? topicMissionStatus = null;
 		string? topicKmlSetPoint = null;
 		string? topicWheelFeedback = null;
@@ -57,9 +57,6 @@ public class MqttConverter : JsonConverter<Mqtt>
 					break;
 				case nameof(Mqtt.TopicRoverStatus):
 					topicRoverStatus = reader.GetString();
-					break;
-				case nameof(Mqtt.TopicRoverContainer):
-					topicRoverContainer = reader.GetString();
 					break;
 				case nameof(Mqtt.TopicMissionStatus):
 					topicMissionStatus = reader.GetString();
@@ -101,7 +98,6 @@ public class MqttConverter : JsonConverter<Mqtt>
 			topicManipulatorControl ?? Default.TopicManipulatorControl,
 			topicRoverFeedback ?? Default.TopicRoverFeedback,
 			topicRoverStatus ?? Default.TopicRoverStatus,
-			topicRoverContainer ?? Default.TopicRoverContainer,
 			topicMissionStatus ?? Default.TopicMissionStatus,
 			topicKmlSetPoint ?? Default.TopicKmlSetPoint,
 			topicWheelFeedback ?? Default.TopicWheelFeedback,
@@ -123,7 +119,6 @@ public class MqttConverter : JsonConverter<Mqtt>
 		writer.WriteString(nameof(Mqtt.TopicManipulatorControl), value.TopicManipulatorControl);
 		writer.WriteString(nameof(Mqtt.TopicRoverFeedback), value.TopicRoverFeedback);
 		writer.WriteString(nameof(Mqtt.TopicRoverStatus), value.TopicRoverStatus);
-		writer.WriteString(nameof(Mqtt.TopicRoverContainer), value.TopicRoverContainer);
 		writer.WriteString(nameof(Mqtt.TopicMissionStatus), value.TopicMissionStatus);
 		writer.WriteString(nameof(Mqtt.TopicKmlSetPoint), value.TopicKmlSetPoint);
 		writer.WriteString(nameof(Mqtt.TopicWheelFeedback), value.TopicWheelFeedback);

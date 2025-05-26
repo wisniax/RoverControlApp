@@ -1,7 +1,8 @@
-﻿using Godot;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
+
+using Godot;
 
 // ReSharper disable PropertyCanBeMadeInitOnly.Global
 // ReSharper disable UnusedMember.Global
@@ -179,12 +180,6 @@ namespace RoverControlApp.Core
 			public double WhCharged { get; set; }
 			public double WhUsed { get; set; }
 			public long Timestamp { get; set; }
-		}
-
-		public class RoverContainer
-		{
-			public float Axis1 { get; set; } = 0f;
-			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
 		public class RoverFeedback

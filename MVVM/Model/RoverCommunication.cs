@@ -56,7 +56,6 @@ namespace RoverControlApp.MVVM.Model
 			pressedKeys.OnRoverMovementVector += RoverMovementVectorChanged;
 			pressedKeys.OnManipulatorMovement += RoverManipulatorVectorChanged;
 			pressedKeys.OnSamplerMovement += RoverSamplerVectorChanged;
-			pressedKeys.OnContainerMovement += PressedKeysOnOnContainerMovement;
 
 			missionStatus.OnRoverMissionStatusChanged += OnRoverMissionStatusChanged;
 
@@ -66,12 +65,6 @@ namespace RoverControlApp.MVVM.Model
 				return;
 
 			RoverCommunication_OnControlStatusChanged(GenerateRoverStatus()).Wait(250);
-		}
-
-		private async Task PressedKeysOnOnContainerMovement(MqttClasses.RoverContainer arg)
-		{
-			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicRoverContainer,
-				JsonSerializer.Serialize(arg));
 		}
 
 		private async void OnMqttConnectionChanged(CommunicationState arg)

@@ -20,7 +20,6 @@ public class PressedKeys : IDisposable
 	private RoverControl _roverMovement;
 	private ManipulatorControl _manipulatorMovement;
 	private SamplerControl _samplerControl = null!;
-	private RoverContainer _containerMovement;
 	private IRoverDriveController _roverDriveControllerPreset = null!;
 	private IRoverManipulatorController _roverManipulatorControllerPreset = null!;
 	private IRoverSamplerController _roverSamplerControllerPreset = null!;
@@ -33,7 +32,6 @@ public class PressedKeys : IDisposable
 	public event Func<RoverControl, Task>? OnRoverMovementVector;
 	public event Func<ManipulatorControl, Task>? OnManipulatorMovement;
 	public event Func<SamplerControl, Task>? OnSamplerMovement;
-	public event Func<RoverContainer, Task>? OnContainerMovement;
 	public event Func<bool, Task>? OnPadConnectionChanged;
 	public event Func<ControlMode, Task>? OnControlModeChanged;
 	public event Func<KinematicMode, Task>? OnKinematicModeChanged;
@@ -110,16 +108,6 @@ public class PressedKeys : IDisposable
 		}
 	}
 
-	public RoverContainer ContainerMovement
-	{
-		get => _containerMovement;
-		private set
-		{
-			_containerMovement = value;
-			OnContainerMovement?.Invoke(value);
-		}
-	}
-
 	#endregion Properties
 
 	#region Ctor
@@ -131,7 +119,6 @@ public class PressedKeys : IDisposable
 		_roverMovement = new();
 		_manipulatorMovement = new();
 		_samplerControl = new();
-		_containerMovement = new();
 		SetupControllerPresets();
 
 		LocalSettings.Singleton.CategoryChanged += OnSettingsCategoryChanged;
@@ -254,21 +241,10 @@ public class PressedKeys : IDisposable
 		CameraMoveVector = absoluteVector4;
 	}
 
-	//TODO: https://github.com/wisniax/RoverControlApp/issues/43
-	private void HandleContainerInputEvent()
-	{
-		if (ControlMode != ControlMode.Manipulator) return;
-		var axis = Input.GetAxis("camera_focus_out", "camera_focus_in");
-		if (Mathf.IsEqualApprox(axis, ContainerMovement.Axis1, 0.01f)) return;
-		ContainerMovement = new RoverContainer { Axis1 = axis };
-	}
-
-
 	private void StopAll()
 	{
 		EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
 		RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = KinematicMode.Ackermann };
-		ContainerMovement = new RoverContainer { Axis1 = 0f };
 		ManipulatorMovement = new ManipulatorControl();
 
 		CameraMoveVector = Vector4.Zero;
