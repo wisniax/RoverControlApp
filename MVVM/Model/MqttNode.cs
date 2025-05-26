@@ -116,27 +116,41 @@ public partial class MqttNode : Node
 	 * Public methods Mqtt
 	 */
 
-	public async Task EnqueueMessageAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
+	/// <summary>
+	/// Adds message to be send. <br/>
+	/// Queue is drpooed when changing server to another one<br/>
+	/// NOTE Messages have guarantee to be enqueued only on state Opening, Opened and Faulted !
+	/// </summary>
+	/// <returns>false when message was ignored</returns>
+	public async Task<bool> EnqueueMessageAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
 		if (_managedMqttClient is null)
 		{
 			EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Warning, $"Message was not enqueued (async) MqttClient not ready - state {ConnectionState}");
-			return;
+			return false;
 		}
 		await _managedMqttClient.EnqueueAsync(TopicFull(subtopic), arg, qos, retain);
 		EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (async) at subtopic: \"{subtopic}\" with:\n{arg}");
+		return true;
 	}
 
-	public void EnqueueMessage(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
+	/// <summary>
+	/// Adds message to be send. <br/>
+	/// Queue is drpooed when changing server to another one<br/>
+	/// NOTE Messages have guarantee to be enqueued only on state Opening, Opened and Faulted !
+	/// </summary>
+	/// <returns>false when message was ignored</returns>
+	public bool EnqueueMessage(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
 		if (_managedMqttClient is null)
 		{
 			EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Warning, $"Message was NOT enqueued (sync). MqttClient not ready - state {ConnectionState}");
-			return;
+			return false;
 		}
 		//await completion
 		_managedMqttClient.EnqueueAsync(subtopic, arg, qos, retain).ConfigureAwait(false).GetAwaiter().GetResult();
 		EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (sync) at subtopic: \"{subtopic}\" with:\n{arg}");
+		return true;
 	}
 
 	public MqttApplicationMessage? GetReceivedMessageOnTopic(string? subtopic)
@@ -172,7 +186,6 @@ public partial class MqttNode : Node
 		}
 
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Starting mqtt");
-		ConnectionState = CommunicationState.Created;
 
 		_cts = new CancellationTokenSource();
 		_responses = new Dictionary<string, MqttApplicationMessage?>();
@@ -259,19 +272,16 @@ public partial class MqttNode : Node
 	private void ThWork()
 	{
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread started");
-		ConnectionState = CommunicationState.Opening;
 		
 		//kind of worried about this one
 		ThClientConnect().Wait();
 		SpinWait.SpinUntil(() => _cts!.IsCancellationRequested);
 
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread stopping");
-		ConnectionState = CommunicationState.Closing;
-
+	
 		//and this
 		ThClientDisconnect().Wait();
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread quit");
-		ConnectionState = CommunicationState.Closed;
 	}
 
 	private async Task ThClientConnect()
@@ -282,6 +292,8 @@ public partial class MqttNode : Node
 		var mqttFactory = new MqttFactory();
 
 		_managedMqttClient = mqttFactory.CreateManagedMqttClient();
+
+		ConnectionState = CommunicationState.Created;
 
 		var mqttClientOptions = new MqttClientOptionsBuilder()
 			.WithTcpServer(LocalSettings.Singleton.Mqtt.ClientSettings.BrokerIp, LocalSettings.Singleton.Mqtt.ClientSettings.BrokerPort)
@@ -306,14 +318,17 @@ public partial class MqttNode : Node
 
 		await _managedMqttClient.StartAsync(managedMqttClientOptions);
 
-
 		await MqSubscribeAllAsync();
+
+		ConnectionState = CommunicationState.Opening;
 	}
 
 	private async Task ThClientDisconnect()
 	{
 		if (_managedMqttClient is null)
 			return;
+
+		ConnectionState = CommunicationState.Closing;
 
 		_managedMqttClient.DisconnectedAsync -= ThOnDisconnectedAsync;
 		_managedMqttClient.ConnectedAsync -= ThOnConnectedAsync;
@@ -353,6 +368,7 @@ public partial class MqttNode : Node
 		_managedMqttClient.Dispose();
 		_managedMqttClient = null;
 
+		ConnectionState = CommunicationState.Closed;
 	}
 
 	private Task ThOnConnectedAsync(MqttClientConnectedEventArgs arg)
