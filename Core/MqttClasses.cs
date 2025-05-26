@@ -232,12 +232,12 @@ namespace RoverControlApp.Core
 
 		public class ZedImuData
 		{
-			public List<double> orientation_covariance { get; set; }
-			public List<double> angular_velocity_covariance { get; set; }
-			public List<double> linear_acceleration_covariance { get; set; }
-			public AngularVelocity angular_velocity { get; set; }
-			public LinearAcceleration linear_acceleration { get; set; }
-			public Orientation orientation { get; set; }
+			public List<double> orientation_covariance { get; set; } = [];
+			public List<double> angular_velocity_covariance { get; set; } = [];
+			public List<double> linear_acceleration_covariance { get; set; } = [];
+			public AngularVelocity angular_velocity { get; set; } = new();
+			public LinearAcceleration linear_acceleration { get; set; } = new();
+			public Orientation orientation { get; set; } = new();
 			public long Timestamp { get; set; }
 		}
 
