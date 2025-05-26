@@ -1,4 +1,6 @@
-﻿using Godot;
+﻿using System;
+
+using Godot;
 
 using static RoverControlApp.Core.MqttClasses;
 
@@ -23,7 +25,9 @@ public interface IRoverDriveController
 	public bool HandleInput(in InputEvent inputEvent, RoverControl lastState, out RoverControl newState)
 	{
 		newState = CalculateMoveVector(inputEvent, lastState);
-		return IsMoveVectorChanged(newState, lastState) || IsKinematicModeChanged(newState.Mode, lastState.Mode);
+		bool changed = IsMoveVectorChanged(newState, lastState) || IsKinematicModeChanged(newState.Mode, lastState.Mode);
+		newState.Timestamp = changed ? DateTimeOffset.Now.ToUnixTimeMilliseconds() : lastState.Timestamp;
+		return changed;
 	}
 
 	/// <summary>

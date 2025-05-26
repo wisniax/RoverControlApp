@@ -1,4 +1,6 @@
-﻿using Godot;
+﻿using System;
+
+using Godot;
 
 using static RoverControlApp.Core.MqttClasses;
 
@@ -18,7 +20,9 @@ public interface IRoverManipulatorController
 	public bool HandleInput(in InputEvent inputEvent, ManipulatorControl lastState, out ManipulatorControl newState)
 	{
 		newState = CalculateMoveVector(inputEvent, lastState);
-		return IsMoveVectorChanged(newState, lastState);
+		bool changed = IsMoveVectorChanged(newState, lastState);
+		newState.Timestamp = changed ? DateTimeOffset.Now.ToUnixTimeMilliseconds() : lastState.Timestamp;
+		return changed;
 	}
 
 	/// <summary>
