@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 
 using Godot;
@@ -6,6 +6,7 @@ using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.Core.RoverControllerPresets;
 using RoverControlApp.Core.RoverControllerPresets.CameraControllers;
+using RoverControlApp.Core.RoverControllerPresets.ControlModeControllers;
 using RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 using RoverControlApp.Core.RoverControllerPresets.SamplerControllers;
 
@@ -21,6 +22,7 @@ public class PressedKeys : IDisposable
 	private RoverControl _roverMovement;
 	private ManipulatorControl _manipulatorMovement;
 	private SamplerControl _samplerControl = null!;
+	private IControlModeController _roverModeControllerPreset = null!;
 	private IRoverDriveController _roverDriveControllerPreset = null!;
 	private IRoverManipulatorController _roverManipulatorControllerPreset = null!;
 	private IRoverSamplerController _roverSamplerControllerPreset = null!;
@@ -103,6 +105,7 @@ public class PressedKeys : IDisposable
 	public PressedKeys()
 	{
 		Input.JoyConnectionChanged += InputOnJoyConnectionChanged;
+
 		_cameraMoveVector = Vector4.Zero;
 		_roverMovement = new();
 		_manipulatorMovement = new();
@@ -140,10 +143,22 @@ public class PressedKeys : IDisposable
 
 	#region Methods.HandleInput
 
+	public void HandleEstop()
+	{		
+		if (_roverModeControllerPreset.EstopReq())
+		{
+			ControlMode = ControlMode.EStop;
+			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by InputController).");
+		}
+	}
+
 	public bool HandleInputEvent(InputEvent inputEvent)
 	{
-		if (HandleInput_ControlMode(inputEvent))
+		if (_roverModeControllerPreset.HandleInput(inputEvent, _controlMode, out _controlMode))
 		{
+			OnControlModeChanged?.Invoke(_controlMode);
+			StopAll();
+			OnAcceptedInput(inputEvent);
 			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as ControlMode");
 			return true;
 		}
@@ -198,28 +213,13 @@ public class PressedKeys : IDisposable
 		return false;
 	}
 
-	private bool HandleInput_ControlMode(InputEvent inputEvent)
-	{
-		if (inputEvent.IsActionPressed("ControlModeChange", exactMatch: true))
-		{
-			if ((int)ControlMode + 1 >= Enum.GetNames<ControlMode>().Length)
-				ControlMode = ControlMode.EStop;
-			else
-				ControlMode++;
-			StopAll();
-			return true;
-		}
-
-		return false;
-	}
-
 	#endregion Methods.HandleInput
 
 	#region Methods
 
 	private void SetupControllerPresets()
 	{
-		_manipulatorMovement = new();
+		_roverModeControllerPreset = new StandardModeController();
 		_roverDriveControllerPreset =
 			RoverDriveControllerSelector.GetController(
 				(RoverDriveControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverDriveController

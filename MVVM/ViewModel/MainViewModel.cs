@@ -127,12 +127,12 @@ namespace RoverControlApp.MVVM.ViewModel
 			base.Dispose(disposing);
 		}
 
-		public override void _Input(InputEvent @event)
+		public override void _UnhandledInput(InputEvent @event)
 		{
 			if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return;
 			if (PressedKeys.HandleInputEvent(@event))
 			{
-				AcceptEvent();
+				GetViewport().SetInputAsHandled();
 				return;
 			}
 
@@ -142,12 +142,15 @@ namespace RoverControlApp.MVVM.ViewModel
 					EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Info, "Saved capture!");
 				else
 					EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Error, "Save failed!");
+				GetViewport().SetInputAsHandled();
 			}
 		}
 
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
 		{
+			PressedKeys.HandleEstop();
+
 			if (_rtspClient is { NewFrameSaved: true })
 			{
 				_backCapture.CleanUpHistory();
@@ -329,11 +332,11 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			else
 			{
-				ShowBatteryMonitor.SetText($"BATTERY {(float)data/10}V");
+				ShowBatteryMonitor.SetText($"BATTERY {(float)data / 10}V");
 			}
 			ShowBatteryMonitor.SetModulate(color);
-			if(color != Colors.Red) return;
-			if(LocalSettings.Singleton.Battery.ShowOnLow)
+			if (color != Colors.Red) return;
+			if (LocalSettings.Singleton.Battery.ShowOnLow)
 			{
 				ShowBatteryMonitor.SetPressed(true);
 				BatteryMonitor.SetVisible(true);
