@@ -32,6 +32,10 @@ public class PressedKeys : IDisposable
 	#endregion Fields
 
 	#region Events
+
+	public delegate void ControllerPresetChangedEventHandler();
+	public delegate void LastAcceptedInputEventHandler(InputHelpHint.HintVisibility type);
+
 	public event Action<Vector4>? CameraMoveVectorChanged;
 	public event Func<RoverControl, Task>? OnRoverMovementVector;
 	public event Func<ManipulatorControl, Task>? OnManipulatorMovement;
@@ -39,6 +43,8 @@ public class PressedKeys : IDisposable
 	public event Func<bool, Task>? OnPadConnectionChanged;
 	public event Func<ControlMode, Task>? OnControlModeChanged;
 	public event Func<KinematicMode, Task>? OnKinematicModeChanged;
+	public event ControllerPresetChangedEventHandler? ControllerPresetChanged;
+	public event LastAcceptedInputEventHandler? LastAcceptedInput;
 
 	#endregion Events
 
@@ -174,6 +180,7 @@ public class PressedKeys : IDisposable
 				if (_roverCameraControllerPreset.HandleInput(inputEvent, _cameraMoveVector, out _cameraMoveVector))
 				{
 					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
+					OnAcceptedInput(inputEvent);
 					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as Camera");
 					return true;
 				}
@@ -188,6 +195,7 @@ public class PressedKeys : IDisposable
 				{
 					OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
 					OnRoverMovementVector?.Invoke(_roverMovement);
+					OnAcceptedInput(inputEvent);
 					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as RoverDrive");
 					return true;
 				}
@@ -196,6 +204,7 @@ public class PressedKeys : IDisposable
 				if (_roverManipulatorControllerPreset.HandleInput(inputEvent, _manipulatorMovement, out _manipulatorMovement))
 				{
 					OnManipulatorMovement?.Invoke(_manipulatorMovement);
+					OnAcceptedInput(inputEvent);
 					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as RoverManipulator");
 					return true;
 				}
@@ -204,6 +213,7 @@ public class PressedKeys : IDisposable
 				if (_roverSamplerControllerPreset.HandleInput(inputEvent, _samplerControl, out _samplerControl))
 				{
 					OnSamplerMovement?.Invoke(_samplerControl);
+					OnAcceptedInput(inputEvent);
 					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as RoverSampler");
 					return true;
 				}
@@ -227,6 +237,8 @@ public class PressedKeys : IDisposable
 		_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
 		_roverSamplerControllerPreset = new SamplerController();
 		_roverCameraControllerPreset = new OriginalCameraController();
+
+		ControllerPresetChanged?.Invoke();
 	}
 
 	private void InputOnJoyConnectionChanged(long device, bool connected)
@@ -245,6 +257,12 @@ public class PressedKeys : IDisposable
 		SamplerMovement = new SamplerControl();
 
 		CameraMoveVector = Vector4.Zero;
+	}
+
+	private void OnAcceptedInput(InputEvent inputEvent)
+	{
+		bool inputIsJoystick = inputEvent is InputEventJoypadButton or InputEventJoypadButton;
+		LastAcceptedInput?.Invoke(inputIsJoystick ? InputHelpHint.HintVisibility.Joy : InputHelpHint.HintVisibility.Kb);
 	}
 
 	#endregion Methods
