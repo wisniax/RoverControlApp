@@ -257,7 +257,7 @@ public class PressedKeys : IDisposable
 
 	private void StopAll()
 	{
-		EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
+		EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Verbose, "Stopping all movement");
 		RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = KinematicMode.Ackermann };
 		ManipulatorMovement = new ManipulatorControl();
 		SamplerMovement = new SamplerControl();
