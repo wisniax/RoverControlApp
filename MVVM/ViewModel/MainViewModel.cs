@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.ServiceModel;
 using System.Text.Json;
@@ -7,12 +8,21 @@ using System.Threading.Tasks;
 using Godot;
 
 using RoverControlApp.Core;
+using RoverControlApp.Core.RoverControllerPresets;
 using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.MVVM.ViewModel
 {
 	public partial class MainViewModel : Control
 	{
+		private enum InputHelpHintMode
+		{
+			Hidden = 0,
+			All = 1,
+			SkipCamera = 2,
+			SkipCameraAndNotes = 3,
+		}
+
 		public PressedKeys PressedKeys { get; private set; }
 		public RoverCommunication RoverCommunication { get; private set; }
 		public MissionStatus MissionStatus { get; private set; }
@@ -27,6 +37,8 @@ namespace RoverControlApp.MVVM.ViewModel
 		private BackCapture _backCapture = new();
 
 		private ImageTexture? _imTexture;
+
+		private InputHelpHintMode _inputHelpHintMode = InputHelpHintMode.Hidden; 
 
 		[Export]
 		private TextureRect imTextureRect = null!;
@@ -59,6 +71,9 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private BatteryMonitor BatteryMonitor = null!;
 
+		[Export]
+		private InputHelpMaster InputHelpMaster = null!;
+
 		public MainViewModel()
 		{
 			PressedKeys = new PressedKeys();
@@ -76,12 +91,14 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.OnControlModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged += InputHelp_HandleControlModeChanged;
+			PressedKeys.ControllerPresetChanged += InputHelp_HandleInputPresetChanged;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			BatteryMonitor.OnBatteryDataChanged += HandleBatteryPercentageChangedHandler;
 
-
+			InputHelp_HandleControlModeChanged(PressedKeys.ControlMode);
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
 		}
 
@@ -95,6 +112,8 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			ManagePtzStatus();
 			ManageRtspStatus();
+			InputHelpMaster.GenerateHints();
+			InputHelpMaster.HintType = PressedKeys.PadConnected ? InputHelpHint.HintVisibility.Joy : InputHelpHint.HintVisibility.Kb;
 
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -109,6 +128,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.OnControlModeChanged -= DriveModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged -= InputHelp_HandleControlModeChanged;
+			PressedKeys.ControllerPresetChanged -= InputHelp_HandleInputPresetChanged;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
@@ -129,7 +150,13 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		public override void _UnhandledInput(InputEvent @event)
 		{
+			if (@event is InputEventKey inputEvKey && inputEvKey.Keycode != Key.Shift)
+				InputHelpMaster.HintType = InputHelpHint.HintVisibility.Kb;
+			else if (@event is InputEventJoypadButton)
+				InputHelpMaster.HintType = InputHelpHint.HintVisibility.Joy;
+
 			if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return;
+
 			if (PressedKeys.HandleInputEvent(@event))
 			{
 				GetViewport().SetInputAsHandled();
@@ -143,6 +170,12 @@ namespace RoverControlApp.MVVM.ViewModel
 				else
 					EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Error, "Save failed!");
 				GetViewport().SetInputAsHandled();
+			}
+
+			if(InputHelp_HandleInput(@event))
+			{
+				GetViewport().SetInputAsHandled();
+				return;
 			}
 		}
 
@@ -341,6 +374,68 @@ namespace RoverControlApp.MVVM.ViewModel
 				ShowBatteryMonitor.SetPressed(true);
 				BatteryMonitor.SetVisible(true);
 			}
+		}
+
+		private void InputHelp_HandleInputPresetChanged()
+		{
+			InputHelp_HandleControlModeChanged(PressedKeys.ControlMode);
+		}
+
+		private Task InputHelp_HandleControlModeChanged(MqttClasses.ControlMode controlMode)
+		{
+			if (_inputHelpHintMode == InputHelpHintMode.Hidden)
+				return Task.CompletedTask;
+			InputHelpMaster.ActionAwareControllers = InputHelp_HintsToShow(controlMode);
+			return Task.CompletedTask;
+		}
+
+		private IActionAwareController[] InputHelp_HintsToShow(MqttClasses.ControlMode controlMode)
+		{
+			List<IActionAwareController> wipList = [PressedKeys.RoverModeControllerPreset];
+
+			if (_inputHelpHintMode == InputHelpHintMode.All)
+			{
+				wipList.Add(PressedKeys.RoverCameraControllerPreset);
+			}
+
+			switch (controlMode)
+			{
+				case MqttClasses.ControlMode.EStop:
+					break; //empty
+				case MqttClasses.ControlMode.Rover:
+					wipList.Add(PressedKeys.RoverDriveControllerPreset);
+					break;
+				case MqttClasses.ControlMode.Manipulator:
+					wipList.Add(PressedKeys.RoverManipulatorControllerPreset);
+					break;
+				case MqttClasses.ControlMode.Sampler:
+					wipList.Add(PressedKeys.RoverSamplerControllerPreset);
+					break;
+				case MqttClasses.ControlMode.Autonomy:
+					break; //empty
+			}
+
+			return [.. wipList];
+		}
+
+		private bool InputHelp_HandleInput(InputEvent @event)
+		{
+			if (@event.IsActionPressed("input_help_show", exactMatch: true))
+			{
+				_inputHelpHintMode++;
+				if (_inputHelpHintMode > InputHelpHintMode.SkipCameraAndNotes)
+				{
+					_inputHelpHintMode = InputHelpHintMode.Hidden;
+				}
+
+				
+
+				InputHelpMaster.ShowAdditionalNotes = _inputHelpHintMode < InputHelpHintMode.SkipCameraAndNotes;
+				InputHelpMaster.Visible = _inputHelpHintMode != InputHelpHintMode.Hidden;
+				InputHelp_HandleControlModeChanged(PressedKeys.ControlMode);
+				return true;
+			}
+			return false;
 		}
 
 		public bool CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 using Godot;
@@ -103,6 +103,12 @@ public class PressedKeys : IDisposable
 			OnSamplerMovement?.Invoke(value);
 		}
 	}
+
+	public IControlModeController RoverModeControllerPreset => _roverModeControllerPreset;
+	public IRoverDriveController RoverDriveControllerPreset => _roverDriveControllerPreset;
+	public IRoverManipulatorController RoverManipulatorControllerPreset => _roverManipulatorControllerPreset;
+	public IRoverSamplerController RoverSamplerControllerPreset => _roverSamplerControllerPreset;
+	public ICameraController RoverCameraControllerPreset => _roverCameraControllerPreset;
 
 	#endregion Properties
 
