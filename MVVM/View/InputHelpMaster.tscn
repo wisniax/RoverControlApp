@@ -1,0 +1,102 @@
+[gd_scene load_steps=5 format=3 uid="uid://cb4iwcuigx2m0"]
+
+[ext_resource type="Theme" uid="uid://b5383qtpq03ca" path="res://Resources/InputHelpMaster.theme" id="1_r456b"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/InputHelpMaster.cs" id="1_raoys"]
+[ext_resource type="PackedScene" uid="uid://o5ejabbb2yio" path="res://MVVM/View/InputHelpHint.tscn" id="2_5ikwg"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_agir7"]
+content_margin_right = 12.0
+
+[node name="InputHelpMaster" type="PanelContainer" node_paths=PackedStringArray("_cycleTimer", "_kindergarden", "_additionalNotesHeadLabel", "_additionalNotesValueLabel", "_headerBox", "_headerScroll", "_kinderScroll")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+tooltip_text = "Hold Shift - Stop Cycling of hints
+Shift + Mouse Scroll - Cycle hints"
+focus_mode = 2
+mouse_force_pass_scroll_events = false
+mouse_default_cursor_shape = 16
+theme = ExtResource("1_r456b")
+script = ExtResource("1_raoys")
+_inputHelpHintScene = ExtResource("2_5ikwg")
+_cycleTimer = NodePath("CycleTimer")
+_kindergarden = NodePath("VBox/Kinderscroll/Kindershool/Kinderoverseer/Kindergarden")
+_additionalNotesHeadLabel = NodePath("VBox/Kinderscroll/Kindershool/Kinderoverseer/AdditionalNotesHead")
+_additionalNotesValueLabel = NodePath("VBox/Kinderscroll/Kindershool/Kinderoverseer/AdditionalNotesValue")
+_headerBox = NodePath("VBox/HeaderScroll/Header")
+_headerScroll = NodePath("VBox/HeaderScroll")
+_kinderScroll = NodePath("VBox/Kinderscroll")
+
+[node name="CycleTimer" type="Timer" parent="."]
+wait_time = 3.0
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="VBox"]
+layout_mode = 2
+size_flags_horizontal = 6
+theme_type_variation = &"LabelHeaderMicro"
+text = "InputHelp Hints"
+
+[node name="HeaderScroll" type="ScrollContainer" parent="VBox"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_agir7")
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 0
+
+[node name="Header" type="HBoxContainer" parent="VBox/HeaderScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Event" type="Label" parent="VBox/HeaderScroll/Header"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_type_variation = &"LabelHeader"
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "INPUT"
+
+[node name="Action" type="Label" parent="VBox/HeaderScroll/Header"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 0
+theme_type_variation = &"LabelHeader"
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "ACTION"
+
+[node name="Kinderscroll" type="ScrollContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+vertical_scroll_mode = 2
+
+[node name="Kindershool" type="MarginContainer" parent="VBox/Kinderscroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Kinderoverseer" type="VBoxContainer" parent="VBox/Kinderscroll/Kindershool"]
+layout_mode = 2
+
+[node name="Kindergarden" type="VBoxContainer" parent="VBox/Kinderscroll/Kindershool/Kinderoverseer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AdditionalNotesHead" type="Label" parent="VBox/Kinderscroll/Kindershool/Kinderoverseer"]
+layout_mode = 2
+theme_type_variation = &"LabelHeader"
+text = "Additional Notes"
+
+[node name="AdditionalNotesValue" type="Label" parent="VBox/Kinderscroll/Kindershool/Kinderoverseer"]
+layout_mode = 2
+text = "None"
+autowrap_mode = 2
+
+[connection signal="timeout" from="CycleTimer" to="." method="OnCycleTimer"]
+[connection signal="resized" from="VBox/Kinderscroll/Kindershool/Kinderoverseer/Kindergarden" to="." method="OnKindergardenResize"]
