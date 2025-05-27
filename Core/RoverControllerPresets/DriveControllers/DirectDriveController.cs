@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Godot;
 
@@ -8,6 +9,20 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class DirectDriveController : IRoverDriveController
 {
+	private readonly string[] _usedActions =
+	[
+		"crab_mode",
+		"spinner_mode",
+		"ebrake_mode",
+		"ackermann_mode",
+		"rover_move_backward",
+		"rover_move_forward",
+		"rover_move_right",
+		"rover_move_left",
+		"rover_move_down",
+		"rover_move_up",
+	];
+
 	public static float SpeedModifier => LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : 1f;
 
 	public RoverControl CalculateMoveVector(in InputEvent inputEvent, in RoverControl lastState)
@@ -64,8 +79,8 @@ public class DirectDriveController : IRoverDriveController
 		return ret;
 	}
 
-    public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState)
-    {
+	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState)
+	{
 		switch (LocalSettings.Singleton.Joystick.ToggleableKinematics)
 		{
 			// Toggle
@@ -89,6 +104,27 @@ public class DirectDriveController : IRoverDriveController
 			case false: //default for hold
 				return KinematicMode.Ackermann;
 		}
-    }
+	}
+
+	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
+		IActionAwareController.FetchAllActionEvents(_usedActions);
+
+	public string GetInputActionsAdditionalNote() =>
+	"""
+	Action: rover_move_backward/forward - is force of movment.
+
+	- Ackermann mode (back wheels are inverted)
+	  Action: rover_move_right/left
+	  TO: set front wheel direction
+	- Crab mode (all wheels in same direction)
+	  Action: rover_move_right/left/down/up
+	  TO: set steering Vector, where Vector.UP is front of rover
+	- Spinner mode (wheels try to form circle around center of rover)
+	  rover_move_backward is anti-clockwise
+	  rover_move_forward is clockwise
+	  TO: rotate in place
+	- Brake mode (wheels will brake)
+	  Wheels just stop. No action required.
+	""";
 }
 

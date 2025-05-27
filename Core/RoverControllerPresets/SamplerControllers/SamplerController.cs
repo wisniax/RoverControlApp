@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using Godot;
 
@@ -8,6 +9,18 @@ namespace RoverControlApp.Core.RoverControllerPresets.SamplerControllers;
 
 public class SamplerController : IRoverSamplerController
 {
+	private readonly string[] _usedActions =
+	[
+		"sampler_move_down", "sampler_move_up",
+		"sampler_drill_down", "sampler_drill_up",
+		"sampler_drill_movement",
+		"sampler_platform_movement",
+		"sampler_drill_enable",
+		"sampler_container_0",
+		"sampler_container_1",
+		"sampler_container_2",
+	];
+
 	public SamplerControl CalculateMoveVector(in InputEvent inputEvent, in SamplerControl lastState)
 	{
 		float movement = Input.GetAxis("sampler_move_down", "sampler_move_up");
@@ -65,4 +78,7 @@ public class SamplerController : IRoverSamplerController
 			return samplerContainer.OpenDegrees;
 		}
 	}
+
+	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
+		IActionAwareController.FetchAllActionEvents(_usedActions);
 }

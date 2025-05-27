@@ -6,7 +6,7 @@ using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets;
 
-public interface IRoverDriveController
+public interface IRoverDriveController : IActionAwareController
 {
 	/// <summary>
 	/// Checks InputEvent and returns RoverControl

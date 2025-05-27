@@ -6,7 +6,7 @@ using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets;
 
-public interface IRoverManipulatorController
+public interface IRoverManipulatorController : IActionAwareController
 {
 	/// <summary>
 	/// Probes Godot.Input and returns ManipulatorControl

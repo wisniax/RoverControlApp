@@ -4,7 +4,7 @@ using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets;
 
-public interface ICameraController
+public interface ICameraController : IActionAwareController
 {
 	/// <summary>
 	/// Checks InputEvent and returns RoverControl

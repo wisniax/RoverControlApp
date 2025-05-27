@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using Godot;
 
@@ -8,6 +9,14 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class GoodOldGamesLikeController : IRoverDriveController
 {
+	private readonly string[] _usedActions =
+	[
+		"rover_move_right",
+		"rover_move_left",
+		"rover_move_down",
+		"rover_move_up",
+	];
+
 	public RoverControl CalculateMoveVector(in InputEvent inputEvent, in RoverControl lastState)
 	{
 		//deadzone have to be non zero for IsEqualApprox
@@ -31,4 +40,12 @@ public class GoodOldGamesLikeController : IRoverDriveController
 	}
 
 	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
+
+	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
+		IActionAwareController.FetchAllActionEvents(_usedActions);
+
+	public string GetInputActionsAdditionalNote() =>
+	$"""
+	{nameof(IRoverDriveController)}/{nameof(GoodOldGamesLikeController)} is a legacy controller. May be unsupported.
+	""";
 }
