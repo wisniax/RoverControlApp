@@ -1,9 +1,11 @@
-﻿using Godot;
-using RoverControlApp.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Godot;
+
+using RoverControlApp.Core;
 
 namespace RoverControlApp.MVVM.Model;
 
@@ -98,6 +100,8 @@ public class JoyVibrato : IDisposable
 
 	private async Task Vibrate(MqttClasses.ControlMode controlMode)
 	{
+		await Task.Delay(300, _ctToken);
+
 		_ctToken.ThrowIfCancellationRequested();
 
 		VibrationSequence[] sequence = Presets[controlMode];
