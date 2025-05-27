@@ -1,26 +1,20 @@
-[gd_scene load_steps=4 format=3 uid="uid://o5ejabbb2yio"]
+[gd_scene load_steps=3 format=3 uid="uid://o5ejabbb2yio"]
 
+[ext_resource type="Theme" uid="uid://b5383qtpq03ca" path="res://Resources/InputHelpMaster.theme" id="1_8dfn2"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/InputHelpHint.cs" id="1_l4op8"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oa4tf"]
-bg_color = Color(0.165656, 0.165656, 0.165656, 1)
-border_width_left = 6
-border_width_top = 6
-border_width_right = 6
-border_width_bottom = 6
-border_color = Color(0.164706, 0.164706, 0.164706, 1)
-
-[sub_resource type="Theme" id="Theme_jaxfp"]
-Panel/styles/panel = SubResource("StyleBoxFlat_oa4tf")
-
-[node name="InputHelpHint" type="Panel" node_paths=PackedStringArray("_kbHelp", "_joyHelp", "_kbHelpEventLabel", "_joyHelpEventLabel", "_kbHelpActionLabel", "_joyHelpActionLabel")]
+[node name="InputHelpHint" type="Control" node_paths=PackedStringArray("_kbHelp", "_joyHelp", "_kbHelpEventLabel", "_joyHelpEventLabel", "_kbHelpActionLabel", "_joyHelpActionLabel")]
+visible = false
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
 size_flags_vertical = 4
-theme = SubResource("Theme_jaxfp")
+mouse_filter = 2
+theme = ExtResource("1_8dfn2")
 script = ExtResource("1_l4op8")
 _kbHelp = NodePath("Keyboard")
 _joyHelp = NodePath("Joy")
@@ -28,8 +22,6 @@ _kbHelpEventLabel = NodePath("Keyboard/Event")
 _joyHelpEventLabel = NodePath("Joy/Event")
 _kbHelpActionLabel = NodePath("Keyboard/Action")
 _joyHelpActionLabel = NodePath("Joy/Action")
-VisibleHint = 2
-ShowEmpty = true
 
 [node name="Keyboard" type="HBoxContainer" parent="."]
 visible = false
@@ -45,39 +37,31 @@ alignment = 1
 [node name="Event" type="Label" parent="Keyboard"]
 layout_mode = 2
 size_flags_horizontal = 0
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
-text = "<KB_INVALID>"
+text = "<KBt_INVALID>"
 
 [node name="Action" type="Label" parent="Keyboard"]
 layout_mode = 2
 size_flags_horizontal = 10
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
 text = "<ACTION_INVALID>"
 
 [node name="Joy" type="HBoxContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme_override_constants/separation = 10
 alignment = 1
 
 [node name="Event" type="Label" parent="Joy"]
 layout_mode = 2
 size_flags_horizontal = 0
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
-text = "<JB_INVALID>"
+text = "<JBt_INVALID>"
 
 [node name="Action" type="Label" parent="Joy"]
 layout_mode = 2
 size_flags_horizontal = 10
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
 text = "<ACTION_INVALID>"

@@ -9,7 +9,7 @@ using RoverControlApp.Core;
 using HintInit = System.Collections.Generic.KeyValuePair<string, Godot.Collections.Array<Godot.InputEvent>>;
 
 [Tool]
-public partial class InputHelpHint : Panel
+public partial class InputHelpHint : Control
 {
 	#region Enums
 
@@ -46,7 +46,7 @@ public partial class InputHelpHint : Panel
 	private Label _joyHelpActionLabel = null!;
 
 	private HintInit _hintInformation = new("<ACTION_INVALID>", []);
-	private HintVisibility _visibleHint = HintVisibility.Kb;
+	private HintVisibility _hintType = HintVisibility.Kb;
 	private bool _showEmpty = false;
 
 	private List<string> _kbHints = [];
@@ -68,12 +68,12 @@ public partial class InputHelpHint : Panel
 	}
 
 	[Export]
-	public HintVisibility VisibleHint
+	public HintVisibility HintType
 	{
-		get => _visibleHint;
+		get => _hintType;
 		set
 		{
-			_visibleHint = value;
+			_hintType = value;
 			if (IsInsideTree())
 				CallDeferred(MethodName.ChangeVisible);
 		}
@@ -133,7 +133,7 @@ public partial class InputHelpHint : Panel
 
 	public override Vector2 _GetMinimumSize()
 	{
-		return VisibleHint switch
+		return HintType switch
 		{
 			HintVisibility.Kb when _kbHelp.Visible => _kbHelp.GetCombinedMinimumSize(),
 			HintVisibility.Joy when _joyHelp.Visible => _joyHelp.GetCombinedMinimumSize(),
@@ -201,11 +201,11 @@ public partial class InputHelpHint : Panel
 			if (input is InputEventKey inputKbKey)
 			{
 				if (inputKbKey.Keycode != Key.None)
-					_kbHints.Add($"KBt_{OS.GetKeycodeString(inputKbKey.Keycode)}");
+					_kbHints.Add($"KBt_{OS.GetKeycodeString(inputKbKey.Keycode).Replace(' ', '_')}");
 				if (inputKbKey.KeyLabel != Key.None)
-					_kbHints.Add($"KBL_{OS.GetKeycodeString(inputKbKey.KeyLabel)}");
+					_kbHints.Add($"KBt_{OS.GetKeycodeString(inputKbKey.KeyLabel).Replace(' ', '_')}");
 				if (inputKbKey.PhysicalKeycode != Key.None)
-					_kbHints.Add($"KBP_{OS.GetKeycodeString(inputKbKey.PhysicalKeycode)}");
+					_kbHints.Add($"KBt_{OS.GetKeycodeString(inputKbKey.PhysicalKeycode).Replace(' ', '_')}");
 			}
 		}
 
@@ -220,41 +220,44 @@ public partial class InputHelpHint : Panel
 		_kbHelpActionLabel.Text = _hintInformation.Key;
 		_joyHelpActionLabel.Text = _hintInformation.Key;
 
-		EventLogger.LogMessageDebug(nameof(InputHelpMaster) + $"/{_hintInformation.Key}", EventLogger.LogLevel.Verbose, $"K:{_kbHints.Count} J:{_joyHints.Count}");
+		EventLogger.LogMessageDebug(nameof(InputHelpHint) + $"/{_hintInformation.Key}", EventLogger.LogLevel.Verbose, $"K:{_kbHints.Count} J:{_joyHints.Count}");
 
 		CycleHints(0);
 	}
 
 	private void ChangeVisible()
 	{
-		switch (VisibleHint)
+		switch (HintType)
 		{
 			case HintVisibility.Kb when _kbHints.Count > 0 || _showEmpty:
 				_kbHelp.Visible = true;
 				_joyHelp.Visible = false;
+				Visible = true;
 				break;
 			case HintVisibility.Joy when _joyHints.Count > 0 || _showEmpty:
 				_kbHelp.Visible = false;
 				_joyHelp.Visible = true;
+				Visible = true;
 				break;
 			default:
 				_kbHelp.Visible = false;
 				_joyHelp.Visible = false;
+				Visible = false;
 				break;
 		}
 
 		UpdateMinimumSize();
 	}
 
-	private void CycleHints(int cycle)
+	public void CycleHints(uint cycle)
 	{
 		if (_kbHints.Count > 0)
-			_kbHelpEventLabel.Text = _kbHints[cycle % _kbHints.Count];
+			_kbHelpEventLabel.Text = _kbHints[(int)(cycle % (uint)_kbHints.Count)];
 		else
 			_kbHelpEventLabel.Text = "<KBt_INVALID>";
 
 		if (_joyHints.Count > 0)
-			_joyHelpEventLabel.Text = _joyHints[cycle % _joyHints.Count];
+			_joyHelpEventLabel.Text = _joyHints[(int)(cycle % (uint)_joyHints.Count)];
 		else
 			_joyHelpEventLabel.Text = "<JBt_INVALID>";
 
