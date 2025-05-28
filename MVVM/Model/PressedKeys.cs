@@ -29,6 +29,7 @@ public class PressedKeys : IDisposable
 	private IRoverSamplerController _roverSamplerControllerPreset = null!;
 	private ICameraController _roverCameraControllerPreset = null!;
 	private bool _disposedValue;
+	private ulong _autoEstop_lastInput = 0;
 
 	#endregion Fields
 
@@ -111,6 +112,21 @@ public class PressedKeys : IDisposable
 	public IRoverSamplerController RoverSamplerControllerPreset => _roverSamplerControllerPreset;
 	public ICameraController RoverCameraControllerPreset => _roverCameraControllerPreset;
 
+	/// <summary>
+	/// Time left to Auto-EStop.
+	/// 0 means Auto-EStop inactive.
+	/// </summary>
+	public long TimeToAutoEStopMsec
+	{
+		get
+		{
+			if (LocalSettings.Singleton.General.NoInputSecondsToEstop == 0)
+				return 0;
+			var lastInput = Time.GetTicksMsec() - _autoEstop_lastInput;
+			return (long)LocalSettings.Singleton.General.NoInputMsecToEstop - (long)lastInput;
+		}
+	} 
+
 	#endregion Properties
 
 	#region Ctor
@@ -157,7 +173,19 @@ public class PressedKeys : IDisposable
 	#region Methods.HandleInput
 
 	public void HandleEstop()
-	{		
+	{
+		var lastInput = Time.GetTicksMsec() - _autoEstop_lastInput;
+
+		if (
+			LocalSettings.Singleton.General.NoInputSecondsToEstop > 0 && // Must be enabled
+			lastInput > LocalSettings.Singleton.General.NoInputMsecToEstop && // Last input longer than expected
+			ControlMode != ControlMode.EStop // Not in EStop already
+		)
+		{
+			ControlMode = ControlMode.EStop;
+			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by Auto-EStop).");
+		}
+
 		if (_roverModeControllerPreset.EstopReq())
 		{
 			ControlMode = ControlMode.EStop;
@@ -176,6 +204,17 @@ public class PressedKeys : IDisposable
 			return true;
 		}
 
+		if (LocalSettings.Singleton.General.PedanticEstop && ControlMode == ControlMode.EStop)
+		{
+			//print only if some controller is happy to take input
+			bool isInputHandled =
+				_roverCameraControllerPreset.HandleInput(inputEvent, _cameraMoveVector, out _);
+
+			if(isInputHandled)
+				EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "PedanticEstop is enabled. Input rejected.");
+			return false;
+		}
+
 		// camera control
 		switch (this.ControlMode)
 		{
@@ -184,6 +223,7 @@ public class PressedKeys : IDisposable
 			case ControlMode.Manipulator: // was disabled originally
 			case ControlMode.Sampler:
 			case ControlMode.Autonomy:
+			default:
 				if (_roverCameraControllerPreset.HandleInput(inputEvent, _cameraMoveVector, out _cameraMoveVector))
 				{
 					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
@@ -268,6 +308,7 @@ public class PressedKeys : IDisposable
 
 	private void OnAcceptedInput(InputEvent inputEvent)
 	{
+		_autoEstop_lastInput = Time.GetTicksMsec();
 		bool inputIsJoystick = inputEvent is InputEventJoypadButton or InputEventJoypadButton;
 		LastAcceptedInput?.Invoke(inputIsJoystick ? InputHelpHint.HintVisibility.Joy : InputHelpHint.HintVisibility.Kb);
 	}

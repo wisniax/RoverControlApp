@@ -350,6 +350,26 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			else
 				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
+
+
+
+			if (LocalSettings.Singleton.General.NoInputSecondsToEstop != 0)
+			{
+				if (PressedKeys!.TimeToAutoEStopMsec > 0)
+				{
+					var timeDictEStop = Time.GetTimeDictFromUnixTime(PressedKeys!.TimeToAutoEStopMsec / 1000);
+					FancyDebugViewRLab.AppendText($"Auto-EStop: {timeDictEStop["minute"].AsUInt32():D2}:{timeDictEStop["second"].AsUInt32():D2}\n");
+				}
+				else
+				{
+					var timeDictEStop = Time.GetTimeDictFromUnixTime(PressedKeys!.TimeToAutoEStopMsec / -1000);
+					FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.Green.ToHtml()}]ACTIVE[/color] ({timeDictEStop["hour"].AsUInt32():D2}:{timeDictEStop["minute"].AsUInt32():D2}:{timeDictEStop["second"].AsUInt32():D2})\n");
+				}
+			}
+			else
+			{
+				FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.Red.ToHtml()}]DISABLED[/color]\n");
+			}
 		}
 
 		void HandleBatteryPercentageChangedHandler(int connectedBatts, int data, Color color)
