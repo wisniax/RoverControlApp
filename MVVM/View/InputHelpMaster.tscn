@@ -94,6 +94,7 @@ theme_type_variation = &"LabelHeader"
 text = "Additional Notes"
 
 [node name="AdditionalNotesValue" type="Label" parent="VBox/Kinderscroll/Kindershool/Kinderoverseer"]
+custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
 text = "None"
 autowrap_mode = 2
