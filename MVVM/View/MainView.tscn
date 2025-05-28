@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=25 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -12,8 +12,9 @@
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SafeMode_UIOverlay.cs" id="7_ssyiv"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/MaxSizeContainer.cs" id="13_0svft"]
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
-[ext_resource type="PackedScene" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
+[ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -74,7 +75,7 @@ FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
 BatteryMonitor = NodePath("BatteryMonitor")
-InputHelpMaster = NodePath("InputHelpMaster")
+InputHelpMaster = NodePath("MaxSizeContainer/InputHelpMaster")
 
 [node name="CameraView" type="TextureRect" parent="."]
 layout_mode = 1
@@ -315,22 +316,30 @@ offset_bottom = -45.38
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="InputHelpMaster" parent="." instance=ExtResource("13_1wevo")]
-visible = false
-custom_minimum_size = Vector2(200, 0)
+[node name="MaxSizeContainer" type="Container" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 0.547
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = 10.0
-offset_top = 38.0
-offset_right = -177.238
-offset_bottom = -111.0
-grow_horizontal = 1
+offset_top = 36.0
+offset_bottom = -110.0
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("13_0svft")
+ChildMaxSize = Vector2(450, 9999)
+MinimalMargin = Vector2(700, 0)
+
+[node name="InputHelpMaster" parent="MaxSizeContainer" instance=ExtResource("13_1wevo")]
+visible = false
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
 ReactiveHints = true
 ShowEmpty = true
 CycleHints = true
+metadata/_edit_lock_ = true
 
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false
@@ -348,8 +357,8 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]
