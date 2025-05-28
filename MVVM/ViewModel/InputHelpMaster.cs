@@ -8,6 +8,8 @@ using RoverControlApp.Core.RoverControllerPresets;
 using HintInit = System.Collections.Generic.KeyValuePair<string, Godot.Collections.Array<Godot.InputEvent>>;
 using InputArray = Godot.Collections.Array<Godot.InputEvent>;
 
+namespace RoverControlApp.MVVM.ViewModel;
+
 public partial class InputHelpMaster : PanelContainer
 {
 	#region Fields

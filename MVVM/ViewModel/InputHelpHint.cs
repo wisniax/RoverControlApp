@@ -8,6 +8,8 @@ using RoverControlApp.Core;
 
 using HintInit = System.Collections.Generic.KeyValuePair<string, Godot.Collections.Array<Godot.InputEvent>>;
 
+namespace RoverControlApp.MVVM.ViewModel;
+
 [Tool]
 public partial class InputHelpHint : Control
 {
