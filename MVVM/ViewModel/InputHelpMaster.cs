@@ -145,12 +145,12 @@ public partial class InputHelpMaster : PanelContainer
 			if (!IsInsideTree())
 				return;
 			if (value)
-					_cycleTimer?.CallDeferred(Timer.MethodName.Start, 0.0);
-				else
-					_cycleTimer?.CallDeferred(Timer.MethodName.Stop);
+				_cycleTimer?.CallDeferred(Timer.MethodName.Start, 0.0);
+			else
+				_cycleTimer?.CallDeferred(Timer.MethodName.Stop);
 		}
 	}
-	
+
 	[Export]
 	public bool ShowAdditionalNotes
 	{
@@ -159,7 +159,7 @@ public partial class InputHelpMaster : PanelContainer
 		{
 			_showAdditionalNotes = value;
 			if (IsInsideTree())
-					CallDeferred(MethodName.UpdateAdditionalNotesVisibility);
+				CallDeferred(MethodName.UpdateAdditionalNotesVisibility);
 		}
 	}
 
@@ -174,12 +174,12 @@ public partial class InputHelpMaster : PanelContainer
 			_cycleTimer.Start();
 	}
 
-    public override void _Process(double delta)
-    {
+	public override void _Process(double delta)
+	{
 		_headerScroll.ScrollHorizontal = _kinderScroll.ScrollHorizontal;
-    }
+	}
 
-    public override void _GuiInput(InputEvent @event)
+	public override void _GuiInput(InputEvent @event)
 	{
 		if (@event.IsActionPressed("input_help_cycle_hint_up", allowEcho: false, exactMatch: true))
 		{
@@ -192,7 +192,7 @@ public partial class InputHelpMaster : PanelContainer
 			CallDeferred(MethodName.UpdateHintCycle);
 		}
 	}
-	
+
 	public override void _UnhandledKeyInput(InputEvent @event)
 	{
 		if (Input.IsActionJustPressed("input_help_cycle_hint_stop", exactMatch: true) && _cycleTimerEnabled)
@@ -206,11 +206,11 @@ public partial class InputHelpMaster : PanelContainer
 	}
 
 
-#endregion Godot
+	#endregion Godot
 
-#region Methods
+	#region Methods
 
-private void OnCycleTimer()
+	private void OnCycleTimer()
 	{
 		_hintCycle++;
 		UpdateHintCycle();
@@ -304,7 +304,7 @@ private void OnCycleTimer()
 		_headerBox.CustomMinimumSize = _kindergarden.Size with { Y = 0 };
 	}
 
-    public void GenerateHints() => GenerateHints(_reactiveHints);
+	public void GenerateHints() => GenerateHints(_reactiveHints);
 
-    #endregion Methods
+	#endregion Methods
 }
