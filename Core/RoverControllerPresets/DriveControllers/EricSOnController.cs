@@ -15,8 +15,8 @@ public class EricSOnController : IRoverDriveController
 		"rover_move_forward",
 		"rover_move_right",
 		"rover_move_left",
-		"rover_move_down",
-		"rover_move_up",
+		"rover_rotate_right",
+		"rover_rotate_left",
 	];
 
 	private const float TURN_ANGLE = 89;

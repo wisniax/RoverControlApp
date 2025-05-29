@@ -7,7 +7,7 @@ namespace RoverControlApp.Core.RoverControllerPresets;
 public interface ICameraController : IActionAwareController
 {
 	/// <summary>
-	/// Checks InputEvent and returns RoverControl
+	/// Checks InputEvent and returns new state
 	/// </summary>
 	public Vector4 CalculateMoveVector(in InputEvent inputEvent, in Vector4 lastState);
 
@@ -22,7 +22,7 @@ public interface ICameraController : IActionAwareController
 	}
 
 	/// <summary>
-	/// Compares two RoverControl states and determines if change is big enough, to be considered
+	/// Compares two states and determines if change is big enough, to be considered
 	/// </summary>
 	/// <returns>true if changed</returns>
 	public bool IsMoveVectorChanged(in Vector4 currentState, in Vector4 lastState) =>
