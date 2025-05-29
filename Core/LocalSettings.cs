@@ -1,13 +1,14 @@
-﻿using Godot;
-using RoverControlApp.Core;
-using System;
+﻿using System;
 using System.Data;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+
+using Godot;
+
 namespace RoverControlApp.Core;
 
 /// <summary>
-/// Master class for settings storage. Can be fetched by LocalSettings.Singleton<br/> 
+/// Master class for settings storage. Can be fetched by LocalSettings.Singleton<br/>
 /// </summary>
 public partial class LocalSettings : Node
 {
@@ -28,7 +29,7 @@ public partial class LocalSettings : Node
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 	public static LocalSettings Singleton { get; private set; }
-#pragma warning restore CS8618 
+#pragma warning restore CS8618
 
 	/// <summary>
 	/// Signal stating that one of categories was overwritten (reference changed)
@@ -116,7 +117,7 @@ public partial class LocalSettings : Node
 		try
 		{
 			using var settingsFileAccess = FileAccess.Open(_settingsPath, FileAccess.ModeFlags.Write) ?? throw new FieldAccessException(FileAccess.GetOpenError().ToString());
-			
+
 			PackedSettings packedSettings = new()
 			{
 				Camera = Camera,
@@ -158,7 +159,7 @@ public partial class LocalSettings : Node
 	private void EmitSignalCategoryChanged(string sectionName)
 	{
 		EmitSignal(SignalName.CategoryChanged, sectionName);
-		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Verbose, $"Section \"{sectionName}\" was overwritten");
+		EventLogger.LogMessageDebug("LocalSettings", EventLogger.LogLevel.Verbose, $"Section \"{sectionName}\" was overwritten");
 	}
 
 	private void PropagateSignal(StringName signal, StringName category, params Variant[] args)
@@ -168,8 +169,8 @@ public partial class LocalSettings : Node
 		combined[0] = category;
 		args.CopyTo(combined, 1);
 
-		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Verbose, $"Field \"{args[0].AsStringName()}\" from \"{combined[0]}\" was changed. Signal propagated to LocalSettings.");
-		
+		EventLogger.LogMessageDebug("LocalSettings", EventLogger.LogLevel.Verbose, $"Field \"{args[0].AsStringName()}\" from \"{combined[0]}\" was changed. Signal propagated to LocalSettings.");
+
 		EmitSignal(signal, combined);
 	}
 
@@ -195,7 +196,7 @@ public partial class LocalSettings : Node
 
 			_camera.Connect(
 				Settings.Camera.SignalName.SubcategoryChanged,
-				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged)) 
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
 			);
 			_camera.Connect(
 				Settings.Camera.SignalName.PropertyChanged,
