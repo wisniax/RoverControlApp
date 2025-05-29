@@ -1,8 +1,9 @@
-﻿using Godot;
-using RoverControlApp.Core.JSONConverters;
-using System;
+﻿using System;
 using System.Text.Json.Serialization;
-using RoverControlApp.Core.RoverControllerPresets;
+
+using Godot;
+
+using RoverControlApp.Core.JSONConverters;
 
 namespace RoverControlApp.Core.Settings;
 
@@ -14,15 +15,15 @@ public partial class Joystick : SettingBase, ICloneable
 	{
 		_roverDriveController = 3;
 		_toggleableKinematics = false;
-		_deadzone = 0.15f;
+		_minimalInput = 0f;
 		_vibrateOnModeChange = true;
 	}
 
-	public Joystick(int roverDriveController, bool toggleableKinematics, float deadzone, bool vibrateOnModeChange)
+	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange)
 	{
 		_roverDriveController = roverDriveController;
 		_toggleableKinematics = toggleableKinematics;
-		_deadzone = deadzone;
+		_minimalInput = minimalInput;
 		_vibrateOnModeChange = vibrateOnModeChange;
 	}
 
@@ -32,7 +33,7 @@ public partial class Joystick : SettingBase, ICloneable
 		{
 			RoverDriveController = _roverDriveController,
 			ToggleableKinematics = _toggleableKinematics,
-			Deadzone = _deadzone,
+			MinimalInput = _minimalInput,
 			VibrateOnModeChange = _vibrateOnModeChange
 		};
 	}
@@ -58,11 +59,11 @@ public partial class Joystick : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _toggleableKinematics, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f")]
-	public float Deadzone
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;1;0.01;f;f", customTooltip: "Value lower than this will count as no input. (0 - disable)")]
+	public float MinimalInput
 	{
-		get => _deadzone;
-		set => EmitSignal_SettingChanged(ref _deadzone, value);
+		get => _minimalInput;
+		set => EmitSignal_SettingChanged(ref _minimalInput, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
@@ -74,7 +75,7 @@ public partial class Joystick : SettingBase, ICloneable
 
 	int _roverDriveController;
 	private bool _toggleableKinematics;
-	float _deadzone;
+	float _minimalInput;
 	bool _vibrateOnModeChange;
 }
 

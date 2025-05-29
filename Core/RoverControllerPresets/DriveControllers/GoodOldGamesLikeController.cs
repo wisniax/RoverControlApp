@@ -22,7 +22,7 @@ public class GoodOldGamesLikeController : IRoverDriveController
 		//deadzone have to be non zero for IsEqualApprox
 		var joyDeadZone = Mathf.Max(
 			0.001f,
-			Convert.ToSingle(LocalSettings.Singleton.Joystick.Deadzone)
+			Convert.ToSingle(LocalSettings.Singleton.Joystick.MinimalInput)
 		);
 		Vector2 tempVel = Input.GetVector("rover_move_down", "rover_move_up", "rover_move_right", "rover_move_left", joyDeadZone);
 		Vector3 velocity = new Vector3(tempVel.X, tempVel.Y, 0);

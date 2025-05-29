@@ -29,7 +29,7 @@ public class EricSOnController : IRoverDriveController
 		if (LocalSettings.Singleton.SpeedLimiter.Enabled) velocity *= LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
 
 		float turn = Input.GetAxis("rover_move_right", "rover_move_left");
-		turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToSingle(LocalSettings.Singleton.Joystick.Deadzone))) ? 0 : turn;
+		turn = Mathf.IsEqualApprox(turn, 0f, Mathf.Max(0.1f, Convert.ToSingle(LocalSettings.Singleton.Joystick.MinimalInput))) ? 0 : turn;
 
 		// turn *= velocity * TURN_COEFF; // Max turn angle: 45 deg.
 

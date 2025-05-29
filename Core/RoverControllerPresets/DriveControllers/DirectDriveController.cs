@@ -30,7 +30,7 @@ public class DirectDriveController : IRoverDriveController
 		//deadzone have to be non zero for IsEqualApprox
 		var joyDeadZone = Mathf.Max(
 			0.001f,
-			Convert.ToSingle(LocalSettings.Singleton.Joystick.Deadzone)
+			Convert.ToSingle(LocalSettings.Singleton.Joystick.MinimalInput)
 		);
 
 		KinematicMode kinematicMode = OperateKinematicMode(inputEvent, lastState);

@@ -16,7 +16,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 
 		int? roverDriveController = null;
 		bool? toggleableKinematics = null;
-		float? deadzone = null;
+		float? minimalInput = null;
 		bool? vibrateOnModeChange = null;
 
 		while (reader.Read())
@@ -38,8 +38,8 @@ public class JoystickConverter : JsonConverter<Joystick>
 				case nameof(Joystick.ToggleableKinematics):
 					toggleableKinematics = reader.GetBoolean();
 					break;
-				case nameof(Joystick.Deadzone):
-					deadzone = reader.GetSingle();
+				case nameof(Joystick.MinimalInput):
+					minimalInput = reader.GetSingle();
 					break;
 				case nameof(Joystick.VibrateOnModeChange):
 					vibrateOnModeChange = reader.GetBoolean();
@@ -54,7 +54,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 		(
 			roverDriveController ?? Default.RoverDriveController,
 			toggleableKinematics ?? Default.ToggleableKinematics,
-			deadzone ?? Default.Deadzone,
+			minimalInput ?? Default.MinimalInput,
 			vibrateOnModeChange ?? Default.VibrateOnModeChange
 		);
 	}
@@ -64,7 +64,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 		writer.WriteStartObject();
 		writer.WriteNumber(nameof(Joystick.RoverDriveController), value.RoverDriveController);
 		writer.WriteBoolean(nameof(Joystick.ToggleableKinematics), value.ToggleableKinematics);
-		writer.WriteNumber(nameof(Joystick.Deadzone), value.Deadzone);
+		writer.WriteNumber(nameof(Joystick.MinimalInput), value.MinimalInput);
 		writer.WriteBoolean(nameof(Joystick.VibrateOnModeChange), value.VibrateOnModeChange);
 		writer.WriteEndObject();
 	}

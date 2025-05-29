@@ -24,11 +24,11 @@ public class SamplerController : IRoverSamplerController
 	public SamplerControl CalculateMoveVector(in InputEvent inputEvent, in SamplerControl lastState)
 	{
 		float movement = Input.GetAxis("sampler_move_down", "sampler_move_up");
-		if (Mathf.Abs(movement) < LocalSettings.Singleton.Joystick.Deadzone)
+		if (Mathf.Abs(movement) < LocalSettings.Singleton.Joystick.MinimalInput)
 			movement = 0f;
 
 		float drillSpeed = Input.GetAxis("sampler_drill_down", "sampler_drill_up");
-		if (Mathf.Abs(drillSpeed) < LocalSettings.Singleton.Joystick.Deadzone)
+		if (Mathf.Abs(drillSpeed) < LocalSettings.Singleton.Joystick.MinimalInput)
 			drillSpeed = 0f;
 
 		SamplerControl newSamplerControl = new()
