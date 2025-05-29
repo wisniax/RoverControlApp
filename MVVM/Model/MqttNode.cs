@@ -21,7 +21,7 @@ using RoverControlApp.Core.Settings;
 namespace RoverControlApp.MVVM.Model;
 
 public partial class MqttNode : Node
-{ 
+{
 	[Signal]
 	public delegate void ConnectionChangedEventHandler(ConnectionState state);
 
@@ -73,7 +73,7 @@ public partial class MqttNode : Node
 
 	/*
 	 * Settings handlers
-	 */ 
+	 */
 
 	void OnSettingsCategoryChanged(StringName property)
 	{
@@ -100,7 +100,7 @@ public partial class MqttNode : Node
 	{
 		if (category != nameof(Mqtt) || name != nameof(Mqtt.ClientSettings)) return;
 
-		MqRestart();		
+		MqRestart();
 	}
 
 	/*
@@ -272,13 +272,13 @@ public partial class MqttNode : Node
 	private void ThWork()
 	{
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread started");
-		
+
 		//kind of worried about this one
 		ThClientConnect().Wait();
 		SpinWait.SpinUntil(() => _cts!.IsCancellationRequested);
 
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread stopping");
-	
+
 		//and this
 		ThClientDisconnect().Wait();
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread quit");

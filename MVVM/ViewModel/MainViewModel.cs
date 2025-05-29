@@ -38,7 +38,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private ImageTexture? _imTexture;
 
-		private InputHelpHintMode _inputHelpHintMode = InputHelpHintMode.Hidden; 
+		private InputHelpHintMode _inputHelpHintMode = InputHelpHintMode.Hidden;
 
 		[Export]
 		private TextureRect imTextureRect = null!;
@@ -172,7 +172,7 @@ namespace RoverControlApp.MVVM.ViewModel
 				GetViewport().SetInputAsHandled();
 			}
 
-			if(InputHelp_HandleInput(@event))
+			if (InputHelp_HandleInput(@event))
 			{
 				GetViewport().SetInputAsHandled();
 				return;
@@ -456,7 +456,7 @@ namespace RoverControlApp.MVVM.ViewModel
 					_inputHelpHintMode = InputHelpHintMode.Hidden;
 				}
 
-				
+
 
 				InputHelpMaster.ShowAdditionalNotes = _inputHelpHintMode < InputHelpHintMode.SkipCameraAndNotes;
 				InputHelpMaster.Visible = _inputHelpHintMode != InputHelpHintMode.Hidden;
