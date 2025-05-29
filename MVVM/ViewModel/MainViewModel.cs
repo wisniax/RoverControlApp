@@ -352,23 +352,31 @@ namespace RoverControlApp.MVVM.ViewModel
 				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
 
 
-
-			if (LocalSettings.Singleton.General.NoInputSecondsToEstop != 0)
+			Godot.Collections.Dictionary timeDictEStop;
+			if (PressedKeys!.TimeToAutoEStopMsec > 0)
 			{
-				if (PressedKeys!.TimeToAutoEStopMsec > 0)
-				{
-					var timeDictEStop = Time.GetTimeDictFromUnixTime(PressedKeys!.TimeToAutoEStopMsec / 1000);
-					FancyDebugViewRLab.AppendText($"Auto-EStop: {timeDictEStop["minute"].AsUInt32():D2}:{timeDictEStop["second"].AsUInt32():D2}\n");
-				}
-				else
-				{
-					var timeDictEStop = Time.GetTimeDictFromUnixTime(PressedKeys!.TimeToAutoEStopMsec / -1000);
-					FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.Green.ToHtml()}]ACTIVE[/color] ({timeDictEStop["hour"].AsUInt32():D2}:{timeDictEStop["minute"].AsUInt32():D2}:{timeDictEStop["second"].AsUInt32():D2})\n");
-				}
+				timeDictEStop = Time.GetTimeDictFromUnixTime(PressedKeys!.TimeToAutoEStopMsec / 1000);
+				// for number to stop jumping
+				if (LocalSettings.Singleton.General.NoInputSecondsToEstop <= 30)
+					timeDictEStop["second"] = Math.Min(LocalSettings.Singleton.General.NoInputSecondsToEstop - 1, timeDictEStop["second"].AsUInt32());
 			}
 			else
+				timeDictEStop = Time.GetTimeDictFromUnixTime(PressedKeys!.TimeToAutoEStopMsec / -1000);
+
+			switch (LocalSettings.Singleton.General.NoInputSecondsToEstop)
 			{
-				FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.Red.ToHtml()}]DISABLED[/color]\n");
+				case 0:
+					FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.Red.ToHtml()}]DISABLED[/color]\n");
+					break;
+				case var x when x > 0 && PressedKeys!.TimeToAutoEStopMsec < 0:
+					FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.Green.ToHtml()}]ACTIVE[/color] ({timeDictEStop["hour"].AsUInt32():D2}:{timeDictEStop["minute"].AsUInt32():D2}:{timeDictEStop["second"].AsUInt32():D2} since activation)\n");
+					break;
+				case var x when x > 30 && PressedKeys!.TimeToAutoEStopMsec >= LocalSettings.Singleton.General.NoInputSecondsToEstop * 1000 - 10000:
+					FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.LightCyan.ToHtml()}]INACTIVE[/color] (recent input)\n");
+					break;
+				case var x when x <= 30 || PressedKeys!.TimeToAutoEStopMsec < LocalSettings.Singleton.General.NoInputSecondsToEstop * 1000 - 10000:
+					FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.LightCyan.ToHtml()}]INACTIVE[/color] ({timeDictEStop["minute"].AsUInt32():D2}:{timeDictEStop["second"].AsUInt32():D2} left)\n");
+					break;
 			}
 		}
 
