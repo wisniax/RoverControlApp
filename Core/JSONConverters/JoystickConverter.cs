@@ -1,7 +1,8 @@
-﻿using RoverControlApp.Core.Settings;
-using System;
+﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
+using RoverControlApp.Core.Settings;
 
 namespace RoverControlApp.Core.JSONConverters;
 
@@ -18,6 +19,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 		bool? toggleableKinematics = null;
 		float? minimalInput = null;
 		bool? vibrateOnModeChange = null;
+		bool? vibrateOnAutoEstop = null;
 
 		while (reader.Read())
 		{
@@ -44,6 +46,9 @@ public class JoystickConverter : JsonConverter<Joystick>
 				case nameof(Joystick.VibrateOnModeChange):
 					vibrateOnModeChange = reader.GetBoolean();
 					break;
+				case nameof(Joystick.VibrateOnAutoEstop):
+					vibrateOnAutoEstop = reader.GetBoolean();
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -55,7 +60,8 @@ public class JoystickConverter : JsonConverter<Joystick>
 			roverDriveController ?? Default.RoverDriveController,
 			toggleableKinematics ?? Default.ToggleableKinematics,
 			minimalInput ?? Default.MinimalInput,
-			vibrateOnModeChange ?? Default.VibrateOnModeChange
+			vibrateOnModeChange ?? Default.VibrateOnModeChange,
+			vibrateOnAutoEstop ?? Default.VibrateOnAutoEstop
 		);
 	}
 
@@ -66,6 +72,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 		writer.WriteBoolean(nameof(Joystick.ToggleableKinematics), value.ToggleableKinematics);
 		writer.WriteNumber(nameof(Joystick.MinimalInput), value.MinimalInput);
 		writer.WriteBoolean(nameof(Joystick.VibrateOnModeChange), value.VibrateOnModeChange);
+		writer.WriteBoolean(nameof(Joystick.VibrateOnAutoEstop), value.VibrateOnAutoEstop);
 		writer.WriteEndObject();
 	}
 }

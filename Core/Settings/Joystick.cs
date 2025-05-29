@@ -17,14 +17,16 @@ public partial class Joystick : SettingBase, ICloneable
 		_toggleableKinematics = false;
 		_minimalInput = 0f;
 		_vibrateOnModeChange = true;
+		_vibrateOnAutoEstop = true;
 	}
 
-	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange)
+	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange, bool vibrateOnAutoEstop)
 	{
 		_roverDriveController = roverDriveController;
 		_toggleableKinematics = toggleableKinematics;
 		_minimalInput = minimalInput;
 		_vibrateOnModeChange = vibrateOnModeChange;
+		_vibrateOnAutoEstop = vibrateOnAutoEstop;
 	}
 
 	public object Clone()
@@ -34,7 +36,8 @@ public partial class Joystick : SettingBase, ICloneable
 			RoverDriveController = _roverDriveController,
 			ToggleableKinematics = _toggleableKinematics,
 			MinimalInput = _minimalInput,
-			VibrateOnModeChange = _vibrateOnModeChange
+			VibrateOnModeChange = _vibrateOnModeChange,
+			VibrateOnAutoEstop = _vibrateOnAutoEstop
 		};
 	}
 
@@ -73,10 +76,18 @@ public partial class Joystick : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _vibrateOnModeChange, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check, customTooltip:"'Vibrate On Mode Change' must be enabled for this to take effect.")]
+	public bool VibrateOnAutoEstop
+	{
+		get => _vibrateOnAutoEstop;
+		set => EmitSignal_SettingChanged(ref _vibrateOnAutoEstop, value);
+	}
+
 	int _roverDriveController;
 	private bool _toggleableKinematics;
 	float _minimalInput;
 	bool _vibrateOnModeChange;
+	bool _vibrateOnAutoEstop;
 }
 
 

@@ -125,7 +125,7 @@ public class PressedKeys : IDisposable
 			var lastInput = Time.GetTicksMsec() - _autoEstop_lastInput;
 			return (long)LocalSettings.Singleton.General.NoInputMsecToEstop - (long)lastInput;
 		}
-	} 
+	}
 
 	#endregion Properties
 
@@ -188,6 +188,7 @@ public class PressedKeys : IDisposable
 
 		if (_roverModeControllerPreset.EstopReq())
 		{
+			_autoEstop_lastInput = Time.GetTicksMsec(); //or else will not vibrate when already in Auto E-Stop
 			ControlMode = ControlMode.EStop;
 			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by InputController).");
 		}

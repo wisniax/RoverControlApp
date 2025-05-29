@@ -33,7 +33,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
-		private JoyVibrato _joyVibrato = new();
+		private JoyVibrato _joyVibrato;
 		private BackCapture _backCapture = new();
 
 		private ImageTexture? _imTexture;
@@ -80,6 +80,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus = new MissionStatus();
 			RoverCommunication = new RoverCommunication(PressedKeys, MissionStatus);
 			MissionSetPoint = new MissionSetPoint();
+			_joyVibrato = new(PressedKeys);
 		}
 
 		public override void _EnterTree()
@@ -141,6 +142,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		protected override void Dispose(bool disposing)
 		{
+			_joyVibrato?.Dispose();
 			PressedKeys.Dispose();
 			RoverCommunication.Dispose();
 			_rtspClient?.Dispose();
