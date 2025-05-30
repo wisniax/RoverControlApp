@@ -302,6 +302,7 @@ public partial class MqttNode : Node
 			.WithWillPayload(JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Faulted }))
 			.WithWillQualityOfServiceLevel(MqttQualityOfServiceLevel.ExactlyOnce)
 			.WithWillRetain()
+			.WithTimeout(new TimeSpan(0,0,3))
 			.Build();
 
 		var managedMqttClientOptions = new ManagedMqttClientOptionsBuilder()
