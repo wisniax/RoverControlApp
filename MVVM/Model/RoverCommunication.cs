@@ -69,6 +69,8 @@ namespace RoverControlApp.MVVM.Model
 
 		private async void OnMqttConnectionChanged(CommunicationState arg)
 		{
+			//this needs to be called or else no updates.
+			GenerateRoverStatus(connection: arg);
 			switch (arg)
 			{
 				case CommunicationState.Opened:
@@ -78,7 +80,7 @@ namespace RoverControlApp.MVVM.Model
 					return; // poker face
 			}
 			await RoverMovementVectorChanged(_pressedKeys.RoverMovement);
-			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(connection: arg));
+			await RoverCommunication_OnControlStatusChanged(RoverStatus!);
 		}
 
 		private async Task OnPadConnectionChanged(bool arg)
