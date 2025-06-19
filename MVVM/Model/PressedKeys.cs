@@ -180,7 +180,12 @@ public partial class PressedKeys : Node
 	{
 		LocalSettings.Singleton.CategoryChanged -= OnSettingsCategoryChanged;
 		LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
+	}
+
+	protected override void Dispose(bool disposing)
+	{
 		Singleton = null!;
+		base.Dispose(disposing);
 	}
 
 	#endregion GodotOverride
