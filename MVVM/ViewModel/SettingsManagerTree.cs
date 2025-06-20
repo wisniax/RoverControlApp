@@ -1,11 +1,13 @@
-using Godot;
-using RoverControlApp.Core;
-using RoverControlApp.MVVM.Model;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Reflection;
+
+using Godot;
+
+using RoverControlApp.Core;
+using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
@@ -45,7 +47,6 @@ public partial class SettingsManagerTree : Tree
 			case TreeItem.TreeCellMode.Check:
 				columnHost.SetCellMode(COLUMN_VALUE, TreeItem.TreeCellMode.Check);
 				columnHost.SetChecked(COLUMN_VALUE, (bool)value);
-				columnHost.SetText(COLUMN_VALUE, "(Checkbox)");
 				break;
 			case TreeItem.TreeCellMode.Range:
 				var splitedFormat = attribute.FormatData.Split(';');
@@ -66,7 +67,7 @@ public partial class SettingsManagerTree : Tree
 
 	// -------- COLUMN_NAME                                                COLUMN_VALUE
 	// Text     Setting custom name                                        -
-	// Metadata index of TargetObjectMirror stored in targetMembersClones. index of tab, sotred in tabCollapseStatus. 
+	// Metadata index of TargetObjectMirror stored in targetMembersClones. index of tab, sotred in tabCollapseStatus.
 
 	private void ConstructTab(TreeItem parentTab, object basedOn, TargetObjectMirror? parnetObjectMirror = null)
 	{
@@ -94,7 +95,7 @@ public partial class SettingsManagerTree : Tree
 				continue;
 			}
 
-			//if memberObject is class, store reference to it. 
+			//if memberObject is class, store reference to it.
 			//it's a better surprise tool that will help us much more later
 			TargetObjectMirror targetMemberClone = new(parnetObjectMirror ?? basedOn, member.GetValue(basedOn)!, member.Name, memberAttribute);
 			targetMembersClones.Add(targetMemberClone);

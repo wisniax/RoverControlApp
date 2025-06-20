@@ -1,6 +1,7 @@
-[gd_scene load_steps=24 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=25 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
+[ext_resource type="Theme" uid="uid://mjdtbskragnd" path="res://Resources/Ovarhaul2025/Ovarhaul2025.theme" id="1_8861l"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
 [ext_resource type="PackedScene" uid="uid://bpm7uiv1e6n8i" path="res://MVVM/View/UIOverlayTemplate.tscn" id="3_mtbtk"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/Grzyb_UIOverlay.cs" id="4_2nwr4"]
@@ -57,6 +58,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_8861l")
 script = ExtResource("1_84vv0")
 imTextureRect = NodePath("CameraView")
 RoverModeUIDis = NodePath("RoverModeUIDis")
@@ -90,10 +92,10 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = -102.0
-offset_right = 454.0
-offset_bottom = -10.0
+offset_left = 9.0
+offset_top = -135.0
+offset_right = 453.0
+offset_bottom = -39.0
 grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_w78xs")
 bbcode_enabled = true
@@ -221,11 +223,13 @@ grow_vertical = 0
 [node name="BackCapture" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
+theme_type_variation = &"ButtonRcaH1"
 text = "BackCapture"
 
 [node name="RTSPCapture" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
+theme_type_variation = &"ButtonRcaH1"
 text = "RTSP Capture"
 
 [node name="Separator" type="Control" parent="HBoxContainer"]
@@ -235,6 +239,7 @@ layout_mode = 2
 [node name="ShowMissionControl" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
+theme_type_variation = &"ButtonRcaH1"
 toggle_mode = true
 shortcut = SubResource("Shortcut_psw5f")
 text = "MISSION CONTROL"
@@ -243,6 +248,7 @@ text = "MISSION CONTROL"
 layout_mode = 2
 tooltip_text = "Disabled - not functional"
 focus_mode = 0
+theme_type_variation = &"ButtonRcaH1"
 disabled = true
 toggle_mode = true
 shortcut = SubResource("Shortcut_x20sx")
@@ -251,6 +257,7 @@ text = "VEL MONITOR"
 [node name="ShowBatteryMonitor" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
+theme_type_variation = &"ButtonRcaH1"
 toggle_mode = true
 shortcut = SubResource("Shortcut_x20sx")
 text = "BATTERY"
@@ -258,6 +265,7 @@ text = "BATTERY"
 [node name="ShowZedMonitor" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
+theme_type_variation = &"ButtonRcaH1"
 toggle_mode = true
 shortcut = SubResource("Shortcut_nofgb")
 text = "GYRO"
@@ -265,6 +273,7 @@ text = "GYRO"
 [node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
+theme_type_variation = &"ButtonRcaH1"
 toggle_mode = true
 shortcut = SubResource("Shortcut_gr50h")
 text = "SETTINGS"
@@ -331,10 +340,12 @@ metadata/_edit_lock_ = true
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false
 layout_mode = 1
-offset_left = 36.0
+anchors_preset = 11
+anchor_left = 1.0
+offset_left = -573.0
 offset_top = 29.0
-offset_right = -27.0
 offset_bottom = -40.0
+grow_horizontal = 0
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
@@ -343,8 +354,8 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]

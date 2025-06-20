@@ -10,6 +10,7 @@ anchor_right = 0.269
 offset_left = -310.426
 offset_right = 123.574
 offset_bottom = 332.0
+theme_type_variation = &"PanelRcaSemiTransparent"
 script = ExtResource("1_ktc3a")
 battery = [NodePath("BatBoxes/Batt1"), NodePath("BatBoxes/Batt2"), NodePath("BatBoxes/Batt3")]
 altDataDisp = NodePath("HBoxContainer/AltData")
