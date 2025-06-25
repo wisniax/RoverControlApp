@@ -1,14 +1,17 @@
-using Godot;
 using System;
-using RoverControlApp.Core;
-using MQTTnet;
-using System.Threading.Tasks;
 using System.Text.Json;
+using System.Threading.Tasks;
+
+using Godot;
+
+using MQTTnet;
+
+using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
-public partial class BatteryMonitor : Panel
+public partial class BatteryMonitor : PanelContainer
 {
 	[Export] volatile SubBattery[] battery = new SubBattery[3];
 	[Export] private volatile VBoxContainer altDataDisp = new ();
@@ -61,13 +64,13 @@ public partial class BatteryMonitor : Panel
 			EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Empty payload");
 			return;
 		}
-		
+
 		MqttClasses.BatteryInfo data;
-		
+
 		data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
 
 		await (battery[data.Slot - 1].UpdateBattInfoHandler(msg.ConvertPayloadToString()));
-		
+
 		return;
 	}
 
@@ -85,9 +88,9 @@ public partial class BatteryMonitor : Panel
 			EventLogger.LogMessage("AltBatteryMonitor", EventLogger.LogLevel.Error, "Empty payload");
 			return Task.CompletedTask;
 		}
-		
+
 		var altData = JsonSerializer.Deserialize<MqttClasses.WheelFeedback>(msg.ConvertPayloadToString());
-		
+
 		if (!(altData.VescId == 0x50 || altData.VescId == 0x51 || altData.VescId == 0x52 || altData.VescId == 0x53)) return Task.CompletedTask;
 
 		_currentVoltageAlt = _currentVoltageAlt * 0.9f + 0.1f * (float)altData.VoltsIn;
@@ -136,7 +139,7 @@ public partial class BatteryMonitor : Panel
 
 		if (battVoltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage) return Colors.Red;
 		if (battVoltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage) return Colors.Yellow;
-		
+
 
 		return Colors.White;
 	}

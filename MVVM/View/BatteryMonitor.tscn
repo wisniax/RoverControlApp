@@ -3,25 +3,30 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/BatteryMonitor.cs" id="1_ktc3a"]
 [ext_resource type="PackedScene" uid="uid://cdbeb0yegexne" path="res://MVVM/View/SubBattery.tscn" id="2_4ptu6"]
 
-[node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("battery", "altDataDisp")]
+[node name="BatteryMonitor" type="PanelContainer" node_paths=PackedStringArray("battery", "altDataDisp")]
 anchors_preset = -1
-anchor_left = 0.269
-anchor_right = 0.269
-offset_left = -310.426
-offset_right = 123.574
+offset_right = 434.0
 offset_bottom = 332.0
 theme_type_variation = &"PanelRcaSemiTransparent"
 script = ExtResource("1_ktc3a")
-battery = [NodePath("BatBoxes/Batt1"), NodePath("BatBoxes/Batt2"), NodePath("BatBoxes/Batt3")]
-altDataDisp = NodePath("HBoxContainer/AltData")
+battery = [NodePath("MarginContainer/VBoxContainer/BatBoxes/Batt1"), NodePath("MarginContainer/VBoxContainer/BatBoxes/Batt2"), NodePath("MarginContainer/VBoxContainer/BatBoxes/Batt3")]
+altDataDisp = NodePath("MarginContainer/VBoxContainer/HBoxContainer/AltData")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 434.0
-offset_bottom = 40.0
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
 alignment = 1
 
-[node name="Label" type="Label" parent="HBoxContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 custom_minimum_size = Vector2(261.465, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 25
@@ -29,43 +34,39 @@ text = "Battery menu"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AltData" type="VBoxContainer" parent="HBoxContainer"]
+[node name="AltData" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 visible = false
 layout_mode = 2
 
-[node name="Name" type="Label" parent="HBoxContainer/AltData"]
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/AltData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "Vesc Voltage:"
 horizontal_alignment = 1
 
-[node name="Voltage" type="Label" parent="HBoxContainer/AltData"]
+[node name="Voltage" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/AltData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 14
 text = "00.0V"
 horizontal_alignment = 1
 
-[node name="BatBoxes" type="HBoxContainer" parent="."]
-layout_mode = 0
-offset_top = 35.0
-offset_right = 434.0
-offset_bottom = 332.0
-rotation = 0.000224471
+[node name="BatBoxes" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
 alignment = 1
 
-[node name="Batt1" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
+[node name="Batt1" parent="MarginContainer/VBoxContainer/BatBoxes" instance=ExtResource("2_4ptu6")]
 layout_mode = 2
 
-[node name="Separator1" type="Control" parent="BatBoxes"]
+[node name="Separator1" type="Control" parent="MarginContainer/VBoxContainer/BatBoxes"]
 custom_minimum_size = Vector2(4.81, 0)
 layout_mode = 2
 
-[node name="Batt2" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
+[node name="Batt2" parent="MarginContainer/VBoxContainer/BatBoxes" instance=ExtResource("2_4ptu6")]
 layout_mode = 2
 
-[node name="Separator2" type="Control" parent="BatBoxes"]
+[node name="Separator2" type="Control" parent="MarginContainer/VBoxContainer/BatBoxes"]
 custom_minimum_size = Vector2(4.81, 0)
 layout_mode = 2
 
-[node name="Batt3" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
+[node name="Batt3" parent="MarginContainer/VBoxContainer/BatBoxes" instance=ExtResource("2_4ptu6")]
 layout_mode = 2
