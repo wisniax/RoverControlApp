@@ -3,10 +3,11 @@ using System;
 using Godot;
 
 using RoverControlApp.Core;
+using RoverControlApp.MVVM.Model;
 
-namespace RoverControlApp.MVVM.Model;
+namespace RoverControlApp.MVVM.ViewModel;
 
-public partial class UIOverlay2 : Control
+public partial class UIOverlay2 : PanelContainer
 {
 	private bool _animateAll = false;
 

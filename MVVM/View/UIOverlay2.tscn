@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://dp1udlu6cpe2h"]
 
-[ext_resource type="Script" path="res://MVVM/Model/UIOverlay2.cs" id="1_8esd3"]
-[ext_resource type="FontVariation" uid="uid://dfmxywt4ro1vh" path="res://Resources/Ovarhaul2025/Fonts/MPLUS2/MPLUS2-MediumBold.tres" id="1_asoet"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/UIOverlay2.cs" id="1_qdt1d"]
+[ext_resource type="FontVariation" uid="uid://dfmxywt4ro1vh" path="res://Resources/Ovarhaul2025/Fonts/MPLUS2/MPLUS2-MediumBold.tres" id="2_g7u1j"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2hlck"]
 content_margin_left = 4.0
@@ -19,43 +19,35 @@ corner_radius_top_right = 16
 corner_radius_bottom_right = 16
 corner_radius_bottom_left = 16
 
-[node name="UIOverlay2" type="Control" node_paths=PackedStringArray("_animator")]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("1_8esd3")
-_animator = NodePath("AnimationPlayer")
-_backgroundNodePath = NodePath("Panel")
-_animatedLabelNodePath = NodePath("Panel/HBoxContainer/Variable")
-_staticLabelNodePath = NodePath("Panel/HBoxContainer/Permanent")
-
-[node name="Panel" type="PanelContainer" parent="."]
-layout_mode = 1
+[node name="UIOverlay2" type="PanelContainer" node_paths=PackedStringArray("_animator")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_2hlck")
+script = ExtResource("1_qdt1d")
+_animator = NodePath("AnimationPlayer")
+_backgroundNodePath = NodePath(".")
+_animatedLabelNodePath = NodePath("HBoxContainer/Variable")
+_staticLabelNodePath = NodePath("HBoxContainer/Permanent")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel"]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 
-[node name="Permanent" type="Label" parent="Panel/HBoxContainer"]
+[node name="Permanent" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Permanent:"
 
-[node name="Variable" type="Label" parent="Panel/HBoxContainer"]
+[node name="Variable" type="Label" parent="HBoxContainer"]
 layout_mode = 2
-theme_override_fonts/font = ExtResource("1_asoet")
+theme_override_fonts/font = ExtResource("2_g7u1j")
 theme_override_font_sizes/font_size = 20
 text = "Variable"
 uppercase = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+root_node = NodePath("")
