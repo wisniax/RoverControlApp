@@ -86,6 +86,7 @@ caret_blink_interval = 0.5
 
 [node name="ConfirmBtn" type="Button" parent="POIController/SectionAddPoint"]
 layout_mode = 2
+theme_type_variation = &"ButtonRcaNoOutline"
 text = "CONFIRM ADD"
 
 [node name="SectionRemovePoint" type="VBoxContainer" parent="POIController"]
@@ -126,6 +127,7 @@ popup/item_1/id = 1
 
 [node name="ConfirmBtn" type="Button" parent="POIController/SectionRemovePoint"]
 layout_mode = 2
+theme_type_variation = &"ButtonRcaNoOutline"
 text = "CONFIRM REMOVE"
 
 [node name="SectionMissionControl" type="VBoxContainer" parent="."]
@@ -152,6 +154,7 @@ text = "TimestampLab_Temp"
 [node name="RefreshBtn" type="Button" parent="SectionMissionControl/SectionPOIStatus"]
 layout_mode = 2
 size_flags_horizontal = 10
+theme_type_variation = &"ButtonRcaNoOutline"
 text = "Refresh"
 
 [node name="SectionMissionControls" type="HBoxContainer" parent="SectionMissionControl"]
@@ -165,10 +168,12 @@ text = "StatusLabel_Temp
 
 [node name="StartBtn" type="Button" parent="SectionMissionControl/SectionMissionControls"]
 layout_mode = 2
+theme_type_variation = &"ButtonRcaNoOutline"
 text = "StartBtn_Temp"
 
 [node name="StopBtn" type="Button" parent="SectionMissionControl/SectionMissionControls"]
 layout_mode = 2
+theme_type_variation = &"ButtonRcaNoOutline"
 text = "StopBtn_Temp"
 
 [connection signal="item_selected" from="POIController/SectionAddPoint/HBC/PointTypeOpBtn" to="." method="OnSPoiAddChanged" unbinds=1]
