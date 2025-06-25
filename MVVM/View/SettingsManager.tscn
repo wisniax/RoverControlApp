@@ -68,6 +68,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Reverts current changes to settings (marked with yellow border)."
 focus_mode = 0
+theme_type_variation = &"ButtonRca"
 text = "Revert"
 
 [node name="ForceDefaultSettings" type="Button" parent="StatusBar"]
@@ -75,6 +76,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Reverts settings to build-in defaults. Settings are NOT automaticly saved to file. Changes will be lost after closing application."
 focus_mode = 0
+theme_type_variation = &"ButtonRca"
 text = "Defaults"
 
 [node name="LoadSettings" type="Button" parent="StatusBar"]
@@ -83,6 +85,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Load settings from file. Simple as that."
 focus_mode = 0
+theme_type_variation = &"ButtonRca"
 text = "Reload"
 
 [node name="SaveSettings" type="Button" parent="StatusBar"]
@@ -91,6 +94,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Applies current changes to settings and writes them to settings file."
 focus_mode = 0
+theme_type_variation = &"ButtonRca"
 shortcut = SubResource("Shortcut_vgxpl")
 text = "Save"
 
