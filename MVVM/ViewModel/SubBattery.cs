@@ -1,34 +1,36 @@
-using Godot;
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+
+using Godot;
+
 using RoverControlApp.Core;
-using RoverControlApp.MVVM.Model;
 using RoverControlApp.MVVM.ViewModel;
 
 public partial class SubBattery : VBoxContainer
 {
-	[Export] private Label _slotLabel = new ();
-	[Export] private Label _slotEmptyLabel = new ();
-	[Export] private Label _idLabel = new();
-	[Export] private Label _percLabel = new();
-	[Export] private Label _vbatLabel = new();
-	[Export] private Label _hotswapLabel = new();
-	[Export] private Label _statusLabel = new();
-	[Export] private Label _currentLabel = new();
-	[Export] private Label _temperatureLabel = new();
-	[Export] private Label _timeLabel = new();
+	[Export] private Label _slotLabel = null!;
+	[Export] private Label _slotEmptyLabel = null!;
+	[Export] private Label _idLabel = null!;
+	[Export] private Label _percLabel = null!;
+	[Export] private Label _vbatLabel = null!;
+	[Export] private Label _hotswapLabel = null!;
+	[Export] private Label _statusLabel = null!;
+	[Export] private Label _currentLabel = null!;
+	[Export] private Label _temperatureLabel = null!;
+	[Export] private Label _timeLabel = null!;
 
-	[Export] private Button _autoButton = new();
-	[Export] private Button _onButton = new();
-	[Export] private Button _offButton = new();
+	[Export] private Button _autoButton = null!;
+	[Export] private Button _onButton = null!;
+	[Export] private Button _offButton = null!;
 
-	[Export] private Timer _timer;
-	[Export] private VBoxContainer _labels;
+	[Export] private Timer _timer = null!;
+	[Export] private VBoxContainer _labels = null!;
 
-	private BatteryMonitor _batteryMonitor;
+	[Export]
+	private BatteryMonitor _batteryMonitor = null!;
 
-	public volatile MqttClasses.BatteryInfo myData;
+	public volatile MqttClasses.BatteryInfo myData = new();
 
 	private volatile int _slot;
 
@@ -45,7 +47,10 @@ public partial class SubBattery : VBoxContainer
 
 	public override void _Ready()
 	{
-		_batteryMonitor = GetParent<HBoxContainer>().GetParent<BatteryMonitor>();
+		if (_batteryMonitor is null)
+		{
+			GD.PushError("_batteryMonitor is not set!");
+		}
 		batteryDetectedHandler(UpToDate);
 	}
 
@@ -59,34 +64,34 @@ public partial class SubBattery : VBoxContainer
 	{
 		var data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg);
 
-		myData = data;
+		myData = data ?? new();
 
-		_idLabel.Text = "Battery ID: " + data.ID;
-		_percLabel.Text = "Battery %: " + data.ChargePercent.ToString("F1") + "%";
+		_idLabel.Text = "Battery ID: " + myData.ID;
+		_percLabel.Text = "Battery %: " + myData.ChargePercent.ToString("F1") + "%";
 
-		_vbatLabel.Text = "VBat: " + data.Voltage.ToString("F1") + "V";
+		_vbatLabel.Text = "VBat: " + myData.Voltage.ToString("F1") + "V";
 
-		if (data.Voltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage)
+		if (myData.Voltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage)
 			_vbatLabel.SetModulate(Colors.Red);
-		else if (data.Voltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage)
+		else if (myData.Voltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage)
 			_vbatLabel.SetModulate(Colors.Yellow);
 		else
 			_vbatLabel.SetModulate(Colors.White);
 
-		_hotswapLabel.Text = "Hotswap: " + data.HotswapStatus.ToString();
-		_statusLabel.Text = "Status: " + data.Status.ToString();
-		_currentLabel.Text = "Current: " + data.Current.ToString("F1") + "A";
-		_temperatureLabel.Text = "Temperature: " + data.Temperature.ToString("F1") + "C";
-		if (data.Temperature > LocalSettings.Singleton.Battery.WarningTemperature)
+		_hotswapLabel.Text = "Hotswap: " + myData.HotswapStatus.ToString();
+		_statusLabel.Text = "Status: " + myData.Status.ToString();
+		_currentLabel.Text = "Current: " + myData.Current.ToString("F1") + "A";
+		_temperatureLabel.Text = "Temperature: " + myData.Temperature.ToString("F1") + "C";
+		if (myData.Temperature > LocalSettings.Singleton.Battery.WarningTemperature)
 			_temperatureLabel.SetModulate(Colors.Orange);
 		else
 			_temperatureLabel.SetModulate(Colors.White);
 
-		_timeLabel.Text = "Est. Time: " + data.Time.ToString("F0") + "min";
+		_timeLabel.Text = "Est. Time: " + myData.Time.ToString("F0") + "min";
 
-		NewBatteryInfo.Invoke();
-		
-		
+		NewBatteryInfo?.Invoke();
+
+
 		batteryDetectedHandler(true);
 		_timer.SetWaitTime(LocalSettings.Singleton.Battery.ExpectedMessageInterval);
 		_timer.Start();

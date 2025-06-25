@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://cdbeb0yegexne" path="res://MVVM/View/SubBattery.tscn" id="2_4ptu6"]
 
 [node name="BatteryMonitor" type="PanelContainer" node_paths=PackedStringArray("battery", "altDataDisp")]
-anchors_preset = -1
 offset_right = 434.0
 offset_bottom = 332.0
 theme_type_variation = &"PanelRcaSemiTransparent"
@@ -54,19 +53,22 @@ horizontal_alignment = 1
 layout_mode = 2
 alignment = 1
 
-[node name="Batt1" parent="MarginContainer/VBoxContainer/BatBoxes" instance=ExtResource("2_4ptu6")]
+[node name="Batt1" parent="MarginContainer/VBoxContainer/BatBoxes" node_paths=PackedStringArray("_batteryMonitor") instance=ExtResource("2_4ptu6")]
 layout_mode = 2
+_batteryMonitor = NodePath("../../../..")
 
 [node name="Separator1" type="Control" parent="MarginContainer/VBoxContainer/BatBoxes"]
 custom_minimum_size = Vector2(4.81, 0)
 layout_mode = 2
 
-[node name="Batt2" parent="MarginContainer/VBoxContainer/BatBoxes" instance=ExtResource("2_4ptu6")]
+[node name="Batt2" parent="MarginContainer/VBoxContainer/BatBoxes" node_paths=PackedStringArray("_batteryMonitor") instance=ExtResource("2_4ptu6")]
 layout_mode = 2
+_batteryMonitor = NodePath("../../../..")
 
 [node name="Separator2" type="Control" parent="MarginContainer/VBoxContainer/BatBoxes"]
 custom_minimum_size = Vector2(4.81, 0)
 layout_mode = 2
 
-[node name="Batt3" parent="MarginContainer/VBoxContainer/BatBoxes" instance=ExtResource("2_4ptu6")]
+[node name="Batt3" parent="MarginContainer/VBoxContainer/BatBoxes" node_paths=PackedStringArray("_batteryMonitor") instance=ExtResource("2_4ptu6")]
 layout_mode = 2
+_batteryMonitor = NodePath("../../../..")
