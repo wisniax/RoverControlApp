@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bpm7uiv1e6n8i"]
+[gd_scene load_steps=3 format=3 uid="uid://bpm7uiv1e6n8i"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_b2hph"]
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_w533b"]
 
@@ -11,6 +13,7 @@ custom_minimum_size = Vector2(128, 26)
 layout_mode = 1
 offset_right = 128.0
 offset_bottom = 26.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_b2hph")
 
 [node name="Background" type="ColorRect" parent="RoverMode"]
 layout_mode = 2
@@ -23,8 +26,8 @@ text = "VAL B"
 horizontal_alignment = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="RoverMode"]
-root_node = NodePath("../..")
 reset_on_save = false
+root_node = NodePath("../..")
 libraries = {
 "UIOverlay": SubResource("AnimationLibrary_w533b")
 }
