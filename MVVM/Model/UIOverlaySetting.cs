@@ -13,6 +13,9 @@ public partial class UIOverlaySetting : Resource
 	public Color FontColor { get; set; } = Colors.LimeGreen;
 
 	[Export]
+	public bool UseFontAsBackColor { get; set; } = false;
+
+	[Export]
 	public string Text { get; set; } = "Text";
 
 	public bool Equals(UIOverlaySetting? other)

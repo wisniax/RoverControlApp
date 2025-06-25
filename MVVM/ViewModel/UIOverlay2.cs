@@ -7,6 +7,7 @@ using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
+[Tool]
 public partial class UIOverlay2 : PanelContainer
 {
 	private bool _animateAll = false;
@@ -15,7 +16,9 @@ public partial class UIOverlay2 : PanelContainer
 
 	private Godot.Collections.Array<UIOverlaySetting> _presets = [];
 
-	private string _permanentText = "";
+	private string _permanentText = "Permanent:";
+
+	private int _fontSize = 20;
 
 	[Export]
 	public int ControlMode
@@ -52,9 +55,9 @@ public partial class UIOverlay2 : PanelContainer
 		set
 		{
 			_permanentText = value;
-			if (IsInsideTree() && _staticLabelNodePath is not null)
+			if (IsInsideTree() && _staticLabel is not null)
 			{
-				GetNode<Label>(_staticLabelNodePath).SetDeferred(Label.PropertyName.Text, _permanentText);
+				_staticLabel.SetDeferred(Label.PropertyName.Text, _permanentText);
 			}
 		}
 	}
@@ -77,6 +80,23 @@ public partial class UIOverlay2 : PanelContainer
 		}
 	}
 
+	[Export]
+	public bool SkipWhenUpdatedButNotChanged { get; set; } = true;
+
+	[Export]
+	public int FontSize
+	{
+		get => _fontSize;
+		set
+		{
+			_fontSize = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.UpdateFontSize);
+			}
+		}
+	}
+
 	[ExportGroup(".internal", "_")]
 	[Export]
 	AnimationPlayer _animator = null!;
@@ -87,7 +107,10 @@ public partial class UIOverlay2 : PanelContainer
 	NodePath _animatedLabelNodePath = null!;
 
 	[Export]
-	NodePath? _staticLabelNodePath;
+	Label? _staticLabel;
+
+	[Export]
+	Label? _variableLabel;
 
 
 	string BackgroundColorAP => $"{_backgroundNodePath}:self_modulate";
@@ -100,8 +123,8 @@ public partial class UIOverlay2 : PanelContainer
 	public override void _Ready()
 	{
 		CallDeferred(MethodName.Regenerate);
-		if(_staticLabelNodePath is not null)
-			GetNode<Label>(_staticLabelNodePath).SetDeferred(Label.PropertyName.Text, _permanentText);
+		UpdateFontSize();
+		PermanentText = _permanentText; // force update
 	}
 
 	public void Regenerate()
@@ -123,20 +146,28 @@ public partial class UIOverlay2 : PanelContainer
 		var fontColorTrackIdx = anim.AddTrack(Animation.TrackType.Value);
 		var textTrackIdx = anim.AddTrack(Animation.TrackType.Value);
 
+		Color BackColorF = Presets[from].UseFontAsBackColor ? Presets[from].FontColor : Presets[from].BackColor;
+		Color BackColorT = Presets[to].UseFontAsBackColor ? Presets[to].FontColor : Presets[to].BackColor;
+
 		anim.TrackSetPath(bgColorTrackIdx, BackgroundColorAP);
 		anim.TrackSetInterpolationType(bgColorTrackIdx, Animation.InterpolationType.Linear);
-		anim.TrackInsertKey(bgColorTrackIdx, 0.0, Presets[from].BackColor);
-		anim.TrackInsertKey(bgColorTrackIdx, 1.0, Presets[to].BackColor);
+		anim.TrackInsertKey(bgColorTrackIdx, 0.0, BackColorF);
+		anim.TrackInsertKey(bgColorTrackIdx, 0.3, BackColorF);
+		anim.TrackInsertKey(bgColorTrackIdx, 0.7, BackColorT);
+		anim.TrackInsertKey(bgColorTrackIdx, 1.0, BackColorT);
 
 		anim.TrackSetPath(fontColorTrackIdx, FontColorAP);
 		anim.TrackSetInterpolationType(fontColorTrackIdx, Animation.InterpolationType.Linear);
 		anim.TrackInsertKey(fontColorTrackIdx, 0.0, Presets[from].FontColor);
+		anim.TrackInsertKey(fontColorTrackIdx, 0.3, Presets[from].FontColor);
+		anim.TrackInsertKey(fontColorTrackIdx, 0.7, Presets[to].FontColor);
 		anim.TrackInsertKey(fontColorTrackIdx, 1.0, Presets[to].FontColor);
 
 		anim.TrackSetPath(textTrackIdx, TextAP);
 		anim.TrackSetInterpolationType(textTrackIdx, Animation.InterpolationType.Linear);
 		anim.TrackInsertKey(textTrackIdx, 0.0, Presets[from].Text);
-		anim.TrackInsertKey(textTrackIdx, 0.5, "");
+		anim.TrackInsertKey(textTrackIdx, 0.45, "");
+		anim.TrackInsertKey(textTrackIdx, 0.55, "");
 		anim.TrackInsertKey(textTrackIdx, 1.0, Presets[to].Text);
 
 		_animator.GetAnimationLibrary("local").AddAnimation($"f{from}t{to}", anim);
@@ -173,6 +204,12 @@ public partial class UIOverlay2 : PanelContainer
 
 	private void OnSetControlMode(int from, int to, bool forceRapid = false)
 	{
+		if (Engine.IsEditorHint())
+			return;
+
+		if (to == from && SkipWhenUpdatedButNotChanged && !forceRapid)
+			return;
+
 		string animationToPlay = $"local/f{from}t{to}";
 
 		if (!IsValidControlMode(to))
@@ -189,25 +226,27 @@ public partial class UIOverlay2 : PanelContainer
 		}
 
 		if (_animator.IsPlaying() ||
-						DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - _lastChangeTimestamp < RapidChangeTimeMiliseconds ||
-						forceRapid
-					)
-			{
-				_animator.Play(animationToPlay);
-				_animator.Seek(1);
-			}
-			else
-				_animator.Play(animationToPlay);
+			DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - _lastChangeTimestamp < RapidChangeTimeMiliseconds ||
+			forceRapid
+		)
+		{
+			_animator.Play(animationToPlay);
+			_animator.Seek(1);
+		}
+		else
+			_animator.Play(animationToPlay);
 		_lastChangeTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 	}
 
 	private void GenerateAnimations()
 	{
+		if (Engine.IsEditorHint())
+			return;
 		//clear
-		if (_animator.HasAnimationLibrary("local"))
-		{
-			_animator.RemoveAnimationLibrary("local");
-		}
+			if (_animator.HasAnimationLibrary("local"))
+			{
+				_animator.RemoveAnimationLibrary("local");
+			}
 		_animator.AddAnimationLibrary("local", new());
 		var jellyfin = _animator.GetAnimationLibrary("local");
 
@@ -226,14 +265,20 @@ public partial class UIOverlay2 : PanelContainer
 			for (int a = 0; a < Presets.Count; a++)
 			{
 				var b = (a + 1) % Presets.Count;
-				if(!jellyfin.HasAnimation($"f{a}t{a}"))
+				if (!jellyfin.HasAnimation($"f{a}t{a}"))
 					CreateAnimation(a, a); //self to self
-				if(!jellyfin.HasAnimation($"f{a}t{b}"))
+				if (!jellyfin.HasAnimation($"f{a}t{b}"))
 					CreateAnimation(a, b); //from to
-				if(!jellyfin.HasAnimation($"f{b}t{a}"))
+				if (!jellyfin.HasAnimation($"f{b}t{a}"))
 					CreateAnimation(b, a); //to from
 			}
 		}
+	}
+
+	private void UpdateFontSize()
+	{
+		_staticLabel?.AddThemeFontSizeOverride("font_size", _fontSize);
+		_variableLabel?.AddThemeFontSizeOverride("font_size", _fontSize);
 	}
 
 }

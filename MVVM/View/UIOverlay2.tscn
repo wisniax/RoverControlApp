@@ -8,18 +8,18 @@ content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
-bg_color = Color(0.0562916, 0.0562916, 0.0562915, 1)
+bg_color = Color(0.165656, 0.165656, 0.165656, 1)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
-[node name="UIOverlay2" type="PanelContainer" node_paths=PackedStringArray("_animator")]
+[node name="UIOverlay2" type="PanelContainer" node_paths=PackedStringArray("_animator", "_staticLabel", "_variableLabel")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -29,25 +29,33 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_2hlck")
 script = ExtResource("1_qdt1d")
 _animator = NodePath("AnimationPlayer")
 _backgroundNodePath = NodePath(".")
-_animatedLabelNodePath = NodePath("HBoxContainer/Variable")
-_staticLabelNodePath = NodePath("HBoxContainer/Permanent")
+_animatedLabelNodePath = NodePath("MarginContainer/HBoxContainer/Variable")
+_staticLabel = NodePath("MarginContainer/HBoxContainer/Permanent")
+_variableLabel = NodePath("MarginContainer/HBoxContainer/Variable")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
-size_flags_horizontal = 4
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
 size_flags_vertical = 4
 
-[node name="Permanent" type="Label" parent="HBoxContainer"]
+[node name="Permanent" type="Label" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 20
 text = "Permanent:"
 
-[node name="Variable" type="Label" parent="HBoxContainer"]
+[node name="Variable" type="Label" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
+size_flags_horizontal = 6
 theme_override_fonts/font = ExtResource("2_g7u1j")
 theme_override_font_sizes/font_size = 20
 text = "Variable"
 uppercase = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-root_node = NodePath("")
