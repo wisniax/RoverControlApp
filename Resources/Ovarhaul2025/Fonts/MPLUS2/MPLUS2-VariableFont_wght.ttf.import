@@ -25,10 +25,15 @@ hinting=1
 subpixel_positioning=1
 oversampling=0.0
 Fallbacks=null
-fallbacks=[]
+fallbacks=[Resource("res://Resources/Ovarhaul2025/Fonts/lucide-icon-font-main/fonts/Lucide.ttf")]
 Compress=null
 compress=true
-preload=[]
+preload=[{
+"chars": [],
+"glyphs": [],
+"name": "New Configuration",
+"size": Vector2i(16, 0)
+}]
 language_support={}
 script_support={}
 opentype_features={}
