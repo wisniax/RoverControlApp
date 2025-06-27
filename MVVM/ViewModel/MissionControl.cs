@@ -7,21 +7,25 @@ using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.MVVM.ViewModel;
-public partial class MissionControl : Panel
+public partial class MissionControl : VBoxContainer
 {
 	private MainViewModel mainView = null!;
 
-	private const string TEXT_START = "Start";
-	private const string TEXT_RESUME = "Resume";
-	private const string TEXT_PAUSE = "Pause";
-	private const string TEXT_STOP = "Stop";
+	private const string TEXT_START = "\xea71 Start";
+	private const string TEXT_RESUME = "\xea71 Resume";
+	private const string TEXT_PAUSE = "\xea5e Pause";
+	private const string TEXT_STOP = "\xeac9 Stop";
 
 	[ExportGroup("Mission Control")]
 	[Export]
 	private Button SMissionControlStartBtn = null!, SMissionControlStopBtn = null!, SMissionControlRefreshBtn = null!;
 	[ExportGroup("Mission Control")]
 	[Export]
-	private Label SMissionControlStatusLabel = null!, SMissionControlPOITimestampLab = null!;
+	private Label SMissionControlPOITimestampLab = null!;
+
+	[ExportGroup("Mission Control")]
+	[Export]
+	private UIOverlay2 SMissionControlStatus = null!;
 
 	[ExportGroup("POI Add")]
 	[Export]
@@ -50,7 +54,7 @@ public partial class MissionControl : Panel
 	[Export]
 	private Button SPoiRemoveConfirmBtn = null!;
 
-	public bool PendingSend 
+	public bool PendingSend
 	{
 		get => _pendingSend;
 		set
@@ -167,7 +171,7 @@ public partial class MissionControl : Panel
 			case MqttClasses.PointType.RemovePoint:
 				foreach(var point in KmlList.poi)
 					SPoiRemoveTargetOpBtn.AddItem(point);
-				
+
 				break;
 			case MqttClasses.PointType.RemovePoly:
 				foreach (var poly in KmlList.area)
@@ -255,7 +259,8 @@ public partial class MissionControl : Panel
 
 	public void SMissionControlVisualUpdate()
 	{
-		SMissionControlStatusLabel.Text = $"Status: {MissionStatus.Singleton.Status?.MissionStatus.ToString() ?? "N/A"}";
+		SMissionControlStatus.ControlMode = (int?)MissionStatus.Singleton.Status?.MissionStatus ?? 6;
+
 		switch (MissionStatus.Singleton.Status?.MissionStatus)
 		{
 			case RoverControlApp.Core.MqttClasses.MissionStatus.Created:
@@ -293,9 +298,9 @@ public partial class MissionControl : Panel
 		}
 
 		//SMissionControlRefreshBtn.Disabled = MissionSetPoint.Singleton is null;
-		string? timestampStr = 
-			MissionSetPoint.Singleton.ActiveKmlObjects?.Timestamp is null 
-			? null 
+		string? timestampStr =
+			MissionSetPoint.Singleton.ActiveKmlObjects?.Timestamp is null
+			? null
 			: DateTimeOffset.FromUnixTimeSeconds(MissionSetPoint.Singleton.ActiveKmlObjects!.Timestamp ?? 0).ToLocalTime().ToString("s");
 		SMissionControlPOITimestampLab.Text = $"ActiveKmlObject Timestamp: {timestampStr ?? "N/A"}";
 	}
