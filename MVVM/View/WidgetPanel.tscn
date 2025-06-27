@@ -1,9 +1,28 @@
-[gd_scene load_steps=3 format=3 uid="uid://dg16lr8hak4r8"]
+[gd_scene load_steps=8 format=3 uid="uid://iocpx8rpo2a8"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/WidgetPanel.cs" id="1_f2d4b"]
-[ext_resource type="PackedScene" uid="uid://kr3phomvuj1f" path="res://MVVM/View/WidgetDragControl.tscn" id="2_uaj7n"]
+[ext_resource type="PackedScene" uid="uid://3nfkg2sjo5lv" path="res://MVVM/View/WidgetDragControl.tscn" id="2_uaj7n"]
+[ext_resource type="Script" path="res://MVVM/Model/UIOverlaySetting.cs" id="3_58wck"]
+[ext_resource type="PackedScene" uid="uid://dp1udlu6cpe2h" path="res://MVVM/View/UIOverlay2.tscn" id="3_n7x3d"]
 
-[node name="WidgetPanel" type="Container" node_paths=PackedStringArray("widgetDragControl")]
+[sub_resource type="Resource" id="Resource_f5tj8"]
+script = ExtResource("3_58wck")
+BackColor = Color(0.00434293, 0.19713, 0.837203, 1)
+FontColor = Color(0.465884, 0.674145, 1, 1)
+UseFontAsBackColor = false
+Text = "Lewo"
+
+[sub_resource type="Resource" id="Resource_0qmhe"]
+script = ExtResource("3_58wck")
+BackColor = Color(0.60947, 0, 0.11775, 1)
+FontColor = Color(1, 0.496389, 0.492111, 1)
+UseFontAsBackColor = false
+Text = "Prawo"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8o5ll"]
+bg_color = Color(0.13, 0.13, 0.13, 0.701961)
+
+[node name="WidgetPanel" type="Container" node_paths=PackedStringArray("_widgetDragControl", "_windowBar", "_editInfo", "_leftDistanceLabel", "_topDistanceLabel", "_rightDistanceLabel", "_bottomDistanceLabel", "_anchorPointLabel")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -15,32 +34,108 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_f2d4b")
-widgetDragControl = NodePath("WidgetDragControl")
+_widgetDragControl = NodePath("WidgetDragControl")
+_windowBar = NodePath("TitleBar")
+_editInfo = NodePath("EditInfo")
+_leftDistanceLabel = NodePath("EditInfo/PositionInfo/MiddleRow/LeftDistance")
+_topDistanceLabel = NodePath("EditInfo/PositionInfo/TopDistance")
+_rightDistanceLabel = NodePath("EditInfo/PositionInfo/MiddleRow/RightDistance")
+_bottomDistanceLabel = NodePath("EditInfo/PositionInfo/BottomDistance")
+_anchorPointLabel = NodePath("EditInfo/PositionInfo/MiddleRow/Anchors")
+WindowBarEnabled = true
 
-[node name="TEMP-DELME" type="Panel" parent="."]
-clip_contents = true
-custom_minimum_size = Vector2(100, 100)
+[node name="UIOverlay2" parent="." instance=ExtResource("3_n7x3d")]
+layout_mode = 2
+ControlMode = 1
+Presets = [SubResource("Resource_f5tj8"), SubResource("Resource_0qmhe")]
+PermanentText = ""
+
+[node name="TitleBar" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+mouse_default_cursor_shape = 6
+theme_type_variation = &"PanelContainerRcaWindowBar"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TitleBar"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="TEMP-DELME"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -55.5
-offset_top = -11.5
-offset_right = 55.5
-offset_bottom = 11.5
-grow_horizontal = 2
-grow_vertical = 2
-text = "Hfast Liściasty"
-metadata/_edit_lock_ = true
+[node name="Label" type="Label" parent="TitleBar/HBoxContainer"]
+layout_mode = 2
+text = "Mission Control"
+
+[node name="Exit" type="Button" parent="TitleBar/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_type_variation = &"ButtonRcaFlat"
+theme_override_font_sizes/font_size = 20
+text = ""
+flat = true
 
 [node name="WidgetDragControl" parent="." instance=ExtResource("2_uaj7n")]
 layout_mode = 2
 
+[node name="EditInfo" type="Panel" parent="."]
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_8o5ll")
+
+[node name="PositionInfo" type="VBoxContainer" parent="EditInfo"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TopDistance" type="Label" parent="EditInfo/PositionInfo"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "TopDistance"
+
+[node name="MiddleRow" type="HBoxContainer" parent="EditInfo/PositionInfo"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="LeftDistance" type="Label" parent="EditInfo/PositionInfo/MiddleRow"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "LeftDistance"
+
+[node name="Anchors" type="Label" parent="EditInfo/PositionInfo/MiddleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "Anchor"
+horizontal_alignment = 1
+
+[node name="RightDistance" type="Label" parent="EditInfo/PositionInfo/MiddleRow"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "RightDistance"
+
+[node name="BottomDistance" type="Label" parent="EditInfo/PositionInfo"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "BottomDistance"
+
+[connection signal="gui_input" from="TitleBar" to="." method="OnDrag"]
 [connection signal="Drag" from="WidgetDragControl" to="." method="OnDrag"]
 [connection signal="ResizeZone" from="WidgetDragControl" to="." method="OnResizeZone"]
 [connection signal="focus_exited" from="WidgetDragControl" to="WidgetDragControl" method="PrintMessageHuj"]

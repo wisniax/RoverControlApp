@@ -1,6 +1,7 @@
-using Godot;
 using System;
 using System.Linq;
+
+using Godot;
 
 public partial class WidgetPanel : Container
 {
@@ -53,17 +54,129 @@ public partial class WidgetPanel : Container
 		Center = 2
 	}
 
-	const float CENTER_ERROR = 20f;
-
-	[Export]
-	private WidgetDragControl widgetDragControl = null!;
-
+	const float CENTER_ERROR = 30f;
 
 	private bool _resizeStarted = false;
 	private Vector2 _mouseMoveStart = Vector2.Zero;
 	private Rect2 _resizeInitialRect = new Rect2();
 
-	private LayoutPreset ClosestAnchorPoint(Rect2 rect)
+	[ExportGroup(".internal", "_")]
+	[Export]
+	private WidgetDragControl _widgetDragControl = null!;
+
+	[Export]
+	private PanelContainer _windowBar = null!;
+
+	[Export]
+	private Panel _editInfo = null!;
+
+	[Export]
+	private Label _leftDistanceLabel = null!;
+
+	[Export]
+	private Label _topDistanceLabel = null!;
+
+	[Export]
+	private Label _rightDistanceLabel = null!;
+
+	[Export]
+	private Label _bottomDistanceLabel = null!;
+
+	[Export]
+	private Label _anchorPointLabel = null!;
+
+	private bool _showVisuals = true;
+	private bool _processDrag = true;
+	private bool _processResize = true;
+	private bool _windowBarEnabled = false;
+	private bool _editMode = false;
+
+	[Export]
+	public bool ShowVisuals
+	{
+		get
+		{
+			_showVisuals = _widgetDragControl.ShowVisuals;
+			return _showVisuals;
+		}
+
+		set
+		{
+			_showVisuals = value;
+			if (IsInsideTree())
+			{
+				_widgetDragControl.SetDeferred(PropertyName.ShowVisuals, _showVisuals);
+			}
+		}
+	}
+
+	[Export]
+	public bool ProcessDrag
+	{
+		get
+		{
+			_showVisuals = _widgetDragControl.ProcessDrag;
+			return _processDrag;
+		}
+
+		set
+		{
+			_processDrag = value;
+			if (IsInsideTree())
+			{
+				_widgetDragControl.SetDeferred(PropertyName.ProcessDrag, _processDrag);
+			}
+		}
+	}
+
+	[Export]
+	public bool ProcessResize
+	{
+		get
+		{
+			_showVisuals = _widgetDragControl.ProcessResize;
+			return _processResize;
+		}
+
+		set
+		{
+			_processResize = value;
+			if (IsInsideTree())
+			{
+				_widgetDragControl.SetDeferred(PropertyName.ProcessResize, _processResize);
+			}
+		}
+	}
+
+	[Export]
+	public bool WindowBarEnabled
+	{
+		get => _windowBarEnabled;
+		set
+		{
+			_windowBarEnabled = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.WindowBarEnabledInternal, _windowBarEnabled);
+			}
+		}
+	}
+
+	[Export]
+	public bool EditMode
+	{
+		get => _editMode;
+		set
+		{
+			_editMode = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.EditModeInternal, _editMode);
+			}
+		}
+	}
+
+	private Vector4 DistanceToSides(Rect2 rect)
 	{
 		float leftDistance = Mathf.Abs(rect.Position.X - GetRect().Position.X);
 		float rightDistance = Mathf.Abs(rect.End.X - GetRect().End.X);
@@ -71,19 +184,26 @@ public partial class WidgetPanel : Container
 		float topDistance = Mathf.Abs(rect.Position.Y - GetRect().Position.Y);
 		float bottomDistance = Mathf.Abs(rect.End.Y - GetRect().End.Y);
 
+		return new(leftDistance, topDistance, rightDistance, bottomDistance);
+	}
+
+	private LayoutPreset ClosestAnchorPoint(Rect2 rect)
+	{
+		var distances = DistanceToSides(rect);
+
 		EasyAnchor xPos, yPos;
 
 		//xPos
-		if (Mathf.IsEqualApprox(leftDistance, rightDistance, CENTER_ERROR))
+		if (Mathf.IsEqualApprox(distances.X, distances.Z, CENTER_ERROR))
 			xPos = EasyAnchor.Center;
 		else
-			xPos = leftDistance < rightDistance ? EasyAnchor.Begin : EasyAnchor.End;
+			xPos = distances.X < distances.Z ? EasyAnchor.Begin : EasyAnchor.End;
 
 		//yPos
-		if (Mathf.IsEqualApprox(topDistance, bottomDistance, CENTER_ERROR))
+		if (Mathf.IsEqualApprox(distances.Y, distances.W, CENTER_ERROR))
 			yPos = EasyAnchor.Center;
 		else
-			yPos = topDistance < bottomDistance ? EasyAnchor.Begin : EasyAnchor.End;
+			yPos = distances.Y < distances.W ? EasyAnchor.Begin : EasyAnchor.End;
 
 		return (xPos, yPos) switch
 		{
@@ -113,6 +233,7 @@ public partial class WidgetPanel : Container
 		if (!eventMouseMotion.ButtonMask.HasFlag(MouseButtonMask.Left))
 		{
 			_resizeStarted = false;
+			SetAnchorsPreset(ClosestAnchorPoint(GetBoundingRect()));
 			return;
 		}
 
@@ -128,7 +249,14 @@ public partial class WidgetPanel : Container
 
 		Rect2 parentRect = GetBoundingRect();
 
-		Position = _resizeInitialRect.Position + mouseRelativeToStart;
+		if (eventMouseMotion.GetModifiersMask().HasFlag(KeyModifierMask.MaskAlt))
+		{
+			Position += eventMouseMotion.Relative * 0.25f;
+			_mouseMoveStart = eventMouseMotion.GlobalPosition;
+			_resizeInitialRect.Position = Position;
+		}
+		else
+			Position = _resizeInitialRect.Position + mouseRelativeToStart;
 
 		//clip at Left
 		if (Position.X < parentRect.Position.X)
@@ -153,6 +281,8 @@ public partial class WidgetPanel : Container
 		{
 			Position = Position with { Y = parentRect.End.Y - Size.Y };
 		}
+
+		UpdateEditInfo();
 	}
 
 	public void OnResizeZone(InputEventMouseMotion eventMouseMotion, LayoutPreset layoutPreset)
@@ -160,6 +290,7 @@ public partial class WidgetPanel : Container
 		if (!eventMouseMotion.ButtonMask.HasFlag(MouseButtonMask.Left))
 		{
 			_resizeStarted = false;
+			SetAnchorsPreset(ClosestAnchorPoint(GetBoundingRect()));
 			return;
 		}
 
@@ -212,6 +343,8 @@ public partial class WidgetPanel : Container
 
 		Position = newRect.Position;
 		Size = newRect.Size;
+
+		UpdateEditInfo();
 	}
 
 	private Rect2 GetResizedRectNormal(LayoutPreset layoutPreset, Vector2 mouseRelative)
@@ -266,9 +399,6 @@ public partial class WidgetPanel : Container
 			case LayoutPreset.TopLeft:
 				newRect = newRect.GrowSide(Side.Top, Mathf.Max(deltaToMinimalSize.Y, -mouseRelative.Y));
 				newRect = newRect.GrowSide(Side.Bottom, Mathf.Max(deltaToMinimalSize.Y, -mouseRelative.Y));
-
-				GD.Print("deltaToMinimalSize:", deltaToMinimalSize.Y);
-				GD.Print("mouseRelative:", -mouseRelative.Y);
 				break;
 			case LayoutPreset.BottomLeft:
 			case LayoutPreset.BottomWide:
@@ -301,18 +431,45 @@ public partial class WidgetPanel : Container
 
 	public Rect2 GetBoundingRect()
 	{
-		return new Rect2(-widgetDragControl.GetCombinedMinimumSize() / 2f, (GetParentOrNull<Control>()?.Size ?? GetViewportRect().Size) + widgetDragControl.GetCombinedMinimumSize());
+		return new Rect2(-_widgetDragControl.GetCombinedMinimumSize() / 2f, (GetParentOrNull<Control>()?.Size ?? GetViewportRect().Size) + _widgetDragControl.GetCombinedMinimumSize());
+	}
+
+	private void WindowBarEnabledInternal(bool enabled)
+	{
+		_windowBar.Visible = enabled;
+
+		QueueSort();
+		CallDeferred(MethodName.UpdateEditInfo);
+	}
+
+	private void EditModeInternal(bool enabled)
+	{
+		_widgetDragControl.Visible = enabled;
+		_editInfo.Visible = enabled;
+		UpdateEditInfo();
+	}
+
+	private void UpdateEditInfo()
+	{
+		if (!EditMode)
+			return;
+		var distances = DistanceToSides(GetBoundingRect());
+
+		_leftDistanceLabel.Text = distances.X.ToString();
+		_topDistanceLabel.Text = distances.Y.ToString();
+		_rightDistanceLabel.Text = distances.Z.ToString();
+		_bottomDistanceLabel.Text = distances.W.ToString();
+		_anchorPointLabel.Text = $"Sticks to {ClosestAnchorPoint(GetBoundingRect())}\nOffset ({distances.X - distances.Z},{distances.Y - distances.W})\nSize ({Size.X},{Size.Y})";
 	}
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
-		base._Ready();
-
-		var kotwa = ClosestAnchorPoint(GetBoundingRect());
-		SetAnchorsPreset(kotwa);
-
-		GD.Print($"Closest Anchor point is: {kotwa}");
+		ShowVisuals = _showVisuals;
+		ProcessDrag = _processDrag;
+		ProcessResize = _processResize;
+		WindowBarEnabled = _windowBarEnabled;
+		EditMode = _editMode;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -333,11 +490,29 @@ public partial class WidgetPanel : Container
 			case NotificationSortChildren:
 				if (!IsNodeReady())
 					return;
-				MoveChild(widgetDragControl, -1);
-				FitChildInRect(widgetDragControl, GetRect() with { Position = Vector2.Zero });
+				Vector2 windowBarOffset = Vector2.Zero;
 
-				foreach (var child in GetChildren().SkipLast(1).Cast<Control>())
-					FitChildInRect(child, new Rect2(widgetDragControl.GetCombinedMinimumSize() / 2f, Size - widgetDragControl.GetCombinedMinimumSize()));
+				if (_windowBarEnabled)
+					windowBarOffset.Y = _windowBar.GetCombinedMinimumSize().Y;
+
+				Rect2 childBoundingBox = new(
+					(_widgetDragControl.GetCombinedMinimumSize() / 2f) + windowBarOffset,
+					Size - _widgetDragControl.GetCombinedMinimumSize() - windowBarOffset
+				);
+
+				MoveChild(_editInfo, -1);
+				FitChildInRect(_editInfo, new Rect2(childBoundingBox.Position - windowBarOffset, childBoundingBox.Size + windowBarOffset));
+
+				MoveChild(_widgetDragControl, -2);
+				FitChildInRect(_widgetDragControl, GetRect() with { Position = Vector2.Zero });
+
+				MoveChild(_windowBar, -3);
+				FitChildInRect(_windowBar, new Rect2(childBoundingBox.Position - windowBarOffset, new Vector2(childBoundingBox.Size.X, windowBarOffset.Y)));
+
+				foreach (var child in GetChildren().Cast<Control>().Except([_widgetDragControl, _windowBar, _editInfo]))
+				{
+					FitChildInRect(child, childBoundingBox);
+				}
 
 				break;
 		}
@@ -347,13 +522,16 @@ public partial class WidgetPanel : Container
 
 	public override Vector2 _GetMinimumSize()
 	{
-		Vector2 minimum = widgetDragControl.GetCombinedMinimumSize();
+		Vector2 minimum = _widgetDragControl.GetCombinedMinimumSize();
 
-		foreach (var child in GetChildren().Cast<Control>().Except([widgetDragControl]))
+		foreach (var child in GetChildren().Cast<Control>().Except([_widgetDragControl]))
 		{
-			minimum.X = Mathf.Max(minimum.X, child.GetCombinedMinimumSize().X + widgetDragControl.GetCombinedMinimumSize().X);
-			minimum.Y = Mathf.Max(minimum.Y, child.GetCombinedMinimumSize().Y + widgetDragControl.GetCombinedMinimumSize().Y);
+			minimum.X = Mathf.Max(minimum.X, child.GetCombinedMinimumSize().X + _widgetDragControl.GetCombinedMinimumSize().X);
+			minimum.Y = Mathf.Max(minimum.Y, child.GetCombinedMinimumSize().Y + _widgetDragControl.GetCombinedMinimumSize().Y);
 		}
+
+		if (_windowBarEnabled)
+			minimum.Y += _windowBar.GetCombinedMinimumSize().Y;
 
 		return minimum;
 	}

@@ -1,10 +1,65 @@
 using Godot;
-using System;
-using System.Linq;
 
 public partial class WidgetDragControl : Control
 {
 	private bool _isResized = false;
+
+	[ExportGroup(".internal","_")]
+	[Export]
+	private Godot.Collections.Array<Control> _visualNodes = null!;
+
+	[Export]
+	private Control _resizeControl = null!;
+
+	[Export]
+	private Control _resizeControlFake = null!;
+
+	private bool _showVisuals = true;
+	private bool _processDrag = true;
+	private bool _processResize = true;
+
+	[Export]
+	public bool ShowVisuals
+	{
+		get => _showVisuals;
+		set
+		{
+			_showVisuals = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.ShowVisualsInternal, _showVisuals);
+			}
+		}
+	}
+
+	[Export]
+	public bool ProcessDrag
+	{
+		get => _processDrag;
+		set
+		{
+			_processDrag = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.AllowDrag, _processDrag);
+			}
+		}
+	}
+
+	[Export]
+	public bool ProcessResize
+	{
+		get => _processResize;
+		set
+		{
+			_processResize = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.AllowResize, _processResize);
+			}
+		}
+	}
+
 
 	[Signal]
 	public delegate void ResizeZoneEventHandler(InputEventMouseMotion eventMouseMotion, LayoutPreset layoutPreset);
@@ -12,10 +67,22 @@ public partial class WidgetDragControl : Control
 	[Signal]
 	public delegate void DragEventHandler(InputEventMouseMotion eventMouseMotion);
 
+	public override void _Ready()
+	{
+		ShowVisualsInternal(_showVisuals);
+		AllowDrag(_processDrag);
+		AllowResize(_processResize);
+	}
+
+	public override void _ExitTree()
+	{
+		_visualNodes.Clear();
+		_visualNodes = null!;
+	}
 
 	private void OnResizeZoneGuiEvent(InputEvent inputEvent, LayoutPreset layoutPreset)
 	{
-		if (inputEvent is not InputEventMouseMotion eventMouseMotion)
+		if (inputEvent is not InputEventMouseMotion eventMouseMotion || !ProcessResize)
 		{
 			return;
 		}
@@ -27,7 +94,7 @@ public partial class WidgetDragControl : Control
 
 	private void OnDragGuiEvent(InputEvent inputEvent)
 	{
-		if (inputEvent is not InputEventMouseMotion eventMouseMotion)
+		if (inputEvent is not InputEventMouseMotion eventMouseMotion || !ProcessDrag)
 		{
 			return;
 		}
@@ -35,5 +102,24 @@ public partial class WidgetDragControl : Control
 		AcceptEvent();
 
 		EmitSignal(SignalName.Drag, eventMouseMotion);
+	}
+
+	private void ShowVisualsInternal(bool show)
+	{
+		foreach (var node in _visualNodes)
+		{
+			node.Visible = show;
+		}
+	}
+
+	private void AllowDrag(bool allow)
+	{
+		MouseDefaultCursorShape = allow ? CursorShape.Drag : CursorShape.Arrow;
+	}
+
+	private void AllowResize(bool allow)
+	{
+		_resizeControl.Visible = allow;
+		_resizeControlFake.Visible = !allow;
 	}
 }
