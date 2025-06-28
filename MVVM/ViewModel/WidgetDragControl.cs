@@ -2,9 +2,13 @@ using Godot;
 
 public partial class WidgetDragControl : Control
 {
+	#region Fields
 	private bool _isResized = false;
+	private bool _showVisuals = true;
+	private bool _processDrag = true;
+	private bool _processResize = true;
 
-	[ExportGroup(".internal","_")]
+	[ExportGroup(".internal", "_")]
 	[Export]
 	private Godot.Collections.Array<Control> _visualNodes = null!;
 
@@ -14,9 +18,17 @@ public partial class WidgetDragControl : Control
 	[Export]
 	private Control _resizeControlFake = null!;
 
-	private bool _showVisuals = true;
-	private bool _processDrag = true;
-	private bool _processResize = true;
+	#endregion Fields
+	#region Events
+
+	[Signal]
+	public delegate void ResizeZoneEventHandler(InputEventMouseMotion eventMouseMotion, LayoutPreset layoutPreset);
+
+	[Signal]
+	public delegate void DragEventHandler(InputEventMouseMotion eventMouseMotion);
+
+	#endregion Events
+	#region Properties
 
 	[Export]
 	public bool ShowVisuals
@@ -59,13 +71,8 @@ public partial class WidgetDragControl : Control
 			}
 		}
 	}
-
-
-	[Signal]
-	public delegate void ResizeZoneEventHandler(InputEventMouseMotion eventMouseMotion, LayoutPreset layoutPreset);
-
-	[Signal]
-	public delegate void DragEventHandler(InputEventMouseMotion eventMouseMotion);
+	#endregion Properties
+	#region Godot
 
 	public override void _Ready()
 	{
@@ -79,6 +86,9 @@ public partial class WidgetDragControl : Control
 		_visualNodes.Clear();
 		_visualNodes = null!;
 	}
+
+	#endregion Godot
+	#region Methods
 
 	private void OnResizeZoneGuiEvent(InputEvent inputEvent, LayoutPreset layoutPreset)
 	{
@@ -114,6 +124,7 @@ public partial class WidgetDragControl : Control
 
 	private void AllowDrag(bool allow)
 	{
+		MouseFilter = allow ? MouseFilterEnum.Stop : MouseFilterEnum.Ignore;
 		MouseDefaultCursorShape = allow ? CursorShape.Drag : CursorShape.Arrow;
 	}
 
@@ -122,4 +133,6 @@ public partial class WidgetDragControl : Control
 		_resizeControl.Visible = allow;
 		_resizeControlFake.Visible = !allow;
 	}
+
+	#endregion Methods
 }

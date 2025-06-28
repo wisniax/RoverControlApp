@@ -1,75 +1,61 @@
-[gd_scene load_steps=8 format=3 uid="uid://iocpx8rpo2a8"]
+[gd_scene load_steps=6 format=3 uid="uid://iocpx8rpo2a8"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/WidgetPanel.cs" id="1_f2d4b"]
+[ext_resource type="Theme" uid="uid://mjdtbskragnd" path="res://Resources/Ovarhaul2025/Ovarhaul2025.theme" id="1_h6km5"]
 [ext_resource type="PackedScene" uid="uid://3nfkg2sjo5lv" path="res://MVVM/View/WidgetDragControl.tscn" id="2_uaj7n"]
-[ext_resource type="Script" path="res://MVVM/Model/UIOverlaySetting.cs" id="3_58wck"]
-[ext_resource type="PackedScene" uid="uid://dp1udlu6cpe2h" path="res://MVVM/View/UIOverlay2.tscn" id="3_n7x3d"]
 
-[sub_resource type="Resource" id="Resource_f5tj8"]
-script = ExtResource("3_58wck")
-BackColor = Color(0.00434293, 0.19713, 0.837203, 1)
-FontColor = Color(0.465884, 0.674145, 1, 1)
-UseFontAsBackColor = false
-Text = "Lewo"
-
-[sub_resource type="Resource" id="Resource_0qmhe"]
-script = ExtResource("3_58wck")
-BackColor = Color(0.60947, 0, 0.11775, 1)
-FontColor = Color(1, 0.496389, 0.492111, 1)
-UseFontAsBackColor = false
-Text = "Prawo"
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jscq1"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.190762, 0.190762, 0.190762, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8o5ll"]
 bg_color = Color(0.13, 0.13, 0.13, 0.701961)
 
-[node name="WidgetPanel" type="Container" node_paths=PackedStringArray("_widgetDragControl", "_windowBar", "_editInfo", "_leftDistanceLabel", "_topDistanceLabel", "_rightDistanceLabel", "_bottomDistanceLabel", "_anchorPointLabel")]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 258.0
-offset_top = 108.0
-offset_right = -142.0
-offset_bottom = -142.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="WidgetPanel" type="Container" node_paths=PackedStringArray("_widgetDragControl", "_windowBar", "_editInfo", "_leftDistanceLabel", "_topDistanceLabel", "_rightDistanceLabel", "_bottomDistanceLabel", "_anchorPointLabel", "_windowBarTitleLabel", "_windowBorder")]
+offset_right = 163.0
+offset_bottom = 85.0
 mouse_filter = 2
+theme = ExtResource("1_h6km5")
 script = ExtResource("1_f2d4b")
 _widgetDragControl = NodePath("WidgetDragControl")
-_windowBar = NodePath("TitleBar")
+_windowBar = NodePath("WindowBar")
 _editInfo = NodePath("EditInfo")
 _leftDistanceLabel = NodePath("EditInfo/PositionInfo/MiddleRow/LeftDistance")
 _topDistanceLabel = NodePath("EditInfo/PositionInfo/TopDistance")
 _rightDistanceLabel = NodePath("EditInfo/PositionInfo/MiddleRow/RightDistance")
 _bottomDistanceLabel = NodePath("EditInfo/PositionInfo/BottomDistance")
 _anchorPointLabel = NodePath("EditInfo/PositionInfo/MiddleRow/Anchors")
-WindowBarEnabled = true
+_windowBarTitleLabel = NodePath("WindowBar/HBoxContainer/Title")
+_windowBorder = NodePath("WindowBorder")
 
-[node name="UIOverlay2" parent="." instance=ExtResource("3_n7x3d")]
-layout_mode = 2
-ControlMode = 1
-Presets = [SubResource("Resource_f5tj8"), SubResource("Resource_0qmhe")]
-PermanentText = ""
-
-[node name="TitleBar" type="PanelContainer" parent="."]
+[node name="WindowBar" type="PanelContainer" parent="."]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 mouse_default_cursor_shape = 6
 theme_type_variation = &"PanelContainerRcaWindowBar"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TitleBar"]
+[node name="HBoxContainer" type="HBoxContainer" parent="WindowBar"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="TitleBar/HBoxContainer"]
+[node name="Title" type="Label" parent="WindowBar/HBoxContainer"]
 layout_mode = 2
-text = "Mission Control"
+text = "WindowBarTitle"
 
-[node name="Exit" type="Button" parent="TitleBar/HBoxContainer"]
+[node name="Exit" type="Button" parent="WindowBar/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 10
 theme_type_variation = &"ButtonRcaFlat"
 theme_override_font_sizes/font_size = 20
 text = ""
 flat = true
+
+[node name="WindowBorder" type="Panel" parent="."]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_jscq1")
 
 [node name="WidgetDragControl" parent="." instance=ExtResource("2_uaj7n")]
 layout_mode = 2
@@ -135,8 +121,7 @@ theme_override_constants/outline_size = 3
 theme_override_font_sizes/font_size = 14
 text = "BottomDistance"
 
-[connection signal="gui_input" from="TitleBar" to="." method="OnDrag"]
+[connection signal="gui_input" from="WindowBar" to="." method="OnDragWindowBar"]
+[connection signal="pressed" from="WindowBar/HBoxContainer/Exit" to="." method="OnButtonExit"]
 [connection signal="Drag" from="WidgetDragControl" to="." method="OnDrag"]
 [connection signal="ResizeZone" from="WidgetDragControl" to="." method="OnResizeZone"]
-[connection signal="focus_exited" from="WidgetDragControl" to="WidgetDragControl" method="PrintMessageHuj"]
-[connection signal="mouse_exited" from="WidgetDragControl" to="WidgetDragControl" method="SetResizeZoneVisibilityOffOnMouseLeave"]

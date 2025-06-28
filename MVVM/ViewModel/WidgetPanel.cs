@@ -1,14 +1,14 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Godot;
 
 public partial class WidgetPanel : Container
 {
-	struct WidgetPos
+	#region Classes
+	public struct WidgetPos
 	{
-		private LayoutPreset _anchorPoint;
-
 		/// <summary>
 		/// Target position for widget.
 		/// </summary>
@@ -19,46 +19,38 @@ public partial class WidgetPanel : Container
 		public Vector2 Size { get; set; }
 
 		/// <summary>
-		/// Anchor point. Should be one of:<br/>
-		/// <list type="bullet">
-		/// 	<item><term><see cref="Godot.LayoutPreset.TopLeft"/></term></item>
-		/// 	<item><term><see cref="Godot.LayoutPreset.TopRight"/></term></item>
-		/// 	<item><term><see cref="Godot.LayoutPreset.BottomLeft"/></term></item>
-		/// 	<item><term><see cref="Godot.LayoutPreset.BottomRight"/></term></item>
-		/// 	<item><term><see cref="Godot.LayoutPreset.Center"/></term></item>
-		/// </list>
+		/// Anchor point.
 		/// </summary>
-		public LayoutPreset AnchorPoint
-		{
-			readonly get => _anchorPoint;
-			set
-			{
-				switch (value)
-				{
-					case LayoutPreset.TopLeft:
-					case LayoutPreset.TopRight:
-					case LayoutPreset.BottomLeft:
-					case LayoutPreset.BottomRight:
-					case LayoutPreset.Center:
-						_anchorPoint = value;
-						break;
-				}
-			}
-		}
+		public LayoutPreset AnchorPoint { get; set; }
 	}
 
-	enum EasyAnchor
+	public enum EasyAnchor
 	{
 		Begin = 0,
 		End = 1,
 		Center = 2
 	}
 
-	const float CENTER_ERROR = 30f;
+	#endregion Classes
+	#region Fields
+
+	private const float CENTER_ERROR = 30f;
 
 	private bool _resizeStarted = false;
 	private Vector2 _mouseMoveStart = Vector2.Zero;
 	private Rect2 _resizeInitialRect = new Rect2();
+
+	private bool _showVisuals = true;
+	private bool _processDrag = true;
+	private bool _processResize = true;
+	private bool _windowBarEnabled = false;
+	private bool _editMode = false;
+
+	private string _windowBarTitle = "";
+
+	private LayoutPreset _lastAppliedLayout = LayoutPreset.TopLeft;
+
+	private List<Control> _untouchableBySortChildren = [];
 
 	[ExportGroup(".internal", "_")]
 	[Export]
@@ -85,27 +77,28 @@ public partial class WidgetPanel : Container
 	[Export]
 	private Label _anchorPointLabel = null!;
 
-	private bool _showVisuals = true;
-	private bool _processDrag = true;
-	private bool _processResize = true;
-	private bool _windowBarEnabled = false;
-	private bool _editMode = false;
+	[Export]
+	private Label _windowBarTitleLabel = null!;
+
+	[Export]
+	private Panel _windowBorder = null!;
+
+	#endregion Fields
+	#region Properties
 
 	[Export]
 	public bool ShowVisuals
 	{
 		get
 		{
-			_showVisuals = _widgetDragControl.ShowVisuals;
 			return _showVisuals;
 		}
-
 		set
 		{
 			_showVisuals = value;
 			if (IsInsideTree())
 			{
-				_widgetDragControl.SetDeferred(PropertyName.ShowVisuals, _showVisuals);
+				CallDeferred(MethodName.EditModeInternal, _editMode);
 			}
 		}
 	}
@@ -115,10 +108,10 @@ public partial class WidgetPanel : Container
 	{
 		get
 		{
-			_showVisuals = _widgetDragControl.ProcessDrag;
+			if (IsInsideTree())
+				_processDrag = _widgetDragControl.ProcessDrag;
 			return _processDrag;
 		}
-
 		set
 		{
 			_processDrag = value;
@@ -134,10 +127,10 @@ public partial class WidgetPanel : Container
 	{
 		get
 		{
-			_showVisuals = _widgetDragControl.ProcessResize;
+			if (IsInsideTree())
+				_processResize = _widgetDragControl.ProcessResize;
 			return _processResize;
 		}
-
 		set
 		{
 			_processResize = value;
@@ -175,6 +168,23 @@ public partial class WidgetPanel : Container
 			}
 		}
 	}
+
+	[Export]
+	public string WindowBarTitle
+	{
+		get => _windowBarTitle;
+		set
+		{
+			_windowBarTitle = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.WindowBarTitleInternal, _windowBarTitle);
+			}
+		}
+	}
+
+	#endregion Properties
+	#region Methods.Helpers
 
 	private Vector4 DistanceToSides(Rect2 rect)
 	{
@@ -228,14 +238,86 @@ public partial class WidgetPanel : Container
 
 	}
 
+	private void WindowBarEnabledInternal(bool enabled)
+	{
+		_windowBar.Visible = enabled;
+		_windowBorder.Visible = enabled;
+
+		QueueSort();
+		CallDeferred(MethodName.UpdateEditInfo);
+	}
+
+	private void EditModeInternal(bool enabled)
+	{
+		_widgetDragControl.Visible = enabled;
+		_widgetDragControl.ShowVisuals = enabled && _showVisuals;
+		_editInfo.Visible = enabled && _showVisuals;
+		_windowBar.MouseDefaultCursorShape = enabled ? CursorShape.Drag : CursorShape.Arrow;
+
+		UpdateEditInfo();
+	}
+
+	private void UpdateEditInfo()
+	{
+		if (!EditMode)
+			return;
+		var distances = DistanceToSides(GetBoundingRect());
+
+		_leftDistanceLabel.Text = distances.X.ToString();
+		_topDistanceLabel.Text = distances.Y.ToString();
+		_rightDistanceLabel.Text = distances.Z.ToString();
+		_bottomDistanceLabel.Text = distances.W.ToString();
+		_anchorPointLabel.Text = $"Sticks to {ClosestAnchorPoint(GetBoundingRect())}\nOffset ({distances.X - distances.Z},{distances.Y - distances.W})\nSize ({Size.X},{Size.Y})";
+	}
+
+	private void WindowBarTitleInternal(string name)
+	{
+		_windowBarTitleLabel.Text = name;
+	}
+
+	private void OnButtonExit()
+	{
+		Visible = false;
+	}
+
+	public Rect2 GetBoundingRect()
+	{
+		return new Rect2(-_widgetDragControl.GetCombinedMinimumSize() / 2f, (GetParentOrNull<Control>()?.Size ?? GetViewportRect().Size) + _widgetDragControl.GetCombinedMinimumSize());
+	}
+
+	public WidgetPos SaveWidget()
+	{
+		return new WidgetPos() { Position = Position, Size = Size, AnchorPoint = _lastAppliedLayout };
+	}
+
+	public void LoadWidget(WidgetPos data)
+	{
+		Position = data.Position;
+		Size = data.Size;
+		_lastAppliedLayout = ClosestAnchorPoint(GetBoundingRect());
+		SetAnchorsPreset(_lastAppliedLayout);
+	}
+
+	#endregion Methods.Helpers
+	#region Methods.DragNSize
+
+	public void OnDragWindowBar(InputEvent @event)
+	{
+		if (@event is InputEventMouseMotion inputEventMouseMotion)
+			OnDrag(inputEventMouseMotion);
+	}
+
 	public void OnDrag(InputEventMouseMotion eventMouseMotion)
 	{
-		if (!eventMouseMotion.ButtonMask.HasFlag(MouseButtonMask.Left))
-		{
-			_resizeStarted = false;
-			SetAnchorsPreset(ClosestAnchorPoint(GetBoundingRect()));
+		if (!EditMode)
 			return;
-		}
+		if (!eventMouseMotion.ButtonMask.HasFlag(MouseButtonMask.Left))
+			{
+				_resizeStarted = false;
+				_lastAppliedLayout = ClosestAnchorPoint(GetBoundingRect());
+				SetAnchorsPreset(_lastAppliedLayout);
+				return;
+			}
 
 		if (!_resizeStarted)
 		{
@@ -287,10 +369,13 @@ public partial class WidgetPanel : Container
 
 	public void OnResizeZone(InputEventMouseMotion eventMouseMotion, LayoutPreset layoutPreset)
 	{
+		if (!EditMode)
+			return;
 		if (!eventMouseMotion.ButtonMask.HasFlag(MouseButtonMask.Left))
 		{
 			_resizeStarted = false;
-			SetAnchorsPreset(ClosestAnchorPoint(GetBoundingRect()));
+			_lastAppliedLayout = ClosestAnchorPoint(GetBoundingRect());
+			SetAnchorsPreset(_lastAppliedLayout);
 			return;
 		}
 
@@ -429,38 +514,8 @@ public partial class WidgetPanel : Container
 		return newRect;
 	}
 
-	public Rect2 GetBoundingRect()
-	{
-		return new Rect2(-_widgetDragControl.GetCombinedMinimumSize() / 2f, (GetParentOrNull<Control>()?.Size ?? GetViewportRect().Size) + _widgetDragControl.GetCombinedMinimumSize());
-	}
-
-	private void WindowBarEnabledInternal(bool enabled)
-	{
-		_windowBar.Visible = enabled;
-
-		QueueSort();
-		CallDeferred(MethodName.UpdateEditInfo);
-	}
-
-	private void EditModeInternal(bool enabled)
-	{
-		_widgetDragControl.Visible = enabled;
-		_editInfo.Visible = enabled;
-		UpdateEditInfo();
-	}
-
-	private void UpdateEditInfo()
-	{
-		if (!EditMode)
-			return;
-		var distances = DistanceToSides(GetBoundingRect());
-
-		_leftDistanceLabel.Text = distances.X.ToString();
-		_topDistanceLabel.Text = distances.Y.ToString();
-		_rightDistanceLabel.Text = distances.Z.ToString();
-		_bottomDistanceLabel.Text = distances.W.ToString();
-		_anchorPointLabel.Text = $"Sticks to {ClosestAnchorPoint(GetBoundingRect())}\nOffset ({distances.X - distances.Z},{distances.Y - distances.W})\nSize ({Size.X},{Size.Y})";
-	}
+	#endregion Methods.DragNSize
+	#region Godot
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -470,12 +525,8 @@ public partial class WidgetPanel : Container
 		ProcessResize = _processResize;
 		WindowBarEnabled = _windowBarEnabled;
 		EditMode = _editMode;
-	}
-
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
-	{
-		base._Process(delta);
+		WindowBarTitle = _windowBarTitle;
+		_untouchableBySortChildren = [_widgetDragControl, _windowBar, _editInfo];
 	}
 
 	public override void _Notification(int what)
@@ -500,6 +551,8 @@ public partial class WidgetPanel : Container
 					Size - _widgetDragControl.GetCombinedMinimumSize() - windowBarOffset
 				);
 
+				MoveChild(_windowBorder, 0);
+
 				MoveChild(_editInfo, -1);
 				FitChildInRect(_editInfo, new Rect2(childBoundingBox.Position - windowBarOffset, childBoundingBox.Size + windowBarOffset));
 
@@ -509,7 +562,8 @@ public partial class WidgetPanel : Container
 				MoveChild(_windowBar, -3);
 				FitChildInRect(_windowBar, new Rect2(childBoundingBox.Position - windowBarOffset, new Vector2(childBoundingBox.Size.X, windowBarOffset.Y)));
 
-				foreach (var child in GetChildren().Cast<Control>().Except([_widgetDragControl, _windowBar, _editInfo]))
+
+				foreach (var child in GetChildren().Cast<Control>().Except(_untouchableBySortChildren))
 				{
 					FitChildInRect(child, childBoundingBox);
 				}
@@ -524,16 +578,21 @@ public partial class WidgetPanel : Container
 	{
 		Vector2 minimum = _widgetDragControl.GetCombinedMinimumSize();
 
-		foreach (var child in GetChildren().Cast<Control>().Except([_widgetDragControl]))
+		foreach (var child in GetChildren().Cast<Control>().Except(_untouchableBySortChildren))
 		{
-			minimum.X = Mathf.Max(minimum.X, child.GetCombinedMinimumSize().X + _widgetDragControl.GetCombinedMinimumSize().X);
-			minimum.Y = Mathf.Max(minimum.Y, child.GetCombinedMinimumSize().Y + _widgetDragControl.GetCombinedMinimumSize().Y);
+			minimum = minimum.Max(child.GetCombinedMinimumSize() + _widgetDragControl.GetCombinedMinimumSize());
 		}
 
 		if (_windowBarEnabled)
+		{
+			minimum.X = Mathf.Max(minimum.X, _windowBar.GetCombinedMinimumSize().X);
 			minimum.Y += _windowBar.GetCombinedMinimumSize().Y;
+		}
 
+		UpdateEditInfo();
 		return minimum;
 	}
+
+	#endregion Godot
 
 }
