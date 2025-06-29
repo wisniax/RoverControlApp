@@ -1,11 +1,8 @@
-[gd_resource type="FontVariation" load_steps=3 format=3 uid="uid://dfmxywt4ro1vh"]
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://dfmxywt4ro1vh"]
 
 [ext_resource type="FontFile" uid="uid://bo6ch4wesf1lx" path="res://Resources/Ovarhaul2025/Fonts/MPLUS2/MPLUS2-VariableFont_wght.ttf" id="1_ei1r2"]
 
-[sub_resource type="SystemFont" id="SystemFont_q4ac0"]
-
 [resource]
-fallbacks = Array[Font]([SubResource("SystemFont_q4ac0")])
 base_font = ExtResource("1_ei1r2")
 variation_opentype = {
 2003265652: 750

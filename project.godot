@@ -15,10 +15,9 @@ run/main_scene="res://MVVM/View/Startup.tscn"
 config/features=PackedStringArray("4.3", "C#", "GL Compatibility")
 run/max_fps=60
 run/low_processor_mode=true
-boot_splash/bg_color=Color(0, 0, 0, 1)
-boot_splash/image="res://Resources/raptors_logoHorizontal_color_nobg.png"
-boot_splash/fullsize=false
-config/icon="res://Resources/icon.svg"
+boot_splash/bg_color=Color(0.0627451, 0.0627451, 0.0627451, 1)
+boot_splash/image="res://Resources/RAPpl_standard_BG.png"
+config/icon="res://Resources/RAPpl_mini_noBG.svg"
 
 [autoload]
 
@@ -33,10 +32,6 @@ MissionSetPoint="res://MVVM/Model/MissionSetPoint.cs"
 
 file_logging/enable_file_logging=true
 file_logging/max_log_files=50
-
-[display]
-
-window/size/viewport_width=1154
 
 [dotnet]
 

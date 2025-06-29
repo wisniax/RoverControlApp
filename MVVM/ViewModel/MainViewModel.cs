@@ -218,10 +218,12 @@ namespace RoverControlApp.MVVM.ViewModel
 				case true when _rtspClient is null:
 					_rtspClient = new();
 					_rtspClientWeak = new(_rtspClient);
+					imTextureRect.Visible = true;
 					break;
 				case false when _rtspClient is not null:
 					_rtspClient.Dispose();
 					_rtspClient = null;
+					imTextureRect.Visible = false;
 					break;
 			}
 		}

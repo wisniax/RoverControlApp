@@ -1,9 +1,10 @@
-[gd_scene load_steps=25 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=26 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Theme" uid="uid://mjdtbskragnd" path="res://Resources/Ovarhaul2025/Ovarhaul2025.theme" id="1_8861l"]
-[ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
+[ext_resource type="FontVariation" uid="uid://bio2ftui85vqm" path="res://Resources/Ovarhaul2025/Fonts/MPLUS2/MPLUS2-SlightBold.tres" id="3_lao64"]
 [ext_resource type="PackedScene" uid="uid://bpm7uiv1e6n8i" path="res://MVVM/View/UIOverlayTemplate.tscn" id="3_mtbtk"]
+[ext_resource type="Texture2D" uid="uid://b6ko2wo6b6fh0" path="res://Resources/RAPpl_poziomo_noBG.svg" id="3_vg1qh"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/Grzyb_UIOverlay.cs" id="4_2nwr4"]
 [ext_resource type="PackedScene" uid="uid://em10imnbie42" path="res://MVVM/View/SettingsManager.tscn" id="4_b20oh"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/RoverMode_UIOverlay.cs" id="4_bwker"]
@@ -77,6 +78,41 @@ ZedMonitor = NodePath("ZedMonitor")
 BatteryMonitor = NodePath("BatteryMonitor")
 InputHelpMaster = NodePath("MaxSizeContainer/InputHelpMaster")
 
+[node name="BgColor" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0627451, 0.0627451, 0.0627451, 1)
+
+[node name="Logo" type="TextureRect" parent="BgColor"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_vg1qh")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="NoCameraFeed" type="Label" parent="BgColor"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -64.0
+offset_top = 55.0
+offset_right = 64.0
+offset_bottom = 241.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.458613, 0.180964, 0.0216873, 1)
+theme_override_fonts/font = ExtResource("3_lao64")
+theme_override_font_sizes/font_size = 128
+text = ""
+
 [node name="CameraView" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
@@ -84,7 +120,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_1llr5")
 expand_mode = 2
 
 [node name="FancyDebugViewRLab" type="RichTextLabel" parent="."]

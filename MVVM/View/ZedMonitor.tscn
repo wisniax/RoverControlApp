@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dfsueqraoksun"]
 
-[ext_resource type="Texture2D" uid="uid://ubenmvj4p5x2" path="res://Resources/icon.svg" id="1_esmsg"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/ZedMonitor.cs" id="1_uhht3"]
+[ext_resource type="Texture2D" uid="uid://lojn3jqibvi5" path="res://Resources/RAPpl_mini_noBG.svg" id="2_c6hh1"]
 
 [node name="ZedMonitor" type="Panel" node_paths=PackedStringArray("pitchVisualisation", "rollVisualisation", "pitchDisplay", "rollDisplay", "errorDisplay", "timer", "timerDisplay")]
 offset_right = 209.0
@@ -53,8 +53,8 @@ layout_mode = 2
 
 [node name="PitchIcon" type="Sprite2D" parent="DataSection/DataVisualisation/DVPitchContainer"]
 position = Vector2(40, 30)
-scale = Vector2(0.297, 0.184)
-texture = ExtResource("1_esmsg")
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_c6hh1")
 
 [node name="DVRollContainer" type="Control" parent="DataSection/DataVisualisation"]
 custom_minimum_size = Vector2(0, 55)
@@ -62,11 +62,11 @@ layout_mode = 2
 
 [node name="RollIcon" type="Sprite2D" parent="DataSection/DataVisualisation/DVRollContainer"]
 position = Vector2(40, 30)
-scale = Vector2(0.293, 0.207)
-texture = ExtResource("1_esmsg")
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_c6hh1")
 
 [node name="PlaceholderForNewGraphics" type="Sprite2D" parent="DataSection/DataVisualisation/DVRollContainer/RollIcon"]
-texture = ExtResource("1_esmsg")
+texture = ExtResource("2_c6hh1")
 flip_h = true
 
 [node name="DataDisplay" type="VBoxContainer" parent="DataSection"]
