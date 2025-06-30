@@ -17,85 +17,14 @@ public partial class UIOverlay2 : PanelContainer
 	private Godot.Collections.Array<UIOverlaySetting> _presets = [];
 
 	private string _permanentText = "Permanent:";
+	private string _variableLabelPrefixExText = "";
+	private string _variableLabelSurfixExText = "";
 
 	private int _fontSize = 20;
-
-	[Export]
-	public int ControlMode
-	{
-		get => _controlMode;
-		set
-		{
-			var old = _controlMode;
-			_controlMode = value;
-			if (IsInsideTree())
-				CallDeferred(MethodName.OnSetControlMode, old, _controlMode, false);
-		}
-	}
-
-	[Export]
-	public Godot.Collections.Array<UIOverlaySetting> Presets
-	{
-		get => _presets;
-		set
-		{
-			_presets = value;
-			if (IsInsideTree())
-			{
-				CallDeferred(MethodName.GenerateAnimations);
-				CallDeferred(MethodName.OnSetControlMode, _controlMode, _controlMode, true);
-			}
-		}
-	}
-
-	[Export]
-	public string PermanentText
-	{
-		get => _permanentText;
-		set
-		{
-			_permanentText = value;
-			if (IsInsideTree() && _staticLabel is not null)
-			{
-				_staticLabel.SetDeferred(Label.PropertyName.Text, _permanentText);
-			}
-		}
-	}
-
-	[Export]
-	public long RapidChangeTimeMiliseconds { get; set; } = 1000L;
-
-	[Export]
-	public bool AnimateAll
-	{
-		get => _animateAll;
-		set
-		{
-			_animateAll = value;
-			if (IsInsideTree())
-			{
-				CallDeferred(MethodName.GenerateAnimations);
-				CallDeferred(MethodName.OnSetControlMode, _controlMode, _controlMode, true);
-			}
-		}
-	}
-
-	[Export]
-	public bool SkipWhenUpdatedButNotChanged { get; set; } = true;
-
-	[Export]
-	public int FontSize
-	{
-		get => _fontSize;
-		set
-		{
-			_fontSize = value;
-			if (IsInsideTree())
-			{
-				CallDeferred(MethodName.UpdateFontSize);
-			}
-		}
-	}
+	private int _fontPrefixSizeEx = 20;
+	private int _fontSurfixSizeEx = 20;
+	private int _fontPrefixSize = 20;
+	private int _fontSurfixSize = 20;
 
 	[ExportGroup(".internal", "_")]
 	[Export]
@@ -112,10 +41,204 @@ public partial class UIOverlay2 : PanelContainer
 	[Export]
 	Label? _variableLabel;
 
+	[Export]
+	Label? _variableLabelPrefix;
+
+	[Export]
+	Label? _variableLabelSurfix;
+
+	[Export]
+	Label? _variableLabelPrefixEx;
+
+	[Export]
+	Label? _variableLabelSurfixEx;
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public int ControlMode
+	{
+		get => _controlMode;
+		set
+		{
+			var old = _controlMode;
+			_controlMode = value;
+			if (IsInsideTree())
+				CallDeferred(MethodName.OnSetControlMode, old, _controlMode, false);
+		}
+	}
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public Godot.Collections.Array<UIOverlaySetting> Presets
+	{
+		get => _presets;
+		set
+		{
+			_presets = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.GenerateAnimations);
+				CallDeferred(MethodName.OnSetControlMode, _controlMode, _controlMode, true);
+			}
+		}
+	}
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public bool AnimateAll
+	{
+		get => _animateAll;
+		set
+		{
+			_animateAll = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.GenerateAnimations);
+				CallDeferred(MethodName.OnSetControlMode, _controlMode, _controlMode, true);
+			}
+		}
+	}
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public string PermanentText
+	{
+		get => _permanentText;
+		set
+		{
+			_permanentText = value;
+			if (IsInsideTree() && _staticLabel is not null)
+			{
+				_staticLabel.SetDeferred(Label.PropertyName.Text, _permanentText);
+			}
+		}
+	}
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public int FontSize
+	{
+		get => _fontSize;
+		set
+		{
+			_fontSize = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.UpdateFontSize);
+			}
+		}
+	}
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public int FontPrefixSize
+	{
+		get => _fontPrefixSize;
+		set
+		{
+			_fontPrefixSize = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.UpdateFontSize);
+			}
+		}
+	}
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public int FontSurfixSize
+	{
+		get => _fontSurfixSize;
+		set
+		{
+			_fontSurfixSize = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.UpdateFontSize);
+			}
+		}
+	}
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public long RapidChangeTimeMiliseconds { get; set; } = 1000L;
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public bool SkipWhenUpdatedButNotChanged { get; set; } = true;
+
+
+	[ExportGroup("VariableText-External")]
+	[Export]
+	public string VariableTextPrefixEx
+	{
+		get => _variableLabelPrefixExText;
+		set
+		{
+			_variableLabelPrefixExText = value;
+			if (IsInsideTree() && _variableLabelPrefixEx is not null)
+			{
+				_variableLabelPrefixEx.SetDeferred(Label.PropertyName.Text, _variableLabelPrefixExText);
+			}
+		}
+	}
+
+	[ExportGroup("VariableText-External")]
+	[Export]
+	public string VariableTextSurfixEx
+	{
+		get => _variableLabelSurfixExText;
+		set
+		{
+			_variableLabelSurfixExText = value;
+			if (IsInsideTree() && _variableLabelSurfixEx is not null)
+			{
+				_variableLabelSurfixEx.SetDeferred(Label.PropertyName.Text, _variableLabelSurfixExText);
+			}
+		}
+	}
+
+	[ExportGroup("VariableText-External")]
+	[Export]
+	public int FontPrefixSizeEx
+	{
+		get => _fontPrefixSizeEx;
+		set
+		{
+			_fontPrefixSizeEx = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.UpdateFontSize);
+			}
+		}
+	}
+
+	[ExportGroup("VariableText-External")]
+	[Export]
+	public int FontSurfixSizeEx
+	{
+		get => _fontSurfixSizeEx;
+		set
+		{
+			_fontSurfixSizeEx = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.UpdateFontSize);
+			}
+		}
+	}
 
 	string BackgroundColorAP => $"{_backgroundNodePath}:self_modulate";
 	string FontColorAP => $"{_animatedLabelNodePath}:theme_override_colors/font_color";
+	string FontColorPrefixAP => $"{GetPathTo(_variableLabelPrefix)}:theme_override_colors/font_color";
+	string FontColorSurfixAP => $"{GetPathTo(_variableLabelSurfix)}:theme_override_colors/font_color";
+	string FontColorPrefixExAP => $"{GetPathTo(_variableLabelPrefixEx)}:theme_override_colors/font_color";
+	string FontColorSurfixExAP => $"{GetPathTo(_variableLabelSurfixEx)}:theme_override_colors/font_color";
 	string TextAP => $"{_animatedLabelNodePath}:text";
+	string TextPrefixAP => $"{GetPathTo(_variableLabelPrefix)}:text";
+	string TextSurfixAP => $"{GetPathTo(_variableLabelSurfix)}:text";
+
+
 
 
 	private long _lastChangeTimestamp = 0;
@@ -125,6 +248,8 @@ public partial class UIOverlay2 : PanelContainer
 		CallDeferred(MethodName.Regenerate);
 		UpdateFontSize();
 		PermanentText = _permanentText; // force update
+		VariableTextPrefixEx = _variableLabelPrefixExText; // force update
+		VariableTextSurfixEx = _variableLabelSurfixExText; // force update
 	}
 
 	public void Regenerate()
@@ -135,6 +260,62 @@ public partial class UIOverlay2 : PanelContainer
 
 	private bool IsValidControlMode(int num) => num < Presets.Count && num >= 0;
 
+	private void CreateAnimationTrack_Color(Animation animation, string propertyPath, in Color from, in Color to)
+	{
+		var colorTrack = animation.AddTrack(Animation.TrackType.Value);
+		animation.TrackSetPath(colorTrack, propertyPath);
+		animation.TrackSetInterpolationType(colorTrack, Animation.InterpolationType.Linear);
+		animation.TrackInsertKey(colorTrack, 0.0, from);
+		animation.TrackInsertKey(colorTrack, 1.0, to);
+	}
+
+	private void CreateAnimationTrack_ColorConst(Animation animation, string propertyPath, in Color from, in Color to)
+	{
+		var colorTrack = animation.AddTrack(Animation.TrackType.Value);
+		animation.TrackSetPath(colorTrack, propertyPath);
+		animation.TrackSetInterpolationType(colorTrack, Animation.InterpolationType.Nearest);
+		animation.TrackInsertKey(colorTrack, 0.0, from);
+		animation.TrackInsertKey(colorTrack, 0.1, to);
+	}
+
+	private void CreateAnimationTrack_TextA(Animation animation, string propertyPath, in string from, in string to)
+	{
+		var textTrack = animation.AddTrack(Animation.TrackType.Value);
+		animation.TrackSetPath(textTrack, propertyPath);
+		animation.TrackSetInterpolationType(textTrack, Animation.InterpolationType.Linear);
+		animation.TrackInsertKey(textTrack, 0.0, from);
+		animation.TrackInsertKey(textTrack, 0.1, from);
+		if (from != to)
+		{
+			animation.TrackInsertKey(textTrack, 0.45, "");
+			animation.TrackInsertKey(textTrack, 0.55, "");
+		}
+		animation.TrackInsertKey(textTrack, 0.9, to);
+	}
+
+	private void CreateAnimationTrack_TextB(Animation animation, string propertyPath, in string from, in string to)
+	{
+		var textTrack = animation.AddTrack(Animation.TrackType.Value);
+		animation.TrackSetPath(textTrack, propertyPath);
+		animation.TrackSetInterpolationType(textTrack, Animation.InterpolationType.Linear);
+		animation.TrackInsertKey(textTrack, 0.0, from);
+		if (from != to)
+		{
+			animation.TrackInsertKey(textTrack, 0.3, "");
+			animation.TrackInsertKey(textTrack, 0.7, "");
+		}
+		animation.TrackInsertKey(textTrack, 1.0, to);
+	}
+
+	private void CreateAnimationTrack_TextConst(Animation animation, string propertyPath, in string from, in string to)
+	{
+		var textTrack = animation.AddTrack(Animation.TrackType.Value);
+		animation.TrackSetPath(textTrack, propertyPath);
+		animation.TrackSetInterpolationType(textTrack, Animation.InterpolationType.Nearest);
+		animation.TrackInsertKey(textTrack, 0.0, from);
+		animation.TrackInsertKey(textTrack, 0.1, to);
+	}
+
 	private void CreateAnimation(int from, int to)
 	{
 		Animation anim = new()
@@ -142,33 +323,34 @@ public partial class UIOverlay2 : PanelContainer
 			Length = 1
 		};
 
-		var bgColorTrackIdx = anim.AddTrack(Animation.TrackType.Value);
-		var fontColorTrackIdx = anim.AddTrack(Animation.TrackType.Value);
-		var textTrackIdx = anim.AddTrack(Animation.TrackType.Value);
-
 		Color BackColorF = Presets[from].UseFontAsBackColor ? Presets[from].FontColor : Presets[from].BackColor;
 		Color BackColorT = Presets[to].UseFontAsBackColor ? Presets[to].FontColor : Presets[to].BackColor;
 
-		anim.TrackSetPath(bgColorTrackIdx, BackgroundColorAP);
-		anim.TrackSetInterpolationType(bgColorTrackIdx, Animation.InterpolationType.Linear);
-		anim.TrackInsertKey(bgColorTrackIdx, 0.0, BackColorF);
-		anim.TrackInsertKey(bgColorTrackIdx, 0.3, BackColorF);
-		anim.TrackInsertKey(bgColorTrackIdx, 0.7, BackColorT);
-		anim.TrackInsertKey(bgColorTrackIdx, 1.0, BackColorT);
+		CreateAnimationTrack_Color(anim, BackgroundColorAP, BackColorF, BackColorT);
+		CreateAnimationTrack_Color(anim, FontColorAP, Presets[from].FontColor, Presets[to].FontColor);
+		CreateAnimationTrack_TextA(anim, TextAP, Presets[from].Text, Presets[to].Text);
 
-		anim.TrackSetPath(fontColorTrackIdx, FontColorAP);
-		anim.TrackSetInterpolationType(fontColorTrackIdx, Animation.InterpolationType.Linear);
-		anim.TrackInsertKey(fontColorTrackIdx, 0.0, Presets[from].FontColor);
-		anim.TrackInsertKey(fontColorTrackIdx, 0.3, Presets[from].FontColor);
-		anim.TrackInsertKey(fontColorTrackIdx, 0.7, Presets[to].FontColor);
-		anim.TrackInsertKey(fontColorTrackIdx, 1.0, Presets[to].FontColor);
+		if (_variableLabelPrefix is not null)
+		{
+			CreateAnimationTrack_Color(anim, FontColorPrefixAP, Presets[from].FontColor, Presets[to].FontColor);
+			CreateAnimationTrack_TextB(anim, TextPrefixAP, Presets[from].TextPrefix, Presets[to].TextPrefix);
+		}
 
-		anim.TrackSetPath(textTrackIdx, TextAP);
-		anim.TrackSetInterpolationType(textTrackIdx, Animation.InterpolationType.Linear);
-		anim.TrackInsertKey(textTrackIdx, 0.0, Presets[from].Text);
-		anim.TrackInsertKey(textTrackIdx, 0.45, "");
-		anim.TrackInsertKey(textTrackIdx, 0.55, "");
-		anim.TrackInsertKey(textTrackIdx, 1.0, Presets[to].Text);
+		if (_variableLabelSurfix is not null)
+		{
+			CreateAnimationTrack_Color(anim, FontColorSurfixAP, Presets[from].FontColor, Presets[to].FontColor);
+			CreateAnimationTrack_TextB(anim, TextSurfixAP, Presets[from].TextSurfix, Presets[to].TextSurfix);
+		}
+
+		if (_variableLabelPrefixEx is not null)
+		{
+			CreateAnimationTrack_Color(anim, FontColorPrefixExAP, Presets[from].FontColor, Presets[to].FontColor);
+		}
+
+		if (_variableLabelSurfixEx is not null)
+		{
+			CreateAnimationTrack_Color(anim, FontColorSurfixExAP, Presets[from].FontColor, Presets[to].FontColor);
+		}
 
 		_animator.GetAnimationLibrary("local").AddAnimation($"f{from}t{to}", anim);
 	}
@@ -180,24 +362,34 @@ public partial class UIOverlay2 : PanelContainer
 			Length = 1
 		};
 
-		var bgColorTrackIdx = anim.AddTrack(Animation.TrackType.Value);
-		var fontColorTrackIdx = anim.AddTrack(Animation.TrackType.Value);
-		var textTrackIdx = anim.AddTrack(Animation.TrackType.Value);
+		Color colorBg = Colors.DeepPink;
+		Color colorFont = Colors.PaleVioletRed;
 
-		anim.TrackSetPath(bgColorTrackIdx, BackgroundColorAP);
-		anim.TrackSetInterpolationType(bgColorTrackIdx, Animation.InterpolationType.Linear);
-		anim.TrackInsertKey(bgColorTrackIdx, 0.0, Colors.DeepPink);
-		anim.TrackInsertKey(bgColorTrackIdx, 1.0, Colors.DeepPink);
+		CreateAnimationTrack_ColorConst(anim, BackgroundColorAP, colorBg, colorBg);
+		CreateAnimationTrack_ColorConst(anim, FontColorAP, colorFont, colorFont);
+		CreateAnimationTrack_TextConst(anim, TextAP, "#INVALID#", "#INVALID#");
 
-		anim.TrackSetPath(fontColorTrackIdx, FontColorAP);
-		anim.TrackSetInterpolationType(fontColorTrackIdx, Animation.InterpolationType.Linear);
-		anim.TrackInsertKey(fontColorTrackIdx, 0.0, Colors.White);
-		anim.TrackInsertKey(fontColorTrackIdx, 1.0, Colors.White);
+		if (_variableLabelPrefix is not null)
+		{
+			CreateAnimationTrack_ColorConst(anim, FontColorPrefixAP, colorFont, colorFont);
+			CreateAnimationTrack_TextConst(anim, TextPrefixAP, "", "");
+		}
 
-		anim.TrackSetPath(textTrackIdx, TextAP);
-		anim.TrackSetInterpolationType(textTrackIdx, Animation.InterpolationType.Linear);
-		anim.TrackInsertKey(textTrackIdx, 0.0, "#INVALID#");
-		anim.TrackInsertKey(textTrackIdx, 1.0, "#INVALID#");
+		if (_variableLabelSurfix is not null)
+		{
+			CreateAnimationTrack_ColorConst(anim, FontColorSurfixAP, colorFont, colorFont);
+			CreateAnimationTrack_TextConst(anim, TextSurfixAP, "", "");
+		}
+
+		if (_variableLabelPrefixEx is not null)
+		{
+			CreateAnimationTrack_ColorConst(anim, FontColorPrefixExAP, colorFont, colorFont);
+		}
+
+		if (_variableLabelSurfixEx is not null)
+		{
+			CreateAnimationTrack_ColorConst(anim, FontColorSurfixExAP, colorFont, colorFont);
+		}
 
 		_animator.GetAnimationLibrary("local").AddAnimation($"invalid", anim);
 	}
@@ -243,10 +435,10 @@ public partial class UIOverlay2 : PanelContainer
 		if (Engine.IsEditorHint())
 			return;
 		//clear
-			if (_animator.HasAnimationLibrary("local"))
-			{
-				_animator.RemoveAnimationLibrary("local");
-			}
+		if (_animator.HasAnimationLibrary("local"))
+		{
+			_animator.RemoveAnimationLibrary("local");
+		}
 		_animator.AddAnimationLibrary("local", new());
 		var jellyfin = _animator.GetAnimationLibrary("local");
 
@@ -279,6 +471,10 @@ public partial class UIOverlay2 : PanelContainer
 	{
 		_staticLabel?.AddThemeFontSizeOverride("font_size", _fontSize);
 		_variableLabel?.AddThemeFontSizeOverride("font_size", _fontSize);
+		_variableLabelPrefixEx?.AddThemeFontSizeOverride("font_size", _fontPrefixSizeEx);
+		_variableLabelSurfixEx?.AddThemeFontSizeOverride("font_size", _fontSurfixSizeEx);
+		_variableLabelPrefix?.AddThemeFontSizeOverride("font_size", _fontPrefixSize);
+		_variableLabelSurfix?.AddThemeFontSizeOverride("font_size", _fontSurfixSize);
 	}
 
 }

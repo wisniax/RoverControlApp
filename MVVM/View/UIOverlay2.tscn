@@ -19,19 +19,20 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
-[node name="UIOverlay2" type="PanelContainer" node_paths=PackedStringArray("_animator", "_staticLabel", "_variableLabel")]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="UIOverlay2" type="PanelContainer" node_paths=PackedStringArray("_animator", "_staticLabel", "_variableLabel", "_variableLabelPrefix", "_variableLabelSurfix", "_variableLabelPrefixEx", "_variableLabelSurfixEx")]
+offset_right = 266.0
+offset_bottom = 62.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_2hlck")
 script = ExtResource("1_qdt1d")
 _animator = NodePath("AnimationPlayer")
 _backgroundNodePath = NodePath(".")
-_animatedLabelNodePath = NodePath("MarginContainer/HBoxContainer/Variable")
+_animatedLabelNodePath = NodePath("MarginContainer/HBoxContainer/VariableTextRegion/Variable")
 _staticLabel = NodePath("MarginContainer/HBoxContainer/Permanent")
-_variableLabel = NodePath("MarginContainer/HBoxContainer/Variable")
+_variableLabel = NodePath("MarginContainer/HBoxContainer/VariableTextRegion/Variable")
+_variableLabelPrefix = NodePath("MarginContainer/HBoxContainer/VariableTextRegion/VariablePrefix")
+_variableLabelSurfix = NodePath("MarginContainer/HBoxContainer/VariableTextRegion/VariableSurfix")
+_variableLabelPrefixEx = NodePath("MarginContainer/HBoxContainer/VariableTextRegion/VariablePrefixEx")
+_variableLabelSurfixEx = NodePath("MarginContainer/HBoxContainer/VariableTextRegion/VariableSurfixEx")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -49,13 +50,46 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 20
 text = "Permanent:"
+vertical_alignment = 1
 
-[node name="Variable" type="Label" parent="MarginContainer/HBoxContainer"]
+[node name="VariableTextRegion" type="HBoxContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 6
+
+[node name="VariablePrefixEx" type="Label" parent="MarginContainer/HBoxContainer/VariableTextRegion"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_g7u1j")
+theme_override_font_sizes/font_size = 20
+vertical_alignment = 1
+uppercase = true
+
+[node name="VariablePrefix" type="Label" parent="MarginContainer/HBoxContainer/VariableTextRegion"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_g7u1j")
+theme_override_font_sizes/font_size = 20
+vertical_alignment = 1
+uppercase = true
+
+[node name="Variable" type="Label" parent="MarginContainer/HBoxContainer/VariableTextRegion"]
+layout_mode = 2
 theme_override_fonts/font = ExtResource("2_g7u1j")
 theme_override_font_sizes/font_size = 20
 text = "Variable"
+vertical_alignment = 1
+uppercase = true
+
+[node name="VariableSurfix" type="Label" parent="MarginContainer/HBoxContainer/VariableTextRegion"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_g7u1j")
+theme_override_font_sizes/font_size = 20
+vertical_alignment = 1
+uppercase = true
+
+[node name="VariableSurfixEx" type="Label" parent="MarginContainer/HBoxContainer/VariableTextRegion"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("2_g7u1j")
+theme_override_font_sizes/font_size = 20
+vertical_alignment = 1
 uppercase = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

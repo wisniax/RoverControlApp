@@ -16,7 +16,13 @@ public partial class UIOverlaySetting : Resource
 	public bool UseFontAsBackColor { get; set; } = false;
 
 	[Export]
+	public string TextPrefix { get; set; } = "";
+
+	[Export]
 	public string Text { get; set; } = "Text";
+
+	[Export]
+	public string TextSurfix { get; set; } = "";
 
 	public bool Equals(UIOverlaySetting? other)
 	{
@@ -25,7 +31,9 @@ public partial class UIOverlaySetting : Resource
 
 		return BackColor == other.BackColor &&
 		FontColor == other.FontColor &&
-		Text == other.Text;
+		Text == other.Text &&
+		TextPrefix == other.TextPrefix &&
+		TextSurfix == other.TextSurfix;
 	}
 
 	public override bool Equals(object? obj)
@@ -41,6 +49,8 @@ public partial class UIOverlaySetting : Resource
 			hash += BackColor.GetHashCode() * 69;
 			hash += FontColor.GetHashCode() * 69;
 			hash += Text.GetHashCode() * 69;
+			hash += TextPrefix.GetHashCode() * 69;
+			hash += TextSurfix.GetHashCode() * 69;
 			return hash;
 		}
 	}
