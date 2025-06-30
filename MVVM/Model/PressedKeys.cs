@@ -310,7 +310,7 @@ public class PressedKeys : IDisposable
 	private void OnAcceptedInput(InputEvent inputEvent)
 	{
 		_autoEstop_lastInput = Time.GetTicksMsec();
-		bool inputIsJoystick = inputEvent is InputEventJoypadButton or InputEventJoypadButton;
+		bool inputIsJoystick = inputEvent is InputEventJoypadButton or InputEventJoypadMotion;
 		LastAcceptedInput?.Invoke(inputIsJoystick ? InputHelpHint.HintVisibility.Joy : InputHelpHint.HintVisibility.Kb);
 	}
 
