@@ -10,7 +10,22 @@ namespace RoverControlApp.MVVM.ViewModel;
 [Tool]
 public partial class UIOverlay2 : PanelContainer
 {
+	public enum AnimationAlert
+	{
+		Off,
+		AlertSoft_Slow,
+		AlertSoft_Normal,
+		AlertSoft_Fast,
+		AlertHard_Slow,
+		AlertHard_Normal,
+		AlertHard_Fast,
+	}
+
 	private bool _animateAll = false;
+	private bool _noAnimation = false;
+	private bool _noBackground = false;
+
+	private AnimationAlert _alertMode = AnimationAlert.Off;
 
 	private int _controlMode = 0;
 
@@ -29,6 +44,9 @@ public partial class UIOverlay2 : PanelContainer
 	[ExportGroup(".internal", "_")]
 	[Export]
 	AnimationPlayer _animator = null!;
+
+	[Export]
+	AnimationPlayer _animatorAlert = null!;
 
 	[Export]
 	NodePath _backgroundNodePath = null!;
@@ -52,6 +70,13 @@ public partial class UIOverlay2 : PanelContainer
 
 	[Export]
 	Label? _variableLabelSurfixEx;
+
+	[Export]
+	StyleBox _normalStyle = null!;
+
+	[Export]
+	StyleBox _noBgStyle = null!;
+
 
 	[ExportGroup("Main Settings")]
 	[Export]
@@ -95,6 +120,47 @@ public partial class UIOverlay2 : PanelContainer
 			{
 				CallDeferred(MethodName.GenerateAnimations);
 				CallDeferred(MethodName.OnSetControlMode, _controlMode, _controlMode, true);
+			}
+		}
+	}
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public bool NoAnimation
+	{
+		get => _noAnimation;
+		set
+		{
+			_noAnimation = value;
+		}
+	}
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public AnimationAlert AlertMode
+	{
+		get => _alertMode;
+		set
+		{
+			_alertMode = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.AlertModeInternal, (int)_alertMode);
+			}
+		}
+	}
+
+	[ExportGroup("Main Settings")]
+	[Export]
+	public bool NoBackground
+	{
+		get => _noBackground;
+		set
+		{
+			_noBackground = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.AddThemeStyleboxOverride, "panel", _noBackground ? _noBgStyle : _normalStyle);
 			}
 		}
 	}
@@ -250,6 +316,8 @@ public partial class UIOverlay2 : PanelContainer
 		PermanentText = _permanentText; // force update
 		VariableTextPrefixEx = _variableLabelPrefixExText; // force update
 		VariableTextSurfixEx = _variableLabelSurfixExText; // force update
+		NoBackground = _noBackground;
+		AlertMode = _alertMode;
 	}
 
 	public void Regenerate()
@@ -404,13 +472,20 @@ public partial class UIOverlay2 : PanelContainer
 
 		string animationToPlay = $"local/f{from}t{to}";
 
+		if (NoAnimation)
+		{
+			forceRapid = true;
+			animationToPlay = $"local/f{to}t{to}";
+		}
+
+
 		if (!IsValidControlMode(to))
 		{
 			EventLogger.LogMessage($"{nameof(UIOverlay2)}/{Name}", EventLogger.LogLevel.Error, $"Invalid control mode '{to}' was used!");
 			animationToPlay = "local/invalid";
 			forceRapid = true;
 		}
-		else if (!IsValidControlMode(from) || !_animator.GetAnimationLibrary("local").HasAnimation(animationToPlay.Split('/')[1]))
+		else if (!IsValidControlMode(from) || (!forceRapid && !_animator.GetAnimationLibrary("local").HasAnimation(animationToPlay.Split('/')[1]) ))
 		{
 			EventLogger.LogMessage($"{nameof(UIOverlay2)}/{Name}", EventLogger.LogLevel.Warning, $"Animation '{animationToPlay}' was not found, skipping animation.");
 			animationToPlay = $"local/f{to}t{to}";
@@ -475,6 +550,37 @@ public partial class UIOverlay2 : PanelContainer
 		_variableLabelSurfixEx?.AddThemeFontSizeOverride("font_size", _fontSurfixSizeEx);
 		_variableLabelPrefix?.AddThemeFontSizeOverride("font_size", _fontPrefixSize);
 		_variableLabelSurfix?.AddThemeFontSizeOverride("font_size", _fontSurfixSize);
+	}
+
+	private void AlertModeInternal(int alertMode)
+	{
+		if (Engine.IsEditorHint())
+			return;
+
+		switch ((AnimationAlert)alertMode)
+		{
+			case AnimationAlert.AlertSoft_Slow:
+				_animatorAlert.Play("alert_soft_1");
+				break;
+			case AnimationAlert.AlertSoft_Normal:
+				_animatorAlert.Play("alert_soft_2");
+				break;
+			case AnimationAlert.AlertSoft_Fast:
+				_animatorAlert.Play("alert_soft_3");
+				break;
+			case AnimationAlert.AlertHard_Slow:
+				_animatorAlert.Play("alert_hard_1");
+				break;
+			case AnimationAlert.AlertHard_Normal:
+				_animatorAlert.Play("alert_hard_2");
+				break;
+			case AnimationAlert.AlertHard_Fast:
+				_animatorAlert.Play("alert_hard_3");
+				break;
+			default:
+				_animatorAlert.Stop();
+				break;
+		}
 	}
 
 }

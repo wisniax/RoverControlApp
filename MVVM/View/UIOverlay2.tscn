@@ -1,30 +1,148 @@
-[gd_scene load_steps=4 format=3 uid="uid://dp1udlu6cpe2h"]
+[gd_scene load_steps=13 format=3 uid="uid://dp1udlu6cpe2h"]
 
+[ext_resource type="StyleBox" uid="uid://bdljusybteiyy" path="res://Resources/Ovarhaul2025/UIOverlay2_nobg.tres" id="1_30pg1"]
+[ext_resource type="StyleBox" uid="uid://jr1lllce0kk" path="res://Resources/Ovarhaul2025/UIOverlay2_normal.tres" id="1_iba58"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/UIOverlay2.cs" id="1_qdt1d"]
 [ext_resource type="FontVariation" uid="uid://dfmxywt4ro1vh" path="res://Resources/Ovarhaul2025/Fonts/MPLUS2/MPLUS2-MediumBold.tres" id="2_g7u1j"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2hlck"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0.165656, 0.165656, 0.165656, 1)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(1, 1, 1, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+[sub_resource type="Animation" id="Animation_8768b"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
 
-[node name="UIOverlay2" type="PanelContainer" node_paths=PackedStringArray("_animator", "_staticLabel", "_variableLabel", "_variableLabelPrefix", "_variableLabelSurfix", "_variableLabelPrefixEx", "_variableLabelSurfixEx")]
+[sub_resource type="Animation" id="Animation_q5shi"]
+resource_name = "alert_hard"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_jckau"]
+resource_name = "alert_hard_fast"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_7qf1w"]
+resource_name = "alert_hard_veryfast"
+length = 2.0
+loop_mode = 1
+step = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 0
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_feso3"]
+resource_name = "alert_soft"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.2, 1, 1.8),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_81i5k"]
+resource_name = "alert_soft_fast"
+length = 2.0
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.1, 0.5, 0.9, 1.1, 1.5, 1.9),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_45gby"]
+resource_name = "alert_soft_veryfast"
+length = 2.0
+loop_mode = 1
+step = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1), Color(1, 1, 1, 0.392157), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1ugfj"]
+_data = {
+"RESET": SubResource("Animation_8768b"),
+"alert_hard_1": SubResource("Animation_q5shi"),
+"alert_hard_2": SubResource("Animation_jckau"),
+"alert_hard_3": SubResource("Animation_7qf1w"),
+"alert_soft_1": SubResource("Animation_feso3"),
+"alert_soft_2": SubResource("Animation_81i5k"),
+"alert_soft_3": SubResource("Animation_45gby")
+}
+
+[node name="UIOverlay2" type="PanelContainer" node_paths=PackedStringArray("_animator", "_animatorAlert", "_staticLabel", "_variableLabel", "_variableLabelPrefix", "_variableLabelSurfix", "_variableLabelPrefixEx", "_variableLabelSurfixEx")]
 offset_right = 266.0
-offset_bottom = 62.0
-theme_override_styles/panel = SubResource("StyleBoxFlat_2hlck")
+offset_bottom = 52.0
+theme_override_styles/panel = ExtResource("1_iba58")
 script = ExtResource("1_qdt1d")
 _animator = NodePath("AnimationPlayer")
+_animatorAlert = NodePath("AnimationPlayerAlert")
 _backgroundNodePath = NodePath(".")
 _animatedLabelNodePath = NodePath("MarginContainer/HBoxContainer/VariableTextRegion/Variable")
 _staticLabel = NodePath("MarginContainer/HBoxContainer/Permanent")
@@ -33,6 +151,10 @@ _variableLabelPrefix = NodePath("MarginContainer/HBoxContainer/VariableTextRegio
 _variableLabelSurfix = NodePath("MarginContainer/HBoxContainer/VariableTextRegion/VariableSurfix")
 _variableLabelPrefixEx = NodePath("MarginContainer/HBoxContainer/VariableTextRegion/VariablePrefixEx")
 _variableLabelSurfixEx = NodePath("MarginContainer/HBoxContainer/VariableTextRegion/VariableSurfixEx")
+_normalStyle = ExtResource("1_iba58")
+_noBgStyle = ExtResource("1_30pg1")
+NoAnimation = true
+FontPrefixSize = 30
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 2
@@ -54,7 +176,8 @@ vertical_alignment = 1
 
 [node name="VariableTextRegion" type="HBoxContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 6
+size_flags_horizontal = 2
+theme_override_constants/separation = 0
 
 [node name="VariablePrefixEx" type="Label" parent="MarginContainer/HBoxContainer/VariableTextRegion"]
 layout_mode = 2
@@ -66,7 +189,7 @@ uppercase = true
 [node name="VariablePrefix" type="Label" parent="MarginContainer/HBoxContainer/VariableTextRegion"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_g7u1j")
-theme_override_font_sizes/font_size = 20
+theme_override_font_sizes/font_size = 30
 vertical_alignment = 1
 uppercase = true
 
@@ -74,7 +197,7 @@ uppercase = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_g7u1j")
 theme_override_font_sizes/font_size = 20
-text = "Variable"
+text = "*"
 vertical_alignment = 1
 uppercase = true
 
@@ -93,3 +216,8 @@ vertical_alignment = 1
 uppercase = true
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[node name="AnimationPlayerAlert" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_1ugfj")
+}
