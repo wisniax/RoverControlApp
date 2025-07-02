@@ -54,6 +54,9 @@ public partial class UIOverlay2 : PanelContainer
 	NodePath _animatedLabelNodePath = null!;
 
 	[Export]
+	HBoxContainer _variableTextRegion = null!;
+
+	[Export]
 	Label? _staticLabel;
 
 	[Export]
@@ -161,6 +164,7 @@ public partial class UIOverlay2 : PanelContainer
 			if (IsInsideTree())
 			{
 				CallDeferred(MethodName.AddThemeStyleboxOverride, "panel", _noBackground ? _noBgStyle : _normalStyle);
+				_variableTextRegion.SetDeferred(PropertyName.SizeFlagsHorizontal, _noBackground ? (long)SizeFlags.ShrinkBegin : (long)SizeFlags.ShrinkCenter | (long)SizeFlags.Expand);
 			}
 		}
 	}
