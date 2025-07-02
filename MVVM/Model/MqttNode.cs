@@ -23,7 +23,7 @@ namespace RoverControlApp.MVVM.Model;
 public partial class MqttNode : Node
 {
 	[Signal]
-	public delegate void ConnectionChangedEventHandler(ConnectionState state);
+	public delegate void ConnectionChangedEventHandler(CommunicationState state);
 
 	[Signal]
 	public delegate void MessageReceivedEventHandler(string topic, MqttNodeMessage message);
