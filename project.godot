@@ -16,7 +16,7 @@ config/features=PackedStringArray("4.3", "C#", "GL Compatibility")
 run/max_fps=60
 run/low_processor_mode=true
 boot_splash/bg_color=Color(0.0627451, 0.0627451, 0.0627451, 1)
-boot_splash/image="res://Resources/RAPpl_standard_BG.png"
+boot_splash/image="res://Resources/RAPpl_rca_standard_BG.png"
 config/icon="res://Resources/RAPpl_mini_noBG.svg"
 
 [autoload]

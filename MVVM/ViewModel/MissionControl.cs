@@ -234,6 +234,7 @@ public partial class MissionControl : VBoxContainer
 
 	public void LoadSizeAndPos()
 	{
+		return; //TODO migrate to widget
 		var vec2String = LocalSettings.Singleton.General.MissionControlSize.Split(';');
 		Size = new Vector2I(Convert.ToInt32(vec2String[0]), Convert.ToInt32(vec2String[1]));
 		vec2String = LocalSettings.Singleton.General.MissionControlPosition.Split(';');

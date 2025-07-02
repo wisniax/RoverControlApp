@@ -10,6 +10,7 @@ using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.Core.RoverControllerPresets;
 using RoverControlApp.MVVM.Model;
+using RoverControlApp.MVVM.ViewModel.MainView_Panel;
 
 namespace RoverControlApp.MVVM.ViewModel
 {
@@ -23,6 +24,14 @@ namespace RoverControlApp.MVVM.ViewModel
 			SkipCameraAndNotes = 3,
 		}
 
+		private enum TopPanelMode
+		{
+			Full = 0,
+			FullExtra = 1,
+			Mini = 2,
+			MiniExtra = 3,
+		}
+
 		private WeakReference<RtspStreamClient>? _rtspClientWeak;
 		private WeakReference<OnvifPtzCameraController>? _ptzClientWeak;
 
@@ -34,19 +43,10 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ImageTexture? _imTexture;
 
 		private InputHelpHintMode _inputHelpHintMode = InputHelpHintMode.Hidden;
+		private TopPanelMode _mainTopPanelMode = TopPanelMode.Full;
 
 		[Export]
 		private TextureRect imTextureRect = null!;
-		[Export]
-		private RoverMode_UIOverlay RoverModeUIDis = null!;
-		[Export]
-		private DriveMode_UIOverlay DriveModeUIDis = null!;
-		[Export]
-		private SafeMode_UIOverlay SafeModeUIDis = null!;
-		[Export]
-		private Grzyb_UIOverlay GrzybUIDis = null!;
-		[Export]
-		private MissionStatus_UIOverlay MissionStatusUIDis = null!;
 
 		[Export]
 		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!, ShowBatteryMonitor = null!;
@@ -67,19 +67,19 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private InputHelpMaster InputHelpMaster = null!;
 
+		[Export]
+		private TopPanelBase MainPanelTopMini = null!;
+		[Export]
+		private TopPanelBase MainPanelTopFull = null!;
+
 
 		public override void _EnterTree()
 		{
 			SettingsManagerNode.Target = LocalSettings.Singleton;
 
-			PressedKeys.Singleton.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnKinematicModeChanged += DriveModeUIDis.KinematicModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged += InputHelp_HandleControlModeChanged;
 			PressedKeys.Singleton.ControllerPresetChanged += InputHelp_HandleInputPresetChanged;
-			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			BatteryMonitor.OnBatteryDataChanged += HandleBatteryPercentageChangedHandler;
@@ -93,9 +93,6 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			MissionControlNode.LoadSizeAndPos();
 			MissionControlNode.SMissionControlVisualUpdate();
-			Task.Run(async () => await MissionStatusUIDis.StatusChangeSubscriber(MissionStatus.Singleton.Status));
-
-			RoverModeUIDis.ControlMode = (int)PressedKeys.Singleton.ControlMode;
 
 			ManagePtzStatus();
 			ManageRtspStatus();
@@ -110,14 +107,9 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 
-			PressedKeys.Singleton.OnControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnKinematicModeChanged -= DriveModeUIDis.KinematicModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged -= DriveModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged -= InputHelp_HandleControlModeChanged;
 			PressedKeys.Singleton.ControllerPresetChanged -= InputHelp_HandleInputPresetChanged;
-			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			BatteryMonitor.OnBatteryDataChanged -= HandleBatteryPercentageChangedHandler;
@@ -445,6 +437,53 @@ namespace RoverControlApp.MVVM.ViewModel
 				return true;
 			}
 			return false;
+		}
+
+		private void OnMainPanelTop_LayoutChange()
+		{
+			switch (Input.IsKeyPressed(Key.Ctrl))
+			{
+				case true when _mainTopPanelMode == TopPanelMode.Full:
+					_mainTopPanelMode = TopPanelMode.FullExtra;
+					break;
+				case true when _mainTopPanelMode == TopPanelMode.FullExtra:
+					_mainTopPanelMode = TopPanelMode.Full;
+					break;
+				case true when _mainTopPanelMode == TopPanelMode.Mini:
+					_mainTopPanelMode = TopPanelMode.MiniExtra;
+					break;
+				case true when _mainTopPanelMode == TopPanelMode.MiniExtra:
+					_mainTopPanelMode = TopPanelMode.Mini;
+					break;
+				default:
+					_mainTopPanelMode = (TopPanelMode)(((int)_mainTopPanelMode + 2) % 4);
+					break;
+			}
+
+			MainPanelTop_LayoutApply();
+		}
+
+		private void MainPanelTop_LayoutApply()
+		{
+			if (_mainTopPanelMode == TopPanelMode.Full || _mainTopPanelMode == TopPanelMode.FullExtra)
+			{
+				MainPanelTopFull.PanelVisible = true;
+				MainPanelTopMini.PanelVisible = false;
+			}
+			else
+			{
+				MainPanelTopFull.PanelVisible = false;
+				MainPanelTopMini.PanelVisible = true;
+			}
+
+			if (_mainTopPanelMode == TopPanelMode.FullExtra || _mainTopPanelMode == TopPanelMode.MiniExtra)
+			{
+				FancyDebugViewRLab.Visible = true;
+			}
+			else
+			{
+				FancyDebugViewRLab.Visible = false;
+			}
 		}
 
 		public bool CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")

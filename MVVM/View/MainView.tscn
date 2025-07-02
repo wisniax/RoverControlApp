@@ -1,21 +1,382 @@
-[gd_scene load_steps=26 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=66 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Theme" uid="uid://mjdtbskragnd" path="res://Resources/Ovarhaul2025/Ovarhaul2025.theme" id="1_8861l"]
-[ext_resource type="FontVariation" uid="uid://bio2ftui85vqm" path="res://Resources/Ovarhaul2025/Fonts/MPLUS2/MPLUS2-SlightBold.tres" id="3_lao64"]
-[ext_resource type="PackedScene" uid="uid://bpm7uiv1e6n8i" path="res://MVVM/View/UIOverlayTemplate.tscn" id="3_mtbtk"]
-[ext_resource type="Texture2D" uid="uid://b6ko2wo6b6fh0" path="res://Resources/RAPpl_poziomo_noBG.svg" id="3_vg1qh"]
-[ext_resource type="Script" path="res://MVVM/ViewModel/Grzyb_UIOverlay.cs" id="4_2nwr4"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/MainView_Panels/TopFull.cs" id="3_5kpi0"]
+[ext_resource type="Texture2D" uid="uid://batjiqxksfxpg" path="res://Resources/RAPpl_rca_standard_BG.svg" id="3_ria73"]
+[ext_resource type="StyleBox" uid="uid://bdljusybteiyy" path="res://Resources/Ovarhaul2025/UIOverlay2_nobg.tres" id="4_6oqvw"]
 [ext_resource type="PackedScene" uid="uid://em10imnbie42" path="res://MVVM/View/SettingsManager.tscn" id="4_b20oh"]
-[ext_resource type="Script" path="res://MVVM/ViewModel/RoverMode_UIOverlay.cs" id="4_bwker"]
+[ext_resource type="Script" path="res://MVVM/Model/UIOverlaySetting.cs" id="4_de84f"]
+[ext_resource type="Texture2D" uid="uid://ds61ow3vb4ygy" path="res://Resources/Ovarhaul2025/Fonts/lucide-icon-font-main/rca-variant/rca-video-off.svg" id="4_s1ejr"]
 [ext_resource type="PackedScene" uid="uid://crakb6uxv2yt8" path="res://MVVM/View/MissionControl.tscn" id="4_wrhi8"]
-[ext_resource type="Script" path="res://MVVM/ViewModel/MissionStatus_UIOverlay.cs" id="6_4tmru"]
-[ext_resource type="Script" path="res://MVVM/ViewModel/DriveMode_UIOverlay.cs" id="6_j447r"]
-[ext_resource type="Script" path="res://MVVM/ViewModel/SafeMode_UIOverlay.cs" id="7_ssyiv"]
+[ext_resource type="PackedScene" uid="uid://dp1udlu6cpe2h" path="res://MVVM/View/UIOverlay2.tscn" id="5_xbxoj"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/MainView_Panels/TopMini.cs" id="8_iy8b2"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MaxSizeContainer.cs" id="13_0svft"]
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
+
+[sub_resource type="Resource" id="Resource_v0xrc"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.8, 0.192, 0.202133, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "N/A"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_8o56p"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.83, 0, 0, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Disarmed"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_cmr6r"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.526673, 0.737821, 0.488602, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Drive/OLD"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_r07qe"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0, 0.813871, 0.0120369, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Drive/AKM"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_pj4sb"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.580455, 0.742058, 0, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Drive/CRB"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_qqwsn"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(2.21401e-06, 0.797651, 0.483326, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Drive/SPN"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_s70ri"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.804198, 0.6562, 3.85046e-07, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Drive/BRK"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_opeq8"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.947514, 0.569255, 0, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Manipulator"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_8b20b"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(1, 0.434737, 0.777556, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Sampler"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_qap50"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.556863, 0.647059, 1, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Autonomy"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_4od4g"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(1, 0.399504, 0.878131, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "N/A"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_wn0xy"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.8, 0.192, 0.202133, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "STOP"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_mor7r"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.196078, 0.803922, 0.196078, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "GO"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_nu2f8"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(1, 0, 0.0166664, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "N/A"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_x887d"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.732444, 0.573923, 1, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Created"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_fetk0"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(1, 0.85, 0, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Connecting"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_i6o2u"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.196078, 0.803922, 0.196078, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Connected"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_sjd7i"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.779966, 0.546684, 1, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Closing"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_tlg1o"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.112858, 0.722827, 1, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Closed"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_n5xrf"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.86, 0.0946, 0.107356, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = "Faulted"
+TextSurfix = ""
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y5kc6"]
+
+[sub_resource type="Resource" id="Resource_yg0mv"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.8, 0.192, 0.202133, 1)
+UseFontAsBackColor = false
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_pjx2p"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.83, 0, 0, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_5c4w6"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.526673, 0.737821, 0.488602, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = " OLD"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_hrt4a"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0, 0.813871, 0.0120369, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = " AKM"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_i40yi"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.580455, 0.742058, 0, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = " CRB"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_sqlng"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(2.21401e-06, 0.797651, 0.483326, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = " SPN"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_c3u1j"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.804198, 0.6562, 3.85046e-07, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = " BRK"
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_0n0cx"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.947514, 0.569255, 0, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_1kwso"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(1, 0.434737, 0.777556, 1)
+UseFontAsBackColor = false
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_q0gue"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.558559, 0.64748, 1, 1)
+UseFontAsBackColor = false
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_4uumx"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(1, 0.399504, 0.878131, 1)
+UseFontAsBackColor = false
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_g2l2u"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.8, 0.192, 0.202133, 1)
+UseFontAsBackColor = false
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_iwkun"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.196078, 0.803922, 0.196078, 1)
+UseFontAsBackColor = false
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_dncim"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.851762, 0.116233, 0, 1)
+UseFontAsBackColor = false
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_1xsc5"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.732444, 0.573923, 1, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_e58yi"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(1, 0.85, 0, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_3ckgd"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.196078, 0.803922, 0.196078, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_q27vw"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.779966, 0.546684, 1, 1)
+UseFontAsBackColor = true
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_uxif7"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.112858, 0.722827, 1, 1)
+UseFontAsBackColor = false
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
+
+[sub_resource type="Resource" id="Resource_2gjfp"]
+script = ExtResource("4_de84f")
+BackColor = Color(0, 0.392157, 0, 1)
+FontColor = Color(0.8, 0.192, 0.202133, 1)
+UseFontAsBackColor = false
+TextPrefix = ""
+Text = ""
+TextSurfix = ""
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -52,7 +413,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "ZedMonitor", "BatteryMonitor", "InputHelpMaster", "MainPanelTopMini", "MainPanelTopFull")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -61,24 +422,132 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_8861l")
 script = ExtResource("1_84vv0")
-imTextureRect = NodePath("CameraView")
-RoverModeUIDis = NodePath("RoverModeUIDis")
-DriveModeUIDis = NodePath("DriveModeUIDis")
-SafeModeUIDis = NodePath("SpeedLimiterUIDis")
-GrzybUIDis = NodePath("GrzybUIDis")
-MissionStatusUIDis = NodePath("MissonStatusUIDis")
-ShowSettingsBtn = NodePath("HBoxContainer/ShowSettingsBtn")
-ShowVelMonitor = NodePath("HBoxContainer/ShowVelMonitor")
-ShowMissionControlBrn = NodePath("HBoxContainer/ShowMissionControl")
-ShowBatteryMonitor = NodePath("HBoxContainer/ShowBatteryMonitor")
-SettingsManagerNode = NodePath("SettingsManager")
-MissionControlNode = NodePath("MissionControl")
-FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
-ZedMonitor = NodePath("ZedMonitor")
-BatteryMonitor = NodePath("BatteryMonitor")
-InputHelpMaster = NodePath("MaxSizeContainer/InputHelpMaster")
+imTextureRect = NodePath("VBoxContainer/MainCenter/CameraView")
+ShowSettingsBtn = NodePath("VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn")
+ShowVelMonitor = NodePath("VBoxContainer/MainPanelBottom/BottomButtons/ShowVelMonitor")
+ShowMissionControlBrn = NodePath("VBoxContainer/MainPanelBottom/BottomButtons/ShowMissionControl")
+ShowBatteryMonitor = NodePath("VBoxContainer/MainPanelBottom/BottomButtons/ShowBatteryMonitor")
+SettingsManagerNode = NodePath("ScreenPanels/SettingsManager")
+MissionControlNode = NodePath("ScreenPanels/MissionControl")
+FancyDebugViewRLab = NodePath("VBoxContainer/MainCenter/Overlays/FancyDebugViewRLab")
+ZedMonitor = NodePath("ScreenPanels/ZedMonitor")
+BatteryMonitor = NodePath("ScreenPanels/BatteryMonitor")
+InputHelpMaster = NodePath("ScreenPanels/MaxSizeContainer/InputHelpMaster")
+MainPanelTopMini = NodePath("VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer/Controller")
+MainPanelTopFull = NodePath("VBoxContainer/MainPanelTop/Zones/Overlays/Controller")
 
-[node name="BgColor" type="ColorRect" parent="."]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="MainPanelTop" type="PanelContainer" parent="VBoxContainer"]
+z_index = 2
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_vertical = 0
+theme_type_variation = &"PanelRcaMainPanelTop"
+
+[node name="Zones" type="HBoxContainer" parent="VBoxContainer/MainPanelTop"]
+layout_mode = 2
+
+[node name="Overlays" type="HFlowContainer" parent="VBoxContainer/MainPanelTop/Zones"]
+layout_mode = 2
+size_flags_horizontal = 3
+last_wrap_alignment = 1
+
+[node name="Controller" type="Node" parent="VBoxContainer/MainPanelTop/Zones/Overlays" node_paths=PackedStringArray("_panelRoot", "_roverOverlay", "_phisEstopOverlay", "_mqttOverlay")]
+script = ExtResource("3_5kpi0")
+_panelRoot = NodePath("../../..")
+_roverOverlay = NodePath("../Rover")
+_phisEstopOverlay = NodePath("../Phis_ E-Stop")
+_mqttOverlay = NodePath("../MQTT")
+AlertAnimation = false
+
+[node name="Rover" parent="VBoxContainer/MainPanelTop/Zones/Overlays" instance=ExtResource("5_xbxoj")]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+Presets = [SubResource("Resource_v0xrc"), SubResource("Resource_8o56p"), SubResource("Resource_cmr6r"), SubResource("Resource_r07qe"), SubResource("Resource_pj4sb"), SubResource("Resource_qqwsn"), SubResource("Resource_s70ri"), SubResource("Resource_opeq8"), SubResource("Resource_8b20b"), SubResource("Resource_qap50")]
+AnimateAll = true
+NoAnimation = true
+PermanentText = "Rover:"
+FontSize = 22
+FontPrefixSize = 22
+FontSurfixSize = 22
+FontPrefixSizeEx = 22
+FontSurfixSizeEx = 22
+
+[node name="Phis_ E-Stop" parent="VBoxContainer/MainPanelTop/Zones/Overlays" instance=ExtResource("5_xbxoj")]
+custom_minimum_size = Vector2(210, 0)
+layout_mode = 2
+Presets = [SubResource("Resource_4od4g"), SubResource("Resource_wn0xy"), SubResource("Resource_mor7r")]
+AnimateAll = true
+NoAnimation = true
+PermanentText = "E-Stop:"
+FontSize = 22
+FontPrefixSize = 22
+FontSurfixSize = 22
+FontPrefixSizeEx = 22
+FontSurfixSizeEx = 22
+
+[node name="MQTT" parent="VBoxContainer/MainPanelTop/Zones/Overlays" instance=ExtResource("5_xbxoj")]
+custom_minimum_size = Vector2(232, 0)
+layout_mode = 2
+size_flags_horizontal = 10
+Presets = [SubResource("Resource_nu2f8"), SubResource("Resource_x887d"), SubResource("Resource_fetk0"), SubResource("Resource_i6o2u"), SubResource("Resource_sjd7i"), SubResource("Resource_tlg1o"), SubResource("Resource_n5xrf")]
+AnimateAll = true
+NoAnimation = true
+PermanentText = "MQTT:"
+FontSize = 22
+FontPrefixSize = 22
+FontSurfixSize = 22
+FontPrefixSizeEx = 22
+FontSurfixSizeEx = 22
+
+[node name="Buttons" type="HBoxContainer" parent="VBoxContainer/MainPanelTop/Zones"]
+layout_mode = 2
+size_flags_horizontal = 8
+
+[node name="BattBtn" type="Button" parent="VBoxContainer/MainPanelTop/Zones/Buttons"]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+theme_type_variation = &"ButtonRcaH1"
+text = "230V "
+alignment = 2
+
+[node name="BattIcon" type="Label" parent="VBoxContainer/MainPanelTop/Zones/Buttons/BattBtn"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -6.0
+offset_right = -6.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = " "
+vertical_alignment = 1
+
+[node name="LayoutBtn" type="Button" parent="VBoxContainer/MainPanelTop/Zones/Buttons"]
+layout_mode = 2
+theme_type_variation = &"ButtonRcaH1"
+theme_override_font_sizes/font_size = 20
+text = ""
+
+[node name="MainCenter" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_y5kc6")
+
+[node name="Background" type="Control" parent="VBoxContainer/MainCenter"]
+layout_mode = 2
+metadata/_edit_lock_ = true
+
+[node name="BgColor" type="ColorRect" parent="VBoxContainer/MainCenter/Background"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -87,51 +556,144 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.0627451, 0.0627451, 0.0627451, 1)
 
-[node name="Logo" type="TextureRect" parent="BgColor"]
+[node name="Logo" type="TextureRect" parent="VBoxContainer/MainCenter/Background"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("3_vg1qh")
-expand_mode = 5
+texture = ExtResource("3_ria73")
+expand_mode = 3
 stretch_mode = 5
 
-[node name="NoCameraFeed" type="Label" parent="BgColor"]
+[node name="NoVideo" type="TextureRect" parent="VBoxContainer/MainCenter/Background"]
 layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -64.0
-offset_top = 55.0
-offset_right = 64.0
-offset_bottom = 241.0
+anchors_preset = -1
+anchor_left = 0.46441
+anchor_top = 0.0284672
+anchor_right = 0.53559
+anchor_bottom = 0.167883
 grow_horizontal = 2
-theme_override_colors/font_color = Color(0.458613, 0.180964, 0.0216873, 1)
-theme_override_fonts/font = ExtResource("3_lao64")
-theme_override_font_sizes/font_size = 128
-text = ""
+texture = ExtResource("4_s1ejr")
+expand_mode = 1
+stretch_mode = 5
+metadata/_edit_use_anchors_ = true
 
-[node name="CameraView" type="TextureRect" parent="."]
+[node name="CameraView" type="TextureRect" parent="VBoxContainer/MainCenter"]
+layout_mode = 2
+size_flags_vertical = 3
+expand_mode = 2
+metadata/_edit_lock_ = true
+
+[node name="Overlays" type="VBoxContainer" parent="VBoxContainer/MainCenter"]
+layout_mode = 2
+
+[node name="MainPanelTopMini" type="Panel" parent="VBoxContainer/MainCenter/Overlays"]
+visible = false
+z_index = 2
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+size_flags_vertical = 0
+theme_type_variation = &"PanelRcaMainPanelTopMini"
+
+[node name="AlwaysVisible" type="HBoxContainer" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini"]
+layout_mode = 2
+anchor_right = 1.0
+offset_left = 2.0
+offset_top = 4.0
+offset_right = -2.0
+offset_bottom = 55.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Controller" type="Node" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer" node_paths=PackedStringArray("_panelRoot", "_roverOverlay", "_phisEstopOverlay", "_mqttOverlay")]
+script = ExtResource("8_iy8b2")
+_panelRoot = NodePath("../../..")
+_roverOverlay = NodePath("../Rover")
+_phisEstopOverlay = NodePath("../Phis_ E-Stop")
+_mqttOverlay = NodePath("../MQTT")
+
+[node name="Rover" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer" instance=ExtResource("5_xbxoj")]
+custom_minimum_size = Vector2(210, 0)
+layout_mode = 2
+tooltip_text = "WisniaHfast"
+theme_override_styles/panel = ExtResource("4_6oqvw")
+Presets = [SubResource("Resource_yg0mv"), SubResource("Resource_pjx2p"), SubResource("Resource_5c4w6"), SubResource("Resource_hrt4a"), SubResource("Resource_i40yi"), SubResource("Resource_sqlng"), SubResource("Resource_c3u1j"), SubResource("Resource_0n0cx"), SubResource("Resource_1kwso"), SubResource("Resource_q0gue")]
+NoAnimation = true
+NoBackground = true
+PermanentText = ""
+FontSize = 28
+FontPrefixSize = 28
+FontSurfixSize = 28
+VariableTextPrefixEx = ""
+FontPrefixSizeEx = 28
+FontSurfixSizeEx = 28
+
+[node name="Phis_ E-Stop" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer" instance=ExtResource("5_xbxoj")]
+layout_mode = 2
+theme_override_styles/panel = ExtResource("4_6oqvw")
+Presets = [SubResource("Resource_4uumx"), SubResource("Resource_g2l2u"), SubResource("Resource_iwkun")]
+NoAnimation = true
+NoBackground = true
+PermanentText = ""
+FontSize = 28
+FontPrefixSize = 28
+FontSurfixSize = 28
+FontPrefixSizeEx = 28
+FontSurfixSizeEx = 28
+
+[node name="MQTT" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer" instance=ExtResource("5_xbxoj")]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_styles/panel = ExtResource("4_6oqvw")
+ControlMode = 5
+Presets = [SubResource("Resource_dncim"), SubResource("Resource_1xsc5"), SubResource("Resource_e58yi"), SubResource("Resource_3ckgd"), SubResource("Resource_q27vw"), SubResource("Resource_uxif7"), SubResource("Resource_2gjfp")]
+NoAnimation = true
+AlertMode = 1
+NoBackground = true
+PermanentText = ""
+FontSize = 28
+FontPrefixSize = 28
+FontSurfixSize = 28
+FontPrefixSizeEx = 28
+FontSurfixSizeEx = 28
+
+[node name="BattBtn" type="Button" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible"]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+theme_type_variation = &"ButtonRcaH1"
+text = "230V "
+alignment = 2
+
+[node name="BattIcon" type="Label" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/BattBtn"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -6.0
+offset_right = -6.0
 grow_horizontal = 2
 grow_vertical = 2
-expand_mode = 2
+theme_override_font_sizes/font_size = 32
+text = " "
+vertical_alignment = 1
 
-[node name="FancyDebugViewRLab" type="RichTextLabel" parent="."]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 9.0
-offset_top = -135.0
-offset_right = 453.0
-offset_bottom = -39.0
-grow_vertical = 0
+[node name="LayoutBtn" type="Button" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible"]
+layout_mode = 2
+theme_type_variation = &"ButtonRcaH1"
+theme_override_font_sizes/font_size = 20
+text = ""
+
+[node name="FancyDebugViewRLab" type="RichTextLabel" parent="VBoxContainer/MainCenter/Overlays"]
+visible = false
+layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_w78xs")
 bbcode_enabled = true
 text = "1Line
@@ -142,136 +704,34 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="GrzybUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -378.0
-offset_top = 4.0
-offset_right = -378.0
-offset_bottom = 4.0
-grow_horizontal = 0
-script = ExtResource("4_2nwr4")
-Animator = NodePath("RoverMode/AnimationPlayer")
-BackgroundNodePath = NodePath("RoverMode/Background")
-LabelNodePath = NodePath("RoverMode/Label")
+[node name="MainPanelBottom" type="PanelContainer" parent="VBoxContainer"]
+z_index = 2
+layout_mode = 2
+size_flags_vertical = 8
+theme_type_variation = &"PanelRcaMainPanelBottom"
 
-[node name="RoverMode" parent="GrzybUIDis" index="0"]
-custom_minimum_size = Vector2(170, 26)
-offset_left = 13.0
-offset_right = 183.0
+[node name="BottomButtons" type="HBoxContainer" parent="VBoxContainer/MainPanelBottom"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
 
-[node name="RoverModeUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -181.0
-offset_top = 4.0
-offset_right = -181.0
-offset_bottom = 4.0
-grow_horizontal = 0
-script = ExtResource("4_bwker")
-Animator = NodePath("RoverMode/AnimationPlayer")
-BackgroundNodePath = NodePath("RoverMode/Background")
-LabelNodePath = NodePath("RoverMode/Label")
-
-[node name="RoverMode" parent="RoverModeUIDis" index="0"]
-custom_minimum_size = Vector2(180, 26)
-offset_left = -2.0
-offset_right = 178.0
-
-[node name="DriveModeUIDis" parent="." node_paths=PackedStringArray("_panelContainer", "Animator") instance=ExtResource("3_mtbtk")]
-visible = false
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -181.0
-offset_top = 36.0
-offset_right = -181.0
-offset_bottom = 36.0
-grow_horizontal = 0
-script = ExtResource("6_j447r")
-_panelContainer = NodePath("RoverMode")
-Animator = NodePath("RoverMode/AnimationPlayer")
-BackgroundNodePath = NodePath("RoverMode/Background")
-LabelNodePath = NodePath("RoverMode/Label")
-
-[node name="RoverMode" parent="DriveModeUIDis" index="0"]
-custom_minimum_size = Vector2(180, 26)
-offset_left = -2.0
-offset_right = 178.0
-
-[node name="SpeedLimiterUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
-visible = false
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -181.0
-offset_top = 68.0
-offset_right = -181.0
-offset_bottom = 68.0
-grow_horizontal = 0
-script = ExtResource("7_ssyiv")
-Animator = NodePath("RoverMode/AnimationPlayer")
-BackgroundNodePath = NodePath("RoverMode/Background")
-LabelNodePath = NodePath("RoverMode/Label")
-
-[node name="RoverMode" parent="SpeedLimiterUIDis" index="0"]
-custom_minimum_size = Vector2(180, 26)
-offset_left = -2.0
-offset_right = 178.0
-
-[node name="Background" parent="SpeedLimiterUIDis/RoverMode" index="0"]
-color = Color(0.321569, 0.792157, 0.956863, 1)
-
-[node name="MissonStatusUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
-layout_mode = 1
-offset_left = 8.0
-offset_top = 4.0
-offset_right = 8.0
-offset_bottom = 4.0
-script = ExtResource("6_4tmru")
-Animator = NodePath("RoverMode/AnimationPlayer")
-BackgroundNodePath = NodePath("RoverMode/Background")
-LabelNodePath = NodePath("RoverMode/Label")
-
-[node name="RoverMode" parent="MissonStatusUIDis" index="0"]
-custom_minimum_size = Vector2(210, 26)
-offset_right = 210.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -85.0
-offset_top = -40.0
-grow_horizontal = 0
-grow_vertical = 0
-
-[node name="BackCapture" type="Button" parent="HBoxContainer"]
+[node name="BackCapture" type="Button" parent="VBoxContainer/MainPanelBottom/BottomButtons"]
 layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"ButtonRcaH1"
 text = "BackCapture"
 
-[node name="RTSPCapture" type="Button" parent="HBoxContainer"]
+[node name="RTSPCapture" type="Button" parent="VBoxContainer/MainPanelBottom/BottomButtons"]
 layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"ButtonRcaH1"
 text = "RTSP Capture"
 
-[node name="Separator" type="Control" parent="HBoxContainer"]
+[node name="Separator" type="Control" parent="VBoxContainer/MainPanelBottom/BottomButtons"]
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 
-[node name="ShowMissionControl" type="Button" parent="HBoxContainer"]
+[node name="ShowMissionControl" type="Button" parent="VBoxContainer/MainPanelBottom/BottomButtons"]
 layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"ButtonRcaH1"
@@ -279,7 +739,7 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_psw5f")
 text = "MISSION CONTROL"
 
-[node name="ShowVelMonitor" type="Button" parent="HBoxContainer"]
+[node name="ShowVelMonitor" type="Button" parent="VBoxContainer/MainPanelBottom/BottomButtons"]
 layout_mode = 2
 tooltip_text = "Disabled - not functional"
 focus_mode = 0
@@ -289,7 +749,7 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_x20sx")
 text = "VEL MONITOR"
 
-[node name="ShowBatteryMonitor" type="Button" parent="HBoxContainer"]
+[node name="ShowBatteryMonitor" type="Button" parent="VBoxContainer/MainPanelBottom/BottomButtons"]
 layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"ButtonRcaH1"
@@ -297,7 +757,7 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_x20sx")
 text = "BATTERY"
 
-[node name="ShowZedMonitor" type="Button" parent="HBoxContainer"]
+[node name="ShowZedMonitor" type="Button" parent="VBoxContainer/MainPanelBottom/BottomButtons"]
 layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"ButtonRcaH1"
@@ -305,7 +765,7 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_nofgb")
 text = "GYRO"
 
-[node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
+[node name="ShowSettingsBtn" type="Button" parent="VBoxContainer/MainPanelBottom/BottomButtons"]
 layout_mode = 2
 focus_mode = 0
 theme_type_variation = &"ButtonRcaH1"
@@ -313,11 +773,25 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_gr50h")
 text = "SETTINGS"
 
-[node name="MissionControl" parent="." instance=ExtResource("4_wrhi8")]
+[node name="ScreenPanels" type="Control" parent="."]
+z_index = 4
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="MissionControl" parent="ScreenPanels" instance=ExtResource("4_wrhi8")]
 visible = false
 layout_mode = 0
+offset_left = 3.0
+offset_top = 65.0
+offset_right = 621.0
+offset_bottom = 519.0
 
-[node name="BatteryMonitor" parent="." instance=ExtResource("13_gec13")]
+[node name="BatteryMonitor" parent="ScreenPanels" instance=ExtResource("13_gec13")]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -325,14 +799,14 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -652.0
-offset_top = -377.0
+offset_left = -766.0
+offset_top = -417.0
 offset_right = -218.0
 offset_bottom = -45.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
+[node name="ZedMonitor" parent="ScreenPanels" instance=ExtResource("10_ypnjt")]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -347,7 +821,7 @@ offset_bottom = -45.38
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="MaxSizeContainer" type="Container" parent="."]
+[node name="MaxSizeContainer" type="Container" parent="ScreenPanels"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -360,8 +834,9 @@ mouse_filter = 2
 script = ExtResource("13_0svft")
 ChildMaxSize = Vector2(450, 9999)
 MinimalMargin = Vector2(700, 0)
+metadata/_edit_lock_ = true
 
-[node name="InputHelpMaster" parent="MaxSizeContainer" instance=ExtResource("13_1wevo")]
+[node name="InputHelpMaster" parent="ScreenPanels/MaxSizeContainer" instance=ExtResource("13_1wevo")]
 visible = false
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
@@ -372,28 +847,26 @@ ShowEmpty = true
 CycleHints = true
 metadata/_edit_lock_ = true
 
-[node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
+[node name="SettingsManager" parent="ScreenPanels" instance=ExtResource("4_b20oh")]
 visible = false
 layout_mode = 1
 anchors_preset = 11
 anchor_left = 1.0
 offset_left = -573.0
-offset_top = 29.0
+offset_top = 97.0
 offset_bottom = -40.0
 grow_horizontal = 0
 
-[connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
-[connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
-[connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
-[connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
-
-[editable path="GrzybUIDis"]
-[editable path="RoverModeUIDis"]
-[editable path="DriveModeUIDis"]
-[editable path="SpeedLimiterUIDis"]
-[editable path="MissonStatusUIDis"]
+[connection signal="LayoutChangePressed" from="VBoxContainer/MainPanelTop/Zones/Overlays/Controller" to="." method="OnMainPanelTop_LayoutChange"]
+[connection signal="pressed" from="VBoxContainer/MainPanelTop/Zones/Buttons/LayoutBtn" to="VBoxContainer/MainPanelTop/Zones/Overlays/Controller" method="OnLayoutChangePressed"]
+[connection signal="LayoutChangePressed" from="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer/Controller" to="." method="OnMainPanelTop_LayoutChange"]
+[connection signal="pressed" from="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/LayoutBtn" to="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer/Controller" method="OnLayoutChangePressed"]
+[connection signal="pressed" from="VBoxContainer/MainPanelBottom/BottomButtons/BackCapture" to="." method="OnBackCapture"]
+[connection signal="pressed" from="VBoxContainer/MainPanelBottom/BottomButtons/RTSPCapture" to="." method="OnRTSPCapture"]
+[connection signal="button_down" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowMissionControl" to="ScreenPanels/MissionControl" method="SaveSizeAndPos"]
+[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowMissionControl" to="ScreenPanels/MissionControl" method="set_visible"]
+[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowBatteryMonitor" to="ScreenPanels/BatteryMonitor" method="set_visible"]
+[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowZedMonitor" to="ScreenPanels/ZedMonitor" method="set_visible"]
+[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="ScreenPanels/SettingsManager" method="Redraw"]
+[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="ScreenPanels/SettingsManager" method="OnVisibilityChange"]
+[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="ScreenPanels/SettingsManager" method="set_visible"]

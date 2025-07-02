@@ -1,0 +1,266 @@
+using System.ServiceModel;
+using System.Threading.Tasks;
+
+using Godot;
+
+using RoverControlApp.Core;
+using RoverControlApp.MVVM.Model;
+
+namespace RoverControlApp.MVVM.ViewModel.MainView_Panel;
+
+public abstract partial class TopPanelBase : Node
+{
+	protected bool _panelVisible = true;
+	protected bool _alertAnimation = true;
+	protected MqttClasses.ControlMode _roverOverlay_controlMode;
+	protected MqttClasses.KinematicMode _roverOverlay_kinematicMode;
+	protected float _roverOverlay_speedLimiter;
+	protected UIOverlay2.AnimationAlert _roverOverlay_alertMode;
+	protected UIOverlay2.AnimationAlert _phisEstopOverlay_alertMode;
+	protected CommunicationState _mqttOverlay_connection;
+	protected UIOverlay2.AnimationAlert _mqttOverlay_alertMode;
+
+	[ExportGroup(".internal", "_")]
+
+	[Export]
+	protected Control _panelRoot = null!;
+
+	[Export]
+	protected UIOverlay2 _roverOverlay = null!;
+
+	[Export]
+	protected UIOverlay2 _phisEstopOverlay = null!;
+
+	[Export]
+	protected UIOverlay2 _mqttOverlay = null!;
+
+	protected UIOverlay2.AnimationAlert AnimationSlow => UseSoftAnimation ? UIOverlay2.AnimationAlert.AlertSoft_Slow : UIOverlay2.AnimationAlert.AlertHard_Slow;
+	protected UIOverlay2.AnimationAlert AnimationNormal => UseSoftAnimation ? UIOverlay2.AnimationAlert.AlertSoft_Normal : UIOverlay2.AnimationAlert.AlertHard_Normal;
+	protected UIOverlay2.AnimationAlert AnimationFast => UseSoftAnimation ? UIOverlay2.AnimationAlert.AlertSoft_Fast : UIOverlay2.AnimationAlert.AlertHard_Fast;
+
+	[Signal]
+	public delegate void LayoutChangePressedEventHandler();
+
+	[Export]
+	public bool PanelVisible
+	{
+		get => _panelVisible;
+		set
+		{
+			_panelVisible = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.PanelVisibleInternal);
+			}
+		}
+	}
+
+	[Export]
+	public bool AlertAnimation
+	{
+		get => _alertAnimation;
+		set
+		{
+			_alertAnimation = value;
+			if (IsInsideTree())
+			{
+				CallDeferred(MethodName.UpdateAlert);
+			}
+		}
+	}
+
+	[Export]
+	public bool AnimateInSync { get; set; } = true;
+
+	[Export]
+	public bool UseSoftAnimation { get; set; } = false;
+
+	public override void _Ready()
+	{
+		PressedKeys.Singleton.OnControlModeChanged += OnControlModeChanged;
+		PressedKeys.Singleton.OnKinematicModeChanged += OnKinematicModeChanged;
+		MqttNode.Singleton.ConnectionChanged += OnMqttConnectionChanged;
+		LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
+
+		_roverOverlay_controlMode = PressedKeys.Singleton.ControlMode;
+		_roverOverlay_kinematicMode = PressedKeys.Singleton.RoverMovement.Mode;
+		_roverOverlay_speedLimiter = LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : -1.0f;
+		_mqttOverlay_connection = MqttNode.Singleton.ConnectionState;
+
+		CallDeferred(MethodName.UpdateRoverOverlay);
+		CallDeferred(MethodName.UpdatePhisEStopOverlay);
+		CallDeferred(MethodName.UpdateMqttOverlay);
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		PressedKeys.Singleton.OnControlModeChanged -= OnControlModeChanged;
+		MqttNode.Singleton.ConnectionChanged -= OnMqttConnectionChanged;
+		LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
+
+
+		base.Dispose(disposing);
+	}
+
+	protected Task OnControlModeChanged(MqttClasses.ControlMode newMode)
+	{
+		_roverOverlay_controlMode = newMode;
+		CallDeferred(MethodName.UpdateRoverOverlay);
+		return Task.CompletedTask;
+	}
+
+	protected Task OnKinematicModeChanged(MqttClasses.KinematicMode newMode)
+	{
+		_roverOverlay_kinematicMode = newMode;
+		CallDeferred(MethodName.UpdateRoverOverlay);
+		return Task.CompletedTask;
+	}
+
+	protected void OnMqttConnectionChanged(CommunicationState state)
+	{
+		_mqttOverlay_connection = state;
+		GD.Print($"hello {state}");
+		CallDeferred(MethodName.UpdateMqttOverlay);
+	}
+
+	protected void OnSettingsPropertyChanged(StringName category, StringName property, Variant oldValue, Variant newValue)
+	{
+		if (category == LocalSettings.PropertyName.SpeedLimiter)
+		{
+			_roverOverlay_speedLimiter = LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : -1.0f;
+			CallDeferred(MethodName.UpdateRoverOverlay);
+		}
+	}
+
+	protected void UpdateAlert()
+	{
+		if (!AlertAnimation)
+		{
+			_roverOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
+			_phisEstopOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
+			_mqttOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
+			return;
+		}
+
+		bool changes = _roverOverlay.AlertMode != _roverOverlay_alertMode
+			|| _phisEstopOverlay.AlertMode != _phisEstopOverlay_alertMode
+			|| _mqttOverlay.AlertMode != _mqttOverlay_alertMode;
+
+		if (changes && AnimateInSync)
+		{
+			_roverOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
+			_phisEstopOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
+			_mqttOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
+		}
+
+		if (changes)
+		{
+			_roverOverlay.AlertMode = _roverOverlay_alertMode;
+			_phisEstopOverlay.AlertMode = _phisEstopOverlay_alertMode;
+			_mqttOverlay.AlertMode = _mqttOverlay_alertMode;
+		}
+	}
+
+	abstract protected string UpdateRoverOverlay_SpeedLimit();
+
+	protected void UpdateRoverOverlay()
+	{
+		_roverOverlay_alertMode = UIOverlay2.AnimationAlert.Off;
+		_roverOverlay.VariableTextSurfixEx = "";
+		switch (_roverOverlay_controlMode)
+		{
+			case MqttClasses.ControlMode.EStop:
+				_roverOverlay.ControlMode = 1;
+				_roverOverlay_alertMode = AnimationSlow;
+				break;
+			case MqttClasses.ControlMode.Rover when _roverOverlay_kinematicMode == MqttClasses.KinematicMode.Ackermann:
+				_roverOverlay.ControlMode = 3;
+				_roverOverlay.VariableTextSurfixEx = UpdateRoverOverlay_SpeedLimit();
+				break;
+			case MqttClasses.ControlMode.Rover when _roverOverlay_kinematicMode == MqttClasses.KinematicMode.Crab:
+				_roverOverlay.ControlMode = 4;
+				_roverOverlay.VariableTextSurfixEx = UpdateRoverOverlay_SpeedLimit();
+				break;
+			case MqttClasses.ControlMode.Rover when _roverOverlay_kinematicMode == MqttClasses.KinematicMode.Spinner:
+				_roverOverlay.ControlMode = 5;
+				_roverOverlay.VariableTextSurfixEx = UpdateRoverOverlay_SpeedLimit();
+				break;
+			case MqttClasses.ControlMode.Rover when _roverOverlay_kinematicMode == MqttClasses.KinematicMode.EBrake:
+				_roverOverlay.ControlMode = 6;
+				_roverOverlay.VariableTextSurfixEx = UpdateRoverOverlay_SpeedLimit();
+				break;
+			case MqttClasses.ControlMode.Rover:
+				_roverOverlay.ControlMode = 2;
+				_roverOverlay.VariableTextSurfixEx = UpdateRoverOverlay_SpeedLimit();
+				break;
+			case MqttClasses.ControlMode.Manipulator:
+				_roverOverlay.ControlMode = 7;
+				break;
+			case MqttClasses.ControlMode.Sampler:
+				_roverOverlay.ControlMode = 8;
+				break;
+			case MqttClasses.ControlMode.Autonomy:
+				_roverOverlay.ControlMode = 9;
+				break;
+			default:
+				_roverOverlay.ControlMode = 0;
+				_roverOverlay_alertMode = AnimationFast;
+				break;
+		}
+
+		UpdateAlert();
+	}
+
+	protected void UpdatePhisEStopOverlay()
+	{
+		_phisEstopOverlay.ControlMode = 0;
+		//_phisEstopOverlay_alertMode = AnimationSlow;
+
+		UpdateAlert();
+	}
+
+	protected void UpdateMqttOverlay()
+	{
+		_mqttOverlay_alertMode = AnimationSlow;
+		switch (_mqttOverlay_connection)
+		{
+			case CommunicationState.Created:
+				_mqttOverlay.ControlMode = 1;
+				break;
+			case CommunicationState.Opening:
+				_mqttOverlay.ControlMode = 2;
+				_mqttOverlay_alertMode = AnimationNormal;
+				break;
+			case CommunicationState.Opened:
+				_mqttOverlay.ControlMode = 3;
+				_mqttOverlay_alertMode = UIOverlay2.AnimationAlert.Off;
+				break;
+			case CommunicationState.Closing:
+				_mqttOverlay.ControlMode = 4;
+				break;
+			case CommunicationState.Closed:
+				_mqttOverlay.ControlMode = 5;
+				break;
+			case CommunicationState.Faulted:
+				_mqttOverlay.ControlMode = 6;
+				_mqttOverlay_alertMode = AnimationFast;
+				break;
+			default:
+				_mqttOverlay.ControlMode = 0;
+				_mqttOverlay_alertMode = AnimationFast;
+				break;
+		}
+
+		UpdateAlert();
+	}
+
+	protected void PanelVisibleInternal()
+	{
+		_panelRoot.Visible = PanelVisible;
+	}
+
+	protected void OnLayoutChangePressed()
+	{
+		EmitSignal(SignalName.LayoutChangePressed);
+	}
+}
