@@ -77,10 +77,21 @@ public partial class VelMonitor : Panel
 																		    $"RPM: ??? rpm\n" +
 																			$"Current: ??? A");
 				}
-				_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Delay: ??? s");
+				_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: ??? s");
 			}
 			else
-				_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Delay: {((int)Math.Round((delay).TotalMilliseconds, 0)/10)/100f} s");
+			{
+				if (delay > _lastDelay[Array.IndexOf(_lastUpdate, i)])
+				{
+					_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: {delay.Milliseconds:F0} ms");
+					_lastDelay[Array.IndexOf(_lastUpdate, i)] = delay;
+				}
+				else
+				{
+					_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: {_lastDelay[Array.IndexOf(_lastUpdate, i)].Milliseconds:F0} ms");
+				}
+			}
+
 		}
 	}
 
@@ -132,7 +143,9 @@ public partial class VelMonitor : Panel
 				if (driveMotorID[i] == velData.VescId)
 				{
 					UpdateDriveMotorInfoHandler(i, velData);
+					_lastDelay[i] = DateTime.Now - _lastUpdate[i];
 					_lastUpdate[i] = DateTime.Now;
+
 					break;
 				}
 				continue;
