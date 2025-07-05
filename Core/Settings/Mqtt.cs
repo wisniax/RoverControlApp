@@ -1,7 +1,9 @@
-﻿using Godot;
-using RoverControlApp.Core.JSONConverters;
-using System;
+﻿using System;
 using System.Text.Json.Serialization;
+
+using Godot;
+
+using RoverControlApp.Core.JSONConverters;
 
 namespace RoverControlApp.Core.Settings;
 
@@ -17,7 +19,6 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicManipulatorControl = "ManipulatorControl";
 		_topicRoverFeedback = "RoverFeedback";
 		_topicRoverStatus = "RoverStatus";
-		_topicRoverContainer = "RoverContainer";
 		_topicMissionStatus = "MissionStatus";
 		_topicKmlSetPoint = "KMLNode/SetPoint";
 		_topicWheelFeedback = "VescStatus";
@@ -36,7 +37,6 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicManipulatorControl,
 		string topicRoverFeedback,
 		string topicRoverStatus,
-		string topicRoverContainer,
 		string topicMissionStatus,
 		string topicKmlSetPoint,
 		string topicWheelFeedback,
@@ -53,7 +53,6 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicManipulatorControl = topicManipulatorControl;
 		_topicRoverFeedback = topicRoverFeedback;
 		_topicRoverStatus = topicRoverStatus;
-		_topicRoverContainer = topicRoverContainer;
 		_topicMissionStatus = topicMissionStatus;
 		_topicKmlSetPoint = topicKmlSetPoint;
 		_topicWheelFeedback = topicWheelFeedback;
@@ -76,7 +75,6 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicManipulatorControl = _topicManipulatorControl,
 			TopicRoverFeedback = _topicRoverFeedback,
 			TopicRoverStatus = _topicRoverStatus,
-			TopicRoverContainer = _topicRoverContainer,
 			TopicMissionStatus = _topicMissionStatus,
 			TopicKmlSetPoint = _topicKmlSetPoint,
 			TopicWheelFeedback = _topicWheelFeedback,
@@ -122,13 +120,6 @@ public partial class Mqtt : SettingBase, ICloneable
 	{
 		get => _topicRoverStatus;
 		set => EmitSignal_SettingChanged(ref _topicRoverStatus, value);
-	}
-
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-	public string TopicRoverContainer
-	{
-		get => _topicRoverContainer;
-		set => EmitSignal_SettingChanged(ref _topicRoverContainer, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
@@ -201,7 +192,6 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicManipulatorControl;
 	string _topicRoverFeedback;
 	string _topicRoverStatus;
-	string _topicRoverContainer;
 	string _topicMissionStatus;
 	string _topicKmlSetPoint;
 	string _topicWheelFeedback;

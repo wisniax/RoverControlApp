@@ -1,12 +1,15 @@
-using Godot;
-using OpenCvSharp;
-using RoverControlApp.Core;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.ServiceModel;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Godot;
+
+using OpenCvSharp;
+
+using RoverControlApp.Core;
 
 namespace RoverControlApp.MVVM.Model
 {
@@ -39,7 +42,7 @@ namespace RoverControlApp.MVVM.Model
 		}
 
 		public double ElapsedSecondsOnCurrentState => _generalPurposeStopwatch.Elapsed.TotalSeconds;
-		
+
 		public bool NewFrameSaved => _newFrameSaved;
 
 		public CommunicationState State
@@ -92,7 +95,7 @@ namespace RoverControlApp.MVVM.Model
 		{
 			if (Capture != null) EndCapture();
 			State = CommunicationState.Created;
-			var task = 
+			var task =
 				Task.Run(() => Capture = new VideoCapture
 				(
 					$"rtsp://{LocalSettings.Singleton.Camera.ConnectionSettings.Login}:{LocalSettings.Singleton.Camera.ConnectionSettings.Password}"

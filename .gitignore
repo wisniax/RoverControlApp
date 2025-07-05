@@ -368,4 +368,4 @@ FodyWeavers.xsd
 /Export
 
 /build
-/Rover Control App.csproj.old.1
+/Rover Control App.csproj.old*

@@ -1,8 +1,10 @@
-using Godot;
-using RoverControlApp.Core;
-using RoverControlApp.MVVM.Model;
 using System;
 using System.Threading.Tasks;
+
+using Godot;
+
+using RoverControlApp.Core;
+using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.MVVM.ViewModel;
 public partial class MissionControl : Panel
@@ -127,7 +129,7 @@ public partial class MissionControl : Panel
 
 		if ( (MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.GetSelectedId() != MqttClasses.PhotoType.None	)
 		{
-			await mainView.CaptureCameraImage("POIImages", SPoiAddTargetStrLEdit.Text, "jpg");
+			await Task.Run(() => mainView.CaptureCameraImage("POIImages", SPoiAddTargetStrLEdit.Text, "jpg"));
 		}
 
 		PendingSend = true;

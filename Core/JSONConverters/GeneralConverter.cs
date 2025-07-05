@@ -1,7 +1,8 @@
-﻿using RoverControlApp.Core.Settings;
-using System;
+﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
+using RoverControlApp.Core.Settings;
 
 namespace RoverControlApp.Core.JSONConverters;
 
@@ -18,6 +19,8 @@ public class GeneralConverter : JsonConverter<General>
 		string? missionControlPosition = null;
 		string? missionControlSize = null;
 		long? backCaptureLength = null;
+		int? noInputSecondsToEstop = null!;
+		bool? pedanticEstop = null!;
 
 		while (reader.Read())
 		{
@@ -44,6 +47,12 @@ public class GeneralConverter : JsonConverter<General>
 				case nameof(General.BackCaptureLength):
 					backCaptureLength = reader.GetInt64();
 					break;
+				case nameof(General.NoInputSecondsToEstop):
+					noInputSecondsToEstop = reader.GetInt32();
+					break;
+				case nameof(General.PedanticEstop):
+					pedanticEstop = reader.GetBoolean();
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -55,7 +64,9 @@ public class GeneralConverter : JsonConverter<General>
 			verboseDebug ?? Default.VerboseDebug,
 			missionControlPosition ?? Default.MissionControlPosition,
 			missionControlSize ?? Default.MissionControlSize,
-			backCaptureLength ?? Default.BackCaptureLength
+			backCaptureLength ?? Default.BackCaptureLength,
+			noInputSecondsToEstop ?? Default.NoInputSecondsToEstop,
+			pedanticEstop ?? Default.PedanticEstop
 		);
 	}
 
@@ -66,6 +77,8 @@ public class GeneralConverter : JsonConverter<General>
 		writer.WriteString(nameof(General.MissionControlPosition), value.MissionControlPosition);
 		writer.WriteString(nameof(General.MissionControlSize), value.MissionControlSize);
 		writer.WriteNumber(nameof(General.BackCaptureLength), value.BackCaptureLength);
+		writer.WriteNumber(nameof(General.NoInputSecondsToEstop), value.NoInputSecondsToEstop);
+		writer.WriteBoolean(nameof(General.PedanticEstop), value.PedanticEstop);
 		writer.WriteEndObject();
 	}
 }
