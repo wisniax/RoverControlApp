@@ -121,7 +121,11 @@ public partial class BatteryMonitor : PanelContainer
 
 	Task SendToHUD()
 	{
-		OnBatteryDataChanged?.Invoke(CountConnectedBatts(), CalculateBatteryPercentSum(), CheckForWarnings());
+		OnBatteryDataChanged?.Invoke(
+			LocalSettings.Singleton.Battery.AltMode ? 0 : CountConnectedBatts(),
+			FetchBatteryPercentOrVoltage(),
+			CheckForWarnings()
+		);
 
 		return Task.CompletedTask;
 	}
@@ -190,7 +194,7 @@ public partial class BatteryMonitor : PanelContainer
 		return count;
 	}
 
-	int CalculateBatteryPercentSum()
+	int FetchBatteryPercentOrVoltage()
 	{
 		int sum = 0;
 
@@ -202,7 +206,17 @@ public partial class BatteryMonitor : PanelContainer
 				sum += (int)batt.myData.ChargePercent;
 		}
 
-		return sum;
+		//if in alt mode, show only vesc voltage. Else auto mode (percent/voltage)
+		int connectedBatts = LocalSettings.Singleton.Battery.AltMode ? 0 : CountConnectedBatts();
+
+		switch (LocalSettings.Singleton.Battery.AverageAll)
+		{	case false when connectedBatts != 0:
+				return sum;
+			case true when connectedBatts != 0:
+				return sum / connectedBatts;
+			default:
+				return (int)(_currentVoltageAlt * 10);
+		}
 	}
 
 	private void OnSettingsPropertyChanged(StringName category, StringName property, Variant oldValue, Variant newValue)
