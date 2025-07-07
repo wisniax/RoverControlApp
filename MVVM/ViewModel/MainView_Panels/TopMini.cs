@@ -14,4 +14,22 @@ public partial class TopMini : TopPanelBase
 			_ => ""
 		};
 	}
+
+	protected override string RtspPtzOverlay_Delay(float delay, out UIOverlay2.AnimationAlert suggestedAlert)
+	{
+		if (delay > 0.1f)
+			suggestedAlert = AnimationSlow;
+		else
+			suggestedAlert = UIOverlay2.AnimationAlert.Off;
+
+		return true switch
+		{
+			true when delay < 0.001f => "",
+			true when delay <= 0.1f => "\xeab4\xe953",
+			true when delay <= 0.2f => "\xeab5\xe90a",
+			true when delay <= 0.4f => "\xeab3\xe909",
+			true when delay <= 1.0f => "\xeab7\xe909",
+			_ => ""
+		};
+	}
 }

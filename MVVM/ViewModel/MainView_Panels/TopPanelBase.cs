@@ -12,16 +12,26 @@ public abstract partial class TopPanelBase : Node
 {
 	protected bool _panelVisible = true;
 	protected bool _alertAnimation = true;
+
 	protected MqttClasses.ControlMode _roverOverlay_controlMode;
 	protected MqttClasses.KinematicMode _roverOverlay_kinematicMode;
 	protected float _roverOverlay_speedLimiter;
 	protected UIOverlay2.AnimationAlert _roverOverlay_alertMode;
+
 	protected UIOverlay2.AnimationAlert _phisEstopOverlay_alertMode;
+
+	protected CommunicationState _rtspOverlay_connection;
+	protected float _rtspOverlay_delay;
+	protected UIOverlay2.AnimationAlert _rtspOverlay_alertMode;
+
+	protected CommunicationState _ptzOverlay_connection;
+	protected float _ptzOverlay_delay;
+	protected UIOverlay2.AnimationAlert _ptzOverlay_alertMode;
+
 	protected CommunicationState _mqttOverlay_connection;
 	protected UIOverlay2.AnimationAlert _mqttOverlay_alertMode;
 
 	[ExportGroup(".internal", "_")]
-
 	[Export]
 	protected Control _panelRoot = null!;
 
@@ -30,6 +40,12 @@ public abstract partial class TopPanelBase : Node
 
 	[Export]
 	protected UIOverlay2 _phisEstopOverlay = null!;
+
+	[Export]
+	protected UIOverlay2 _rtspOverlay = null!;
+
+	[Export]
+	protected UIOverlay2 _ptzOverlay = null!;
 
 	[Export]
 	protected UIOverlay2 _mqttOverlay = null!;
@@ -112,6 +128,8 @@ public abstract partial class TopPanelBase : Node
 
 		CallDeferred(MethodName.UpdateRoverOverlay);
 		CallDeferred(MethodName.UpdatePhisEStopOverlay);
+		CallDeferred(MethodName.UpdateRtspOverlay);
+		CallDeferred(MethodName.UpdatePtzOverlay);
 		CallDeferred(MethodName.UpdateMqttOverlay);
 	}
 
@@ -141,10 +159,27 @@ public abstract partial class TopPanelBase : Node
 		return Task.CompletedTask;
 	}
 
+	protected void OnRtspConnectionChanged(CommunicationState state)
+	{
+		_rtspOverlay_connection = state;
+		CallDeferred(MethodName.UpdateRtspOverlay);
+	}
+
+	protected void OnPtzConnectionChanged(CommunicationState state)
+	{
+		_ptzOverlay_connection = state;
+		CallDeferred(MethodName.UpdatePtzOverlay);
+	}
+
+	protected void OnCameraDataPulse(float rtspDelay, float ptzDelay)
+	{
+		_rtspOverlay_delay = rtspDelay;
+		_ptzOverlay_delay = ptzDelay;
+	}
+
 	protected void OnMqttConnectionChanged(CommunicationState state)
 	{
 		_mqttOverlay_connection = state;
-		GD.Print($"hello {state}");
 		CallDeferred(MethodName.UpdateMqttOverlay);
 	}
 
@@ -211,18 +246,24 @@ public abstract partial class TopPanelBase : Node
 		{
 			_roverOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
 			_phisEstopOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
+			_rtspOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
+			_ptzOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
 			_mqttOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
 			return;
 		}
 
 		bool changes = _roverOverlay.AlertMode != _roverOverlay_alertMode
 			|| _phisEstopOverlay.AlertMode != _phisEstopOverlay_alertMode
+			|| _rtspOverlay.AlertMode != _rtspOverlay_alertMode
+			|| _ptzOverlay.AlertMode != _ptzOverlay_alertMode
 			|| _mqttOverlay.AlertMode != _mqttOverlay_alertMode;
 
 		if (changes && AnimateInSync)
 		{
 			_roverOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
 			_phisEstopOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
+			_rtspOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
+			_ptzOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
 			_mqttOverlay.AlertMode = UIOverlay2.AnimationAlert.Off;
 		}
 
@@ -230,6 +271,8 @@ public abstract partial class TopPanelBase : Node
 		{
 			_roverOverlay.AlertMode = _roverOverlay_alertMode;
 			_phisEstopOverlay.AlertMode = _phisEstopOverlay_alertMode;
+			_rtspOverlay.AlertMode = _rtspOverlay_alertMode;
+			_ptzOverlay.AlertMode = _ptzOverlay_alertMode;
 			_mqttOverlay.AlertMode = _mqttOverlay_alertMode;
 		}
 	}
@@ -289,6 +332,84 @@ public abstract partial class TopPanelBase : Node
 		_phisEstopOverlay.ControlMode = 0;
 		//_phisEstopOverlay_alertMode = AnimationSlow;
 
+		UpdateAlert();
+	}
+
+	protected abstract string RtspPtzOverlay_Delay(float delay, out UIOverlay2.AnimationAlert suggestedAlert);
+
+	protected void UpdateRtspOverlay()
+	{
+		string delayStr = "";
+		_rtspOverlay_alertMode = AnimationSlow;
+		switch (_rtspOverlay_connection)
+		{
+			case CommunicationState.Created:
+				_rtspOverlay.ControlMode = 1;
+				break;
+			case CommunicationState.Opening:
+				_rtspOverlay.ControlMode = 2;
+				_rtspOverlay_alertMode = AnimationNormal;
+				break;
+			case CommunicationState.Opened:
+				_rtspOverlay.ControlMode = 3;
+				delayStr = RtspPtzOverlay_Delay(_rtspOverlay_delay, out _rtspOverlay_alertMode);
+				break;
+			case CommunicationState.Closing:
+				_rtspOverlay.ControlMode = 4;
+				break;
+			case CommunicationState.Closed:
+				_rtspOverlay.ControlMode = 5;
+				_rtspOverlay_alertMode = UIOverlay2.AnimationAlert.Off;
+				break;
+			case CommunicationState.Faulted:
+				_rtspOverlay.ControlMode = 6;
+				_rtspOverlay_alertMode = AnimationFast;
+				break;
+			default:
+				_rtspOverlay.ControlMode = 0;
+				_rtspOverlay_alertMode = AnimationFast;
+				break;
+		}
+
+		_rtspOverlay.VariableTextSurfixEx = delayStr;
+		UpdateAlert();
+	}
+
+	protected void UpdatePtzOverlay()
+	{
+		string delayStr = "";
+		_ptzOverlay_alertMode = AnimationSlow;
+		switch (_ptzOverlay_connection)
+		{
+			case CommunicationState.Created:
+				_ptzOverlay.ControlMode = 1;
+				break;
+			case CommunicationState.Opening:
+				_ptzOverlay.ControlMode = 2;
+				_ptzOverlay_alertMode = AnimationNormal;
+				break;
+			case CommunicationState.Opened:
+				_ptzOverlay.ControlMode = 3;
+				delayStr = RtspPtzOverlay_Delay(_ptzOverlay_delay, out _ptzOverlay_alertMode);
+				break;
+			case CommunicationState.Closing:
+				_ptzOverlay.ControlMode = 4;
+				break;
+			case CommunicationState.Closed:
+				_ptzOverlay.ControlMode = 5;
+				_ptzOverlay_alertMode = UIOverlay2.AnimationAlert.Off;
+				break;
+			case CommunicationState.Faulted:
+				_ptzOverlay.ControlMode = 6;
+				_ptzOverlay_alertMode = AnimationFast;
+				break;
+			default:
+				_ptzOverlay.ControlMode = 0;
+				_ptzOverlay_alertMode = AnimationFast;
+				break;
+		}
+
+		_ptzOverlay.VariableTextSurfixEx = delayStr;
 		UpdateAlert();
 	}
 

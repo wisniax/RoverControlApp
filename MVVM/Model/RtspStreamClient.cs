@@ -25,6 +25,8 @@ namespace RoverControlApp.MVVM.Model
 		private Mat? _matrix;
 		private Thread? _rtspThread;
 
+		public event Action<CommunicationState>? StateChange;
+
 		public VideoCapture? Capture { get; private set; }
 
 		public Image LatestImage
@@ -52,6 +54,7 @@ namespace RoverControlApp.MVVM.Model
 			{
 				EventLogger.LogMessage("RtspStreamClient", EventLogger.LogLevel.Info, $"CommunicationState update: {value}");
 				_state = value;
+				StateChange?.Invoke(_state);
 			}
 		}
 

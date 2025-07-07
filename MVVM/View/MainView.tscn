@@ -156,7 +156,7 @@ BackColor = Color(0, 0.392157, 0, 1)
 FontColor = Color(1, 0.85, 0, 1)
 UseFontAsBackColor = true
 TextPrefix = ""
-Text = "Connecting"
+Text = "Opening"
 TextSurfix = ""
 
 [sub_resource type="Resource" id="Resource_i6o2u"]
@@ -165,7 +165,7 @@ BackColor = Color(0, 0.392157, 0, 1)
 FontColor = Color(0.196078, 0.803922, 0.196078, 1)
 UseFontAsBackColor = true
 TextPrefix = ""
-Text = "Connected"
+Text = "Open"
 TextSurfix = ""
 
 [sub_resource type="Resource" id="Resource_sjd7i"]
@@ -330,7 +330,7 @@ FontColor = Color(0.732444, 0.573923, 1, 1)
 UseFontAsBackColor = true
 TextPrefix = ""
 Text = ""
-TextSurfix = ""
+TextSurfix = ""
 
 [sub_resource type="Resource" id="Resource_rhuj2"]
 script = ExtResource("4_de84f")
@@ -393,7 +393,7 @@ FontColor = Color(0.732444, 0.573923, 1, 1)
 UseFontAsBackColor = true
 TextPrefix = ""
 Text = ""
-TextSurfix = ""
+TextSurfix = ""
 
 [sub_resource type="Resource" id="Resource_ghuj2"]
 script = ExtResource("4_de84f")
@@ -583,11 +583,13 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Controller" type="Node" parent="VBoxContainer/MainPanelTop/Zones/Overlays" node_paths=PackedStringArray("_panelRoot", "_roverOverlay", "_phisEstopOverlay", "_mqttOverlay", "_batteryButton", "_batteryLabel", "batteryMonitorNode")]
+[node name="Controller" type="Node" parent="VBoxContainer/MainPanelTop/Zones/Overlays" node_paths=PackedStringArray("_panelRoot", "_roverOverlay", "_phisEstopOverlay", "_rtspOverlay", "_ptzOverlay", "_mqttOverlay", "_batteryButton", "_batteryLabel", "batteryMonitorNode")]
 script = ExtResource("3_5kpi0")
 _panelRoot = NodePath("../../..")
 _roverOverlay = NodePath("../Rover")
 _phisEstopOverlay = NodePath("../Phis_ E-Stop")
+_rtspOverlay = NodePath("../Rtsp")
+_ptzOverlay = NodePath("../Ptz")
 _mqttOverlay = NodePath("../MQTT")
 _batteryButton = NodePath("../../Buttons/BattBtn")
 _batteryLabel = NodePath("../../Buttons/BattBtn/BattIcon")
@@ -760,6 +762,7 @@ layout_mode = 2
 metadata/_edit_lock_ = true
 
 [node name="MainPanelTopMini" type="Panel" parent="VBoxContainer/MainCenter/Overlays"]
+visible = false
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 size_flags_vertical = 0
@@ -778,11 +781,13 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="Controller" type="Node" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer" node_paths=PackedStringArray("_panelRoot", "_roverOverlay", "_phisEstopOverlay", "_mqttOverlay", "_batteryButton", "_batteryLabel", "batteryMonitorNode")]
+[node name="Controller" type="Node" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer" node_paths=PackedStringArray("_panelRoot", "_roverOverlay", "_phisEstopOverlay", "_rtspOverlay", "_ptzOverlay", "_mqttOverlay", "_batteryButton", "_batteryLabel", "batteryMonitorNode")]
 script = ExtResource("8_iy8b2")
 _panelRoot = NodePath("../../..")
 _roverOverlay = NodePath("../Rover")
 _phisEstopOverlay = NodePath("../Phis_ E-Stop")
+_rtspOverlay = NodePath("../Rtsp")
+_ptzOverlay = NodePath("../Ptz")
 _mqttOverlay = NodePath("../MQTT")
 _batteryButton = NodePath("../../BattBtn")
 _batteryLabel = NodePath("../../BattBtn/BattIcon")
@@ -913,6 +918,7 @@ metadata/_edit_lock_ = true
 
 [node name="MissionControl" parent="VBoxContainer/MainCenter/ScreenPanels" instance=ExtResource("4_wrhi8")]
 visible = false
+layout_mode = 0
 offset_left = 3.0
 offset_top = 3.0
 offset_right = 621.0
@@ -1047,6 +1053,16 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_gr50h")
 text = "SETTINGS"
 
+[node name="CameraDataPulser" type="Timer" parent="."]
+wait_time = 0.2
+autostart = true
+
+[connection signal="CameraDataPulse" from="." to="VBoxContainer/MainPanelTop/Zones/Overlays/Controller" method="OnCameraDataPulse"]
+[connection signal="CameraDataPulse" from="." to="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer/Controller" method="OnCameraDataPulse"]
+[connection signal="PtzConnectionChange" from="." to="VBoxContainer/MainPanelTop/Zones/Overlays/Controller" method="OnPtzConnectionChanged"]
+[connection signal="PtzConnectionChange" from="." to="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer/Controller" method="OnPtzConnectionChanged"]
+[connection signal="RtspConnectionChange" from="." to="VBoxContainer/MainPanelTop/Zones/Overlays/Controller" method="OnRtspConnectionChanged"]
+[connection signal="RtspConnectionChange" from="." to="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer/Controller" method="OnRtspConnectionChanged"]
 [connection signal="LayoutChangePressed" from="VBoxContainer/MainPanelTop/Zones/Overlays/Controller" to="." method="OnMainPanelTop_LayoutChange"]
 [connection signal="toggled" from="VBoxContainer/MainPanelTop/Zones/Buttons/BattBtn" to="VBoxContainer/MainCenter/ScreenPanels/BatteryMonitor" method="set_visible"]
 [connection signal="pressed" from="VBoxContainer/MainPanelTop/Zones/Buttons/LayoutBtn" to="VBoxContainer/MainPanelTop/Zones/Overlays/Controller" method="OnLayoutChangePressed"]
@@ -1061,3 +1077,4 @@ text = "SETTINGS"
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="VBoxContainer/MainCenter/ScreenPanels/SettingsManager" method="set_visible"]
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="VBoxContainer/MainCenter/ScreenPanels/SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="VBoxContainer/MainCenter/ScreenPanels/SettingsManager" method="Redraw"]
+[connection signal="timeout" from="CameraDataPulser" to="." method="OnCameraDataPulserTimeout"]

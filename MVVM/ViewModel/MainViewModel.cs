@@ -37,6 +37,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
+
 		private JoyVibrato _joyVibrato = new();
 		private BackCapture _backCapture = new();
 
@@ -72,6 +73,18 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private TopPanelBase MainPanelTopFull = null!;
 
+		[Export]
+		private Timer _cameraDataPulser = null!;
+
+		[Signal]
+		public delegate void RtspConnectionChangeEventHandler(CommunicationState state);
+
+		[Signal]
+		public delegate void PtzConnectionChangeEventHandler(CommunicationState state);
+
+		[Signal]
+		public delegate void CameraDataPulseEventHandler(float rtspDelay, float ptzDelay);
+
 
 		public override void _EnterTree()
 		{
@@ -94,6 +107,10 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			ManagePtzStatus();
 			ManageRtspStatus();
+			OnPtzStateChange(CommunicationState.Closed);
+			OnRtspStateChange(CommunicationState.Closed);
+
+
 			InputHelpMaster.GenerateHints();
 			InputHelpMaster.HintType = PressedKeys.PadConnected ? InputHelpHint.HintVisibility.Joy : InputHelpHint.HintVisibility.Kb;
 
@@ -207,8 +224,11 @@ namespace RoverControlApp.MVVM.ViewModel
 					_rtspClient = new();
 					_rtspClientWeak = new(_rtspClient);
 					imTextureRect.Visible = true;
+					_rtspClient.StateChange += OnRtspStateChange;
 					break;
 				case false when _rtspClient is not null:
+					_rtspClient.StateChange -= OnRtspStateChange;
+					OnRtspStateChange(CommunicationState.Closed);
 					_rtspClient.Dispose();
 					_rtspClient = null;
 					imTextureRect.Visible = false;
@@ -224,9 +244,12 @@ namespace RoverControlApp.MVVM.ViewModel
 					_ptzClient = new OnvifPtzCameraController();
 					_ptzClientWeak = new(_ptzClient);
 					PressedKeys.Singleton.CameraMoveVectorChanged += _ptzClient.ChangeMoveVector;
+					_ptzClient.StateChange += OnPtzStateChange;
 					break;
 				case false when _ptzClient is not null:
 					PressedKeys.Singleton.CameraMoveVectorChanged -= _ptzClient.ChangeMoveVector;
+					_ptzClient.StateChange -= OnPtzStateChange;
+					OnPtzStateChange(CommunicationState.Closed);
 					_ptzClient.Dispose();
 					_ptzClient = null;
 					break;
@@ -456,6 +479,21 @@ namespace RoverControlApp.MVVM.ViewModel
 			{
 				FancyDebugViewRLab.Visible = false;
 			}
+		}
+
+		private void OnRtspStateChange(CommunicationState state) => CallDeferred(MethodName.EmitSignal, SignalName.RtspConnectionChange, (int)state);
+		private void OnPtzStateChange(CommunicationState state) => CallDeferred(MethodName.EmitSignal, SignalName.PtzConnectionChange, (int)state);
+
+		private void OnCameraDataPulserTimeout()
+		{
+			if (!IsNodeReady())
+				return;
+
+			EmitSignal(
+				SignalName.CameraDataPulse,
+				_rtspClient?.ElapsedSecondsOnCurrentState ?? -1.0,
+				_ptzClient?.ElapsedSecondsOnCurrentState ?? -1.0
+			);
 		}
 
 		public bool CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
