@@ -14,7 +14,7 @@ namespace RoverControlApp.MVVM.ViewModel;
 public partial class BatteryMonitor : PanelContainer
 {
 	[Export] volatile SubBattery[] battery = new SubBattery[3];
-	[Export] private volatile VBoxContainer altDataDisp = new ();
+	[Export] private volatile VBoxContainer altDataDisp = new();
 
 	private volatile float _currentVoltageAlt = 0;
 
@@ -51,7 +51,7 @@ public partial class BatteryMonitor : PanelContainer
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			battery[i].SetSlotNumber(i+1);
+			battery[i].SetSlotNumber(i + 1);
 		}
 	}
 
@@ -65,11 +65,13 @@ public partial class BatteryMonitor : PanelContainer
 			return;
 		}
 
-		MqttClasses.BatteryInfo data;
+		MqttClasses.BatteryInfo? data =
+			JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
 
-		data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
+		if (data is null)
+			return;
 
-		await (battery[data.Slot - 1].UpdateBattInfoHandler(msg.ConvertPayloadToString()));
+		await battery[data.Slot - 1].UpdateBattInfoHandler(msg.ConvertPayloadToString());
 
 		return;
 	}
@@ -91,12 +93,20 @@ public partial class BatteryMonitor : PanelContainer
 
 		var altData = JsonSerializer.Deserialize<MqttClasses.WheelFeedback>(msg.ConvertPayloadToString());
 
-		if (!(altData.VescId == 0x50 || altData.VescId == 0x51 || altData.VescId == 0x52 || altData.VescId == 0x53)) return Task.CompletedTask;
+		if (altData is null) return Task.CompletedTask;
+
+		bool altDataValidId =
+			altData.VescId == 0x50 ||
+			altData.VescId == 0x51 ||
+			altData.VescId == 0x52 ||
+			altData.VescId == 0x53;
+
+		if (!altDataValidId) return Task.CompletedTask;
 
 		_currentVoltageAlt = _currentVoltageAlt * 0.9f + 0.1f * (float)altData.VoltsIn;
 		CallDeferred("ShowAltVoltage", true);
 
-		OnBatteryDataChanged.Invoke(0,(int)(_currentVoltageAlt*10),CheckForWarnings());
+		OnBatteryDataChanged?.Invoke(0, (int)(_currentVoltageAlt * 10), CheckForWarnings());
 
 		return Task.CompletedTask;
 	}
@@ -109,7 +119,7 @@ public partial class BatteryMonitor : PanelContainer
 
 	Task SendToHUD()
 	{
-		OnBatteryDataChanged.Invoke(CountConnectedBatts(), CalculateBatteryPercentSum(), CheckForWarnings());
+		OnBatteryDataChanged?.Invoke(CountConnectedBatts(), CalculateBatteryPercentSum(), CheckForWarnings());
 
 		return Task.CompletedTask;
 	}
@@ -146,14 +156,14 @@ public partial class BatteryMonitor : PanelContainer
 
 	Task OnBatteryControl(int slot, MqttClasses.BatterySet set)
 	{
-		if(CountConnectedBatts() < 2 && set == MqttClasses.BatterySet.Off) return Task.CompletedTask;
+		if (CountConnectedBatts() < 2 && set == MqttClasses.BatterySet.Off) return Task.CompletedTask;
 
 		MqttClasses.BatteryControl control = new MqttClasses.BatteryControl()
 		{
 			Slot = slot,
 			Set = set
 		};
-		OnBatteryControlChanged(control);
+		_ = OnBatteryControlChanged(control);
 		return Task.CompletedTask;
 	}
 
