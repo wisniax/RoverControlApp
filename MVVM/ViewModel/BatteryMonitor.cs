@@ -29,6 +29,7 @@ public partial class BatteryMonitor : PanelContainer
 	{
 		MqttNode.Singleton.MessageReceivedAsync += BatteryInfoChanged;
 		MqttNode.Singleton.MessageReceivedAsync += AltBatteryInfoChanged;
+		LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
 		foreach (var batt in battery)
 		{
 			batt.NewBatteryInfo += SendToHUD;
@@ -40,6 +41,7 @@ public partial class BatteryMonitor : PanelContainer
 	{
 		MqttNode.Singleton.MessageReceivedAsync -= BatteryInfoChanged;
 		MqttNode.Singleton.MessageReceivedAsync -= AltBatteryInfoChanged;
+		LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
 		foreach (var batt in battery)
 		{
 			batt.NewBatteryInfo -= SendToHUD;
@@ -201,5 +203,15 @@ public partial class BatteryMonitor : PanelContainer
 		}
 
 		return sum;
+	}
+
+	private void OnSettingsPropertyChanged(StringName category, StringName property, Variant oldValue, Variant newValue)
+	{
+		switch (category)
+		{
+			case nameof(LocalSettings.Battery):
+				SendToHUD();
+				break;
+		}
 	}
 }
