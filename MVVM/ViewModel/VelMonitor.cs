@@ -176,6 +176,9 @@ public partial class VelMonitor : Panel
 		_wheelSlider[motor].Value = (float)erpm;
 		_wheelSlider[motor].MinValue = - LocalSettings.Singleton.WheelData.MaxRPM;
 		_wheelSlider[motor].MaxValue = LocalSettings.Singleton.WheelData.MaxRPM;
+		_wheelSlider[motor].Modulate = (erpm < 0) ? Colors.Red : Colors.Green;
+		if (erpm > -LocalSettings.Singleton.WheelData.MaxRPM/20 && erpm < LocalSettings.Singleton.WheelData.MaxRPM / 20)
+			_wheelSlider[motor].Modulate = Colors.White;
 	}
 
 	void UpdateRotationMotorInfoHandler(int motor, MqttClasses.WheelFeedback data)
