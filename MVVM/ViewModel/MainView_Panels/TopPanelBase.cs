@@ -175,6 +175,9 @@ public abstract partial class TopPanelBase : Node
 	{
 		_rtspOverlay_delay = rtspDelay;
 		_ptzOverlay_delay = ptzDelay;
+
+		CallDeferred(MethodName.UpdateRtspOverlay);
+		CallDeferred(MethodName.UpdatePtzOverlay);
 	}
 
 	protected void OnMqttConnectionChanged(CommunicationState state)

@@ -18,9 +18,9 @@ public partial class TopFull : TopPanelBase
 		else
 			suggestedAlert = UIOverlay2.AnimationAlert.Off;
 
-		if (delay >= 1.0f)
-			return "> 1s";
+		if (delay > 1.0f)
+			return " > 1s ";
 		else
-			return string.Format("{0:D}ms", delay * 1000.0f);
+			return string.Format(" {0:000}ms", delay * 1000.0f);
 	}
 }

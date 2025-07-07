@@ -24,11 +24,11 @@ public partial class TopMini : TopPanelBase
 
 		return true switch
 		{
-			true when delay < 0.001f => "",
-			true when delay <= 0.1f => "\xeab4\xe953",
-			true when delay <= 0.2f => "\xeab5\xe90a",
-			true when delay <= 0.4f => "\xeab3\xe909",
-			true when delay <= 1.0f => "\xeab7\xe909",
+			true when delay < 0f => "",
+			true when delay <= 0.1f => "\xeab7\xe953",
+			true when delay <= 0.2f => "\xeab3\xe90a",
+			true when delay <= 0.4f => "\xeab5\xe909",
+			true when delay <= 1.0f => "\xeab4\xe909",
 			_ => ""
 		};
 	}
