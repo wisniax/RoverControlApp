@@ -21,9 +21,11 @@ public partial class WheelData : SettingBase, ICloneable
 		FrontRightTurn = "0x61";
 		BackRightTurn = "0x62";
 		BackLeftTurn = "0x63";
+
+		MaxRPM = 1000;
 	}
 
-	public WheelData(string frontLeftDrive, string frontRightDrive, string backRightDrive, string backLeftDrive, string frontLeftTurn, string frontRightTurn, string backRightTurn, string backLeftTurn)
+	public WheelData(string frontLeftDrive, string frontRightDrive, string backRightDrive, string backLeftDrive, string frontLeftTurn, string frontRightTurn, string backRightTurn, string backLeftTurn, int maxRPM)
 	{
 		FrontLeftTurn = frontLeftTurn;
 		FrontRightTurn = frontRightTurn;
@@ -34,6 +36,8 @@ public partial class WheelData : SettingBase, ICloneable
 		FrontRightDrive = frontRightDrive;
 		BackRightDrive = backRightDrive;
 		BackLeftDrive = backLeftDrive;
+
+		MaxRPM = maxRPM;
 	}
 
 	public object Clone()
@@ -108,6 +112,13 @@ public partial class WheelData : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _backLeftTurn, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "100;10000;100;f;i")]
+	public int MaxRPM
+	{
+		get => _maxRPM;
+		set => EmitSignal_SettingChanged(ref _maxRPM, value);
+	}
+
 	private string _frontLeftDrive;
 	private string _frontRightDrive;
 	private string _backRightDrive;
@@ -116,4 +127,5 @@ public partial class WheelData : SettingBase, ICloneable
 	private string _frontRightTurn;
 	private string _backRightTurn;
 	private string _backLeftTurn;
+	private int _maxRPM;
 }

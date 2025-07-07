@@ -174,6 +174,8 @@ public partial class VelMonitor : Panel
 						 $"RPM: {erpm} rpm\n" +
 						 $"Current: {current} A");
 		_wheelSlider[motor].Value = (float)erpm;
+		_wheelSlider[motor].MinValue = - LocalSettings.Singleton.WheelData.MaxRPM;
+		_wheelSlider[motor].MaxValue = LocalSettings.Singleton.WheelData.MaxRPM;
 	}
 
 	void UpdateRotationMotorInfoHandler(int motor, MqttClasses.WheelFeedback data)

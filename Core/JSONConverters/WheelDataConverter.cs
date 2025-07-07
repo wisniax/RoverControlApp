@@ -24,6 +24,8 @@ public class WheelDataConverter : JsonConverter<WheelData>
 		string? backRightTurn = null;
 		string? backLeftTurn = null;
 
+		int? maxRPM = null;
+
 		while (reader.Read())
 		{
 			if (reader.TokenType == JsonTokenType.EndObject)
@@ -61,6 +63,9 @@ public class WheelDataConverter : JsonConverter<WheelData>
 				case nameof(WheelData.BackLeftDrive):
 					backLeftTurn = reader.GetString();
 					break;
+				case nameof(WheelData.MaxRPM):
+					maxRPM = reader.GetInt32();
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -77,13 +82,16 @@ public class WheelDataConverter : JsonConverter<WheelData>
 			frontLeftTurn ?? Default.FrontLeftTurn,
 			frontRightTurn ?? Default.FrontRightTurn,
 			backRightTurn ?? Default.BackRightTurn,
-			backLeftTurn ?? Default.BackLeftTurn
+			backLeftTurn ?? Default.BackLeftTurn,
+
+			maxRPM ?? Default.MaxRPM
 		);
 	}
 
 	public override void Write(Utf8JsonWriter writer, WheelData value, JsonSerializerOptions options)
 	{
 		writer.WriteStartObject();
+
 		writer.WriteString(nameof(WheelData.FrontLeftDrive), value.FrontLeftDrive);
 		writer.WriteString(nameof(WheelData.FrontLeftTurn), value.FrontLeftTurn);
 		writer.WriteString(nameof(WheelData.FrontRightDrive), value.FrontRightDrive);
@@ -93,6 +101,9 @@ public class WheelDataConverter : JsonConverter<WheelData>
 		writer.WriteString(nameof(WheelData.BackLeftTurn), value.BackLeftTurn);
 		writer.WriteString(nameof(WheelData.BackRightDrive), value.BackRightDrive);
 		writer.WriteString(nameof(WheelData.BackRightTurn), value.BackRightTurn);
+
+		writer.WriteNumber(nameof(WheelData.MaxRPM), value.MaxRPM);
+
 		writer.WriteEndObject();
 	}
 }
