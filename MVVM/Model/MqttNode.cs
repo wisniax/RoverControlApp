@@ -317,11 +317,11 @@ public partial class MqttNode : Node
 		_managedMqttClient.SynchronizingSubscriptionsFailedAsync += ThOnSynchronizingSubscriptionsFailedAsync;
 		_managedMqttClient.ApplicationMessageReceivedAsync += ThOnApplicationMessageReceivedAsync;
 
+		ConnectionState = CommunicationState.Opening;
+
 		await _managedMqttClient.StartAsync(managedMqttClientOptions);
 
 		await MqSubscribeAllAsync();
-
-		ConnectionState = CommunicationState.Opening;
 	}
 
 	private async Task ThClientDisconnect()
