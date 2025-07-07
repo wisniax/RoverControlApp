@@ -7,7 +7,7 @@ using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
-[Tool]
+//[Tool]
 public partial class UIOverlay2 : PanelContainer
 {
 	public enum AnimationAlert

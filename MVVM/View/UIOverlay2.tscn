@@ -171,12 +171,12 @@ size_flags_vertical = 4
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 20
-text = "Permanent:"
+text = "^"
 vertical_alignment = 1
 
 [node name="VariableTextRegion" type="HBoxContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
-size_flags_horizontal = 4
+size_flags_horizontal = 10
 theme_override_constants/separation = 0
 
 [node name="VariablePrefixEx" type="Label" parent="MarginContainer/HBoxContainer/VariableTextRegion"]
@@ -197,7 +197,7 @@ uppercase = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("2_g7u1j")
 theme_override_font_sizes/font_size = 20
-text = "*"
+text = "&"
 vertical_alignment = 1
 uppercase = true
 

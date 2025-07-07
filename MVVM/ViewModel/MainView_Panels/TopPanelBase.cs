@@ -201,6 +201,7 @@ public abstract partial class TopPanelBase : Node
 		_batteryButton.Text = text;
 		_batteryButton.AddThemeColorOverride("font_color", requestedColor);
 		_batteryButton.AddThemeColorOverride("font_focus_color", requestedColor);
+		_batteryButton.AddThemeColorOverride("font_pressed_color", requestedColor);
 		_batteryLabel.Modulate = requestedColor;
 	}
 

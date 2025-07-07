@@ -49,7 +49,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private TextureRect imTextureRect = null!;
 
 		[Export]
-		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!, ShowBatteryMonitor = null!;
+		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!;
 		[Export]
 		private SettingsManager SettingsManagerNode = null!;
 		[Export]
@@ -82,8 +82,6 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.Singleton.ControllerPresetChanged += InputHelp_HandleInputPresetChanged;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
-			BatteryMonitor.OnBatteryDataChanged += HandleBatteryPercentageChangedHandler;
-
 			InputHelp_HandleControlModeChanged(PressedKeys.Singleton.ControlMode);
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys.Singleton.ControlMode));
 		}
@@ -111,8 +109,6 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.Singleton.OnControlModeChanged -= InputHelp_HandleControlModeChanged;
 			PressedKeys.Singleton.ControllerPresetChanged -= InputHelp_HandleInputPresetChanged;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
-
-			BatteryMonitor.OnBatteryDataChanged -= HandleBatteryPercentageChangedHandler;
 
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -350,30 +346,6 @@ namespace RoverControlApp.MVVM.ViewModel
 				case var x when x <= 30 || PressedKeys.Singleton.TimeToAutoEStopMsec < LocalSettings.Singleton.General.NoInputSecondsToEstop * 1000 - 10000:
 					FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.LightCyan.ToHtml()}]INACTIVE[/color] ({timeDictEStop["minute"].AsUInt32():D2}:{timeDictEStop["second"].AsUInt32():D2} left)\n");
 					break;
-			}
-		}
-
-		void HandleBatteryPercentageChangedHandler(int connectedBatts, int data, Color color)
-		{
-			CallDeferred("HandleBatteryPercentageChanged", connectedBatts, data, color);
-		}
-
-		void HandleBatteryPercentageChanged(int connectedBatts, int data, Color color)
-		{
-			if (!LocalSettings.Singleton.Battery.AltMode && connectedBatts != 0)
-			{
-				ShowBatteryMonitor.SetText($"BATTERY {data}%:{connectedBatts}");
-			}
-			else
-			{
-				ShowBatteryMonitor.SetText($"BATTERY {(float)data / 10}V");
-			}
-			ShowBatteryMonitor.SetModulate(color);
-			if (color != Colors.Red) return;
-			if (LocalSettings.Singleton.Battery.ShowOnLow)
-			{
-				ShowBatteryMonitor.SetPressed(true);
-				BatteryMonitor.SetVisible(true);
 			}
 		}
 
