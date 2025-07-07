@@ -34,9 +34,25 @@ public abstract partial class TopPanelBase : Node
 	[Export]
 	protected UIOverlay2 _mqttOverlay = null!;
 
+	[Export]
+	protected Button _batteryButton = null!;
+
+	[Export]
+	protected Label _batteryLabel = null!;
+
+	protected static string BattLevel0 => " \xe92e";
+	protected static string BattLevel1 => " \xe92c";
+	protected static string BattLevel2 => " \xe92d";
+	protected static string BattLevel3 => " \xe92b";
+	protected static string BattLevelCharge => " \xe92a";
+	protected static string BattLevelAltView => "\xe92e\xe90a";
+
 	protected UIOverlay2.AnimationAlert AnimationSlow => UseSoftAnimation ? UIOverlay2.AnimationAlert.AlertSoft_Slow : UIOverlay2.AnimationAlert.AlertHard_Slow;
 	protected UIOverlay2.AnimationAlert AnimationNormal => UseSoftAnimation ? UIOverlay2.AnimationAlert.AlertSoft_Normal : UIOverlay2.AnimationAlert.AlertHard_Normal;
 	protected UIOverlay2.AnimationAlert AnimationFast => UseSoftAnimation ? UIOverlay2.AnimationAlert.AlertSoft_Fast : UIOverlay2.AnimationAlert.AlertHard_Fast;
+
+	[Export]
+	private BatteryMonitor? batteryMonitorNode;
 
 	[Signal]
 	public delegate void LayoutChangePressedEventHandler();
@@ -82,6 +98,13 @@ public abstract partial class TopPanelBase : Node
 		MqttNode.Singleton.ConnectionChanged += OnMqttConnectionChanged;
 		LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
 
+		OnBatteryInfo();
+
+		if (batteryMonitorNode is null)
+			EventLogger.LogMessage(nameof(TopPanelBase), EventLogger.LogLevel.Warning, "Can't access battery info!");
+		else
+			batteryMonitorNode.OnBatteryDataChanged += OnBatteryInfo;
+
 		_roverOverlay_controlMode = PressedKeys.Singleton.ControlMode;
 		_roverOverlay_kinematicMode = PressedKeys.Singleton.RoverMovement.Mode;
 		_roverOverlay_speedLimiter = LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : -1.0f;
@@ -98,6 +121,8 @@ public abstract partial class TopPanelBase : Node
 		MqttNode.Singleton.ConnectionChanged -= OnMqttConnectionChanged;
 		LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
 
+		if (batteryMonitorNode is not null)
+			batteryMonitorNode.OnBatteryDataChanged -= OnBatteryInfo;
 
 		base.Dispose(disposing);
 	}
@@ -125,11 +150,58 @@ public abstract partial class TopPanelBase : Node
 
 	protected void OnSettingsPropertyChanged(StringName category, StringName property, Variant oldValue, Variant newValue)
 	{
-		if (category == LocalSettings.PropertyName.SpeedLimiter)
+		switch (category)
 		{
-			_roverOverlay_speedLimiter = LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : -1.0f;
-			CallDeferred(MethodName.UpdateRoverOverlay);
+			case nameof(LocalSettings.SpeedLimiter):
+				_roverOverlay_speedLimiter = LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : -1.0f;
+				CallDeferred(MethodName.UpdateRoverOverlay);
+				break;
 		}
+	}
+
+	protected void OnBatteryInfo() => OnBatteryInfo(0, 0, Colors.Red);
+	protected void OnBatteryInfo(int enabledBatts, int percentagesOrVolts, Color requestedColor)
+	{
+		bool voltsMode = enabledBatts == 0;
+		string text;
+
+		if (voltsMode)
+		{
+			percentagesOrVolts /= 10;
+			text = string.Format("{0:0.0}V", percentagesOrVolts);
+
+			_batteryLabel.Text = BattLevelAltView;
+		}
+		else
+		{
+			int percentDiv;
+			if (LocalSettings.Singleton.Battery.AverageAll)
+			{
+				text = string.Format("{0:0}%|{1:0}", percentagesOrVolts, enabledBatts);
+				percentDiv = 1;
+			}
+			else
+			{
+				text = string.Format("{0:0}%/{1:0}", percentagesOrVolts, enabledBatts);
+				percentDiv = enabledBatts;
+			}
+
+			int percentages = percentagesOrVolts / percentDiv;
+			//percent to icon
+			if (percentages < 15)
+				_batteryLabel.Text = BattLevel0;
+			else if (percentages < 30)
+				_batteryLabel.Text = BattLevel1;
+			else if (percentages < 60)
+				_batteryLabel.Text = BattLevel2;
+			else
+				_batteryLabel.Text = BattLevel3;
+		}
+
+		_batteryButton.Text = text;
+		_batteryButton.AddThemeColorOverride("font_color", requestedColor);
+		_batteryButton.AddThemeColorOverride("font_focus_color", requestedColor);
+		_batteryLabel.Modulate = requestedColor;
 	}
 
 	protected void UpdateAlert()

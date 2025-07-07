@@ -460,12 +460,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 last_wrap_alignment = 1
 
-[node name="Controller" type="Node" parent="VBoxContainer/MainPanelTop/Zones/Overlays" node_paths=PackedStringArray("_panelRoot", "_roverOverlay", "_phisEstopOverlay", "_mqttOverlay")]
+[node name="Controller" type="Node" parent="VBoxContainer/MainPanelTop/Zones/Overlays" node_paths=PackedStringArray("_panelRoot", "_roverOverlay", "_phisEstopOverlay", "_mqttOverlay", "_batteryButton", "_batteryLabel", "batteryMonitorNode")]
 script = ExtResource("3_5kpi0")
 _panelRoot = NodePath("../../..")
 _roverOverlay = NodePath("../Rover")
 _phisEstopOverlay = NodePath("../Phis_ E-Stop")
 _mqttOverlay = NodePath("../MQTT")
+_batteryButton = NodePath("../../Buttons/BattBtn")
+_batteryLabel = NodePath("../../Buttons/BattBtn/BattIcon")
+batteryMonitorNode = NodePath("../../../../../ScreenPanels/BatteryMonitor")
 AlertAnimation = false
 
 [node name="Rover" parent="VBoxContainer/MainPanelTop/Zones/Overlays" instance=ExtResource("5_xbxoj")]
@@ -513,7 +516,7 @@ layout_mode = 2
 size_flags_horizontal = 8
 
 [node name="BattBtn" type="Button" parent="VBoxContainer/MainPanelTop/Zones/Buttons"]
-custom_minimum_size = Vector2(96, 0)
+custom_minimum_size = Vector2(110, 0)
 layout_mode = 2
 theme_type_variation = &"ButtonRcaH1"
 text = "230V "
@@ -524,11 +527,13 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -6.0
-offset_right = -6.0
+offset_left = -1.0
+offset_top = -3.0
+offset_right = -1.0
+offset_bottom = 3.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 30
 text = " "
 vertical_alignment = 1
 
@@ -612,12 +617,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="Controller" type="Node" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer" node_paths=PackedStringArray("_panelRoot", "_roverOverlay", "_phisEstopOverlay", "_mqttOverlay")]
+[node name="Controller" type="Node" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer" node_paths=PackedStringArray("_panelRoot", "_roverOverlay", "_phisEstopOverlay", "_mqttOverlay", "_batteryButton", "_batteryLabel", "batteryMonitorNode")]
 script = ExtResource("8_iy8b2")
 _panelRoot = NodePath("../../..")
 _roverOverlay = NodePath("../Rover")
 _phisEstopOverlay = NodePath("../Phis_ E-Stop")
 _mqttOverlay = NodePath("../MQTT")
+_batteryButton = NodePath("../../BattBtn")
+_batteryLabel = NodePath("../../BattBtn/BattIcon")
+batteryMonitorNode = NodePath("../../../../../../../ScreenPanels/BatteryMonitor")
 
 [node name="Rover" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer" instance=ExtResource("5_xbxoj")]
 custom_minimum_size = Vector2(210, 0)
@@ -666,7 +674,7 @@ FontPrefixSizeEx = 28
 FontSurfixSizeEx = 28
 
 [node name="BattBtn" type="Button" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible"]
-custom_minimum_size = Vector2(96, 0)
+custom_minimum_size = Vector2(110, 0)
 layout_mode = 2
 theme_type_variation = &"ButtonRcaH1"
 text = "230V "
@@ -677,11 +685,11 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -6.0
-offset_right = -6.0
+offset_left = -1.0
+offset_right = -1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 32
+theme_override_font_sizes/font_size = 30
 text = " "
 vertical_alignment = 1
 
@@ -867,6 +875,6 @@ grow_horizontal = 0
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowMissionControl" to="ScreenPanels/MissionControl" method="set_visible"]
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowBatteryMonitor" to="ScreenPanels/BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowZedMonitor" to="ScreenPanels/ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="ScreenPanels/SettingsManager" method="Redraw"]
-[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="ScreenPanels/SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="ScreenPanels/SettingsManager" method="set_visible"]
+[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="ScreenPanels/SettingsManager" method="OnVisibilityChange"]
+[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="ScreenPanels/SettingsManager" method="Redraw"]
