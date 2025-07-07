@@ -89,9 +89,6 @@ public partial class SubBattery : VBoxContainer
 
 		_timeLabel.Text = "Est. Time: " + myData.Time.ToString("F0") + "min";
 
-		NewBatteryInfo?.Invoke();
-
-
 		batteryDetectedHandler(true);
 		_timer.SetWaitTime(LocalSettings.Singleton.Battery.ExpectedMessageInterval);
 		_timer.Start();
@@ -112,5 +109,6 @@ public partial class SubBattery : VBoxContainer
 		UpToDate = detected;
 		_slotEmptyLabel.SetVisible(!detected);
 		_labels.SetVisible(detected);                //buttons stay visible so that we can force close the hotswap even if bms died or we use a non-bms battery
+		NewBatteryInfo?.Invoke();
 	}
 }
