@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -132,32 +133,36 @@ public partial class BatteryMonitor : PanelContainer
 
 	Color CheckForWarnings()
 	{
-		float battVoltage = 0;
+		bool isWarnReached = false;
+		bool isCritReached = false;
+
+		float minimalBattVoltage;
 		if (LocalSettings.Singleton.Battery.AltMode || CountConnectedBatts() == 0)
 		{
-			battVoltage = _currentVoltageAlt;
+			minimalBattVoltage = _currentVoltageAlt;
 		}
 		else
 		{
-			battVoltage = 999;
-			foreach (var batt in battery)
-			{
-				if (batt.myData == null) continue;
-				if ((batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto || batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) &&
-				   battVoltage > batt.myData.Voltage)
-				{
-					battVoltage = batt.myData.Voltage;
-				}
+			var enabledBatts = battery.Where((batt) => batt.IsEnabled);
 
-				if (batt.myData.Temperature > LocalSettings.Singleton.Battery.WarningTemperature) return Colors.Red;
-			}
+			minimalBattVoltage = enabledBatts.Min((batt) => batt.myData.Voltage);
+			isCritReached |= enabledBatts.Any((batt) => batt.myData.Temperature > LocalSettings.Singleton.Battery.WarningTemperature);
 		}
 
-		if (battVoltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage) return Colors.Red;
-		if (battVoltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage) return Colors.Yellow;
+		float crit6SVoltage = 6 * LocalSettings.Singleton.Battery.CriticalVoltage;
+		float warn6SVoltage = 6 * LocalSettings.Singleton.Battery.WarningVoltage;
+
+		isCritReached |= minimalBattVoltage < crit6SVoltage;
+		isWarnReached |= minimalBattVoltage < warn6SVoltage;
+
+		Color suggestColor = Colors.White;
+		if (isCritReached)
+			suggestColor = Colors.Red;
+		else if (isWarnReached)
+			suggestColor = Colors.Yellow;
 
 
-		return Colors.White;
+		return suggestColor;
 	}
 
 	Task OnBatteryControl(int slot, MqttClasses.BatterySet set)
@@ -179,32 +184,11 @@ public partial class BatteryMonitor : PanelContainer
 			JsonSerializer.Serialize(arg));
 	}
 
-	int CountConnectedBatts()
-	{
-		int count = 0;
-
-		foreach (var batt in battery)
-		{
-			if (batt.myData == null) continue;
-			if ((batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
-				batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) && batt.UpToDate)
-				count++;
-		}
-
-		return count;
-	}
+	int CountConnectedBatts() => battery.Count((batt) => batt.IsEnabled && batt.UpToDate);
 
 	int FetchBatteryPercentOrVoltage()
 	{
-		int sum = 0;
-
-		foreach (var batt in battery)
-		{
-			if (batt.myData == null) continue;
-			if ((batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
-				batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) && batt.UpToDate)
-				sum += (int)batt.myData.ChargePercent;
-		}
+		int sum = battery.Sum((batt) => batt.IsEnabled && batt.UpToDate ? (int)batt.myData.ChargePercent : 0);
 
 		//if in alt mode, show only vesc voltage. Else auto mode (percent/voltage)
 		int connectedBatts = LocalSettings.Singleton.Battery.AltMode ? 0 : CountConnectedBatts();
