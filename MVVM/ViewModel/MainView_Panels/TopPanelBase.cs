@@ -114,6 +114,8 @@ public abstract partial class TopPanelBase : Node
 		MqttNode.Singleton.ConnectionChanged += OnMqttConnectionChanged;
 		LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
 
+		batteryMonitorNode?.Connect(CanvasItem.SignalName.VisibilityChanged, new Callable(this, MethodName.OnBatteryMonitorVisiblilityChange));
+
 		OnBatteryInfo();
 
 		if (batteryMonitorNode is null)
@@ -131,6 +133,11 @@ public abstract partial class TopPanelBase : Node
 		CallDeferred(MethodName.UpdateRtspOverlay);
 		CallDeferred(MethodName.UpdatePtzOverlay);
 		CallDeferred(MethodName.UpdateMqttOverlay);
+	}
+
+	public override void _ExitTree()
+	{
+		batteryMonitorNode?.Disconnect(CanvasItem.SignalName.VisibilityChanged, new Callable(this, MethodName.OnBatteryMonitorVisiblilityChange));
 	}
 
 	protected override void Dispose(bool disposing)
@@ -195,6 +202,12 @@ public abstract partial class TopPanelBase : Node
 				CallDeferred(MethodName.UpdateRoverOverlay);
 				break;
 		}
+	}
+
+	private void OnBatteryMonitorVisiblilityChange()
+	{
+		if(batteryMonitorNode is not null)
+			_batteryButton.SetPressedNoSignal(batteryMonitorNode.Visible);
 	}
 
 	protected void OnBatteryInfo() => OnBatteryInfo(0, 0, Colors.Red);
