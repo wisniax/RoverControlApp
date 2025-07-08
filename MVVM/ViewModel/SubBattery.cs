@@ -94,6 +94,10 @@ public partial class SubBattery : VBoxContainer
 		_timer.Start();
 	}
 
+	public bool IsEnabled =>
+		myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto
+		|| myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan;
+
 	void BatteryControl(MqttClasses.BatterySet set)
 	{
 		if(set == MqttClasses.BatterySet.Off)
