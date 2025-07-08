@@ -69,13 +69,15 @@ public partial class VelMonitor : Panel
 				{
 					_driveLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Drive:\n" +
 																	   $"RPM: ??? rpm\n" +
-																	   $"Current: ??? A");	
+																	   $"Current: ??? A" +
+																	   $"Temperature: ??? C\n");	
 				}
 				else
 				{
 					_rotationLabel[Array.IndexOf(_lastUpdate, i)-4].SetText($"Rotation:\n" +
 																		    $"RPM: ??? rpm\n" +
-																			$"Current: ??? A");
+																			$"Current: ??? A" +
+																			$"Temperature: ??? C\n");
 				}
 				_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: ??? s");
 			}
@@ -165,19 +167,20 @@ public partial class VelMonitor : Panel
 
 	void UpdateDriveMotorInfoHandler(int motor, MqttClasses.WheelFeedback data)
 	{
-		CallDeferred("UpdateDriveMotorInfo", motor, (int)data.ERPM, (int)data.Current);
+		CallDeferred("UpdateDriveMotorInfo", motor, (int)data.ERPM, (int)data.Current, (float)data.TempMotor);
 	}
 
-	void UpdateDriveMotorInfo(int motor, int erpm, int current)
+	void UpdateDriveMotorInfo(int motor, int erpm, int current, float temp)
 	{
 		_driveLabel[motor].SetText($"Drive:\n" +
 						 $"RPM: {erpm} rpm\n" +
-						 $"Current: {current} A");
+						 $"Current: {current} A" +
+						 $"Temperature: {temp} C\n");
 		_wheelSlider[motor].Value = (float)erpm;
 		_wheelSlider[motor].MinValue = - LocalSettings.Singleton.WheelData.MaxRPM;
 		_wheelSlider[motor].MaxValue = LocalSettings.Singleton.WheelData.MaxRPM;
 		_wheelSlider[motor].Modulate = (erpm < 0) ? Colors.Red : Colors.Green;
-		if (erpm > -LocalSettings.Singleton.WheelData.MaxRPM/20 && erpm < LocalSettings.Singleton.WheelData.MaxRPM / 20)
+		if (erpm > -LocalSettings.Singleton.WheelData.MaxRPM/100 && erpm < LocalSettings.Singleton.WheelData.MaxRPM / 100)
 			_wheelSlider[motor].Modulate = Colors.White;
 	}
 
