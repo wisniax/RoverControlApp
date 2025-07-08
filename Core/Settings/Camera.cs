@@ -1,7 +1,9 @@
-﻿using Godot;
-using RoverControlApp.Core.JSONConverters;
-using System;
+﻿using System;
 using System.Text.Json.Serialization;
+
+using Godot;
+
+using RoverControlApp.Core.JSONConverters;
 
 namespace RoverControlApp.Core.Settings;
 
@@ -56,7 +58,7 @@ public partial class Camera : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _inverseAxis,value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check, customTooltip: "Must be enabled manually on non Windows OS platform. (Rtsp fully supported only on Windows)")]
 	public bool EnableRtspStream
 	{
 		get => _enableRtspStream;
