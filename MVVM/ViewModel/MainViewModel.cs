@@ -436,24 +436,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void OnMainPanelTop_LayoutChange()
 		{
-			switch (Input.IsKeyPressed(Key.Ctrl))
-			{
-				case true when _mainTopPanelMode == TopPanelMode.Full:
-					_mainTopPanelMode = TopPanelMode.FullExtra;
-					break;
-				case true when _mainTopPanelMode == TopPanelMode.FullExtra:
-					_mainTopPanelMode = TopPanelMode.Full;
-					break;
-				case true when _mainTopPanelMode == TopPanelMode.Mini:
-					_mainTopPanelMode = TopPanelMode.MiniExtra;
-					break;
-				case true when _mainTopPanelMode == TopPanelMode.MiniExtra:
-					_mainTopPanelMode = TopPanelMode.Mini;
-					break;
-				default:
-					_mainTopPanelMode = (TopPanelMode)(((int)_mainTopPanelMode + 2) % 4);
-					break;
-			}
+			_mainTopPanelMode = (TopPanelMode)(((int)_mainTopPanelMode + 1) % 4);
 
 			MainPanelTop_LayoutApply();
 		}
