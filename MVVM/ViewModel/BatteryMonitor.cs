@@ -19,6 +19,8 @@ public partial class BatteryMonitor : PanelContainer
 
 	private volatile float _currentVoltageAlt = 0;
 
+	private bool showOnLowFired = false;
+
 	public event Action<int, int, Color>? OnBatteryDataChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
 
 	public int ConnectedBatts
@@ -155,6 +157,8 @@ public partial class BatteryMonitor : PanelContainer
 		isCritReached |= minimalBattVoltage < crit6SVoltage;
 		isWarnReached |= minimalBattVoltage < warn6SVoltage;
 
+		ShowOnLowLogic(isCritReached);
+
 		Color suggestColor = Colors.White;
 		if (isCritReached)
 			suggestColor = Colors.Red;
@@ -201,6 +205,12 @@ public partial class BatteryMonitor : PanelContainer
 			default:
 				return (int)(_currentVoltageAlt * 10);
 		}
+	}
+
+	private void ShowOnLowLogic(bool isLow)
+	{
+		Visible |= !showOnLowFired && isLow && LocalSettings.Singleton.Battery.ShowOnLow;
+		showOnLowFired = isLow;
 	}
 
 	private void OnSettingsPropertyChanged(StringName category, StringName property, Variant oldValue, Variant newValue)
