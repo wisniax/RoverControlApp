@@ -361,6 +361,7 @@ public abstract partial class TopPanelBase : Node
 		{
 			case CommunicationState.Created:
 				_rtspOverlay.ControlMode = 1;
+				_rtspOverlay_alertMode = AnimationNormal;
 				break;
 			case CommunicationState.Opening:
 				_rtspOverlay.ControlMode = 2;
@@ -399,6 +400,7 @@ public abstract partial class TopPanelBase : Node
 		{
 			case CommunicationState.Created:
 				_ptzOverlay.ControlMode = 1;
+				_ptzOverlay_alertMode = AnimationNormal;
 				break;
 			case CommunicationState.Opening:
 				_ptzOverlay.ControlMode = 2;
