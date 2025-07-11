@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://cb4iwcuigx2m0"]
 
-[ext_resource type="Theme" uid="uid://b5383qtpq03ca" path="res://Resources/InputHelpMaster.theme" id="1_r456b"]
+[ext_resource type="Theme" uid="uid://dsdc73dbaqeqs" path="res://Resources/InputHelpMaster.theme" id="1_ngtig"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/InputHelpMaster.cs" id="1_raoys"]
 [ext_resource type="PackedScene" uid="uid://o5ejabbb2yio" path="res://MVVM/View/InputHelpHint.tscn" id="2_5ikwg"]
 
@@ -18,7 +18,7 @@ Shift + Mouse Scroll - Cycle hints"
 focus_mode = 2
 mouse_force_pass_scroll_events = false
 mouse_default_cursor_shape = 16
-theme = ExtResource("1_r456b")
+theme = ExtResource("1_ngtig")
 script = ExtResource("1_raoys")
 _inputHelpHintScene = ExtResource("2_5ikwg")
 _cycleTimer = NodePath("CycleTimer")

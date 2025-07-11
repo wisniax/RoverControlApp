@@ -1,10 +1,15 @@
-# Top-level configuration
 root = true
 
-# Apply these settings to all cs files
 [*.cs]
 end_of_line = lf
 indent_style = tab
 indent_size = 4
+charset = utf-8
 trim_trailing_whitespace = true
 insert_final_newline = true
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_before_members_in_object_initializers = always
+csharp_new_line_before_members_in_anonymous_types = always

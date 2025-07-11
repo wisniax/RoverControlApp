@@ -72,16 +72,13 @@ public class JoyVibrato : IDisposable
 		}
 	};
 
-	private PressedKeys _pressedKeys;
-
 	private Task? _taskVibrato;
 	private CancellationTokenSource _ctSource;
 	private CancellationToken _ctToken;
 	private bool _disposedValue = false;
 
-	public JoyVibrato(PressedKeys pressedKeys)
+	public JoyVibrato()
 	{
-		_pressedKeys = pressedKeys;
 		_ctSource = new CancellationTokenSource();
 		_ctToken = _ctSource.Token;
 	}
@@ -105,7 +102,7 @@ public class JoyVibrato : IDisposable
 			case MqttClasses.ControlMode.EStop
 			when LocalSettings.Singleton.General.NoInputSecondsToEstop > 0
 			&& !LocalSettings.Singleton.Joystick.VibrateOnAutoEstop
-			&& _pressedKeys.TimeToAutoEStopMsec <= 0:
+			&& PressedKeys.Singleton.TimeToAutoEStopMsec <= 0:
 				// no vibrato on Auto E-Stop
 				break;
 			default:
