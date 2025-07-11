@@ -7,6 +7,7 @@ using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
 
 namespace RoverControlApp.MVVM.ViewModel;
+
 public partial class MissionControl : VBoxContainer
 {
 	private MainViewModel mainView = null!;
@@ -74,6 +75,17 @@ public partial class MissionControl : VBoxContainer
 		SPoiRemoveReset();
 	}
 
+	public override void _GuiInput(InputEvent @event)
+	{
+		if (@event is not InputEventMouseButton)
+			return;
+
+		if(GetViewport().GuiGetFocusOwner() is not null)
+			GetViewport().SetInputAsHandled();
+
+		GetViewport().GuiReleaseFocus();
+	}
+
 	private void OnSMissionControlRefreshBtn()
 	{
 		SPoiRemoveReset();
@@ -131,7 +143,7 @@ public partial class MissionControl : VBoxContainer
 			return;
 		}
 
-		if ( (MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.GetSelectedId() != MqttClasses.PhotoType.None	)
+		if ((MqttClasses.PhotoType)SPoiAddPhotoTypeOpBtn.GetSelectedId() != MqttClasses.PhotoType.None)
 		{
 			await Task.Run(() => mainView.CaptureCameraImage("POIImages", SPoiAddTargetStrLEdit.Text, "jpg"));
 		}
@@ -166,10 +178,10 @@ public partial class MissionControl : VBoxContainer
 
 		var KmlList = MissionSetPoint.Singleton.ActiveKmlObjects;
 
-		switch((MqttClasses.PointType)SPoiRemoveTypeOpBtn.GetItemId(index))
+		switch ((MqttClasses.PointType)SPoiRemoveTypeOpBtn.GetItemId(index))
 		{
 			case MqttClasses.PointType.RemovePoint:
-				foreach(var point in KmlList.poi)
+				foreach (var point in KmlList.poi)
 					SPoiRemoveTargetOpBtn.AddItem(point);
 
 				break;
@@ -245,7 +257,7 @@ public partial class MissionControl : VBoxContainer
 	{
 		var maxSize = GetTree().Root.GetViewport().GetVisibleRect().Size;
 
-		Size = new Vector2(Math.Clamp(Size.X, CustomMinimumSize.X,maxSize.X), Size.Y);
+		Size = new Vector2(Math.Clamp(Size.X, CustomMinimumSize.X, maxSize.X), Size.Y);
 		Position = new Vector2(Math.Clamp(Position.X, 0, maxSize.X - Size.X), Math.Clamp(Position.Y, 30, maxSize.Y - Size.Y));
 
 		LocalSettings.Singleton.General.MissionControlSize = Size.X.ToString() + ';' + Size.Y.ToString();

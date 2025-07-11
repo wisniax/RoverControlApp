@@ -139,6 +139,18 @@ namespace RoverControlApp.MVVM.ViewModel
 			base.Dispose(disposing);
 		}
 
+	public override void _GuiInput(InputEvent @event)
+	{
+		if (@event is not InputEventMouseButton)
+			return;
+
+		if(GetViewport().GuiGetFocusOwner() is not null)
+			GetViewport().SetInputAsHandled();
+
+		GetViewport().GuiReleaseFocus();
+	}
+
+
 		public override void _UnhandledInput(InputEvent @event)
 		{
 			if (@event is InputEventKey inputEvKey && inputEvKey.Keycode != Key.Shift)
@@ -302,7 +314,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			string? ptzAge = ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
 			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication.Singleton.RoverStatus?.ControlMode}, " +
-			              $"{(RoverCommunication.Singleton.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
+						  $"{(RoverCommunication.Singleton.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
 						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication.Singleton.RoverStatus?.CommunicationState}[/color], " +
 						  $"Pad connected: {RoverCommunication.Singleton.RoverStatus?.PadConnected}\n");
 			switch (RoverCommunication.Singleton.RoverStatus?.ControlMode)
@@ -319,13 +331,13 @@ namespace RoverControlApp.MVVM.ViewModel
 					break;
 				case MqttClasses.ControlMode.Sampler:
 					FancyDebugViewRLab.AppendText($"PressedKeys: Sampler DrillAction: {PressedKeys.Singleton.SamplerMovement.DrillAction:F2}, " +
-					                              $"DrillMov: {PressedKeys.Singleton.SamplerMovement.DrillMovement:F2}, " +
-					                              $"PlatformMov: {PressedKeys.Singleton.SamplerMovement.PlatformMovement:F2}, " +
+												  $"DrillMov: {PressedKeys.Singleton.SamplerMovement.DrillMovement:F2}, " +
+												  $"PlatformMov: {PressedKeys.Singleton.SamplerMovement.PlatformMovement:F2}, " +
 												  $"{(LocalSettings.Singleton.Sampler.Container0.CustomName == "-" ? "Container0" : LocalSettings.Singleton.Sampler.Container0.CustomName)}" +
 																$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees0:F1}, " +
 												  $"{(LocalSettings.Singleton.Sampler.Container1.CustomName == "-" ? "Container1" : LocalSettings.Singleton.Sampler.Container1.CustomName)}" +
 																$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees1:F1}, " +
-					                              $"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "Container2" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
+												  $"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "Container2" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
 																$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees2:F1}\n");
 					break;
 			}

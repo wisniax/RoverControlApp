@@ -86,18 +86,21 @@ alignment = 1
 
 [node name="AutoButton" type="Button" parent="Buttons"]
 layout_mode = 2
+focus_mode = 0
 theme_type_variation = &"ButtonRca"
 theme_override_font_sizes/font_size = 18
 text = "Auto"
 
 [node name="OnButton" type="Button" parent="Buttons"]
 layout_mode = 2
+focus_mode = 0
 theme_type_variation = &"ButtonRca"
 theme_override_font_sizes/font_size = 14
 text = "ON"
 
 [node name="OffButton" type="Button" parent="Buttons"]
 layout_mode = 2
+focus_mode = 0
 theme_type_variation = &"ButtonRca"
 theme_override_font_sizes/font_size = 14
 text = "OFF"

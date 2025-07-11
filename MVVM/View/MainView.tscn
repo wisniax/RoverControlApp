@@ -574,6 +574,7 @@ metadata/_edit_lock_ = true
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
 size_flags_vertical = 0
+mouse_filter = 1
 theme_type_variation = &"PanelRcaMainPanelTop"
 
 [node name="Zones" type="HBoxContainer" parent="VBoxContainer/MainPanelTop"]
@@ -600,6 +601,7 @@ AlertAnimation = false
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 tooltip_text = "Current ControlMode"
+mouse_filter = 1
 mouse_default_cursor_shape = 16
 Presets = [SubResource("Resource_v0xrc"), SubResource("Resource_8o56p"), SubResource("Resource_cmr6r"), SubResource("Resource_r07qe"), SubResource("Resource_pj4sb"), SubResource("Resource_qqwsn"), SubResource("Resource_s70ri"), SubResource("Resource_opeq8"), SubResource("Resource_8b20b"), SubResource("Resource_qap50")]
 AnimateAll = true
@@ -615,6 +617,7 @@ FontSurfixSizeEx = 22
 custom_minimum_size = Vector2(210, 0)
 layout_mode = 2
 tooltip_text = "Phisical E-Stop button state"
+mouse_filter = 1
 mouse_default_cursor_shape = 16
 Presets = [SubResource("Resource_4od4g"), SubResource("Resource_wn0xy"), SubResource("Resource_mor7r")]
 AnimateAll = true
@@ -630,6 +633,7 @@ FontSurfixSizeEx = 22
 custom_minimum_size = Vector2(232, 0)
 layout_mode = 2
 tooltip_text = "Camera feed status"
+mouse_filter = 1
 mouse_default_cursor_shape = 16
 Presets = [SubResource("Resource_nu2f8"), SubResource("Resource_x887d"), SubResource("Resource_fetk0"), SubResource("Resource_i6o2u"), SubResource("Resource_sjd7i"), SubResource("Resource_tlg1o"), SubResource("Resource_n5xrf")]
 AnimateAll = true
@@ -645,6 +649,7 @@ FontSurfixSizeEx = 22
 custom_minimum_size = Vector2(232, 0)
 layout_mode = 2
 tooltip_text = "Camera control status"
+mouse_filter = 1
 mouse_default_cursor_shape = 16
 Presets = [SubResource("Resource_nu2f8"), SubResource("Resource_x887d"), SubResource("Resource_fetk0"), SubResource("Resource_i6o2u"), SubResource("Resource_sjd7i"), SubResource("Resource_tlg1o"), SubResource("Resource_n5xrf")]
 AnimateAll = true
@@ -661,6 +666,7 @@ custom_minimum_size = Vector2(232, 0)
 layout_mode = 2
 size_flags_horizontal = 10
 tooltip_text = "MQTT connection state"
+mouse_filter = 1
 mouse_default_cursor_shape = 16
 Presets = [SubResource("Resource_nu2f8"), SubResource("Resource_x887d"), SubResource("Resource_fetk0"), SubResource("Resource_i6o2u"), SubResource("Resource_sjd7i"), SubResource("Resource_tlg1o"), SubResource("Resource_n5xrf")]
 AnimateAll = true
@@ -680,6 +686,7 @@ size_flags_horizontal = 8
 custom_minimum_size = Vector2(110, 0)
 layout_mode = 2
 tooltip_text = "Battery status"
+focus_mode = 0
 theme_type_variation = &"ButtonRcaH1"
 toggle_mode = true
 text = "230V "
@@ -702,6 +709,7 @@ vertical_alignment = 1
 
 [node name="LayoutBtn" type="Button" parent="VBoxContainer/MainPanelTop/Zones/Buttons"]
 layout_mode = 2
+focus_mode = 0
 theme_type_variation = &"ButtonRcaH1"
 theme_override_font_sizes/font_size = 20
 text = ""
@@ -709,11 +717,13 @@ text = ""
 [node name="MainCenter" type="PanelContainer" parent="VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 1
 theme_override_styles/panel = SubResource("StyleBoxEmpty_y5kc6")
 metadata/_edit_lock_ = true
 
 [node name="Background" type="Control" parent="VBoxContainer/MainCenter"]
 layout_mode = 2
+mouse_filter = 2
 metadata/_edit_lock_ = true
 
 [node name="BgColor" type="ColorRect" parent="VBoxContainer/MainCenter/Background"]
@@ -723,6 +733,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 color = Color(0.0627451, 0.0627451, 0.0627451, 1)
 
 [node name="Logo" type="TextureRect" parent="VBoxContainer/MainCenter/Background"]
@@ -734,6 +745,7 @@ anchor_right = 0.9
 anchor_bottom = 0.9
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("3_ria73")
 expand_mode = 3
 stretch_mode = 5
@@ -746,6 +758,7 @@ anchor_top = 0.0284672
 anchor_right = 0.53559
 anchor_bottom = 0.167883
 grow_horizontal = 2
+mouse_filter = 2
 texture = ExtResource("4_s1ejr")
 expand_mode = 1
 stretch_mode = 5
@@ -766,6 +779,7 @@ visible = false
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 size_flags_vertical = 0
+mouse_filter = 1
 theme_type_variation = &"PanelRcaMainPanelTopMini"
 
 [node name="AlwaysVisible" type="HBoxContainer" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini"]
@@ -797,6 +811,7 @@ batteryMonitorNode = NodePath("../../../../../ScreenPanels/BatteryMonitor")
 custom_minimum_size = Vector2(210, 0)
 layout_mode = 2
 tooltip_text = "Current ControlMode"
+mouse_filter = 1
 mouse_default_cursor_shape = 16
 Presets = [SubResource("Resource_yg0mv"), SubResource("Resource_pjx2p"), SubResource("Resource_5c4w6"), SubResource("Resource_hrt4a"), SubResource("Resource_i40yi"), SubResource("Resource_sqlng"), SubResource("Resource_c3u1j"), SubResource("Resource_0n0cx"), SubResource("Resource_1kwso"), SubResource("Resource_q0gue")]
 NoAnimation = true
@@ -812,6 +827,7 @@ FontSurfixSizeEx = 28
 [node name="Phis_ E-Stop" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible/HBoxContainer" instance=ExtResource("5_xbxoj")]
 layout_mode = 2
 tooltip_text = "Phisical E-Stop button state"
+mouse_filter = 1
 mouse_default_cursor_shape = 16
 Presets = [SubResource("Resource_4uumx"), SubResource("Resource_g2l2u"), SubResource("Resource_iwkun")]
 NoAnimation = true
@@ -827,6 +843,7 @@ FontSurfixSizeEx = 28
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 tooltip_text = "Camera feed status"
+mouse_filter = 1
 mouse_default_cursor_shape = 16
 Presets = [SubResource("Resource_rhuj0"), SubResource("Resource_rhuj1"), SubResource("Resource_rhuj2"), SubResource("Resource_rhuj3"), SubResource("Resource_rhuj4"), SubResource("Resource_rhuj5"), SubResource("Resource_rhuj6")]
 NoAnimation = true
@@ -842,6 +859,7 @@ FontSurfixSizeEx = 28
 custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 tooltip_text = "Camera control status"
+mouse_filter = 1
 mouse_default_cursor_shape = 16
 Presets = [SubResource("Resource_ghuj0"), SubResource("Resource_ghuj1"), SubResource("Resource_ghuj2"), SubResource("Resource_ghuj3"), SubResource("Resource_ghuj4"), SubResource("Resource_ghuj5"), SubResource("Resource_ghuj6")]
 NoAnimation = true
@@ -858,6 +876,7 @@ custom_minimum_size = Vector2(120, 0)
 layout_mode = 2
 size_flags_horizontal = 10
 tooltip_text = "MQTT connection state"
+mouse_filter = 1
 mouse_default_cursor_shape = 16
 Presets = [SubResource("Resource_dncim"), SubResource("Resource_1xsc5"), SubResource("Resource_e58yi"), SubResource("Resource_3ckgd"), SubResource("Resource_q27vw"), SubResource("Resource_uxif7"), SubResource("Resource_2gjfp")]
 NoAnimation = true
@@ -874,6 +893,7 @@ FontSurfixSizeEx = 28
 custom_minimum_size = Vector2(110, 0)
 layout_mode = 2
 tooltip_text = "Battery status"
+focus_mode = 0
 theme_type_variation = &"ButtonRcaH1"
 toggle_mode = true
 text = "230V "
@@ -894,6 +914,7 @@ vertical_alignment = 1
 
 [node name="LayoutBtn" type="Button" parent="VBoxContainer/MainCenter/Overlays/MainPanelTopMini/AlwaysVisible"]
 layout_mode = 2
+focus_mode = 0
 theme_type_variation = &"ButtonRcaH1"
 theme_override_font_sizes/font_size = 20
 text = ""
@@ -938,6 +959,7 @@ offset_right = -218.0
 offset_bottom = -2.0
 grow_horizontal = 0
 grow_vertical = 0
+mouse_filter = 1
 
 [node name="ZedMonitor" parent="VBoxContainer/MainCenter/ScreenPanels" instance=ExtResource("10_ypnjt")]
 visible = false
@@ -953,6 +975,7 @@ offset_right = -5.40991
 offset_bottom = -0.380005
 grow_horizontal = 0
 grow_vertical = 0
+mouse_filter = 1
 
 [node name="MaxSizeContainer" type="Container" parent="VBoxContainer/MainCenter/ScreenPanels"]
 layout_mode = 1
@@ -974,6 +997,7 @@ custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+mouse_filter = 1
 ReactiveHints = true
 ShowEmpty = true
 CycleHints = true
@@ -991,11 +1015,13 @@ offset_right = -1.0
 offset_bottom = -8.0
 grow_horizontal = 0
 grow_vertical = 0
+mouse_filter = 1
 
 [node name="MainPanelBottom" type="PanelContainer" parent="VBoxContainer"]
 z_index = 2
 layout_mode = 2
 size_flags_vertical = 8
+mouse_filter = 1
 theme_type_variation = &"PanelRcaMainPanelBottom"
 
 [node name="BottomButtons" type="HBoxContainer" parent="VBoxContainer/MainPanelBottom"]
@@ -1018,6 +1044,7 @@ text = "RTSP Capture"
 [node name="Separator" type="Control" parent="VBoxContainer/MainPanelBottom/BottomButtons"]
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
+mouse_filter = 2
 
 [node name="ShowMissionControl" type="Button" parent="VBoxContainer/MainPanelBottom/BottomButtons"]
 layout_mode = 2
