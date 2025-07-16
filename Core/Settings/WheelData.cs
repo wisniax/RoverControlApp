@@ -12,32 +12,32 @@ public partial class WheelData : SettingBase, ICloneable
 
 	public WheelData()
 	{
-		FrontLeftDrive = "0x50";
-		FrontRightDrive = "0x51";
-		BackRightDrive = "0x52";
-		BackLeftDrive = "0x53";
+		_frontLeftDrive = "0x50";
+		_frontRightDrive = "0x51";
+		_backRightDrive = "0x52";
+		_backLeftDrive = "0x53";
 
-		FrontLeftTurn = "0x60";
-		FrontRightTurn = "0x61";
-		BackRightTurn = "0x62";
-		BackLeftTurn = "0x63";
+		_frontLeftTurn = "0x60";
+		_frontRightTurn = "0x61";
+		_backRightTurn = "0x62";
+		_backLeftTurn = "0x63";
 
-		MaxRPM = 1000;
+		_maxRPM = 1000;
 	}
 
 	public WheelData(string frontLeftDrive, string frontRightDrive, string backRightDrive, string backLeftDrive, string frontLeftTurn, string frontRightTurn, string backRightTurn, string backLeftTurn, int maxRPM)
 	{
-		FrontLeftTurn = frontLeftTurn;
-		FrontRightTurn = frontRightTurn;
-		BackRightTurn = backRightTurn;
-		BackLeftTurn = backLeftTurn;
+		_frontLeftTurn = frontLeftTurn;
+		_frontRightTurn = frontRightTurn;
+		_backRightTurn = backRightTurn;
+		_backLeftTurn = backLeftTurn;
 
-		FrontLeftDrive = frontLeftDrive;
-		FrontRightDrive = frontRightDrive;
-		BackRightDrive = backRightDrive;
-		BackLeftDrive = backLeftDrive;
+		_frontLeftDrive = frontLeftDrive;
+		_frontRightDrive = frontRightDrive;
+		_backRightDrive = backRightDrive;
+		_backLeftDrive = backLeftDrive;
 
-		MaxRPM = maxRPM;
+		_maxRPM = maxRPM;
 	}
 
 	public object Clone()
