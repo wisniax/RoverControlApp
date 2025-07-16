@@ -40,28 +40,28 @@ public class WheelDataConverter : JsonConverter<WheelData>
 			switch (propertyName)
 			{
 				case nameof(WheelData.FrontLeftTurn):
-					frontLeftDrive = reader.GetString();
-					break;
-				case nameof(WheelData.FrontRightTurn):
-					frontRightDrive = reader.GetString();
-					break;
-				case nameof(WheelData.BackRightTurn):
-					backRightDrive = reader.GetString();
-					break;
-				case nameof(WheelData.BackLeftTurn):
-					backLeftDrive = reader.GetString();
-					break;
-				case nameof(WheelData.FrontLeftDrive):
 					frontLeftTurn = reader.GetString();
 					break;
-				case nameof(WheelData.FrontRightDrive):
+				case nameof(WheelData.FrontRightTurn):
 					frontRightTurn = reader.GetString();
 					break;
-				case nameof(WheelData.BackRightDrive):
+				case nameof(WheelData.BackRightTurn):
 					backRightTurn = reader.GetString();
 					break;
-				case nameof(WheelData.BackLeftDrive):
+				case nameof(WheelData.BackLeftTurn):
 					backLeftTurn = reader.GetString();
+					break;
+				case nameof(WheelData.FrontLeftDrive):
+					frontLeftDrive = reader.GetString();
+					break;
+				case nameof(WheelData.FrontRightDrive):
+					frontRightDrive = reader.GetString();
+					break;
+				case nameof(WheelData.BackRightDrive):
+					backRightDrive = reader.GetString();
+					break;
+				case nameof(WheelData.BackLeftDrive):
+					backLeftDrive = reader.GetString();
 					break;
 				case nameof(WheelData.MaxRPM):
 					maxRPM = reader.GetInt32();
