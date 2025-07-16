@@ -150,7 +150,6 @@ public partial class VelMonitor : Panel
 
 					break;
 				}
-				continue;
 			}
 			else
 			{
@@ -160,7 +159,6 @@ public partial class VelMonitor : Panel
 					_lastUpdate[i] = DateTime.Now;
 					break;
 				}
-				continue;
 			}
 		}
 		await Task.Yield();
