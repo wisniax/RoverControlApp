@@ -12,14 +12,14 @@ using System;
 namespace RoverControlApp.MVVM.ViewModel;
 public partial class VelMonitor : Panel
 {
-	[Export] private Label _flLabel;
-	[Export] private Label _frLabel;
-	[Export] private Label _brLabel;
-	[Export] private Label _blLabel;
+	[Export] private Label _flLabel = null!;
+	[Export] private Label _frLabel = null!;
+	[Export] private Label _brLabel = null!;
+	[Export] private Label _blLabel = null!;
 
-	[Export] private Label[] _driveLabel;
-	[Export] private Label[] _rotationLabel;
-	[Export] private Label[] _delayLabel;
+	[Export] private Label[] _driveLabel = null!;
+	[Export] private Label[] _rotationLabel = null!;
+	[Export] private Label[] _delayLabel = null!;
 	DateTime[] _lastUpdate = new DateTime[8];
 	TimeSpan[] _lastDelay = new TimeSpan[8];
 
