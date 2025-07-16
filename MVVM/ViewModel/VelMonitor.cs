@@ -69,15 +69,15 @@ public partial class VelMonitor : Panel
 				{
 					_driveLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Drive:\n" +
 																	   $"RPM: ??? rpm\n" +
-																	   $"Current: ??? A" +
-																	   $"Temperature: ??? C\n");	
+																	   $"Current: ??? A\n" +
+																	   $"Temperature: ??? C");	
 				}
 				else
 				{
 					_rotationLabel[Array.IndexOf(_lastUpdate, i)-4].SetText($"Rotation:\n" +
 																		    $"RPM: ??? rpm\n" +
-																			$"Current: ??? A" +
-																			$"Temperature: ??? C\n");
+																			$"Current: ??? A\n" +
+																			$"Temperature: ??? C");
 				}
 				_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: ??? s");
 			}
