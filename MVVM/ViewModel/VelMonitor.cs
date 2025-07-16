@@ -163,6 +163,7 @@ public partial class VelMonitor : Panel
 				continue;
 			}
 		}
+		await Task.Yield();
 	}
 
 	void UpdateDriveMotorInfoHandler(int motor, MqttClasses.WheelFeedback data)
