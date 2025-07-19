@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://cma0xbahpt60p"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jscq1"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.190762, 0.190762, 0.190762, 1)
+
+[node name="WindowBorder" type="Panel"]
+theme_override_styles/panel = SubResource("StyleBoxFlat_jscq1")

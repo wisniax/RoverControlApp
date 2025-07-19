@@ -1,0 +1,64 @@
+[gd_scene load_steps=2 format=3 uid="uid://fi3fxtj15swf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8o5ll"]
+bg_color = Color(0.13, 0.13, 0.13, 0.701961)
+
+[node name="EditInfo" type="Panel"]
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_8o5ll")
+
+[node name="PositionInfo" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TopDistance" type="Label" parent="PositionInfo"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "TopDistance"
+
+[node name="MiddleRow" type="HBoxContainer" parent="PositionInfo"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="LeftDistance" type="Label" parent="PositionInfo/MiddleRow"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "LeftDistance"
+
+[node name="Anchors" type="Label" parent="PositionInfo/MiddleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "Anchor"
+horizontal_alignment = 1
+
+[node name="RightDistance" type="Label" parent="PositionInfo/MiddleRow"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "RightDistance"
+
+[node name="BottomDistance" type="Label" parent="PositionInfo"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 3
+theme_override_font_sizes/font_size = 14
+text = "BottomDistance"
