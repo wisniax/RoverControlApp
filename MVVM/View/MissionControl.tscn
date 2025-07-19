@@ -1,6 +1,5 @@
-[gd_scene load_steps=12 format=3 uid="uid://crakb6uxv2yt8"]
+[gd_scene load_steps=11 format=3 uid="uid://crakb6uxv2yt8"]
 
-[ext_resource type="Theme" uid="uid://mjdtbskragnd" path="res://Resources/Ovarhaul2025/Ovarhaul2025.theme" id="1_3j30s"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionControl.cs" id="1_j63bh"]
 [ext_resource type="PackedScene" uid="uid://dp1udlu6cpe2h" path="res://MVVM/View/UIOverlay2.tscn" id="3_hh7oa"]
 [ext_resource type="Script" path="res://MVVM/Model/UIOverlaySetting.cs" id="4_ybfar"]
@@ -72,7 +71,6 @@ TextSurfix = ""
 custom_minimum_size = Vector2(480, 360)
 offset_right = 618.0
 offset_bottom = 452.0
-theme = ExtResource("1_3j30s")
 theme_override_constants/separation = 0
 script = ExtResource("1_j63bh")
 SMissionControlStartBtn = NodePath("Content/VBoxContainer/SectionMissionControl/SectionMissionControls/StartBtn")
@@ -281,8 +279,8 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 Presets = [SubResource("Resource_qpuqh"), SubResource("Resource_6xagi"), SubResource("Resource_saa16"), SubResource("Resource_5yi0l"), SubResource("Resource_bsgjx"), SubResource("Resource_n6x1i"), SubResource("Resource_y6m36")]
-PermanentText = "Status:"
 AnimateAll = true
+PermanentText = "Status:"
 FontSize = 16
 
 [node name="StartBtn" type="Button" parent="Content/VBoxContainer/SectionMissionControl/SectionMissionControls"]

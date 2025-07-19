@@ -37,6 +37,10 @@ file_logging/max_log_files=50
 
 project/assembly_name="Rover Control App"
 
+[gui]
+
+theme/custom="res://Resources/Ovarhaul2025/Ovarhaul2025.theme"
+
 [input]
 
 camera_move_left={

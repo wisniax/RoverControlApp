@@ -1,7 +1,6 @@
-[gd_scene load_steps=79 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=78 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
-[ext_resource type="Theme" uid="uid://mjdtbskragnd" path="res://Resources/Ovarhaul2025/Ovarhaul2025.theme" id="1_8861l"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainView_Panels/TopFull.cs" id="3_5kpi0"]
 [ext_resource type="Texture2D" uid="uid://batjiqxksfxpg" path="res://Resources/RAPpl_rca_standard_BG.svg" id="3_ria73"]
 [ext_resource type="PackedScene" uid="uid://em10imnbie42" path="res://MVVM/View/SettingsManager.tscn" id="4_b20oh"]
@@ -545,7 +544,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_8861l")
 script = ExtResource("1_84vv0")
 imTextureRect = NodePath("VBoxContainer/MainCenter/CameraView")
 ShowSettingsBtn = NodePath("VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn")
@@ -1102,6 +1100,6 @@ autostart = true
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowMissionControl" to="VBoxContainer/MainCenter/ScreenPanels/MissionControl" method="set_visible"]
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowZedMonitor" to="VBoxContainer/MainCenter/ScreenPanels/ZedMonitor" method="set_visible"]
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="VBoxContainer/MainCenter/ScreenPanels/SettingsManager" method="set_visible"]
-[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="VBoxContainer/MainCenter/ScreenPanels/SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="VBoxContainer/MainCenter/ScreenPanels/SettingsManager" method="Redraw"]
+[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="VBoxContainer/MainCenter/ScreenPanels/SettingsManager" method="OnVisibilityChange"]
 [connection signal="timeout" from="CameraDataPulser" to="." method="OnCameraDataPulserTimeout"]

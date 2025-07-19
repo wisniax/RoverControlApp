@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://iocpx8rpo2a8"]
+[gd_scene load_steps=6 format=3 uid="uid://iocpx8rpo2a8"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/WidgetPanel.cs" id="1_f2d4b"]
-[ext_resource type="Theme" uid="uid://mjdtbskragnd" path="res://Resources/Ovarhaul2025/Ovarhaul2025.theme" id="1_h6km5"]
 [ext_resource type="PackedScene" uid="uid://3nfkg2sjo5lv" path="res://MVVM/View/Widget/WidgetDragControl.tscn" id="2_uaj7n"]
 [ext_resource type="PackedScene" uid="uid://cisg0j3itxgm1" path="res://MVVM/View/Widget/WindowBar.tscn" id="3_tgta4"]
 [ext_resource type="PackedScene" uid="uid://cma0xbahpt60p" path="res://MVVM/View/Widget/WindowBorder.tscn" id="4_4pp4i"]
@@ -11,7 +10,6 @@
 offset_right = 163.0
 offset_bottom = 85.0
 mouse_filter = 2
-theme = ExtResource("1_h6km5")
 script = ExtResource("1_f2d4b")
 _widgetDragControl = NodePath("WidgetDragControl")
 _windowBar = NodePath("WindowBar")

@@ -1,6 +1,5 @@
-[gd_scene load_steps=6 format=3 uid="uid://em10imnbie42"]
+[gd_scene load_steps=5 format=3 uid="uid://em10imnbie42"]
 
-[ext_resource type="Theme" uid="uid://mjdtbskragnd" path="res://Resources/Ovarhaul2025/Ovarhaul2025.theme" id="1_be7f7"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SettingsManager.cs" id="1_pihm0"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SettingsManagerTree.cs" id="2_mu20m"]
 
@@ -18,7 +17,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_be7f7")
 script = ExtResource("1_pihm0")
 smTree = NodePath("SettingsManagerTree")
 statusBar = NodePath("StatusBar/StatusBarLabel")
