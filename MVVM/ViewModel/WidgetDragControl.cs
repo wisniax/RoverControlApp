@@ -1,5 +1,7 @@
 using Godot;
 
+namespace RoverControlApp.MVVM.ViewModel;
+
 public partial class WidgetDragControl : Control
 {
 	#region Fields

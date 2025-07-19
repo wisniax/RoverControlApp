@@ -4,6 +4,8 @@ using System.Linq;
 
 using Godot;
 
+namespace RoverControlApp.MVVM.ViewModel;
+
 public partial class WidgetPanel : Container
 {
 	#region Classes
@@ -312,12 +314,12 @@ public partial class WidgetPanel : Container
 		if (!EditMode)
 			return;
 		if (!eventMouseMotion.ButtonMask.HasFlag(MouseButtonMask.Left))
-			{
-				_resizeStarted = false;
-				_lastAppliedLayout = ClosestAnchorPoint(GetBoundingRect());
-				SetAnchorsPreset(_lastAppliedLayout);
-				return;
-			}
+		{
+			_resizeStarted = false;
+			_lastAppliedLayout = ClosestAnchorPoint(GetBoundingRect());
+			SetAnchorsPreset(_lastAppliedLayout);
+			return;
+		}
 
 		if (!_resizeStarted)
 		{
