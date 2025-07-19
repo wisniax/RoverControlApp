@@ -14,15 +14,15 @@ mouse_filter = 2
 theme = ExtResource("1_h6km5")
 script = ExtResource("1_f2d4b")
 _widgetDragControl = NodePath("WidgetDragControl")
-_windowBar = NodePath("")
-_editInfo = NodePath("")
-_leftDistanceLabel = NodePath("")
-_topDistanceLabel = NodePath("")
-_rightDistanceLabel = NodePath("")
-_bottomDistanceLabel = NodePath("")
-_anchorPointLabel = NodePath("")
-_windowBarTitleLabel = NodePath("")
-_windowBorder = NodePath("")
+_windowBar = NodePath("WindowBar")
+_editInfo = NodePath("EditInfo")
+_leftDistanceLabel = NodePath("EditInfo/PositionInfo/MiddleRow/LeftDistance")
+_topDistanceLabel = NodePath("EditInfo/PositionInfo/TopDistance")
+_rightDistanceLabel = NodePath("EditInfo/PositionInfo/MiddleRow/RightDistance")
+_bottomDistanceLabel = NodePath("EditInfo/PositionInfo/BottomDistance")
+_anchorPointLabel = NodePath("EditInfo/PositionInfo/MiddleRow/Anchors")
+_windowBarTitleLabel = NodePath("WindowBar/HBoxContainer/Title")
+_windowBorder = NodePath("WindowBorder")
 
 [node name="WindowBar" parent="." instance=ExtResource("3_tgta4")]
 layout_mode = 2
@@ -36,5 +36,10 @@ layout_mode = 2
 [node name="EditInfo" parent="." instance=ExtResource("6_qlbgg")]
 layout_mode = 2
 
+[connection signal="gui_input" from="WindowBar" to="." method="OnDragWindowBar"]
+[connection signal="pressed" from="WindowBar/HBoxContainer/Exit" to="." method="OnButtonExit"]
 [connection signal="Drag" from="WidgetDragControl" to="." method="OnDrag"]
 [connection signal="ResizeZone" from="WidgetDragControl" to="." method="OnResizeZone"]
+
+[editable path="WindowBar"]
+[editable path="EditInfo"]
