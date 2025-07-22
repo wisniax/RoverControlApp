@@ -1,40 +1,69 @@
-[gd_scene load_steps=5 format=3 uid="uid://b5n8onswl0y7o"]
+[gd_scene load_steps=3 format=3 uid="uid://b5n8onswl0y7o"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/WidgetWindow.cs" id="1_ey63g"]
-[ext_resource type="PackedScene" uid="uid://cisg0j3itxgm1" path="res://MVVM/View/Widget/WindowBar.tscn" id="1_yl8mw"]
-[ext_resource type="PackedScene" uid="uid://cma0xbahpt60p" path="res://MVVM/View/Widget/WindowBorder.tscn" id="2_iciam"]
-[ext_resource type="PackedScene" uid="uid://3nfkg2sjo5lv" path="res://MVVM/View/Widget/WidgetDragControl.tscn" id="3_jce70"]
 
-[node name="WidgetWindow" type="Window"]
-transparent_bg = true
-position = Vector2i(501, 100)
-size = Vector2i(150, 100)
-transient = true
-exclusive = true
-transparent = true
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4vkp3"]
+bg_color = Color(0.454948, 0.158422, 0, 0.784314)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.937255, 0.427451, 0.160784, 1)
+
+[node name="WidgetWindow" type="Window" node_paths=PackedStringArray("_noChildBg", "_options")]
+initial_position = 2
 script = ExtResource("1_ey63g")
+_noChildBg = NodePath("NoChildBg")
+_options = NodePath("Options")
 
-[node name="WindowBar" parent="." instance=ExtResource("1_yl8mw")]
-anchors_preset = 10
-anchor_right = 1.0
-offset_bottom = 34.0
-grow_horizontal = 2
+[node name="Options" type="PopupMenu" parent="."]
+size = Vector2i(125, 100)
+item_count = 7
+item_0/text = "Widget Options"
+item_0/id = 1
+item_0/separator = true
+item_1/text = "Borderless"
+item_1/checkable = 1
+item_1/id = 2
+item_2/text = "Transparent"
+item_2/checkable = 1
+item_2/checked = true
+item_2/id = 3
+item_3/text = "Always On Top"
+item_3/id = 4
+item_3/separator = true
+item_4/text = "None"
+item_4/checkable = 2
+item_4/id = 5
+item_5/text = "Above RCA"
+item_5/checkable = 2
+item_5/id = 6
+item_6/text = "Above All"
+item_6/checkable = 2
+item_6/id = 7
 
-[node name="WindowBorder" parent="." instance=ExtResource("2_iciam")]
+[node name="NoChildBg" type="Panel" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4vkp3")
 
-[node name="WidgetDragControls" parent="." instance=ExtResource("3_jce70")]
-visible = false
-mouse_filter = 2
-ShowVisuals = false
-ProcessDrag = false
-ProcessResize = false
+[node name="Label" type="Label" parent="NoChildBg"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -66.5
+offset_top = -12.0
+offset_right = 66.5
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Nothing to show."
 
-[connection signal="gui_input" from="WindowBar" to="." method="OnDragWindowBar"]
-
-[editable path="WindowBar"]
+[connection signal="id_pressed" from="Options" to="." method="OnOptionsChange"]
