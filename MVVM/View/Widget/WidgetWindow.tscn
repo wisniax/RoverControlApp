@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://b5n8onswl0y7o"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/WidgetWindow.cs" id="1_ey63g"]
+[ext_resource type="PackedScene" uid="uid://cisg0j3itxgm1" path="res://MVVM/View/Widget/WindowBar.tscn" id="1_yl8mw"]
+[ext_resource type="PackedScene" uid="uid://cma0xbahpt60p" path="res://MVVM/View/Widget/WindowBorder.tscn" id="2_iciam"]
+[ext_resource type="PackedScene" uid="uid://3nfkg2sjo5lv" path="res://MVVM/View/Widget/WidgetDragControl.tscn" id="3_jce70"]
+
+[node name="WidgetWindow" type="Window"]
+transparent_bg = true
+position = Vector2i(501, 100)
+size = Vector2i(150, 100)
+transient = true
+exclusive = true
+transparent = true
+script = ExtResource("1_ey63g")
+
+[node name="WindowBar" parent="." instance=ExtResource("1_yl8mw")]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 34.0
+grow_horizontal = 2
+
+[node name="WindowBorder" parent="." instance=ExtResource("2_iciam")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="WidgetDragControls" parent="." instance=ExtResource("3_jce70")]
+visible = false
+mouse_filter = 2
+ShowVisuals = false
+ProcessDrag = false
+ProcessResize = false
+
+[connection signal="gui_input" from="WindowBar" to="." method="OnDragWindowBar"]
+
+[editable path="WindowBar"]
