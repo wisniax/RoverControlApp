@@ -7,6 +7,7 @@ theme_type_variation = &"PanelContainerRcaWindowBar"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="Title" type="Label" parent="HBoxContainer"]
 layout_mode = 2

@@ -397,9 +397,19 @@ public partial class WidgetPanel : Container
 
 
 		if (eventMouseMotion.GetModifiersMask().HasFlag(KeyModifierMask.MaskCtrl))
-			newRect = GetResizedRectCenter(layoutPreset, mouseRelativeToStart);
+			newRect = WidgetStatic.GetResizedRectCenter(
+				_resizeInitialRect,
+				GetCombinedMinimumSize(),
+				layoutPreset,
+				mouseRelativeToStart
+			);
 		else
-			newRect = GetResizedRectNormal(layoutPreset, mouseRelativeToStart);
+			newRect = WidgetStatic.GetResizedRectNormal(
+				_resizeInitialRect,
+				GetCombinedMinimumSize(),
+				layoutPreset,
+				mouseRelativeToStart
+			);
 
 
 		//clip at Left
@@ -432,88 +442,6 @@ public partial class WidgetPanel : Container
 		Size = newRect.Size;
 
 		UpdateEditInfo();
-	}
-
-	private Rect2 GetResizedRectNormal(LayoutPreset layoutPreset, Vector2 mouseRelative)
-	{
-		Rect2 newRect = _resizeInitialRect;
-		Vector2 deltaToMinimalSize = GetCombinedMinimumSize() - _resizeInitialRect.Size;
-		switch (layoutPreset)
-		{
-			case LayoutPreset.TopRight:
-			case LayoutPreset.TopWide:
-			case LayoutPreset.TopLeft:
-				newRect = newRect.GrowSide(Side.Top, Mathf.Max(deltaToMinimalSize.Y, -mouseRelative.Y));
-				break;
-			case LayoutPreset.BottomLeft:
-			case LayoutPreset.BottomWide:
-			case LayoutPreset.BottomRight:
-				newRect = newRect.GrowSide(Side.Bottom, Mathf.Max(deltaToMinimalSize.Y, mouseRelative.Y));
-				break;
-		}
-
-		switch (layoutPreset)
-		{
-			case LayoutPreset.TopLeft:
-			case LayoutPreset.LeftWide:
-			case LayoutPreset.BottomLeft:
-				newRect = newRect.GrowSide(Side.Left, Mathf.Max(deltaToMinimalSize.X, -mouseRelative.X));
-				break;
-			case LayoutPreset.TopRight:
-			case LayoutPreset.RightWide:
-			case LayoutPreset.BottomRight:
-				newRect = newRect.GrowSide(Side.Right, Mathf.Max(deltaToMinimalSize.X, mouseRelative.X));
-				break;
-		}
-
-
-
-		return newRect;
-	}
-
-	private Rect2 GetResizedRectCenter(LayoutPreset layoutPreset, Vector2 mouseRelative)
-	{
-		Rect2 newRect = _resizeInitialRect;
-		Vector2 deltaToMinimalSize = GetCombinedMinimumSize() - _resizeInitialRect.Size;
-
-		//mouseRelative *= 0.5f;
-		deltaToMinimalSize *= 0.5f;
-
-		switch (layoutPreset)
-		{
-			case LayoutPreset.TopRight:
-			case LayoutPreset.TopWide:
-			case LayoutPreset.TopLeft:
-				newRect = newRect.GrowSide(Side.Top, Mathf.Max(deltaToMinimalSize.Y, -mouseRelative.Y));
-				newRect = newRect.GrowSide(Side.Bottom, Mathf.Max(deltaToMinimalSize.Y, -mouseRelative.Y));
-				break;
-			case LayoutPreset.BottomLeft:
-			case LayoutPreset.BottomWide:
-			case LayoutPreset.BottomRight:
-				newRect = newRect.GrowSide(Side.Bottom, Mathf.Max(deltaToMinimalSize.Y, mouseRelative.Y));
-				newRect = newRect.GrowSide(Side.Top, Mathf.Max(deltaToMinimalSize.Y, mouseRelative.Y));
-				break;
-		}
-
-		switch (layoutPreset)
-		{
-			case LayoutPreset.TopLeft:
-			case LayoutPreset.LeftWide:
-			case LayoutPreset.BottomLeft:
-				newRect = newRect.GrowSide(Side.Left, Mathf.Max(deltaToMinimalSize.X, -mouseRelative.X));
-				newRect = newRect.GrowSide(Side.Right, Mathf.Max(deltaToMinimalSize.X, -mouseRelative.X));
-
-				break;
-			case LayoutPreset.TopRight:
-			case LayoutPreset.RightWide:
-			case LayoutPreset.BottomRight:
-				newRect = newRect.GrowSide(Side.Right, Mathf.Max(deltaToMinimalSize.X, mouseRelative.X));
-				newRect = newRect.GrowSide(Side.Left, Mathf.Max(deltaToMinimalSize.X, mouseRelative.X));
-
-				break;
-		}
-
-		return newRect;
 	}
 
 	#endregion Methods.DragNSize
