@@ -356,7 +356,7 @@ public partial class MqttNode : Node
 		if (LocalSettings.Singleton.Mqtt.ClientSettings.UseTls)
 		{
 			var mqttTls = new MqttClientTlsOptionsBuilder()
-				.WithSslProtocols(System.Security.Authentication.SslProtocols.Tls12)
+				.WithSslProtocols(System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13)
 				.WithCertificateValidationHandler(ValidateCertificate)
 				.Build();
 
