@@ -439,7 +439,17 @@ public partial class MqttNode : Node
 
 	private Task ThOnDisconnectedAsync(MqttClientDisconnectedEventArgs arg)
 	{
-		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Info, "Mqtt is now Disconnected!");
+		var clientSettings = LocalSettings.Singleton.Mqtt.ClientSettings;
+		switch (arg.ConnectResult?.ResultCode)
+		{
+			case null:
+				EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Error, $"Mqtt cant connect. Exception: \"{arg.Exception.Message}\".");
+				break;
+			default:
+				EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Error, $"Mqtt cant connect. Error: \"{arg.ConnectResult.ResultCode}\"");
+				break;
+		}
+
 		ConnectionState = CommunicationState.Faulted;
 		return Task.CompletedTask;
 	}
