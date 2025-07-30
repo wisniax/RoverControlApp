@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Text.Json;
 using System.Threading;
@@ -269,6 +272,41 @@ public partial class MqttNode : Node
 	 * Methods used only on thread
 	 */
 
+	bool ValidateCertificate(MqttClientCertificateValidationEventArgs args)
+	{
+		// 0. Skip if user want to skip
+		if (LocalSettings.Singleton.Mqtt.ClientSettings.SkipCAVerification)
+			return true;
+
+		// 1. Check for no errors
+		if (args.SslPolicyErrors == SslPolicyErrors.None)
+			return true;
+
+		// 2. Validate against known CA
+		if (!File.Exists(LocalSettings.Singleton.Mqtt.ClientSettings.CertificateAuthorityCertPath))
+			return false;
+
+		var caCert = new X509Certificate2(LocalSettings.Singleton.Mqtt.ClientSettings.CertificateAuthorityCertPath);
+		var cert2 = new X509Certificate2(args.Certificate);
+
+		// Verify certificate chain
+		args.Chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+		args.Chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+		args.Chain.ChainPolicy.CustomTrustStore.Add(caCert);
+
+		if (args.Chain.Build(cert2))
+		{
+			var valid = args.Chain.ChainElements
+				.Cast<X509ChainElement>()
+				.Any(x => x.Certificate.Thumbprint == caCert.Thumbprint);
+
+			return valid;
+		}
+
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Error, "Mqtt server certificate validation failed!");
+		return false;
+	}
+
 	private void ThWork()
 	{
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread started");
@@ -295,18 +333,38 @@ public partial class MqttNode : Node
 
 		ConnectionState = CommunicationState.Created;
 
-		var mqttClientOptions = new MqttClientOptionsBuilder()
+
+
+
+		var mqttClientOptionsBuilder = new MqttClientOptionsBuilder()
 			.WithTcpServer(LocalSettings.Singleton.Mqtt.ClientSettings.BrokerIp, LocalSettings.Singleton.Mqtt.ClientSettings.BrokerPort)
 			.WithKeepAlivePeriod(TimeSpan.FromSeconds(LocalSettings.Singleton.Mqtt.ClientSettings.PingInterval))
 			.WithWillTopic(TopicFull(LocalSettings.Singleton.Mqtt.TopicRoverStatus))
 			.WithWillPayload(JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Faulted }))
 			.WithWillQualityOfServiceLevel(MqttQualityOfServiceLevel.ExactlyOnce)
 			.WithWillRetain()
-			.WithTimeout(new TimeSpan(0,0,3))
-			.Build();
+			.WithTimeout(new TimeSpan(0, 0, 3));
+
+		if (!string.IsNullOrWhiteSpace(LocalSettings.Singleton.Mqtt.ClientSettings.Username))
+		{
+			mqttClientOptionsBuilder.WithCredentials(
+				LocalSettings.Singleton.Mqtt.ClientSettings.Username,
+				LocalSettings.Singleton.Mqtt.ClientSettings.Password
+			);
+		}
+
+		if (LocalSettings.Singleton.Mqtt.ClientSettings.UseTls)
+		{
+			var mqttTls = new MqttClientTlsOptionsBuilder()
+				.WithSslProtocols(System.Security.Authentication.SslProtocols.Tls12)
+				.WithCertificateValidationHandler(ValidateCertificate)
+				.Build();
+
+			mqttClientOptionsBuilder.WithTlsOptions(mqttTls);
+		}
 
 		var managedMqttClientOptions = new ManagedMqttClientOptionsBuilder()
-			.WithClientOptions(mqttClientOptions)
+			.WithClientOptions(mqttClientOptionsBuilder.Build())
 			.WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
 			.WithMaxPendingMessages(99)
 			.WithPendingMessagesOverflowStrategy(MqttPendingMessagesOverflowStrategy.DropOldestQueuedMessage)
