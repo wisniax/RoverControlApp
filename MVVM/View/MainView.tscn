@@ -285,6 +285,19 @@ offset_bottom = -45.0
 grow_horizontal = 0
 grow_vertical = 0
 
+[node name="VelMonitor" parent="." instance=ExtResource("6_wqihy")]
+visible = false
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -440.0
+offset_top = -208.0
+offset_right = -9.0
+offset_bottom = 213.0
+grow_horizontal = 0
+
 [node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
 visible = false
 layout_mode = 1
@@ -308,19 +321,6 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
-[node name="VelMonitor" parent="." instance=ExtResource("6_wqihy")]
-visible = false
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = -440.0
-offset_top = -208.0
-offset_right = -9.0
-offset_bottom = 213.0
-grow_horizontal = 0
-
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
@@ -329,8 +329,8 @@ grow_horizontal = 0
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]
