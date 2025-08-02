@@ -173,8 +173,8 @@ public partial class VelMonitor : Panel
 	{
 		_driveLabel[motor].SetText($"Drive:\n" +
 						 $"RPM: {erpm} rpm\n" +
-						 $"Current: {current} A" +
-						 $"Temperature: {temp} C\n");
+						 $"Current: {current} A\n" +
+						 $"Temperature: {temp} C");
 		_wheelSlider[motor].Value = (float)erpm;
 		_wheelSlider[motor].MinValue = - LocalSettings.Singleton.WheelData.MaxRPM;
 		_wheelSlider[motor].MaxValue = LocalSettings.Singleton.WheelData.MaxRPM;
@@ -185,14 +185,15 @@ public partial class VelMonitor : Panel
 
 	void UpdateRotationMotorInfoHandler(int motor, MqttClasses.WheelFeedback data)
 	{
-		CallDeferred("UpdateRotationMotorInfo", motor, (int)data.ERPM, (int)data.Current, (int)data.PrecisePos, (int)data.PidPos);
+		CallDeferred("UpdateRotationMotorInfo", motor, (int)data.ERPM, (int)data.Current, (int)data.TempMotor, (int)data.PrecisePos, (int)data.PidPos);
 	}
 
-	void UpdateRotationMotorInfo(int motor, int erpm, int current, int precisePos, int pidPos)
+	void UpdateRotationMotorInfo(int motor, int erpm, int current, int temp, int precisePos, int pidPos)
 	{
 		_rotationLabel[motor].SetText($"Rotation:\n" +
 						 $"RPM: {erpm} rpm\n" +
-						 $"Current: {current:F0} A");
+						 $"Current: {current:F0} A\n" +
+						 $"Temperature: {temp} C");
 		_wheelSprites[motor].RotationDegrees = (float)precisePos + ((motor == 0 || motor == 3) ? 90f : -90f);
 		_ghostSprites[motor].RotationDegrees = (float)pidPos + ((motor == 0 || motor == 3) ? 90f : -90f);
 	}
