@@ -156,6 +156,7 @@ public partial class VelMonitor : Panel
 				if (rotationMotorID[i - 4] == velData.VescId)
 				{
 					UpdateRotationMotorInfoHandler(i - 4, velData);
+					_lastDelay[i] = DateTime.Now - _lastUpdate[i];
 					_lastUpdate[i] = DateTime.Now;
 					break;
 				}
