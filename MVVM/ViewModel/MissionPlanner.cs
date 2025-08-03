@@ -10,18 +10,12 @@ public partial class MissionPlanner : Panel
 {
 	[Export] TextureRect picture = null!;
 	[Export] TextEdit picturePath = null!;
+	[Export] Label mousePosLabel = null!;
 
 	public override void _EnterTree()
 	{
 		picturePath.TextChanged += LoadPicture;
-		picture.MouseEntered += () =>
-		{
-			GD.Print("Mouse entered the picture area.");
-		};
-		picture.MouseExited += () =>
-		{
-			GD.Print("Mouse exited the picture area.");
-		};
+		picture.GuiInput += HandleMouseInput;
 	}
 
 	public override void _Ready()
@@ -37,9 +31,8 @@ public partial class MissionPlanner : Panel
 	{
 		try
 		{
-			switch(picturePath.Text)
+			switch (picturePath.Text)
 			{
-				case "ExampleMap":
 				case "ExampleMap.png":
 				case "ExampleMap.jpg":
 				case "ExampleMap.jpeg":
@@ -55,7 +48,7 @@ public partial class MissionPlanner : Panel
 				default:
 					if (!File.Exists(picturePath.Text)) break;
 					picture.Texture = GD.Load<Texture2D>(picturePath.Text);
-					EventLogger.LogMessage("MissionPlanner", EventLogger.LogLevel.Info, $"Picture loaded from path: {picturePath.Text}");		
+					EventLogger.LogMessage("MissionPlanner", EventLogger.LogLevel.Info, $"Picture loaded from path: {picturePath.Text}");
 					break;
 			}
 		}
@@ -64,5 +57,40 @@ public partial class MissionPlanner : Panel
 			GD.PrintErr($"Error initializing picture: {e.Message}");
 			return;
 		}
+	}
+
+	void HandleMouseInput(InputEvent inputEvent)
+	{
+		if (inputEvent is InputEventMouseMotion)
+		{
+			Vector2 temp = GetLocalMousePosition();
+			mousePosLabel.Text = $"Current Position: {temp.X:F0}, {temp.Y:F0}";
+			return;
+		}
+
+		if (inputEvent is InputEventMouseButton mouseButton && mouseButton.IsPressed())
+		{
+			if (mouseButton.ButtonIndex == MouseButton.Left)
+			{
+				TryAddPoint(GetLocalMousePosition());
+				return;
+			}
+
+			if (mouseButton.ButtonIndex == MouseButton.Right)
+			{
+				TryRemovePoint(GetLocalMousePosition());
+				return;
+			}
+		}
+	}
+
+	void TryAddPoint(Vector2 pos)
+	{
+		GD.Print($"Trying to add point at position: {pos}");
+	}
+
+	void TryRemovePoint(Vector2 pos)
+	{
+		GD.Print($"Trying to remove point at position: {pos}");
 	}
 }

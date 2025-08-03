@@ -3,32 +3,41 @@
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="1_cijim"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionPlanner.cs" id="1_jdbma"]
 
-[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "picturePath")]
+[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "picturePath", "mousePosLabel")]
 offset_right = 909.0
-offset_bottom = 460.0
+offset_bottom = 524.0
 script = ExtResource("1_jdbma")
 picture = NodePath("TextureRect")
 picturePath = NodePath("PicturePath")
+mousePosLabel = NodePath("MousePositionLabel")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
-offset_right = 712.0
-offset_bottom = 393.0
+offset_right = 701.0
+offset_bottom = 451.0
 texture = ExtResource("1_cijim")
 
 [node name="PicturePath" type="TextEdit" parent="."]
 layout_mode = 0
-offset_left = 10.0
-offset_top = 422.0
-offset_right = 263.0
-offset_bottom = 457.0
+offset_left = 5.0
+offset_top = 474.0
+offset_right = 258.0
+offset_bottom = 509.0
 placeholder_text = "ExampleMap.jpeg"
 scroll_fit_content_height = true
 
 [node name="PicturePathLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 12.0
-offset_top = 398.0
-offset_right = 112.0
-offset_bottom = 421.0
+offset_left = 7.0
+offset_top = 450.0
+offset_right = 107.0
+offset_bottom = 473.0
 text = "Picture path:"
+
+[node name="MousePositionLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 488.0
+offset_top = 450.0
+offset_right = 633.0
+offset_bottom = 473.0
+text = "CurrentPos: XX, XX"
