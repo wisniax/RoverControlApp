@@ -1,0 +1,34 @@
+[gd_scene load_steps=3 format=3 uid="uid://b3sxri61lcv03"]
+
+[ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="1_cijim"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/MissionPlanner.cs" id="1_jdbma"]
+
+[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "picturePath")]
+offset_right = 909.0
+offset_bottom = 460.0
+script = ExtResource("1_jdbma")
+picture = NodePath("TextureRect")
+picturePath = NodePath("PicturePath")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 712.0
+offset_bottom = 393.0
+texture = ExtResource("1_cijim")
+
+[node name="PicturePath" type="TextEdit" parent="."]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 422.0
+offset_right = 263.0
+offset_bottom = 457.0
+placeholder_text = "ExampleMap.jpeg"
+scroll_fit_content_height = true
+
+[node name="PicturePathLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 398.0
+offset_right = 112.0
+offset_bottom = 421.0
+text = "Picture path:"
