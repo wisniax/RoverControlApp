@@ -21,6 +21,7 @@ public class GeneralConverter : JsonConverter<General>
 		long? backCaptureLength = null;
 		int? noInputSecondsToEstop = null!;
 		bool? pedanticEstop = null!;
+		string? missionControlMapPath = null!;
 
 		while (reader.Read())
 		{
@@ -53,6 +54,9 @@ public class GeneralConverter : JsonConverter<General>
 				case nameof(General.PedanticEstop):
 					pedanticEstop = reader.GetBoolean();
 					break;
+				case nameof(General.MissionControlMapPath):
+					missionControlMapPath = reader.GetString();
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -66,7 +70,8 @@ public class GeneralConverter : JsonConverter<General>
 			missionControlSize ?? Default.MissionControlSize,
 			backCaptureLength ?? Default.BackCaptureLength,
 			noInputSecondsToEstop ?? Default.NoInputSecondsToEstop,
-			pedanticEstop ?? Default.PedanticEstop
+			pedanticEstop ?? Default.PedanticEstop,
+			missionControlMapPath ?? Default.MissionControlMapPath
 		);
 	}
 
@@ -79,6 +84,7 @@ public class GeneralConverter : JsonConverter<General>
 		writer.WriteNumber(nameof(General.BackCaptureLength), value.BackCaptureLength);
 		writer.WriteNumber(nameof(General.NoInputSecondsToEstop), value.NoInputSecondsToEstop);
 		writer.WriteBoolean(nameof(General.PedanticEstop), value.PedanticEstop);
+		writer.WriteString(nameof(General.MissionControlMapPath), value.MissionControlMapPath);
 		writer.WriteEndObject();
 	}
 }

@@ -9,13 +9,15 @@ using static RoverControlApp.Core.MqttClasses;
 public partial class MissionPlanner : Panel
 {
 	[Export] TextureRect picture = null!;
-	[Export] TextEdit picturePath = null!;
+	//[Export] TextEdit picturePath = null!;
 	[Export] Label mousePosLabel = null!;
 
 	public override void _EnterTree()
 	{
-		picturePath.TextChanged += LoadPicture;
+		//picturePath.TextChanged += LoadPicture;
 		picture.GuiInput += HandleMouseInput;
+		//DisplayServer.WindowResized += HandleScreenSizeChange;
+		GetTree().Root.SizeChanged += HandleScreenSizeChange;
 	}
 
 	public override void _Ready()
@@ -25,13 +27,14 @@ public partial class MissionPlanner : Panel
 
 	public override void _Process(double delta)
 	{
+		//GD.Print(DisplayServer.WindowGetSize());
 	}
 
 	void LoadPicture()
 	{
 		try
 		{
-			switch (picturePath.Text)
+			switch (LocalSettings.Singleton.General.MissionControlMapPath)
 			{
 				case "ExampleMap.png":
 				case "ExampleMap.jpg":
@@ -46,9 +49,9 @@ public partial class MissionPlanner : Panel
 					break;
 
 				default:
-					if (!File.Exists(picturePath.Text)) break;
-					picture.Texture = GD.Load<Texture2D>(picturePath.Text);
-					EventLogger.LogMessage("MissionPlanner", EventLogger.LogLevel.Info, $"Picture loaded from path: {picturePath.Text}");
+					if (!File.Exists(LocalSettings.Singleton.General.MissionControlMapPath)) break;
+					picture.Texture = GD.Load<Texture2D>(LocalSettings.Singleton.General.MissionControlMapPath);
+					EventLogger.LogMessage("MissionPlanner", EventLogger.LogLevel.Info, $"Picture loaded from path: {LocalSettings.Singleton.General.MissionControlMapPath}");
 					break;
 			}
 		}
@@ -92,5 +95,14 @@ public partial class MissionPlanner : Panel
 	void TryRemovePoint(Vector2 pos)
 	{
 		GD.Print($"Trying to remove point at position: {pos}");
+	}
+
+	void HandleScreenSizeChange()
+	{
+		if (DisplayServer.WindowGetSize().X > 1700 && DisplayServer.WindowGetSize().Y > 800)
+			this.Scale = new Vector2(1.5f, 1.5f);
+		else
+			this.Scale = new Vector2(1.0f, 1.0f);
+		GD.Print($"Screen size changed to: {DisplayServer.WindowGetSize()}");
 	}
 }

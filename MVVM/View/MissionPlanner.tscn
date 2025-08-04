@@ -1,43 +1,87 @@
-[gd_scene load_steps=3 format=3 uid="uid://b3sxri61lcv03"]
+[gd_scene load_steps=4 format=3 uid="uid://b3sxri61lcv03"]
 
-[ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="1_cijim"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionPlanner.cs" id="1_jdbma"]
+[ext_resource type="PackedScene" uid="uid://dlppkwr8yuhdw" path="res://MVVM/View/Waypoint.tscn" id="2_0u5b2"]
+[ext_resource type="Texture2D" uid="uid://cb0uaxyf03igv" path="res://Resources/ExampleMap.jpeg" id="2_2yld7"]
 
-[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "picturePath", "mousePosLabel")]
+[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "mousePosLabel")]
 offset_right = 909.0
-offset_bottom = 524.0
+offset_bottom = 501.0
 script = ExtResource("1_jdbma")
 picture = NodePath("TextureRect")
-picturePath = NodePath("PicturePath")
 mousePosLabel = NodePath("MousePositionLabel")
+
+[node name="Waypoints" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 701.0
+offset_top = 2.0
+offset_right = 910.0
+offset_bottom = 472.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Waypoints"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Waypoints/HBoxContainer"]
+custom_minimum_size = Vector2(170, 0)
+layout_mode = 2
+text = "Waypoints"
+horizontal_alignment = 1
+
+[node name="Button" type="Button" parent="Waypoints/HBoxContainer"]
+custom_minimum_size = Vector2(32.035, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "+"
+
+[node name="Waypoint" parent="Waypoints" instance=ExtResource("2_0u5b2")]
+layout_mode = 2
+
+[node name="Waypoint2" parent="Waypoints" instance=ExtResource("2_0u5b2")]
+layout_mode = 2
+
+[node name="Waypoint3" parent="Waypoints" instance=ExtResource("2_0u5b2")]
+layout_mode = 2
+
+[node name="Waypoint4" parent="Waypoints" instance=ExtResource("2_0u5b2")]
+layout_mode = 2
+
+[node name="Waypoint5" parent="Waypoints" instance=ExtResource("2_0u5b2")]
+layout_mode = 2
+
+[node name="Waypoint6" parent="Waypoints" instance=ExtResource("2_0u5b2")]
+layout_mode = 2
+
+[node name="Waypoint7" parent="Waypoints" instance=ExtResource("2_0u5b2")]
+layout_mode = 2
+
+[node name="Waypoint8" parent="Waypoints" instance=ExtResource("2_0u5b2")]
+layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
 offset_right = 701.0
-offset_bottom = 451.0
-texture = ExtResource("1_cijim")
-
-[node name="PicturePath" type="TextEdit" parent="."]
-layout_mode = 0
-offset_left = 5.0
-offset_top = 474.0
-offset_right = 258.0
-offset_bottom = 509.0
-placeholder_text = "ExampleMap.jpeg"
-scroll_fit_content_height = true
+offset_bottom = 501.0
+texture = ExtResource("2_2yld7")
 
 [node name="PicturePathLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 7.0
-offset_top = 450.0
-offset_right = 107.0
-offset_bottom = 473.0
+offset_left = 701.0
+offset_top = 454.0
+offset_right = 801.0
+offset_bottom = 477.0
 text = "Picture path:"
 
 [node name="MousePositionLabel" type="Label" parent="."]
 layout_mode = 0
-offset_left = 488.0
-offset_top = 450.0
-offset_right = 633.0
-offset_bottom = 473.0
+offset_left = 701.0
+offset_top = 477.0
+offset_right = 846.0
+offset_bottom = 500.0
 text = "CurrentPos: XX, XX"
+
+[node name="VScrollBar" type="VScrollBar" parent="."]
+layout_mode = 0
+offset_left = 1083.0
+offset_top = 96.0
+offset_right = 1149.0
+offset_bottom = 377.0

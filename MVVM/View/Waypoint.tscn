@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://dlppkwr8yuhdw"]
+
+[node name="Waypoint" type="Panel"]
+custom_minimum_size = Vector2(0, 36)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -945.0
+offset_bottom = -612.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 3.0
+offset_right = 209.0
+offset_bottom = 33.0
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "X."
+
+[node name="TextEdit" type="TextEdit" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+text = "ds"
+scroll_fit_content_height = true
+
+[node name="TextEdit2" type="TextEdit" parent="HBoxContainer"]
+custom_minimum_size = Vector2(70, 0)
+layout_mode = 2
+scroll_fit_content_height = true
+
+[node name="Button" type="Button" parent="HBoxContainer"]
+modulate = Color(1, 0, 0, 1)
+custom_minimum_size = Vector2(36.755, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 19
+text = "X"
