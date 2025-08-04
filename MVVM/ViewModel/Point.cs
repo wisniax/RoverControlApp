@@ -4,11 +4,11 @@ using System;
 public partial class Point : Control
 {
 	[Export] Label label = null!;
-	[Export] CollisionShape2D shape = null!;
+	[Export] Sprite2D sprite = null!;
 
 	public void SetColor(Color color)
 	{
-		shape.DebugColor = color;
+		sprite.Modulate = color;
 	}
 
 	public void SetString(string text)

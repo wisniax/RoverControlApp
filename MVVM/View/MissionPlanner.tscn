@@ -1,15 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://b3sxri61lcv03"]
+[gd_scene load_steps=3 format=3 uid="uid://b3sxri61lcv03"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionPlanner.cs" id="1_jdbma"]
-[ext_resource type="PackedScene" uid="uid://dlppkwr8yuhdw" path="res://MVVM/View/Waypoint.tscn" id="2_0u5b2"]
 [ext_resource type="Texture2D" uid="uid://cb0uaxyf03igv" path="res://Resources/ExampleMap.jpeg" id="2_2yld7"]
 
-[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "mousePosLabel")]
+[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "mousePosLabel", "waypointsContainer")]
 offset_right = 1550.0
 offset_bottom = 804.0
 script = ExtResource("1_jdbma")
 picture = NodePath("TextureRect")
 mousePosLabel = NodePath("VBoxContainer/MousePositionLabel")
+waypointsContainer = NodePath("Waypoints")
 
 [node name="Waypoints" type="VBoxContainer" parent="."]
 layout_mode = 0
@@ -39,30 +39,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "No.|     X-axis     |    Y-axis     |  deadzone  |wait|delete"
 
-[node name="Waypoint" parent="Waypoints" instance=ExtResource("2_0u5b2")]
-layout_mode = 2
-
-[node name="Waypoint2" parent="Waypoints" instance=ExtResource("2_0u5b2")]
-layout_mode = 2
-
-[node name="Waypoint3" parent="Waypoints" instance=ExtResource("2_0u5b2")]
-layout_mode = 2
-
-[node name="Waypoint4" parent="Waypoints" instance=ExtResource("2_0u5b2")]
-layout_mode = 2
-
-[node name="Waypoint5" parent="Waypoints" instance=ExtResource("2_0u5b2")]
-layout_mode = 2
-
-[node name="Waypoint6" parent="Waypoints" instance=ExtResource("2_0u5b2")]
-layout_mode = 2
-
-[node name="Waypoint7" parent="Waypoints" instance=ExtResource("2_0u5b2")]
-layout_mode = 2
-
-[node name="Waypoint8" parent="Waypoints" instance=ExtResource("2_0u5b2")]
-layout_mode = 2
-
 [node name="Calibration" type="VBoxContainer" parent="."]
 visible = false
 layout_mode = 0
@@ -85,6 +61,7 @@ offset_bottom = 805.0
 texture = ExtResource("2_2yld7")
 
 [node name="GoToWaypoints" type="Button" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 1452.0
 offset_top = 708.0

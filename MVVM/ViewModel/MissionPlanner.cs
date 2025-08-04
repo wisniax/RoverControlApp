@@ -2,15 +2,23 @@ using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.Core.Settings;
 using RoverControlApp.MVVM.Model;
+using RoverControlApp.MVVM.ViewModel;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using static RoverControlApp.Core.MqttClasses;
 
 public partial class MissionPlanner : Panel
 {
 	[Export] TextureRect picture = null!;
-	//[Export] TextEdit picturePath = null!;
 	[Export] Label mousePosLabel = null!;
+	[Export] VBoxContainer waypointsContainer = null!;
+
+
+
+	List<Point> points = new List<Point>();
+	List<Waypoint> wayPoints = new List<Waypoint>();
 
 	public override void _EnterTree()
 	{
@@ -100,6 +108,42 @@ public partial class MissionPlanner : Panel
 
 	void TryAddPoint(Vector2 pos)
 	{
+		var scene = GD.Load<PackedScene>("res://MVVM/View/Point.tscn");
+		var inst = scene.Instantiate();
+		AddChild(inst);
+		if (inst is Point point)
+		{
+			point.SetColor(Colors.Blue);
+			point.SetNumber(points.Count + 1);
+			point.Position = pos;
+			points.Add(point);
+			GD.Print($"Point added at position: {pos}, total points: {points.Count}");
+		}
+		else
+		{
+			GD.PrintErr("Failed to instantiate Point scene.");
+			return;
+		}
+
+		scene = GD.Load<PackedScene>("res://MVVM/View/Waypoint.tscn");
+		inst = scene.Instantiate();
+		if (inst is Waypoint waypoint)
+		{
+			waypoint.Coordinates = pos;
+			waypoint.Number = wayPoints.Count + 1;
+			waypoint.Deadzone = 2;
+			wayPoints.Add(waypoint);
+
+			waypointsContainer.AddChild(inst);
+		}
+		else
+		{
+			GD.PrintErr("Failed to instantiate Waypoint scene.");
+			return;
+		}
+
+
+
 		GD.Print($"Trying to add point at position: {pos}");
 	}
 
