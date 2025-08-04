@@ -1,4 +1,5 @@
 using Godot;
+using OpenCvSharp;
 using RoverControlApp.Core;
 using RoverControlApp.Core.Settings;
 using RoverControlApp.MVVM.Model;
@@ -151,6 +152,19 @@ public partial class MissionPlanner : Panel
 
 	void TryRemovePoint(Vector2 pos)
 	{
+		if (points.Count == 0) return;
+		if (pos.X > picture.Size.X || pos.Y > picture.Size.Y) return;
+
+		foreach (var point in points)
+		{
+			if (point.Position.DistanceTo(pos) < 20)
+			{
+				RemoveWaypoint(point);
+				
+				break;
+			}
+		}
+
 		GD.Print($"Trying to remove point at position: {pos}");
 	}
 
@@ -168,9 +182,7 @@ public partial class MissionPlanner : Panel
 		if (waypoint == null) return;
 
 		points[waypoint.Number-1].QueueFree();
-		GD.Print($"Removing waypoint: {waypoint.Number}");
 		points.RemoveAll(p=> p.Number == waypoint.Number);
-		GD.Print($"Points after removal: {points.Count}");
 		points.ForEach(p => p.SetNumber(points.IndexOf(p)+1));
 
 
@@ -182,6 +194,24 @@ public partial class MissionPlanner : Panel
 			wayPoints[i].Number = i + 1;
 			waypointsContainer.MoveChild(wayPoints[i], i+2);
 		}
-		GD.Print($"Waypoint removed, total waypoints: {wayPoints.Count}");
+	}
+
+	public void RemoveWaypoint(Point point)
+	{
+		if (point == null) return;
+
+		point.QueueFree();
+		points.RemoveAll(p => p == point);
+		points.ForEach(p => p.SetNumber(points.IndexOf(p) + 1));
+
+
+		waypointsContainer.RemoveChild(wayPoints[point.Number]);
+		wayPoints[point.Number-1].QueueFree();
+		wayPoints.Remove(wayPoints[point.Number]);
+		for (int i = 0; i < wayPoints.Count; i++)
+		{
+			wayPoints[i].Number = i + 1;
+			waypointsContainer.MoveChild(wayPoints[i], i + 2);
+		}
 	}
 }
