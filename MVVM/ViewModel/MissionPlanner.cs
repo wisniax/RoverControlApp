@@ -36,6 +36,8 @@ public partial class MissionPlanner : Panel
 
 	void LoadPictureHandler(StringName category, StringName name, Variant oldValue, Variant newValue)
 	{
+		if (category != nameof(General)) return;
+		if (name != nameof(General.MissionControlMapPath)) return;
 		LoadPicture();
 	}
 
