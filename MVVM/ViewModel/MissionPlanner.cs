@@ -108,6 +108,8 @@ public partial class MissionPlanner : Panel
 
 	void TryAddPoint(Vector2 pos)
 	{
+		if (pos.X > picture.Size.X || pos.Y > picture.Size.Y) return;
+
 		var scene = GD.Load<PackedScene>("res://MVVM/View/Point.tscn");
 		var inst = scene.Instantiate();
 		AddChild(inst);
@@ -159,5 +161,19 @@ public partial class MissionPlanner : Panel
 		else
 			this.Scale = new Vector2(0.6f, 0.6f);
 		GD.Print($"Screen size changed to: {DisplayServer.WindowGetSize()}");
+	}
+
+	public void RemoveWaypoint(Waypoint waypoint)
+	{
+		if (waypoint == null) return;
+		waypointsContainer.RemoveChild(waypoint);
+		waypoint.QueueFree();
+		wayPoints.Remove(waypoint);
+		for (int i = 0; i < wayPoints.Count; i++)
+		{
+			wayPoints[i].Number = i + 1;
+			waypointsContainer.MoveChild(wayPoints[i], i+2);
+		}
+		GD.Print($"Waypoint removed, total waypoints: {wayPoints.Count}");
 	}
 }

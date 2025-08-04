@@ -1,4 +1,5 @@
 using Godot;
+using RoverControlApp.Core;
 using System;
 
 public partial class Waypoint : Panel
@@ -52,19 +53,28 @@ public partial class Waypoint : Panel
 		//ShowOnScreen();
 	}
 
-	public Waypoint(int number, Vector2 position, int deadzone)
+	public override void _EnterTree()
 	{
-		_number = number;
-		_position = position;
-		_deadzone = deadzone;
-		ShowOnScreen();
+		deleteButton.Pressed += OnDeletePressed;
 	}
 
 	void ShowOnScreen()
 	{
 		numberLabel.Text = _number.ToString();
-		xaxisEdit.Text = _position.X.ToString();
-		yaxisEdit.Text = _position.Y.ToString();
-		deadzoneEdit.Text = _deadzone.ToString();
+		xaxisEdit.Text = Math.Round(_position.X, 2).ToString();
+		yaxisEdit.Text = Math.Round(_position.Y, 2).ToString();
+		deadzoneEdit.Text = _deadzone.ToString();	
+	}
+
+	void OnDeletePressed()
+	{
+		if (GetParent().GetParent() is MissionPlanner missionPlanner)
+		{
+			missionPlanner.RemoveWaypoint(this);
+		}
+		else
+		{
+			GD.PrintErr("Failed to find parent MissionPlanner.");
+		}
 	}
 }

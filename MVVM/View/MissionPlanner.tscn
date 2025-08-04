@@ -39,6 +39,9 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "No.|     X-axis     |    Y-axis     |  deadzone  |wait|delete"
 
+[node name="WaypointsContainer" type="VBoxContainer" parent="Waypoints"]
+layout_mode = 2
+
 [node name="Calibration" type="VBoxContainer" parent="."]
 visible = false
 layout_mode = 0
