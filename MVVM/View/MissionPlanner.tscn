@@ -63,13 +63,36 @@ layout_mode = 2
 [node name="Waypoint8" parent="Waypoints" instance=ExtResource("2_0u5b2")]
 layout_mode = 2
 
+[node name="Calibration" type="VBoxContainer" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 1238.0
+offset_top = 2.0
+offset_right = 1549.0
+offset_bottom = 472.0
+
+[node name="Label" type="Label" parent="Calibration"]
+custom_minimum_size = Vector2(0, 46.945)
+layout_mode = 2
+text = "Calibration"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
 offset_right = 1233.0
 offset_bottom = 805.0
 texture = ExtResource("2_2yld7")
 
-[node name="Button" type="Button" parent="."]
+[node name="GoToWaypoints" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1452.0
+offset_top = 708.0
+offset_right = 1547.0
+offset_bottom = 803.0
+text = "Waypoints"
+
+[node name="GoToCalibration" type="Button" parent="."]
 layout_mode = 0
 offset_left = 1452.0
 offset_top = 708.0
@@ -100,3 +123,12 @@ text = "OnMapPos: XX, XX"
 [node name="MousePositionLabel3" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 text = "OnMapPos: XX, XX"
+
+[connection signal="pressed" from="GoToWaypoints" to="Waypoints" method="set_visible" binds= [true]]
+[connection signal="pressed" from="GoToWaypoints" to="Calibration" method="set_visible" binds= [false]]
+[connection signal="pressed" from="GoToWaypoints" to="GoToWaypoints" method="set_visible" binds= [false]]
+[connection signal="pressed" from="GoToWaypoints" to="GoToCalibration" method="set_visible" binds= [true]]
+[connection signal="pressed" from="GoToCalibration" to="Waypoints" method="set_visible" binds= [false]]
+[connection signal="pressed" from="GoToCalibration" to="Calibration" method="set_visible" binds= [true]]
+[connection signal="pressed" from="GoToCalibration" to="GoToWaypoints" method="set_visible" binds= [true]]
+[connection signal="pressed" from="GoToCalibration" to="GoToCalibration" method="set_visible" binds= [false]]
