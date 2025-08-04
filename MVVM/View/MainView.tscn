@@ -313,8 +313,9 @@ grow_vertical = 1
 layout_mode = 0
 offset_left = 8.0
 offset_top = 33.0
-offset_right = 917.0
-offset_bottom = 534.0
+offset_right = 1558.0
+offset_bottom = 840.0
+scale = Vector2(0.6, 0.6)
 
 [node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
 visible = false

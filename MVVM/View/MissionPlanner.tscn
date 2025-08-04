@@ -5,33 +5,39 @@
 [ext_resource type="Texture2D" uid="uid://cb0uaxyf03igv" path="res://Resources/ExampleMap.jpeg" id="2_2yld7"]
 
 [node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "mousePosLabel")]
-offset_right = 909.0
-offset_bottom = 501.0
+offset_right = 1550.0
+offset_bottom = 804.0
 script = ExtResource("1_jdbma")
 picture = NodePath("TextureRect")
-mousePosLabel = NodePath("MousePositionLabel")
+mousePosLabel = NodePath("VBoxContainer/MousePositionLabel")
 
 [node name="Waypoints" type="VBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 701.0
+offset_left = 1238.0
 offset_top = 2.0
-offset_right = 910.0
+offset_right = 1549.0
 offset_bottom = 472.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Waypoints"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="Waypoints/HBoxContainer"]
-custom_minimum_size = Vector2(170, 0)
+custom_minimum_size = Vector2(268.55, 0)
 layout_mode = 2
 text = "Waypoints"
 horizontal_alignment = 1
 
 [node name="Button" type="Button" parent="Waypoints/HBoxContainer"]
-custom_minimum_size = Vector2(32.035, 0)
+custom_minimum_size = Vector2(38.23, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 26
+theme_override_font_sizes/font_size = 25
 text = "+"
+
+[node name="Label2" type="Label" parent="Waypoints"]
+custom_minimum_size = Vector2(268.55, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "No.|     X-axis     |    Y-axis     |  deadzone  |wait|delete"
 
 [node name="Waypoint" parent="Waypoints" instance=ExtResource("2_0u5b2")]
 layout_mode = 2
@@ -59,29 +65,38 @@ layout_mode = 2
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
-offset_right = 701.0
-offset_bottom = 501.0
+offset_right = 1233.0
+offset_bottom = 805.0
 texture = ExtResource("2_2yld7")
 
-[node name="PicturePathLabel" type="Label" parent="."]
+[node name="Button" type="Button" parent="."]
 layout_mode = 0
-offset_left = 701.0
-offset_top = 454.0
-offset_right = 801.0
-offset_bottom = 477.0
+offset_left = 1452.0
+offset_top = 708.0
+offset_right = 1547.0
+offset_bottom = 803.0
+text = "Calibration"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 1236.0
+offset_top = 709.0
+offset_right = 1452.0
+offset_bottom = 813.0
+theme_override_constants/separation = 1
+
+[node name="PicturePathLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
 text = "Picture path:"
 
-[node name="MousePositionLabel" type="Label" parent="."]
-layout_mode = 0
-offset_left = 701.0
-offset_top = 477.0
-offset_right = 846.0
-offset_bottom = 500.0
-text = "CurrentPos: XX, XX"
+[node name="MousePositionLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "OnPicturePos: XX, XX"
 
-[node name="VScrollBar" type="VScrollBar" parent="."]
-layout_mode = 0
-offset_left = 1083.0
-offset_top = 96.0
-offset_right = 1149.0
-offset_bottom = 377.0
+[node name="MousePositionLabel2" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "OnMapPos: XX, XX"
+
+[node name="MousePositionLabel3" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "OnMapPos: XX, XX"

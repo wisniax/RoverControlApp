@@ -99,10 +99,10 @@ public partial class MissionPlanner : Panel
 
 	void HandleScreenSizeChange()
 	{
-		if (DisplayServer.WindowGetSize().X > 1700 && DisplayServer.WindowGetSize().Y > 800)
-			this.Scale = new Vector2(1.5f, 1.5f);
-		else
+		if (DisplayServer.WindowGetSize().X > 1700 && DisplayServer.WindowGetSize().Y > 900)
 			this.Scale = new Vector2(1.0f, 1.0f);
+		else
+			this.Scale = new Vector2(0.6f, 0.6f);
 		GD.Print($"Screen size changed to: {DisplayServer.WindowGetSize()}");
 	}
 }
