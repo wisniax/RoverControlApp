@@ -18,16 +18,25 @@ public partial class MissionPlanner : Panel
 		picture.GuiInput += HandleMouseInput;
 		//DisplayServer.WindowResized += HandleScreenSizeChange;
 		GetTree().Root.SizeChanged += HandleScreenSizeChange;
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(LoadPictureHandler));
 	}
+
 
 	public override void _Ready()
 	{
 		LoadPicture();
 	}
 
+
+
 	public override void _Process(double delta)
 	{
 		//GD.Print(DisplayServer.WindowGetSize());
+	}
+
+	void LoadPictureHandler(StringName category, StringName name, Variant oldValue, Variant newValue)
+	{
+		LoadPicture();
 	}
 
 	void LoadPicture()
