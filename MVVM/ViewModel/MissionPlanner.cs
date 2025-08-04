@@ -166,6 +166,14 @@ public partial class MissionPlanner : Panel
 	public void RemoveWaypoint(Waypoint waypoint)
 	{
 		if (waypoint == null) return;
+
+		points[waypoint.Number-1].QueueFree();
+		GD.Print($"Removing waypoint: {waypoint.Number}");
+		points.RemoveAll(p=> p.Number == waypoint.Number);
+		GD.Print($"Points after removal: {points.Count}");
+		points.ForEach(p => p.SetNumber(points.IndexOf(p)+1));
+
+
 		waypointsContainer.RemoveChild(waypoint);
 		waypoint.QueueFree();
 		wayPoints.Remove(waypoint);

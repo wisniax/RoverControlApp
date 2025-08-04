@@ -6,6 +6,8 @@ public partial class Point : Control
 	[Export] Label label = null!;
 	[Export] Sprite2D sprite = null!;
 
+	public int Number;
+
 	public void SetColor(Color color)
 	{
 		sprite.Modulate = color;
@@ -18,6 +20,7 @@ public partial class Point : Control
 
 	public void SetNumber(int number)
 	{
+		Number = number;
 		label.Text = number.ToString();
 	}
 }
