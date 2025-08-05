@@ -68,7 +68,7 @@ public partial class Waypoint : Panel
 
 	void OnDeletePressed()
 	{
-		if (GetParent().GetParent() is MissionPlanner missionPlanner)
+		if (GetParent().GetParent().GetParent() is MissionPlanner missionPlanner)
 		{
 			missionPlanner.RemoveWaypoint(this);
 		}

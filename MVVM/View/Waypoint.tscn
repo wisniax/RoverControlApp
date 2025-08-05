@@ -7,7 +7,7 @@ custom_minimum_size = Vector2(0, 36)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -832.0
+offset_right = -815.0
 offset_bottom = -612.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -31,19 +31,19 @@ layout_mode = 2
 text = "XX."
 
 [node name="TextEdit" type="TextEdit" parent="HBoxContainer"]
-custom_minimum_size = Vector2(70, 0)
+custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 placeholder_text = "x axis"
 scroll_fit_content_height = true
 
 [node name="TextEdit2" type="TextEdit" parent="HBoxContainer"]
-custom_minimum_size = Vector2(70, 0)
+custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 placeholder_text = "y axis"
 scroll_fit_content_height = true
 
 [node name="TextEdit3" type="TextEdit" parent="HBoxContainer"]
-custom_minimum_size = Vector2(70, 0)
+custom_minimum_size = Vector2(75, 0)
 layout_mode = 2
 placeholder_text = "dedzon"
 scroll_fit_content_height = true
@@ -53,7 +53,7 @@ layout_mode = 2
 
 [node name="Button" type="Button" parent="HBoxContainer"]
 modulate = Color(1, 0, 0, 1)
-custom_minimum_size = Vector2(36.755, 0)
+custom_minimum_size = Vector2(39.6, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 19
 text = "X"

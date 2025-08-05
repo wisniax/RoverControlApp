@@ -2,64 +2,18 @@
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionPlanner.cs" id="1_jdbma"]
 [ext_resource type="Texture2D" uid="uid://cb0uaxyf03igv" path="res://Resources/ExampleMap.jpeg" id="2_2yld7"]
-[ext_resource type="PackedScene" uid="uid://dlppkwr8yuhdw" path="res://MVVM/View/Waypoint.tscn" id="2_fay10"]
+[ext_resource type="PackedScene" uid="uid://djb630ht7i3m3" path="res://MVVM/View/Point.tscn" id="3_kj2xc"]
 
-[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "mousePosLabel", "waypointsContainer")]
+[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "mousePosLabel", "waypointsContainer", "selectReferencePoint", "referencePoints", "pointsContainer")]
 offset_right = 1575.0
 offset_bottom = 804.0
 script = ExtResource("1_jdbma")
 picture = NodePath("TextureRect")
 mousePosLabel = NodePath("VBoxContainer/MousePositionLabel")
-waypointsContainer = NodePath("Waypoints")
-
-[node name="Waypoints" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 1235.0
-offset_top = 2.0
-offset_right = 1574.0
-offset_bottom = 645.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Waypoints"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Waypoints/HBoxContainer"]
-custom_minimum_size = Vector2(292.63, 0)
-layout_mode = 2
-text = "Waypoints"
-horizontal_alignment = 1
-
-[node name="Button" type="Button" parent="Waypoints/HBoxContainer"]
-custom_minimum_size = Vector2(41.31, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 25
-text = "+"
-
-[node name="Label2" type="Label" parent="Waypoints"]
-custom_minimum_size = Vector2(268.55, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 13
-text = "No.|     X-axis     |    Y-axis     |  deadzone  |wait|delete"
-
-[node name="WaypointsContainer" type="VBoxContainer" parent="Waypoints"]
-layout_mode = 2
-
-[node name="Waypoint" parent="Waypoints" instance=ExtResource("2_fay10")]
-layout_mode = 2
-
-[node name="Calibration" type="VBoxContainer" parent="."]
-visible = false
-layout_mode = 0
-offset_left = 1238.0
-offset_top = 2.0
-offset_right = 1549.0
-offset_bottom = 472.0
-
-[node name="Label" type="Label" parent="Calibration"]
-custom_minimum_size = Vector2(0, 46.945)
-layout_mode = 2
-text = "Calibration"
-horizontal_alignment = 1
-vertical_alignment = 1
+waypointsContainer = NodePath("WaypointsMenu/Waypoints")
+selectReferencePoint = [NodePath("CalibrationMenu/Calibration/Point1"), NodePath("CalibrationMenu/Calibration/Point2")]
+referencePoints = [NodePath("CalibrationMenu/RefPoint1"), NodePath("CalibrationMenu/RefPoint2")]
+pointsContainer = NodePath("WaypointsMenu/PointContainer")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
@@ -67,20 +21,205 @@ offset_right = 1233.0
 offset_bottom = 805.0
 texture = ExtResource("2_2yld7")
 
-[node name="GoToWaypoints" type="Button" parent="."]
+[node name="WaypointsMenu" type="Control" parent="."]
 visible = false
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Waypoints" type="VBoxContainer" parent="WaypointsMenu"]
 layout_mode = 0
-offset_left = 1452.0
+offset_left = 1235.0
+offset_top = 2.0
+offset_right = 1575.0
+offset_bottom = 645.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="WaypointsMenu/Waypoints"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="WaypointsMenu/Waypoints/HBoxContainer"]
+custom_minimum_size = Vector2(292.63, 0)
+layout_mode = 2
+text = "Waypoints"
+horizontal_alignment = 1
+
+[node name="Button" type="Button" parent="WaypointsMenu/Waypoints/HBoxContainer"]
+custom_minimum_size = Vector2(41.31, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "+"
+
+[node name="Label2" type="Label" parent="WaypointsMenu/Waypoints"]
+custom_minimum_size = Vector2(268.55, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = " No.  |    X-axis     |   Y-axis       | deadzone |wait|delete"
+
+[node name="PointContainer" type="Control" parent="WaypointsMenu"]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CalibrationMenu" type="Control" parent="."]
+anchors_preset = 0
+
+[node name="Calibration" type="VBoxContainer" parent="CalibrationMenu"]
+layout_mode = 0
+offset_left = 1237.0
+offset_top = 2.0
+offset_right = 1572.0
+offset_bottom = 472.0
+
+[node name="Label" type="Label" parent="CalibrationMenu/Calibration"]
+custom_minimum_size = Vector2(0, 46.945)
+layout_mode = 2
+text = "Calibration"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Point1" type="Button" parent="CalibrationMenu/Calibration"]
+custom_minimum_size = Vector2(0, 113.665)
+layout_mode = 2
+
+[node name="Point" type="VBoxContainer" parent="CalibrationMenu/Calibration/Point1"]
+layout_mode = 2
+offset_top = 2.0
+offset_right = 335.0
+offset_bottom = 81.0
+
+[node name="Label" type="Label" parent="CalibrationMenu/Calibration/Point1/Point"]
+layout_mode = 2
+text = "Reference Point 1"
+horizontal_alignment = 1
+
+[node name="PicturePos" type="HBoxContainer" parent="CalibrationMenu/Calibration/Point1/Point"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CalibrationMenu/Calibration/Point1/Point/PicturePos"]
+layout_mode = 2
+text = " Picture [px]"
+horizontal_alignment = 1
+
+[node name="TextEdit" type="TextEdit" parent="CalibrationMenu/Calibration/Point1/Point/PicturePos"]
+custom_minimum_size = Vector2(115.62, 0)
+layout_mode = 2
+placeholder_text = "x axis"
+scroll_past_end_of_file = true
+
+[node name="TextEdit2" type="TextEdit" parent="CalibrationMenu/Calibration/Point1/Point/PicturePos"]
+custom_minimum_size = Vector2(115.62, 0)
+layout_mode = 2
+placeholder_text = "y axis"
+scroll_past_end_of_file = true
+
+[node name="LocalPos" type="HBoxContainer" parent="CalibrationMenu/Calibration/Point1/Point"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CalibrationMenu/Calibration/Point1/Point/LocalPos"]
+custom_minimum_size = Vector2(93, 0)
+layout_mode = 2
+text = " Real [m]"
+horizontal_alignment = 1
+
+[node name="TextEdit" type="TextEdit" parent="CalibrationMenu/Calibration/Point1/Point/LocalPos"]
+custom_minimum_size = Vector2(115.62, 0)
+layout_mode = 2
+placeholder_text = "x axis"
+scroll_past_end_of_file = true
+
+[node name="TextEdit2" type="TextEdit" parent="CalibrationMenu/Calibration/Point1/Point/LocalPos"]
+custom_minimum_size = Vector2(115.62, 0)
+layout_mode = 2
+placeholder_text = "y axis"
+scroll_past_end_of_file = true
+
+[node name="Point2" type="Button" parent="CalibrationMenu/Calibration"]
+custom_minimum_size = Vector2(0, 113.665)
+layout_mode = 2
+
+[node name="Point" type="VBoxContainer" parent="CalibrationMenu/Calibration/Point2"]
+layout_mode = 2
+offset_top = 2.0
+offset_right = 335.0
+offset_bottom = 81.0
+
+[node name="Label" type="Label" parent="CalibrationMenu/Calibration/Point2/Point"]
+layout_mode = 2
+text = "Reference Point 2
+"
+horizontal_alignment = 1
+
+[node name="PicturePos" type="HBoxContainer" parent="CalibrationMenu/Calibration/Point2/Point"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CalibrationMenu/Calibration/Point2/Point/PicturePos"]
+layout_mode = 2
+text = " Picture [px]"
+horizontal_alignment = 1
+
+[node name="TextEdit" type="TextEdit" parent="CalibrationMenu/Calibration/Point2/Point/PicturePos"]
+custom_minimum_size = Vector2(115.62, 0)
+layout_mode = 2
+placeholder_text = "x axis"
+scroll_past_end_of_file = true
+
+[node name="TextEdit2" type="TextEdit" parent="CalibrationMenu/Calibration/Point2/Point/PicturePos"]
+custom_minimum_size = Vector2(115.62, 0)
+layout_mode = 2
+placeholder_text = "y axis"
+scroll_past_end_of_file = true
+
+[node name="LocalPos" type="HBoxContainer" parent="CalibrationMenu/Calibration/Point2/Point"]
+custom_minimum_size = Vector2(0, 38)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CalibrationMenu/Calibration/Point2/Point/LocalPos"]
+custom_minimum_size = Vector2(93, 0)
+layout_mode = 2
+text = " Real [m]"
+horizontal_alignment = 1
+
+[node name="TextEdit" type="TextEdit" parent="CalibrationMenu/Calibration/Point2/Point/LocalPos"]
+custom_minimum_size = Vector2(115.62, 0)
+layout_mode = 2
+placeholder_text = "x axis"
+scroll_past_end_of_file = true
+
+[node name="TextEdit2" type="TextEdit" parent="CalibrationMenu/Calibration/Point2/Point/LocalPos"]
+custom_minimum_size = Vector2(115.62, 0)
+layout_mode = 2
+placeholder_text = "y axis"
+scroll_past_end_of_file = true
+
+[node name="RefPoint1" parent="CalibrationMenu" instance=ExtResource("3_kj2xc")]
+offset_left = 466.0
+offset_top = 592.0
+offset_right = 466.0
+offset_bottom = 592.0
+
+[node name="RefPoint2" parent="CalibrationMenu" instance=ExtResource("3_kj2xc")]
+offset_left = 465.0
+offset_top = 515.0
+offset_right = 465.0
+offset_bottom = 515.0
+
+[node name="GoToWaypoints" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1479.0
 offset_top = 708.0
-offset_right = 1547.0
+offset_right = 1574.0
 offset_bottom = 803.0
 text = "Waypoints"
 
 [node name="GoToCalibration" type="Button" parent="."]
+visible = false
 layout_mode = 0
-offset_left = 1467.0
+offset_left = 1479.0
 offset_top = 708.0
-offset_right = 1562.0
+offset_right = 1574.0
 offset_bottom = 803.0
 text = "Calibration"
 
@@ -102,17 +241,17 @@ text = "OnPicturePos: XX, XX"
 
 [node name="MousePositionLabel2" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-text = "OnMapPos: XX, XX"
+text = "OnLocalPos: XX, XX"
 
 [node name="MousePositionLabel3" type="Label" parent="VBoxContainer"]
 layout_mode = 2
 text = "OnMapPos: XX, XX"
 
-[connection signal="pressed" from="GoToWaypoints" to="Waypoints" method="set_visible" binds= [true]]
-[connection signal="pressed" from="GoToWaypoints" to="Calibration" method="set_visible" binds= [false]]
 [connection signal="pressed" from="GoToWaypoints" to="GoToWaypoints" method="set_visible" binds= [false]]
 [connection signal="pressed" from="GoToWaypoints" to="GoToCalibration" method="set_visible" binds= [true]]
-[connection signal="pressed" from="GoToCalibration" to="Waypoints" method="set_visible" binds= [false]]
-[connection signal="pressed" from="GoToCalibration" to="Calibration" method="set_visible" binds= [true]]
+[connection signal="pressed" from="GoToWaypoints" to="WaypointsMenu" method="set_visible" binds= [true]]
+[connection signal="pressed" from="GoToWaypoints" to="CalibrationMenu" method="set_visible" binds= [false]]
 [connection signal="pressed" from="GoToCalibration" to="GoToWaypoints" method="set_visible" binds= [true]]
 [connection signal="pressed" from="GoToCalibration" to="GoToCalibration" method="set_visible" binds= [false]]
+[connection signal="pressed" from="GoToCalibration" to="WaypointsMenu" method="set_visible" binds= [false]]
+[connection signal="pressed" from="GoToCalibration" to="CalibrationMenu" method="set_visible" binds= [true]]

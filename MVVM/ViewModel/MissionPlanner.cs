@@ -15,15 +15,29 @@ public partial class MissionPlanner : Panel
 	[Export] TextureRect picture = null!;
 	[Export] Label mousePosLabel = null!;
 	[Export] VBoxContainer waypointsContainer = null!;
-
-
+	[Export] Button[] selectReferencePoint = new Button[2];
+	[Export] Point[] referencePoints = new Point[2];
+	[Export] Control pointsContainer = null!;
 
 	List<Point> points = new List<Point>();
 	List<Waypoint> waypoints = new List<Waypoint>();
 
+	int _lastSelectedReferencePoint = 0;
+
 	public override void _EnterTree()
 	{
-		//picturePath.TextChanged += LoadPicture;
+		selectReferencePoint[0].Pressed += () =>
+		{
+			_lastSelectedReferencePoint = 0;
+			referencePoints[0].SetColor(Colors.DarkGreen);
+			referencePoints[1].SetColor(Colors.DarkRed);
+		};
+		selectReferencePoint[1].Pressed += () =>
+		{
+			_lastSelectedReferencePoint = 1;
+			referencePoints[0].SetColor(Colors.DarkRed);
+			referencePoints[1].SetColor(Colors.DarkGreen);
+		};
 		picture.GuiInput += HandleMouseInput;
 		//DisplayServer.WindowResized += HandleScreenSizeChange;
 		GetTree().Root.SizeChanged += HandleScreenSizeChange;
@@ -33,6 +47,11 @@ public partial class MissionPlanner : Panel
 
 	public override void _Ready()
 	{
+		referencePoints[0].SetColor(Colors.DarkGreen);
+		referencePoints[0].SetNumber(1);
+		referencePoints[1].SetColor(Colors.DarkRed);
+		referencePoints[1].SetNumber(2);
+
 		LoadPicture();
 	}
 
@@ -40,7 +59,7 @@ public partial class MissionPlanner : Panel
 
 	public override void _Process(double delta)
 	{
-		//GD.Print(DisplayServer.WindowGetSize());
+		
 	}
 
 	void LoadPictureHandler(StringName category, StringName name, Variant oldValue, Variant newValue)
@@ -93,18 +112,35 @@ public partial class MissionPlanner : Panel
 
 		if (inputEvent is InputEventMouseButton mouseButton && mouseButton.IsPressed())
 		{
-			if (mouseButton.ButtonIndex == MouseButton.Left)
+			if (waypointsContainer.GetParent<Control>().Visible)
 			{
-				TryAddPoint(GetLocalMousePosition());
-				return;
-			}
+				if (mouseButton.ButtonIndex == MouseButton.Left)
+				{
+					TryAddPoint(GetLocalMousePosition());
+					return;
+				}
 
-			if (mouseButton.ButtonIndex == MouseButton.Right)
-			{
-				TryRemovePoint(GetLocalMousePosition());
-				return;
+				if (mouseButton.ButtonIndex == MouseButton.Right)
+				{
+					TryRemovePoint(GetLocalMousePosition());
+					return;
+				}
 			}
+			else
+			{
+				MoveReferencePoint();
+			}
+			
 		}
+	}
+
+	private void MoveReferencePoint()
+	{
+		referencePoints[_lastSelectedReferencePoint].Position = GetLocalMousePosition();
+		//selectReferencePoint[_lastSelectedReferencePoint].GetChild(0).GetChild(1).GetChild<TextEdit>(1).Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.X, 2).ToString();
+		selectReferencePoint[_lastSelectedReferencePoint].GetChild(0).GetChild(1).GetChild<TextEdit>(2).Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.Y, 2).ToString();
+		selectReferencePoint[_lastSelectedReferencePoint].GetNode<TextEdit>("Point/PicturePos/TextEdit").Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.X, 2).ToString();
+
 	}
 
 	void TryAddPoint(Vector2 pos)
@@ -113,9 +149,9 @@ public partial class MissionPlanner : Panel
 
 		var scene = GD.Load<PackedScene>("res://MVVM/View/Point.tscn");
 		var inst = scene.Instantiate();
-		AddChild(inst);
 		if (inst is Point point)
 		{
+			pointsContainer.AddChild(inst);
 			point.SetColor(Colors.Blue);
 			point.SetNumber(points.Count + 1);
 			point.Position = pos;
@@ -145,8 +181,6 @@ public partial class MissionPlanner : Panel
 			return;
 		}
 
-
-
 		GD.Print($"Trying to add point at position: {pos}");
 	}
 
@@ -168,15 +202,6 @@ public partial class MissionPlanner : Panel
 		GD.Print($"Trying to remove point at position: {pos}");
 	}
 
-	void HandleScreenSizeChange()
-	{
-		if (DisplayServer.WindowGetSize().X > 1700 && DisplayServer.WindowGetSize().Y > 900)
-			this.Scale = new Vector2(1.0f, 1.0f);
-		else
-			this.Scale = new Vector2(0.6f, 0.6f);
-		GD.Print($"Screen size changed to: {DisplayServer.WindowGetSize()}");
-	}
-
 	public void RemoveWaypoint(Waypoint waypoint)
 	{
 		if (waypoint == null) return;
@@ -194,5 +219,14 @@ public partial class MissionPlanner : Panel
 			waypoints[i].Number = i + 1;
 			waypointsContainer.MoveChild(waypoints[i], i + 2);
 		}
+	}
+
+	void HandleScreenSizeChange()
+	{
+		if (DisplayServer.WindowGetSize().X > 1700 && DisplayServer.WindowGetSize().Y > 900)
+			this.Scale = new Vector2(1.0f, 1.0f);
+		else
+			this.Scale = new Vector2(0.6f, 0.6f);
+		GD.Print($"Screen size changed to: {DisplayServer.WindowGetSize()}");
 	}
 }
