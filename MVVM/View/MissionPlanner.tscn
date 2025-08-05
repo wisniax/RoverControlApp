@@ -1,10 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://b3sxri61lcv03"]
+[gd_scene load_steps=4 format=3 uid="uid://b3sxri61lcv03"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionPlanner.cs" id="1_jdbma"]
 [ext_resource type="Texture2D" uid="uid://cb0uaxyf03igv" path="res://Resources/ExampleMap.jpeg" id="2_2yld7"]
+[ext_resource type="PackedScene" uid="uid://dlppkwr8yuhdw" path="res://MVVM/View/Waypoint.tscn" id="2_fay10"]
 
 [node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "mousePosLabel", "waypointsContainer")]
-offset_right = 1550.0
+offset_right = 1575.0
 offset_bottom = 804.0
 script = ExtResource("1_jdbma")
 picture = NodePath("TextureRect")
@@ -13,22 +14,22 @@ waypointsContainer = NodePath("Waypoints")
 
 [node name="Waypoints" type="VBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 1238.0
+offset_left = 1235.0
 offset_top = 2.0
-offset_right = 1549.0
-offset_bottom = 472.0
+offset_right = 1574.0
+offset_bottom = 645.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Waypoints"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="Waypoints/HBoxContainer"]
-custom_minimum_size = Vector2(268.55, 0)
+custom_minimum_size = Vector2(292.63, 0)
 layout_mode = 2
 text = "Waypoints"
 horizontal_alignment = 1
 
 [node name="Button" type="Button" parent="Waypoints/HBoxContainer"]
-custom_minimum_size = Vector2(38.23, 0)
+custom_minimum_size = Vector2(41.31, 0)
 layout_mode = 2
 theme_override_font_sizes/font_size = 25
 text = "+"
@@ -36,10 +37,13 @@ text = "+"
 [node name="Label2" type="Label" parent="Waypoints"]
 custom_minimum_size = Vector2(268.55, 0)
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
+theme_override_font_sizes/font_size = 13
 text = "No.|     X-axis     |    Y-axis     |  deadzone  |wait|delete"
 
 [node name="WaypointsContainer" type="VBoxContainer" parent="Waypoints"]
+layout_mode = 2
+
+[node name="Waypoint" parent="Waypoints" instance=ExtResource("2_fay10")]
 layout_mode = 2
 
 [node name="Calibration" type="VBoxContainer" parent="."]
@@ -74,9 +78,9 @@ text = "Waypoints"
 
 [node name="GoToCalibration" type="Button" parent="."]
 layout_mode = 0
-offset_left = 1452.0
+offset_left = 1467.0
 offset_top = 708.0
-offset_right = 1547.0
+offset_right = 1562.0
 offset_bottom = 803.0
 text = "Calibration"
 

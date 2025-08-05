@@ -19,7 +19,7 @@ public partial class MissionPlanner : Panel
 
 
 	List<Point> points = new List<Point>();
-	List<Waypoint> wayPoints = new List<Waypoint>();
+	List<Waypoint> waypoints = new List<Waypoint>();
 
 	public override void _EnterTree()
 	{
@@ -133,9 +133,9 @@ public partial class MissionPlanner : Panel
 		if (inst is Waypoint waypoint)
 		{
 			waypoint.Coordinates = pos;
-			waypoint.Number = wayPoints.Count + 1;
+			waypoint.Number = waypoints.Count + 1;
 			waypoint.Deadzone = 2;
-			wayPoints.Add(waypoint);
+			waypoints.Add(waypoint);
 
 			waypointsContainer.AddChild(inst);
 		}
@@ -159,8 +159,8 @@ public partial class MissionPlanner : Panel
 		{
 			if (point.Position.DistanceTo(pos) < 20)
 			{
-				RemoveWaypoint(point);
-				
+				RemoveWaypoint(waypoints[point.Number-1]);
+
 				break;
 			}
 		}
@@ -181,37 +181,18 @@ public partial class MissionPlanner : Panel
 	{
 		if (waypoint == null) return;
 
-		points[waypoint.Number-1].QueueFree();
-		points.RemoveAll(p=> p.Number == waypoint.Number);
-		points.ForEach(p => p.SetNumber(points.IndexOf(p)+1));
+		points[waypoint.Number - 1].QueueFree();
+		points.RemoveAll(p => p.Number == waypoint.Number);
+		points.ForEach(p => p.SetNumber(points.IndexOf(p) + 1));
 
 
 		waypointsContainer.RemoveChild(waypoint);
 		waypoint.QueueFree();
-		wayPoints.Remove(waypoint);
-		for (int i = 0; i < wayPoints.Count; i++)
+		waypoints.Remove(waypoint);
+		for (int i = 0; i < waypoints.Count; i++)
 		{
-			wayPoints[i].Number = i + 1;
-			waypointsContainer.MoveChild(wayPoints[i], i+2);
-		}
-	}
-
-	public void RemoveWaypoint(Point point)
-	{
-		if (point == null) return;
-
-		point.QueueFree();
-		points.RemoveAll(p => p == point);
-		points.ForEach(p => p.SetNumber(points.IndexOf(p) + 1));
-
-
-		waypointsContainer.RemoveChild(wayPoints[point.Number]);
-		wayPoints[point.Number-1].QueueFree();
-		wayPoints.Remove(wayPoints[point.Number]);
-		for (int i = 0; i < wayPoints.Count; i++)
-		{
-			wayPoints[i].Number = i + 1;
-			waypointsContainer.MoveChild(wayPoints[i], i + 2);
+			waypoints[i].Number = i + 1;
+			waypointsContainer.MoveChild(waypoints[i], i + 2);
 		}
 	}
 }

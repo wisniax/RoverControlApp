@@ -7,7 +7,7 @@ custom_minimum_size = Vector2(0, 36)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -844.0
+offset_right = -832.0
 offset_bottom = -612.0
 grow_horizontal = 2
 grow_vertical = 2
@@ -26,8 +26,9 @@ offset_right = 209.0
 offset_bottom = 33.0
 
 [node name="Label" type="Label" parent="HBoxContainer"]
+custom_minimum_size = Vector2(26.595, 0)
 layout_mode = 2
-text = "X."
+text = "XX."
 
 [node name="TextEdit" type="TextEdit" parent="HBoxContainer"]
 custom_minimum_size = Vector2(70, 0)
