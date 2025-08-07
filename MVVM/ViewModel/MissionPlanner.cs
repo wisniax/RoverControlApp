@@ -73,7 +73,15 @@ public partial class MissionPlanner : Panel
 
 	public override void _Process(double delta)
 	{
-		
+		//float fi;
+		//float scale;
+		//double[] t_p2r = new double[2];
+		//double[] t_r2p = new double[2];
+
+		//GD.Print($"fi: {fi}\n" +
+		//		$"scale: {scale}\n" +
+		//		$"t_p2r: {t_p2r[0]}, {t_p2r[1]}\n" +
+		//		$"t_r2p: {t_r2p[0]}, {t_r2p[1]}");
 	}
 
 	void LoadPictureHandler(StringName category, StringName name, Variant oldValue, Variant newValue)
@@ -122,7 +130,7 @@ public partial class MissionPlanner : Panel
 			Vector2 temp = GetLocalMousePosition();
 			mousePosLabel.Text = $"OnPhotoPos: {ToGoodCoordinates(temp)}";
 			if (Point1Photo == Point2Photo || Point1Real == Point2Real) return;
-			localPosLabel.Text = $"OnLocalPos: {PhotoToReal(ToGoodCoordinates(temp))}";
+			localPosLabel.Text = $"OnLocalPos: {-PhotoToReal(ToGoodCoordinates(temp))}";
 			return;
 		}
 
@@ -307,11 +315,10 @@ public partial class MissionPlanner : Panel
 	{
 		Vector2 real = new Vector2();
 
-
 		real.X = (float)(scale * (photo.X * Math.Cos(fi) - photo.Y * Math.Sin(fi)) + t_p2r[0]);
 		real.Y = (float)(scale * (photo.X * Math.Sin(fi) + photo.Y * Math.Cos(fi)) + t_p2r[1]);
 
-		return real;
+		return -real;
 	}
 
 	Vector2 RealToPhoto(Vector2 real)
@@ -346,17 +353,17 @@ public partial class MissionPlanner : Panel
 	void CalibrateMap()
 	{
 		float deltaPX = Point2Photo.X - Point1Photo.X;
-		float deltaPY = (picture.Size.Y - Point2Photo.Y) - (picture.Size.Y - Point1Photo.Y);
+		float deltaPY = Point2Photo.Y - Point1Photo.Y;
 		float deltaRX = Point2Real.X - Point1Real.X;
 		float deltaRY = Point2Real.Y - Point1Real.Y;
 
 		scale = MathF.Sqrt((deltaRX * deltaRX + deltaRY * deltaRY) / (deltaPX * deltaPX + deltaPY * deltaPY));
 		fi = MathF.Atan2(deltaRY, deltaRX) - MathF.Atan2(deltaPY, deltaPX);
-
-		t_p2r[0] = Point1Real.X - scale * (Point1Photo.X * Math.Cos(fi) - Point1Photo.Y * Math.Sin(fi));
-		t_p2r[1] = Point1Real.Y - scale * (Point1Photo.X * Math.Sin(fi) + Point1Photo.Y * Math.Cos(fi));
-
-		t_r2p[0] = Point1Photo.X - 1/scale * (Point1Real.X * Math.Cos(-fi) - Point1Real.Y * Math.Sin(-fi));
-		t_r2p[1] = Point1Photo.Y - 1/scale * (Point1Real.X * Math.Sin(-fi) + Point1Real.Y * Math.Cos(-fi));
+		
+		t_p2r[0] = Point1Real.X - scale * (Point1Photo.X * MathF.Cos(fi) - Point1Photo.Y * MathF.Sin(fi));
+		t_p2r[1] = Point1Real.Y - scale * (Point1Photo.X * MathF.Sin(fi) + Point1Photo.Y * MathF.Cos(fi));
+		
+		t_r2p[0] = Point1Photo.X - 1/scale * (Point1Real.X * MathF.Cos(-fi) - Point1Real.Y * MathF.Sin(-fi));
+		t_r2p[1] = Point1Photo.Y - 1/scale * (Point1Real.X * MathF.Sin(-fi) + Point1Real.Y * MathF.Cos(-fi));
 	}
 }
