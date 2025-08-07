@@ -19,6 +19,9 @@ public partial class MissionPlanner : Panel
 	[Export] Point[] referencePoints = new Point[2];
 	[Export] Control pointsContainer = null!;
 
+	[Export] TextEdit[] refPoint1 = new TextEdit[4];
+	[Export] TextEdit[] refPoint2 = new TextEdit[4];
+
 	List<Point> points = new List<Point>();
 	List<Waypoint> waypoints = new List<Waypoint>();
 
@@ -228,5 +231,26 @@ public partial class MissionPlanner : Panel
 		else
 			this.Scale = new Vector2(0.6f, 0.6f);
 		GD.Print($"Screen size changed to: {DisplayServer.WindowGetSize()}");
+	}
+
+
+	float fi;
+	float scale;
+	float[] t_p2r = new float[2];
+	float[] t_r2p = new float[2];
+
+	void calibrateMap()
+	{
+		
+	}
+
+	Vector2 PhotoToReal(Vector2 photo)
+	{
+		return new Vector2();
+	}
+
+	Vector2 RealToPhoto(Vector2 real)
+	{
+		return new Vector2();
 	}
 }

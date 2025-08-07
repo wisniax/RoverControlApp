@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cb0uaxyf03igv" path="res://Resources/ExampleMap.jpeg" id="2_2yld7"]
 [ext_resource type="PackedScene" uid="uid://djb630ht7i3m3" path="res://MVVM/View/Point.tscn" id="3_kj2xc"]
 
-[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "mousePosLabel", "waypointsContainer", "selectReferencePoint", "referencePoints", "pointsContainer")]
+[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "mousePosLabel", "waypointsContainer", "selectReferencePoint", "referencePoints", "pointsContainer", "refPoint1", "refPoint2")]
 offset_right = 1575.0
 offset_bottom = 804.0
 script = ExtResource("1_jdbma")
@@ -14,12 +14,15 @@ waypointsContainer = NodePath("WaypointsMenu/Waypoints")
 selectReferencePoint = [NodePath("CalibrationMenu/Calibration/Point1"), NodePath("CalibrationMenu/Calibration/Point2")]
 referencePoints = [NodePath("CalibrationMenu/RefPoint1"), NodePath("CalibrationMenu/RefPoint2")]
 pointsContainer = NodePath("WaypointsMenu/PointContainer")
+refPoint1 = [NodePath("CalibrationMenu/Calibration/Point1/Point/PicturePos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point1/Point/PicturePos/TextEdit2"), NodePath("CalibrationMenu/Calibration/Point1/Point/LocalPos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point1/Point/LocalPos/TextEdit2")]
+refPoint2 = [NodePath("CalibrationMenu/Calibration/Point2/Point/PicturePos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point2/Point/PicturePos/TextEdit2"), NodePath("CalibrationMenu/Calibration/Point2/Point/LocalPos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point2/Point/LocalPos/TextEdit2")]
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
 offset_right = 1233.0
 offset_bottom = 805.0
 texture = ExtResource("2_2yld7")
+stretch_mode = 4
 
 [node name="WaypointsMenu" type="Control" parent="."]
 visible = false
@@ -247,11 +250,11 @@ text = "OnLocalPos: XX, XX"
 layout_mode = 2
 text = "OnMapPos: XX, XX"
 
-[connection signal="pressed" from="GoToWaypoints" to="GoToWaypoints" method="set_visible" binds= [false]]
-[connection signal="pressed" from="GoToWaypoints" to="GoToCalibration" method="set_visible" binds= [true]]
 [connection signal="pressed" from="GoToWaypoints" to="WaypointsMenu" method="set_visible" binds= [true]]
 [connection signal="pressed" from="GoToWaypoints" to="CalibrationMenu" method="set_visible" binds= [false]]
-[connection signal="pressed" from="GoToCalibration" to="GoToWaypoints" method="set_visible" binds= [true]]
-[connection signal="pressed" from="GoToCalibration" to="GoToCalibration" method="set_visible" binds= [false]]
+[connection signal="pressed" from="GoToWaypoints" to="GoToWaypoints" method="set_visible" binds= [false]]
+[connection signal="pressed" from="GoToWaypoints" to="GoToCalibration" method="set_visible" binds= [true]]
 [connection signal="pressed" from="GoToCalibration" to="WaypointsMenu" method="set_visible" binds= [false]]
 [connection signal="pressed" from="GoToCalibration" to="CalibrationMenu" method="set_visible" binds= [true]]
+[connection signal="pressed" from="GoToCalibration" to="GoToWaypoints" method="set_visible" binds= [true]]
+[connection signal="pressed" from="GoToCalibration" to="GoToCalibration" method="set_visible" binds= [false]]
