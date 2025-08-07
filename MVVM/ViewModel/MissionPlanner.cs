@@ -279,6 +279,7 @@ public partial class MissionPlanner : Panel
 				break;
 		}
 
+		CalibrateMap();
 	}
 
 	void UpdateReferenceCoordinatesReal(int whichOne)
@@ -299,11 +300,13 @@ public partial class MissionPlanner : Panel
 				break;
 		}
 
+		CalibrateMap();
 	}
 
 	Vector2 PhotoToReal(Vector2 photo)
 	{
 		Vector2 real = new Vector2();
+
 
 		real.X = (float)(scale * (photo.X * Math.Cos(fi) - photo.Y * Math.Sin(fi)) + t_p2r[0]);
 		real.Y = (float)(scale * (photo.X * Math.Sin(fi) + photo.Y * Math.Cos(fi)) + t_p2r[1]);

@@ -19,9 +19,14 @@ refPoint1 = [NodePath("CalibrationMenu/Calibration/Point1/Point/PicturePos/TextE
 refPoint2 = [NodePath("CalibrationMenu/Calibration/Point2/Point/PicturePos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point2/Point/PicturePos/TextEdit2"), NodePath("CalibrationMenu/Calibration/Point2/Point/LocalPos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point2/Point/LocalPos/TextEdit2")]
 
 [node name="TextureRect" type="TextureRect" parent="."]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -804.0
 offset_right = 1233.0
-offset_bottom = 805.0
+offset_bottom = 1.0
+grow_vertical = 0
 texture = ExtResource("2_2yld7")
 stretch_mode = 4
 
