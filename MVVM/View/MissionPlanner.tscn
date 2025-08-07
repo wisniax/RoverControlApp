@@ -4,12 +4,13 @@
 [ext_resource type="Texture2D" uid="uid://cb0uaxyf03igv" path="res://Resources/ExampleMap.jpeg" id="2_2yld7"]
 [ext_resource type="PackedScene" uid="uid://djb630ht7i3m3" path="res://MVVM/View/Point.tscn" id="3_kj2xc"]
 
-[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "mousePosLabel", "waypointsContainer", "selectReferencePoint", "referencePoints", "pointsContainer", "refPoint1", "refPoint2")]
+[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "mousePosLabel", "localPosLabel", "waypointsContainer", "selectReferencePoint", "referencePoints", "pointsContainer", "refPoint1", "refPoint2")]
 offset_right = 1575.0
 offset_bottom = 804.0
 script = ExtResource("1_jdbma")
 picture = NodePath("TextureRect")
 mousePosLabel = NodePath("VBoxContainer/MousePositionLabel")
+localPosLabel = NodePath("VBoxContainer/MousePositionLabel2")
 waypointsContainer = NodePath("WaypointsMenu/Waypoints")
 selectReferencePoint = [NodePath("CalibrationMenu/Calibration/Point1"), NodePath("CalibrationMenu/Calibration/Point2")]
 referencePoints = [NodePath("CalibrationMenu/RefPoint1"), NodePath("CalibrationMenu/RefPoint2")]

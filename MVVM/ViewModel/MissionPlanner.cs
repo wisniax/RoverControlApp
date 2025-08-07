@@ -14,6 +14,7 @@ public partial class MissionPlanner : Panel
 {
 	[Export] TextureRect picture = null!;
 	[Export] Label mousePosLabel = null!;
+	[Export] Label localPosLabel = null!;
 	[Export] VBoxContainer waypointsContainer = null!;
 	[Export] Button[] selectReferencePoint = new Button[2];
 	[Export] Point[] referencePoints = new Point[2];
@@ -46,14 +47,14 @@ public partial class MissionPlanner : Panel
 		GetTree().Root.SizeChanged += HandleScreenSizeChange;
 		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(LoadPictureHandler));
 
-		refPoint1[0].TextChanged += () => UpdateReferenceCoordinates(0);
-		refPoint1[1].TextChanged += () => UpdateReferenceCoordinates(1);
-		refPoint1[2].TextChanged += () => UpdateReferenceCoordinates(2);
-		refPoint1[3].TextChanged += () => UpdateReferenceCoordinates(3);
-		refPoint2[0].TextChanged += () => UpdateReferenceCoordinates(4);
-		refPoint2[1].TextChanged += () => UpdateReferenceCoordinates(5);
-		refPoint2[2].TextChanged += () => UpdateReferenceCoordinates(6);
-		refPoint2[3].TextChanged += () => UpdateReferenceCoordinates(7);
+		refPoint1[0].TextChanged += () => UpdateReferenceCoordinatesPhoto(0);
+		refPoint1[1].TextChanged += () => UpdateReferenceCoordinatesPhoto(1);
+		refPoint2[0].TextChanged += () => UpdateReferenceCoordinatesPhoto(2);
+		refPoint2[1].TextChanged += () => UpdateReferenceCoordinatesPhoto(3);
+		refPoint1[2].TextChanged += () => UpdateReferenceCoordinatesReal(0);
+		refPoint1[3].TextChanged += () => UpdateReferenceCoordinatesReal(1);
+		refPoint2[2].TextChanged += () => UpdateReferenceCoordinatesReal(2);
+		refPoint2[3].TextChanged += () => UpdateReferenceCoordinatesReal(3);
 	}
 
 
@@ -72,7 +73,7 @@ public partial class MissionPlanner : Panel
 
 	public override void _Process(double delta)
 	{
-		GD.Print($"{Point1Photo}");
+		
 	}
 
 	void LoadPictureHandler(StringName category, StringName name, Variant oldValue, Variant newValue)
@@ -119,7 +120,9 @@ public partial class MissionPlanner : Panel
 		if (inputEvent is InputEventMouseMotion)
 		{
 			Vector2 temp = GetLocalMousePosition();
-			mousePosLabel.Text = $"Current Position: {temp.X:F0}, {temp.Y:F0}";
+			mousePosLabel.Text = $"OnPhotoPos: {ToGoodCoordinates(temp)}";
+			if (Point1Photo == Point2Photo || Point1Real == Point2Real) return;
+			localPosLabel.Text = $"OnLocalPos: {PhotoToReal(ToGoodCoordinates(temp))}";
 			return;
 		}
 
@@ -145,6 +148,12 @@ public partial class MissionPlanner : Panel
 			}
 			
 		}
+	}
+
+	Vector2 ToGoodCoordinates(Vector2 vec)
+	{
+		vec.Y = picture.Size.Y - vec.Y;
+		return vec;
 	}
 
 	void TryAddPoint(Vector2 pos)
@@ -244,7 +253,7 @@ public partial class MissionPlanner : Panel
 	double[] t_p2r = new double[2];
 	double[] t_r2p = new double[2];
 
-	void UpdateReferenceCoordinates(int whichOne)
+	void UpdateReferenceCoordinatesPhoto(int whichOne)
 	{
 		switch(whichOne)
 		{
@@ -259,14 +268,34 @@ public partial class MissionPlanner : Panel
 				MoveReferencePoint(Point1Photo);
 				break;
 			case 2: // X2
-				Point2Photo.X = float.Parse(refPoint1[2].Text);
+				Point2Photo.X = float.Parse(refPoint2[0].Text);
 				_lastSelectedReferencePoint = 1;
 				MoveReferencePoint(Point2Photo);
 				break;
 			case 3: // Y2
-				Point2Photo.Y = float.Parse(refPoint1[3].Text);
+				Point2Photo.Y = float.Parse(refPoint2[1].Text);
 				_lastSelectedReferencePoint = 1;
 				MoveReferencePoint(Point2Photo);
+				break;
+		}
+
+	}
+
+	void UpdateReferenceCoordinatesReal(int whichOne)
+	{
+		switch (whichOne)
+		{
+			case 0: // X1
+				Point1Real.X = float.Parse(refPoint1[2].Text);
+				break;
+			case 1: // Y1
+				Point1Real.Y = float.Parse(refPoint1[3].Text);
+				break;
+			case 2: // X2
+				Point2Real.X = float.Parse(refPoint2[2].Text);
+				break;
+			case 3: // Y2
+				Point2Real.Y = float.Parse(refPoint2[3].Text);
 				break;
 		}
 
@@ -301,10 +330,10 @@ public partial class MissionPlanner : Panel
 		switch (_lastSelectedReferencePoint)
 		{
 			case 0:
-				Point1Photo = referencePoints[_lastSelectedReferencePoint].Position;
+				Point1Photo = new Vector2(referencePoints[_lastSelectedReferencePoint].Position.X, picture.Size.Y - referencePoints[_lastSelectedReferencePoint].Position.Y);
 				break;
 			case 1:
-				Point2Photo = referencePoints[_lastSelectedReferencePoint].Position;
+				Point2Photo = new Vector2(referencePoints[_lastSelectedReferencePoint].Position.X, picture.Size.Y - referencePoints[_lastSelectedReferencePoint].Position.Y);
 				break;
 		}
 
@@ -314,7 +343,7 @@ public partial class MissionPlanner : Panel
 	void CalibrateMap()
 	{
 		float deltaPX = Point2Photo.X - Point1Photo.X;
-		float deltaPY = Point2Photo.Y - Point1Photo.Y;
+		float deltaPY = (picture.Size.Y - Point2Photo.Y) - (picture.Size.Y - Point1Photo.Y);
 		float deltaRX = Point2Real.X - Point1Real.X;
 		float deltaRY = Point2Real.Y - Point1Real.Y;
 
