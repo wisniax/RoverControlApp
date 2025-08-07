@@ -46,14 +46,14 @@ public partial class MissionPlanner : Panel
 		GetTree().Root.SizeChanged += HandleScreenSizeChange;
 		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(LoadPictureHandler));
 
-		foreach (var point in refPoint1)
-		{
-			point.TextChanged += CalibrateMap;
-		}
-		foreach (var point in refPoint2)
-		{
-			point.TextChanged += CalibrateMap;
-		}
+		refPoint1[0].TextChanged += () => UpdateReferenceCoordinates(0);
+		refPoint1[1].TextChanged += () => UpdateReferenceCoordinates(1);
+		refPoint1[2].TextChanged += () => UpdateReferenceCoordinates(2);
+		refPoint1[3].TextChanged += () => UpdateReferenceCoordinates(3);
+		refPoint2[0].TextChanged += () => UpdateReferenceCoordinates(4);
+		refPoint2[1].TextChanged += () => UpdateReferenceCoordinates(5);
+		refPoint2[2].TextChanged += () => UpdateReferenceCoordinates(6);
+		refPoint2[3].TextChanged += () => UpdateReferenceCoordinates(7);
 	}
 
 
@@ -65,13 +65,14 @@ public partial class MissionPlanner : Panel
 		referencePoints[1].SetNumber(2);
 
 		LoadPicture();
+		HandleScreenSizeChange();
 	}
 
 
 
 	public override void _Process(double delta)
 	{
-		
+		GD.Print($"{Point1Photo}");
 	}
 
 	void LoadPictureHandler(StringName category, StringName name, Variant oldValue, Variant newValue)
@@ -140,19 +141,10 @@ public partial class MissionPlanner : Panel
 			}
 			else
 			{
-				MoveReferencePoint();
+				MoveReferencePoint(GetLocalMousePosition());
 			}
 			
 		}
-	}
-
-	private void MoveReferencePoint()
-	{
-		referencePoints[_lastSelectedReferencePoint].Position = GetLocalMousePosition();
-		//selectReferencePoint[_lastSelectedReferencePoint].GetChild(0).GetChild(1).GetChild<TextEdit>(1).Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.X, 2).ToString();
-		selectReferencePoint[_lastSelectedReferencePoint].GetChild(0).GetChild(1).GetChild<TextEdit>(2).Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.Y, 2).ToString();
-		selectReferencePoint[_lastSelectedReferencePoint].GetNode<TextEdit>("Point/PicturePos/TextEdit").Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.X, 2).ToString();
-
 	}
 
 	void TryAddPoint(Vector2 pos)
@@ -249,28 +241,90 @@ public partial class MissionPlanner : Panel
 
 	float fi;
 	float scale;
-	float[] t_p2r = new float[2];
-	float[] t_r2p = new float[2];
+	double[] t_p2r = new double[2];
+	double[] t_r2p = new double[2];
 
-	void CalibrateMap()
+	void UpdateReferenceCoordinates(int whichOne)
 	{
-		foreach (var point in refPoint1)
+		switch(whichOne)
 		{
-			//point.TextChanged += CalibrateMap;
+			case 0: // X1
+				Point1Photo.X = float.Parse(refPoint1[0].Text);
+				_lastSelectedReferencePoint = 0;
+				MoveReferencePoint(Point1Photo);
+				break;
+			case 1: // Y1
+				Point1Photo.Y = float.Parse(refPoint1[1].Text);
+				_lastSelectedReferencePoint = 0;
+				MoveReferencePoint(Point1Photo);
+				break;
+			case 2: // X2
+				Point2Photo.X = float.Parse(refPoint1[2].Text);
+				_lastSelectedReferencePoint = 1;
+				MoveReferencePoint(Point2Photo);
+				break;
+			case 3: // Y2
+				Point2Photo.Y = float.Parse(refPoint1[3].Text);
+				_lastSelectedReferencePoint = 1;
+				MoveReferencePoint(Point2Photo);
+				break;
 		}
-		foreach (var point in refPoint2)
-		{
-			//point.TextChanged += CalibrateMap;
-		}
+
 	}
 
 	Vector2 PhotoToReal(Vector2 photo)
 	{
-		return new Vector2();
+		Vector2 real = new Vector2();
+
+		real.X = (float)(scale * (photo.X * Math.Cos(fi) - photo.Y * Math.Sin(fi)) + t_p2r[0]);
+		real.Y = (float)(scale * (photo.X * Math.Sin(fi) + photo.Y * Math.Cos(fi)) + t_p2r[1]);
+
+		return real;
 	}
 
 	Vector2 RealToPhoto(Vector2 real)
 	{
-		return new Vector2();
+		Vector2 photo = new Vector2();
+
+		photo.X = (float)(1 / scale * (real.X * Math.Cos(-fi) - real.Y * Math.Sin(-fi)) + t_r2p[0]);
+		photo.Y = (float)(1 / scale * (real.X * Math.Sin(-fi) + real.Y * Math.Cos(-fi)) + t_r2p[1]);
+
+		return photo;
+	}
+
+	private void MoveReferencePoint(Vector2 newPlace)
+	{
+		referencePoints[_lastSelectedReferencePoint].Position = newPlace;
+		selectReferencePoint[_lastSelectedReferencePoint].GetChild(0).GetChild(1).GetChild<TextEdit>(2).Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.Y, 2).ToString();
+		selectReferencePoint[_lastSelectedReferencePoint].GetNode<TextEdit>("Point/PicturePos/TextEdit").Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.X, 2).ToString();
+
+		switch (_lastSelectedReferencePoint)
+		{
+			case 0:
+				Point1Photo = referencePoints[_lastSelectedReferencePoint].Position;
+				break;
+			case 1:
+				Point2Photo = referencePoints[_lastSelectedReferencePoint].Position;
+				break;
+		}
+
+		CalibrateMap();
+	}
+
+	void CalibrateMap()
+	{
+		float deltaPX = Point2Photo.X - Point1Photo.X;
+		float deltaPY = Point2Photo.Y - Point1Photo.Y;
+		float deltaRX = Point2Real.X - Point1Real.X;
+		float deltaRY = Point2Real.Y - Point1Real.Y;
+
+		scale = MathF.Sqrt((deltaRX * deltaRX + deltaRY * deltaRY) / (deltaPX * deltaPX + deltaPY * deltaPY));
+		fi = MathF.Atan2(deltaRY, deltaRX) - MathF.Atan2(deltaPY, deltaPX);
+
+		t_p2r[0] = Point1Real.X - scale * (Point1Photo.X * Math.Cos(fi) - Point1Photo.Y * Math.Sin(fi));
+		t_p2r[1] = Point1Real.Y - scale * (Point1Photo.X * Math.Sin(fi) + Point1Photo.Y * Math.Cos(fi));
+
+		t_r2p[0] = Point1Photo.X - 1/scale * (Point1Real.X * Math.Cos(-fi) - Point1Real.Y * Math.Sin(-fi));
+		t_r2p[1] = Point1Photo.Y - 1/scale * (Point1Real.X * Math.Sin(-fi) + Point1Real.Y * Math.Cos(-fi));
 	}
 }
