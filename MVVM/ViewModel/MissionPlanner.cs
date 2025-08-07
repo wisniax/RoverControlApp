@@ -45,6 +45,15 @@ public partial class MissionPlanner : Panel
 		//DisplayServer.WindowResized += HandleScreenSizeChange;
 		GetTree().Root.SizeChanged += HandleScreenSizeChange;
 		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(LoadPictureHandler));
+
+		foreach (var point in refPoint1)
+		{
+			point.TextChanged += CalibrateMap;
+		}
+		foreach (var point in refPoint2)
+		{
+			point.TextChanged += CalibrateMap;
+		}
 	}
 
 
@@ -233,15 +242,26 @@ public partial class MissionPlanner : Panel
 		GD.Print($"Screen size changed to: {DisplayServer.WindowGetSize()}");
 	}
 
+	Vector2 Point1Real;
+	Vector2 Point2Real;
+	Vector2 Point1Photo;
+	Vector2 Point2Photo;
 
 	float fi;
 	float scale;
 	float[] t_p2r = new float[2];
 	float[] t_r2p = new float[2];
 
-	void calibrateMap()
+	void CalibrateMap()
 	{
-		
+		foreach (var point in refPoint1)
+		{
+			//point.TextChanged += CalibrateMap;
+		}
+		foreach (var point in refPoint2)
+		{
+			//point.TextChanged += CalibrateMap;
+		}
 	}
 
 	Vector2 PhotoToReal(Vector2 photo)
