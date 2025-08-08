@@ -189,7 +189,7 @@ public partial class MissionPlanner : Panel
 		inst = scene.Instantiate();
 		if (inst is Waypoint waypoint)
 		{
-			waypoint.Coordinates = pos;
+			waypoint.Coordinates = PhotoToReal(pos);
 			waypoint.Number = waypoints.Count + 1;
 			waypoint.Deadzone = 2;
 			waypoints.Add(waypoint);
@@ -366,5 +366,10 @@ public partial class MissionPlanner : Panel
 		
 		t_r2p[0] = Point1Photo.X - 1/scale * (Point1Real.X * MathF.Cos(-fi) - Point1Real.Y * MathF.Sin(-fi));
 		t_r2p[1] = Point1Photo.Y - 1/scale * (Point1Real.X * MathF.Sin(-fi) + Point1Real.Y * MathF.Cos(-fi));
+
+		foreach(var waypoint in waypoints)
+		{
+			waypoint.Coordinates = PhotoToReal(points[waypoint.Number-1].Position);
+		}
 	}
 }
