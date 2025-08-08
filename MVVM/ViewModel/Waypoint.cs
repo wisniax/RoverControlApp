@@ -56,6 +56,21 @@ public partial class Waypoint : Panel
 	public override void _EnterTree()
 	{
 		deleteButton.Pressed += OnDeletePressed;
+		xaxisEdit.TextChanged += () => MovePoint();
+		yaxisEdit.TextChanged += () => MovePoint();
+
+	}
+
+	void MovePoint()
+	{
+		if (GetParent().GetParent().GetParent() is MissionPlanner missionPlanner)
+		{
+			missionPlanner.MovePoint(new Vector2(float.Parse(xaxisEdit.Text), float.Parse(yaxisEdit.Text)), Number-1);
+		}
+		else
+		{
+			GD.PrintErr("Failed to find parent MissionPlanner.");
+		}
 	}
 
 	void ShowOnScreen()

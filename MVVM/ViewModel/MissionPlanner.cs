@@ -205,6 +205,11 @@ public partial class MissionPlanner : Panel
 		GD.Print($"Trying to add point at position: {pos}");
 	}
 
+	public void MovePoint(Vector2 realPos, int number)
+	{
+		points[number].Position = RealToPhoto(realPos);
+	}
+
 	void TryRemovePoint(Vector2 pos)
 	{
 		if (points.Count == 0) return;
@@ -328,6 +333,11 @@ public partial class MissionPlanner : Panel
 
 		photo.X = (float)(1 / scale * (real.X * Math.Cos(-fi) - real.Y * Math.Sin(-fi)) + t_r2p[0]);
 		photo.Y = (float)(1 / scale * (real.X * Math.Sin(-fi) + real.Y * Math.Cos(-fi)) + t_r2p[1]);
+		GD.Print(photo);
+
+		photo = ToGoodCoordinates(photo);
+
+		GD.Print(photo);
 
 		return photo;
 	}
