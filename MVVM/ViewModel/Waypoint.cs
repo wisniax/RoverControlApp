@@ -63,7 +63,7 @@ public partial class Waypoint : Panel
 
 	void MovePoint()
 	{
-		if (GetParent().GetParent().GetParent() is MissionPlanner missionPlanner)
+		if (GetParent().GetParent().GetParent().GetParent() is MissionPlanner missionPlanner)
 		{
 			missionPlanner.MovePoint(new Vector2(float.Parse(xaxisEdit.Text), float.Parse(yaxisEdit.Text)), Number-1);
 		}
@@ -76,14 +76,14 @@ public partial class Waypoint : Panel
 	void ShowOnScreen()
 	{
 		numberLabel.Text = _number.ToString();
-		xaxisEdit.Text = Math.Round(_position.X, 2).ToString();
-		yaxisEdit.Text = Math.Round(_position.Y, 2).ToString();
+		xaxisEdit.Text = Math.Round(_position.X, 4).ToString();
+		yaxisEdit.Text = Math.Round(_position.Y, 4).ToString();
 		deadzoneEdit.Text = _deadzone.ToString();	
 	}
 
 	void OnDeletePressed()
 	{
-		if (GetParent().GetParent().GetParent() is MissionPlanner missionPlanner)
+		if (GetParent().GetParent().GetParent().GetParent() is MissionPlanner missionPlanner)
 		{
 			missionPlanner.RemoveWaypoint(this);
 		}

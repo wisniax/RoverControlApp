@@ -8,11 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using static RoverControlApp.Core.MqttClasses;
 
 public partial class MissionPlanner : Panel
 {
 	[Export] TextureRect picture = null!;
+
+	[Export] Label picturePathLabel = null!;
 	[Export] Label mousePosLabel = null!;
 	[Export] Label localPosLabel = null!;
 	[Export] VBoxContainer waypointsContainer = null!;
@@ -121,6 +124,8 @@ public partial class MissionPlanner : Panel
 			GD.PrintErr($"Error initializing picture: {e.Message}");
 			return;
 		}
+
+		picturePathLabel.Text = $"Picture path: {LocalSettings.Singleton.General.MissionControlMapPath}";
 	}
 
 	void HandleMouseInput(InputEvent inputEvent)
@@ -128,7 +133,7 @@ public partial class MissionPlanner : Panel
 		if (inputEvent is InputEventMouseMotion)
 		{
 			Vector2 temp = GetLocalMousePosition();
-			mousePosLabel.Text = $"OnPhotoPos: {ToGoodCoordinates(temp)}";
+			mousePosLabel.Text = $"OnPhotoPos: ({MathF.Round(ToGoodCoordinates(temp).X,0)}, {MathF.Round(ToGoodCoordinates(temp).Y, 0)})";
 			if (Point1Photo == Point2Photo || Point1Real == Point2Real) return;
 			localPosLabel.Text = $"OnLocalPos: {PhotoToReal(temp)}";
 			return;
@@ -136,7 +141,7 @@ public partial class MissionPlanner : Panel
 
 		if (inputEvent is InputEventMouseButton mouseButton && mouseButton.IsPressed())
 		{
-			if (waypointsContainer.GetParent<Control>().Visible)
+			if (waypointsContainer.GetParent().GetParent<Control>().Visible)
 			{
 				if (mouseButton.ButtonIndex == MouseButton.Left)
 				{
@@ -243,7 +248,7 @@ public partial class MissionPlanner : Panel
 		for (int i = 0; i < waypoints.Count; i++)
 		{
 			waypoints[i].Number = i + 1;
-			waypointsContainer.MoveChild(waypoints[i], i + 2);
+			waypointsContainer.MoveChild(waypoints[i], i);
 		}
 	}
 
@@ -324,6 +329,9 @@ public partial class MissionPlanner : Panel
 		real.X = (float)(scale * (photo.X * Math.Cos(fi) - photo.Y * Math.Sin(fi)) + t_p2r[0]);
 		real.Y = (float)(scale * (photo.X * Math.Sin(fi) + photo.Y * Math.Cos(fi)) + t_p2r[1]);
 
+		real.X = MathF.Round(real.X, 4);
+		real.Y = MathF.Round(real.Y, 4);
+
 		return real;
 	}
 
@@ -345,8 +353,8 @@ public partial class MissionPlanner : Panel
 	private void MoveReferencePoint(Vector2 newPlace)
 	{
 		referencePoints[_lastSelectedReferencePoint].Position = newPlace;
-		selectReferencePoint[_lastSelectedReferencePoint].GetChild(0).GetChild(1).GetChild<TextEdit>(2).Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.Y, 2).ToString();
-		selectReferencePoint[_lastSelectedReferencePoint].GetNode<TextEdit>("Point/PicturePos/TextEdit").Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.X, 2).ToString();
+		selectReferencePoint[_lastSelectedReferencePoint].GetChild(0).GetChild(1).GetChild<TextEdit>(2).Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.Y, 0).ToString();
+		selectReferencePoint[_lastSelectedReferencePoint].GetNode<TextEdit>("Point/PicturePos/TextEdit").Text = Math.Round(referencePoints[_lastSelectedReferencePoint].Position.X, 0).ToString();
 
 		switch (_lastSelectedReferencePoint)
 		{
