@@ -130,7 +130,7 @@ public partial class MissionPlanner : Panel
 			Vector2 temp = GetLocalMousePosition();
 			mousePosLabel.Text = $"OnPhotoPos: {ToGoodCoordinates(temp)}";
 			if (Point1Photo == Point2Photo || Point1Real == Point2Real) return;
-			localPosLabel.Text = $"OnLocalPos: {-PhotoToReal(ToGoodCoordinates(temp))}";
+			localPosLabel.Text = $"OnLocalPos: {PhotoToReal(temp)}";
 			return;
 		}
 
@@ -313,12 +313,13 @@ public partial class MissionPlanner : Panel
 
 	Vector2 PhotoToReal(Vector2 photo)
 	{
+		photo = ToGoodCoordinates(photo);
 		Vector2 real = new Vector2();
 
 		real.X = (float)(scale * (photo.X * Math.Cos(fi) - photo.Y * Math.Sin(fi)) + t_p2r[0]);
 		real.Y = (float)(scale * (photo.X * Math.Sin(fi) + photo.Y * Math.Cos(fi)) + t_p2r[1]);
 
-		return -real;
+		return real;
 	}
 
 	Vector2 RealToPhoto(Vector2 real)
