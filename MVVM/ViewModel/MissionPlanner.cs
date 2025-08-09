@@ -158,15 +158,8 @@ public partial class MissionPlanner : Panel
 			else
 			{
 				MoveReferencePoint(GetLocalMousePosition());
-			}
-			
+			}	
 		}
-	}
-
-	Vector2 ToGoodCoordinates(Vector2 vec)
-	{
-		vec.Y = picture.Size.Y - vec.Y;
-		return vec;
 	}
 
 	void TryAddPoint(Vector2 pos)
@@ -210,11 +203,6 @@ public partial class MissionPlanner : Panel
 		GD.Print($"Trying to add point at position: {pos}");
 	}
 
-	public void MovePoint(Vector2 realPos, int number)
-	{
-		points[number].Position = RealToPhoto(realPos);
-	}
-
 	void TryRemovePoint(Vector2 pos)
 	{
 		if (points.Count == 0) return;
@@ -250,6 +238,11 @@ public partial class MissionPlanner : Panel
 			waypoints[i].Number = i + 1;
 			waypointsContainer.MoveChild(waypoints[i], i);
 		}
+	}
+
+	public void MovePoint(Vector2 realPos, int number)
+	{
+		points[number].Position = RealToPhoto(realPos);
 	}
 
 	void HandleScreenSizeChange()
@@ -321,35 +314,6 @@ public partial class MissionPlanner : Panel
 		CalibrateMap();
 	}
 
-	Vector2 PhotoToReal(Vector2 photo)
-	{
-		photo = ToGoodCoordinates(photo);
-		Vector2 real = new Vector2();
-
-		real.X = (float)(scale * (photo.X * Math.Cos(fi) - photo.Y * Math.Sin(fi)) + t_p2r[0]);
-		real.Y = (float)(scale * (photo.X * Math.Sin(fi) + photo.Y * Math.Cos(fi)) + t_p2r[1]);
-
-		real.X = MathF.Round(real.X, 4);
-		real.Y = MathF.Round(real.Y, 4);
-
-		return real;
-	}
-
-	Vector2 RealToPhoto(Vector2 real)
-	{
-		Vector2 photo = new Vector2();
-
-		photo.X = (float)(1 / scale * (real.X * Math.Cos(-fi) - real.Y * Math.Sin(-fi)) + t_r2p[0]);
-		photo.Y = (float)(1 / scale * (real.X * Math.Sin(-fi) + real.Y * Math.Cos(-fi)) + t_r2p[1]);
-		GD.Print(photo);
-
-		photo = ToGoodCoordinates(photo);
-
-		GD.Print(photo);
-
-		return photo;
-	}
-
 	private void MoveReferencePoint(Vector2 newPlace)
 	{
 		referencePoints[_lastSelectedReferencePoint].Position = newPlace;
@@ -389,5 +353,40 @@ public partial class MissionPlanner : Panel
 		{
 			waypoint.Coordinates = PhotoToReal(points[waypoint.Number-1].Position);
 		}
+	}
+
+	Vector2 PhotoToReal(Vector2 photo)
+	{
+		photo = ToGoodCoordinates(photo);
+		Vector2 real = new Vector2();
+
+		real.X = (float)(scale * (photo.X * Math.Cos(fi) - photo.Y * Math.Sin(fi)) + t_p2r[0]);
+		real.Y = (float)(scale * (photo.X * Math.Sin(fi) + photo.Y * Math.Cos(fi)) + t_p2r[1]);
+
+		real.X = MathF.Round(real.X, 4);
+		real.Y = MathF.Round(real.Y, 4);
+
+		return real;
+	}
+
+	Vector2 RealToPhoto(Vector2 real)
+	{
+		Vector2 photo = new Vector2();
+
+		photo.X = (float)(1 / scale * (real.X * Math.Cos(-fi) - real.Y * Math.Sin(-fi)) + t_r2p[0]);
+		photo.Y = (float)(1 / scale * (real.X * Math.Sin(-fi) + real.Y * Math.Cos(-fi)) + t_r2p[1]);
+		GD.Print(photo);
+
+		photo = ToGoodCoordinates(photo);
+
+		GD.Print(photo);
+
+		return photo;
+	}
+
+	Vector2 ToGoodCoordinates(Vector2 vec)
+	{
+		vec.Y = picture.Size.Y - vec.Y;
+		return vec;
 	}
 }
