@@ -204,6 +204,7 @@ public partial class MissionPlanner : Panel
 			waypoints.Add(waypoint);
 
 			waypointsContainer.AddChild(inst);
+	/*temp*/SendNextWaypointToRover(waypoint);
 		}
 		else
 		{
@@ -399,5 +400,15 @@ public partial class MissionPlanner : Panel
 	{
 		vec.Y = picture.Size.Y - vec.Y;
 		return vec;
+	}
+
+	private async Task SendNextWaypointToRover(Waypoint waypoint)
+	{
+		var data = new MissionPlannerMessage();
+		data.RequestedPosX = waypoint.Coordinates.X;
+		data.RequestedPosY = waypoint.Coordinates.Y;
+		data.Deadzone = waypoint.Deadzone;
+		data.MessageType = MqttClasses.MissionPlannerMessageType.PointToNavigate;
+		await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicBatteryControl, JsonSerializer.Serialize(data));
 	}
 }

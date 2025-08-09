@@ -189,16 +189,28 @@ namespace RoverControlApp.Core
 			public string Status { get; set; } = string.Empty;
 		}
 
-		public class MissionControlPoint
+		public enum MissionPlannerMessageType
 		{
-			public Vector2 RequestedPos { get; set; }
+			PointToNavigate = 0,
+			StartSlashContinue = 1,
+			PauseMission = 2,
+			CancelMission = 3
+		}
+
+		public class MissionPlannerMessage
+		{
+			public float RequestedPosX { get; set; }
+			public float RequestedPosY { get; set; }
 			public float Deadzone { get; set; }
+			public MissionPlannerMessageType MessageType { get; set; }
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
-		public class MissionControlFeedback
+		public class MissionPlannerFeedback
 		{
-			public Vector2 CurrentPos { get; set; }
+			public float CurrentPosX { get; set; }
+			public float CurrentPosY { get; set; }
+			public MissionStatus MissionStatus { get; set; }
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
