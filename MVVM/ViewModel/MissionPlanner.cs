@@ -1,4 +1,5 @@
 using Godot;
+using MQTTnet;
 using OpenCvSharp;
 using RoverControlApp.Core;
 using RoverControlApp.Core.Settings;
@@ -9,6 +10,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Threading.Tasks;
 using static RoverControlApp.Core.MqttClasses;
 
 public partial class MissionPlanner : Panel
@@ -58,8 +61,14 @@ public partial class MissionPlanner : Panel
 		refPoint1[3].TextChanged += () => UpdateReferenceCoordinatesReal(1);
 		refPoint2[2].TextChanged += () => UpdateReferenceCoordinatesReal(2);
 		refPoint2[3].TextChanged += () => UpdateReferenceCoordinatesReal(3);
+
+		MqttNode.Singleton.MessageReceivedAsync += UpdateRoverPosition;
 	}
 
+	private async Task UpdateRoverPosition(string topic, MqttApplicationMessage? message)
+	{
+		throw new NotImplementedException();
+	}
 
 	public override void _Ready()
 	{
@@ -70,6 +79,8 @@ public partial class MissionPlanner : Panel
 
 		LoadPicture();
 		HandleScreenSizeChange();
+
+		//MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicBatteryControl,JsonSerializer.Serialize(arg));
 	}
 
 

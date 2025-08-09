@@ -28,6 +28,8 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicSamplerControlControl = "SamplerControl";
 		_topicBatteryInfo = "BatteryInfo";
 		_topicBatteryControl = "BatteryControl";
+		_topicMissionPlanner = "MissionPlanner";
+		_topicMissionPlannerFeedback = "MissionPlannerFeedback";
 	}
 
 	public Mqtt
@@ -45,7 +47,9 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicKmlListOfActiveObj,
 		string topicSamplerControlControl,
 		string topicBatteryInfo,
-		string topicBatteryControl
+		string topicBatteryControl,
+		string topicMissionPlanner,
+		string topicMissionPlannerFeedback
 	)
 	{
 		_clientSettings = clientSettings;
@@ -62,7 +66,8 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicSamplerControlControl = topicSamplerControlControl;
 		_topicBatteryInfo = topicBatteryInfo;
 		_topicBatteryControl = topicBatteryControl;
-		
+		_topicMissionPlanner = topicMissionPlanner;
+		_topicMissionPlannerFeedback = topicMissionPlannerFeedback;
 	}
 
 	public object Clone()
@@ -83,7 +88,9 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicKmlListOfActiveObj = _topicKmlListOfActiveObj,
 			TopicSamplerControl = _topicSamplerControlControl,
 			TopicBatteryInfo = _topicBatteryInfo,
-			TopicBatteryControl = _topicBatteryControl
+			TopicBatteryControl = _topicBatteryControl,
+			TopicMissionPlanner = _topicMissionPlanner,
+			TopicMissionPlannerFeedback = _topicMissionPlannerFeedback
 		};
 	}
 
@@ -185,6 +192,19 @@ public partial class Mqtt : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _topicBatteryControl, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicMissionPlanner
+	{
+		get => _topicMissionPlanner;
+		set => EmitSignal_SettingChanged(ref _topicMissionPlanner, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicMissionPlannerFeedback
+	{
+		get => _topicMissionPlannerFeedback;
+		set => EmitSignal_SettingChanged(ref _topicMissionPlannerFeedback, value);
+	}
 
 	MqttClientOptions _clientSettings;
 
@@ -201,6 +221,8 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicSamplerControlControl;
 	string _topicBatteryInfo;
 	string _topicBatteryControl;
+	string _topicMissionPlanner;
+	string _topicMissionPlannerFeedback;
 }
 
 

@@ -188,6 +188,20 @@ namespace RoverControlApp.Core
 			public bool EStop { get; set; } = true;
 			public string Status { get; set; } = string.Empty;
 		}
+
+		public class MissionControlPoint
+		{
+			public Vector2 RequestedPos { get; set; }
+			public float Deadzone { get; set; }
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+
+		public class MissionControlFeedback
+		{
+			public Vector2 CurrentPos { get; set; }
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+
 		public class RoverMissionStatus
 		{
 			public MissionStatus MissionStatus { get; set; } = MissionStatus.Stopped;
