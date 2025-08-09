@@ -26,6 +26,10 @@ public partial class MissionPlanner : Panel
 	[Export] Point[] referencePoints = new Point[2];
 	[Export] Control pointsContainer = null!;
 
+	[Export] Button startButton = null!;
+	[Export] Button pauseButton = null!;
+	[Export] Button cancelButton = null!;
+
 	[Export] TextEdit[] refPoint1 = new TextEdit[4];
 	[Export] TextEdit[] refPoint2 = new TextEdit[4];
 
@@ -63,6 +67,25 @@ public partial class MissionPlanner : Panel
 		refPoint2[3].TextChanged += () => UpdateReferenceCoordinatesReal(3);
 
 		MqttNode.Singleton.MessageReceivedAsync += UpdateRoverPosition;
+
+		startButton.Pressed += StartOrContinueMission;
+		pauseButton.Pressed += PauseMission;
+		cancelButton.Pressed += CancelMission;
+	}
+
+	private void StartOrContinueMission()
+	{
+		throw new NotImplementedException();
+	}
+
+	private void PauseMission()
+	{
+		throw new NotImplementedException();
+	}
+
+	private void CancelMission()
+	{
+		throw new NotImplementedException();
 	}
 
 	private async Task UpdateRoverPosition(string topic, MqttApplicationMessage? message)
@@ -204,7 +227,6 @@ public partial class MissionPlanner : Panel
 			waypoints.Add(waypoint);
 
 			waypointsContainer.AddChild(inst);
-	/*temp*/SendNextWaypointToRover(waypoint);
 		}
 		else
 		{

@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cb0uaxyf03igv" path="res://Resources/ExampleMap.jpeg" id="2_2yld7"]
 [ext_resource type="PackedScene" uid="uid://djb630ht7i3m3" path="res://MVVM/View/Point.tscn" id="3_kj2xc"]
 
-[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "picturePathLabel", "mousePosLabel", "localPosLabel", "waypointsContainer", "selectReferencePoint", "referencePoints", "pointsContainer", "refPoint1", "refPoint2")]
+[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "picturePathLabel", "mousePosLabel", "localPosLabel", "waypointsContainer", "selectReferencePoint", "referencePoints", "pointsContainer", "startButton", "pauseButton", "cancelButton", "refPoint1", "refPoint2")]
 offset_right = 1596.0
 offset_bottom = 804.0
 script = ExtResource("1_jdbma")
@@ -16,6 +16,9 @@ waypointsContainer = NodePath("WaypointsMenu/ScrollContainer/Waypoints")
 selectReferencePoint = [NodePath("CalibrationMenu/Calibration/Point1"), NodePath("CalibrationMenu/Calibration/Point2")]
 referencePoints = [NodePath("CalibrationMenu/RefPoint1"), NodePath("CalibrationMenu/RefPoint2")]
 pointsContainer = NodePath("WaypointsMenu/PointContainer")
+startButton = NodePath("WaypointsMenu/HBoxContainer/StartButton")
+pauseButton = NodePath("WaypointsMenu/HBoxContainer/PauseButton")
+cancelButton = NodePath("WaypointsMenu/HBoxContainer/CancelButton")
 refPoint1 = [NodePath("CalibrationMenu/Calibration/Point1/Point/PicturePos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point1/Point/PicturePos/TextEdit2"), NodePath("CalibrationMenu/Calibration/Point1/Point/LocalPos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point1/Point/LocalPos/TextEdit2")]
 refPoint2 = [NodePath("CalibrationMenu/Calibration/Point2/Point/PicturePos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point2/Point/PicturePos/TextEdit2"), NodePath("CalibrationMenu/Calibration/Point2/Point/LocalPos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point2/Point/LocalPos/TextEdit2")]
 
@@ -32,7 +35,6 @@ texture = ExtResource("2_2yld7")
 stretch_mode = 4
 
 [node name="WaypointsMenu" type="Control" parent="."]
-visible = false
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -73,7 +75,33 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
+[node name="HBoxContainer" type="HBoxContainer" parent="WaypointsMenu"]
+layout_mode = 0
+offset_left = 1235.0
+offset_top = 617.0
+offset_right = 1592.0
+offset_bottom = 702.0
+
+[node name="StartButton" type="Button" parent="WaypointsMenu/HBoxContainer"]
+custom_minimum_size = Vector2(116, 0)
+layout_mode = 2
+text = "Start
+Mission"
+
+[node name="PauseButton" type="Button" parent="WaypointsMenu/HBoxContainer"]
+custom_minimum_size = Vector2(116, 0)
+layout_mode = 2
+text = "Pause
+Mission"
+
+[node name="CancelButton" type="Button" parent="WaypointsMenu/HBoxContainer"]
+custom_minimum_size = Vector2(116, 0)
+layout_mode = 2
+text = "Cancel
+Mission"
+
 [node name="CalibrationMenu" type="Control" parent="."]
+visible = false
 anchors_preset = 0
 
 [node name="Calibration" type="VBoxContainer" parent="CalibrationMenu"]
@@ -223,6 +251,7 @@ offset_right = 465.0
 offset_bottom = 515.0
 
 [node name="GoToWaypoints" type="Button" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 1497.0
 offset_top = 705.0
@@ -231,7 +260,6 @@ offset_bottom = 800.0
 text = "Waypoints"
 
 [node name="GoToCalibration" type="Button" parent="."]
-visible = false
 layout_mode = 0
 offset_left = 1497.0
 offset_top = 706.0
