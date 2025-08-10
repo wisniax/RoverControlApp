@@ -34,7 +34,8 @@ namespace RoverControlApp.Core
 			Started = 2,
 			Stopping = 3,
 			Stopped = 4,
-			Interrupted = 5
+			Interrupted = 5,
+			Waiting = 6
 		}
 		public enum PointType
 		{

@@ -36,7 +36,6 @@ texture = ExtResource("2_2yld7")
 stretch_mode = 4
 
 [node name="WaypointsMenu" type="Control" parent="."]
-visible = false
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -102,9 +101,30 @@ layout_mode = 2
 text = "Cancel
 Mission"
 
+[node name="RoverPosLabel" type="Label" parent="WaypointsMenu"]
+layout_mode = 0
+offset_left = 1234.0
+offset_top = 596.0
+offset_right = 1411.0
+offset_bottom = 613.22
+theme_override_font_sizes/font_size = 12
+text = "RoverPos:"
+
+[node name="DistanceLabel" type="Label" parent="WaypointsMenu"]
+layout_mode = 0
+offset_left = 1415.0
+offset_top = 596.0
+offset_right = 1592.0
+offset_bottom = 613.22
+theme_override_font_sizes/font_size = 12
+text = "DistanceToTarget:"
+
 [node name="RoverPosition" parent="WaypointsMenu" instance=ExtResource("3_kj2xc")]
+offset_top = -300.0
+offset_bottom = -300.0
 
 [node name="CalibrationMenu" type="Control" parent="."]
+visible = false
 anchors_preset = 0
 
 [node name="Calibration" type="VBoxContainer" parent="CalibrationMenu"]
@@ -250,6 +270,7 @@ offset_top = -300.0
 offset_bottom = -300.0
 
 [node name="GoToWaypoints" type="Button" parent="."]
+visible = false
 layout_mode = 0
 offset_left = 1497.0
 offset_top = 705.0
@@ -258,7 +279,6 @@ offset_bottom = 800.0
 text = "Waypoints"
 
 [node name="GoToCalibration" type="Button" parent="."]
-visible = false
 layout_mode = 0
 offset_left = 1497.0
 offset_top = 706.0

@@ -35,10 +35,16 @@ public partial class MissionPlanner : Panel
 	[Export] TextEdit[] refPoint1 = new TextEdit[4];
 	[Export] TextEdit[] refPoint2 = new TextEdit[4];
 
+	[Export] Label roverPosLabel = null!;
+	[Export] Label distanceLabel = null!;
+
 	List<Point> points = new List<Point>();
 	List<Waypoint> waypoints = new List<Waypoint>();
 
 	int _lastSelectedReferencePoint = 0;
+
+	Vector2 _nextTargetWaypoint;
+
 
 	public override void _EnterTree()
 	{
