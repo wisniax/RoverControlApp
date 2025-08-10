@@ -30,6 +30,8 @@ public partial class MissionPlanner : Panel
 	[Export] Button pauseButton = null!;
 	[Export] Button cancelButton = null!;
 
+	[Export] Point roverPosition = null!;
+
 	[Export] TextEdit[] refPoint1 = new TextEdit[4];
 	[Export] TextEdit[] refPoint2 = new TextEdit[4];
 
@@ -88,9 +90,27 @@ public partial class MissionPlanner : Panel
 		throw new NotImplementedException();
 	}
 
-	private async Task UpdateRoverPosition(string topic, MqttApplicationMessage? message)
+	private async Task UpdateRoverPosition(string subTopic, MqttApplicationMessage? msg)
 	{
-		throw new NotImplementedException();
+		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicMissionPlannerFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicMissionPlannerFeedback)
+			return;
+		if (msg is null || msg.PayloadSegment.Count == 0)
+		{
+			EventLogger.LogMessage("MissionPlannerFeedback", EventLogger.LogLevel.Error, "Empty payload");
+			return;
+		}
+		try
+		{
+			MqttClasses.MissionPlannerFeedback data;
+			data = JsonSerializer.Deserialize<MqttClasses.MissionPlannerFeedback>(msg.ConvertPayloadToString());
+
+			var roverPos = new Vector2(data.CurrentPosX, data.CurrentPosY);
+			roverPosition.Position = RealToPhoto(roverPos);
+		}
+		catch(Exception e)
+		{
+			EventLogger.LogMessage("MissionPlanner", EventLogger.LogLevel.None, "Failed to deserialize MissionPlannerFeedback.");
+		}
 	}
 
 	public override void _Ready()
