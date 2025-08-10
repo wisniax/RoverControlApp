@@ -120,6 +120,9 @@ public partial class MissionPlanner : Panel
 		referencePoints[1].SetColor(Colors.DarkRed);
 		referencePoints[1].SetNumber(2);
 
+		roverPosition.SetColor(Colors.DarkOrange);
+		roverPosition.SetString("R");
+
 		LoadPicture();
 		HandleScreenSizeChange();
 
