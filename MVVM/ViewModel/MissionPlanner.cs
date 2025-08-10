@@ -129,11 +129,11 @@ public partial class MissionPlanner : Panel
 
 	public Task UpdateRoverPositionHandler(Vector2 roverPos)
 	{
-		CallDeferred("UpdateBattInfo", roverPos);
+		CallDeferred("UpdateRoverPosition", roverPos);
 		return Task.CompletedTask;
 	}
 
-	public void UpdateBattInfo(Vector2 roverPos)
+	public void UpdateRoverPosition(Vector2 roverPos)
 	{
 		roverPosition.Position = RealToPhoto(roverPos);
 		roverPosLabel.Text = $"RoverPos: {roverPos}";
