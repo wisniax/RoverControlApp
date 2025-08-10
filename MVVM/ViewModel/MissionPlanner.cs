@@ -48,6 +48,8 @@ public partial class MissionPlanner : Panel
 	MqttClasses.MissionStatus? MissionStatus;
 	bool _missionActive = false;
 
+	Vector2 _roverPosition;
+
 	public override void _EnterTree()
 	{
 		selectReferencePoint[0].Pressed += () =>
@@ -96,12 +98,12 @@ public partial class MissionPlanner : Panel
 
 	private void PauseMission()
 	{
-		throw new NotImplementedException();
+		return;
 	}
 
 	private void CancelMission()
 	{
-		throw new NotImplementedException();
+		return;
 	}
 
 	private async Task OnRoverPositionReceived(string subTopic, MqttApplicationMessage? msg)
@@ -119,6 +121,7 @@ public partial class MissionPlanner : Panel
 			data = JsonSerializer.Deserialize<MqttClasses.MissionPlannerFeedback>(msg.ConvertPayloadToString());
 
 			var roverPos = new Vector2(data.CurrentPosX, data.CurrentPosY);
+			_roverPosition = roverPos;
 			UpdateRoverPositionHandler(roverPos);
 		}
 		catch(Exception e)
@@ -142,6 +145,13 @@ public partial class MissionPlanner : Panel
 		var distance = roverPos.DistanceTo((Vector2)_nextTargetWaypoint);
 		distanceLabel.Text = $"DistanceToTarget: {distance:f2}m";
 
+		if (distance < waypoints[_nextWaypointNumber].Deadzone)
+		{
+			points[_nextWaypointNumber].SetColor(Colors.Green);
+			_nextWaypointNumber++;
+			_nextTargetWaypoint = waypoints[_nextWaypointNumber].Coordinates;
+			SendNextWaypointToRover(waypoints[_nextWaypointNumber]);
+		}
 	}
 
 	public override void _Ready()
@@ -487,7 +497,6 @@ public partial class MissionPlanner : Panel
 		data.MessageType = MqttClasses.MissionPlannerMessageType.PointToNavigate;
 
 		points[waypoint.Number - 1].SetColor(Colors.Yellow);
-
-		await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicBatteryControl, JsonSerializer.Serialize(data));
+		await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicMissionPlanner, JsonSerializer.Serialize(data));
 	}
 }
