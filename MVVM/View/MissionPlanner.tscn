@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cb0uaxyf03igv" path="res://Resources/ExampleMap.jpeg" id="2_2yld7"]
 [ext_resource type="PackedScene" uid="uid://djb630ht7i3m3" path="res://MVVM/View/Point.tscn" id="3_kj2xc"]
 
-[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "picturePathLabel", "mousePosLabel", "localPosLabel", "waypointsContainer", "selectReferencePoint", "referencePoints", "pointsContainer", "startButton", "pauseButton", "cancelButton", "roverPosition", "refPoint1", "refPoint2")]
+[node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "picturePathLabel", "mousePosLabel", "localPosLabel", "waypointsContainer", "selectReferencePoint", "referencePoints", "pointsContainer", "startButton", "pauseButton", "cancelButton", "roverPosition", "refPoint1", "refPoint2", "roverPosLabel", "distanceLabel")]
 offset_right = 1596.0
 offset_bottom = 804.0
 script = ExtResource("1_jdbma")
@@ -22,6 +22,8 @@ cancelButton = NodePath("WaypointsMenu/HBoxContainer/CancelButton")
 roverPosition = NodePath("WaypointsMenu/RoverPosition")
 refPoint1 = [NodePath("CalibrationMenu/Calibration/Point1/Point/PicturePos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point1/Point/PicturePos/TextEdit2"), NodePath("CalibrationMenu/Calibration/Point1/Point/LocalPos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point1/Point/LocalPos/TextEdit2")]
 refPoint2 = [NodePath("CalibrationMenu/Calibration/Point2/Point/PicturePos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point2/Point/PicturePos/TextEdit2"), NodePath("CalibrationMenu/Calibration/Point2/Point/LocalPos/TextEdit"), NodePath("CalibrationMenu/Calibration/Point2/Point/LocalPos/TextEdit2")]
+roverPosLabel = NodePath("WaypointsMenu/RoverPosLabel")
+distanceLabel = NodePath("WaypointsMenu/DistanceLabel")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 1

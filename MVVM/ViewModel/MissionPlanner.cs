@@ -43,8 +43,10 @@ public partial class MissionPlanner : Panel
 
 	int _lastSelectedReferencePoint = 0;
 
-	Vector2 _nextTargetWaypoint;
-
+	Vector2? _nextTargetWaypoint;
+	int _nextWaypointNumber;
+	MqttClasses.MissionStatus? MissionStatus;
+	bool _missionActive = false;
 
 	public override void _EnterTree()
 	{
@@ -74,7 +76,7 @@ public partial class MissionPlanner : Panel
 		refPoint2[2].TextChanged += () => UpdateReferenceCoordinatesReal(2);
 		refPoint2[3].TextChanged += () => UpdateReferenceCoordinatesReal(3);
 
-		MqttNode.Singleton.MessageReceivedAsync += UpdateRoverPosition;
+		MqttNode.Singleton.MessageReceivedAsync += OnRoverPositionReceived;
 
 		startButton.Pressed += StartOrContinueMission;
 		pauseButton.Pressed += PauseMission;
@@ -83,7 +85,13 @@ public partial class MissionPlanner : Panel
 
 	private void StartOrContinueMission()
 	{
-		throw new NotImplementedException();
+		if (MissionStatus == null)
+		{
+			_nextWaypointNumber = 0;
+		}
+		_nextTargetWaypoint = waypoints[_nextWaypointNumber].Coordinates;
+		_missionActive = true;
+		SendNextWaypointToRover(waypoints[_nextWaypointNumber]);
 	}
 
 	private void PauseMission()
@@ -96,7 +104,7 @@ public partial class MissionPlanner : Panel
 		throw new NotImplementedException();
 	}
 
-	private async Task UpdateRoverPosition(string subTopic, MqttApplicationMessage? msg)
+	private async Task OnRoverPositionReceived(string subTopic, MqttApplicationMessage? msg)
 	{
 		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicMissionPlannerFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicMissionPlannerFeedback)
 			return;
@@ -111,12 +119,29 @@ public partial class MissionPlanner : Panel
 			data = JsonSerializer.Deserialize<MqttClasses.MissionPlannerFeedback>(msg.ConvertPayloadToString());
 
 			var roverPos = new Vector2(data.CurrentPosX, data.CurrentPosY);
-			roverPosition.Position = RealToPhoto(roverPos);
+			UpdateRoverPositionHandler(roverPos);
 		}
 		catch(Exception e)
 		{
-			EventLogger.LogMessage("MissionPlanner", EventLogger.LogLevel.None, "Failed to deserialize MissionPlannerFeedback.");
+			EventLogger.LogMessage("MissionPlanner", EventLogger.LogLevel.None, $"{e}");
 		}
+	}
+
+	public Task UpdateRoverPositionHandler(Vector2 roverPos)
+	{
+		CallDeferred("UpdateBattInfo", roverPos);
+		return Task.CompletedTask;
+	}
+
+	public void UpdateBattInfo(Vector2 roverPos)
+	{
+		roverPosition.Position = RealToPhoto(roverPos);
+		roverPosLabel.Text = $"RoverPos: {roverPos}";
+
+		if (!_missionActive) return;
+		var distance = roverPos.DistanceTo((Vector2)_nextTargetWaypoint);
+		distanceLabel.Text = $"DistanceToTarget: {distance:f2}m";
+
 	}
 
 	public override void _Ready()
@@ -252,7 +277,7 @@ public partial class MissionPlanner : Panel
 		{
 			waypoint.Coordinates = PhotoToReal(pos);
 			waypoint.Number = waypoints.Count + 1;
-			waypoint.Deadzone = 2;
+			waypoint.Deadzone = 0.2f;
 			waypoints.Add(waypoint);
 
 			waypointsContainer.AddChild(inst);
@@ -460,6 +485,9 @@ public partial class MissionPlanner : Panel
 		data.RequestedPosY = waypoint.Coordinates.Y;
 		data.Deadzone = waypoint.Deadzone;
 		data.MessageType = MqttClasses.MissionPlannerMessageType.PointToNavigate;
+
+		points[waypoint.Number - 1].SetColor(Colors.Yellow);
+
 		await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicBatteryControl, JsonSerializer.Serialize(data));
 	}
 }

@@ -31,7 +31,7 @@ public partial class Waypoint : Panel
 		}
 	}
 
-	public int Deadzone
+	public float Deadzone
 	{
 		get => _deadzone;
 		set
@@ -43,13 +43,13 @@ public partial class Waypoint : Panel
 
 	private int _number;
 	private Vector2 _position;
-	private int _deadzone;
+	private float _deadzone;
 
 	public Waypoint()
 	{
 		_number = 0;
 		_position = Vector2.Zero;
-		_deadzone = 1;
+		_deadzone = 0.2f;
 		//ShowOnScreen();
 	}
 
@@ -65,7 +65,9 @@ public partial class Waypoint : Panel
 	{
 		if (GetParent().GetParent().GetParent().GetParent() is MissionPlanner missionPlanner)
 		{
-			missionPlanner.MovePoint(new Vector2(float.Parse(xaxisEdit.Text), float.Parse(yaxisEdit.Text)), Number-1);
+			var temp = new Vector2(float.Parse(xaxisEdit.Text), float.Parse(yaxisEdit.Text));
+			missionPlanner.MovePoint(temp, Number-1);
+			Coordinates = temp;
 		}
 		else
 		{
