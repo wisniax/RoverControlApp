@@ -44,7 +44,7 @@ public partial class MissionPlanner : Panel
 	int _lastSelectedReferencePoint = 0;
 
 	Vector2? _nextTargetWaypoint;
-	int _nextWaypointNumber;
+	int _nextWaypointNumber = 0;
 	MqttClasses.MissionStatus? MissionStatus;
 	bool _missionActive = false;
 
@@ -87,10 +87,6 @@ public partial class MissionPlanner : Panel
 
 	private void StartOrContinueMission()
 	{
-		if (MissionStatus == null)
-		{
-			_nextWaypointNumber = 0;
-		}
 		_nextTargetWaypoint = waypoints[_nextWaypointNumber].Coordinates;
 		_missionActive = true;
 		SendNextWaypointToRover(waypoints[_nextWaypointNumber]);
@@ -98,11 +94,20 @@ public partial class MissionPlanner : Panel
 
 	private void PauseMission()
 	{
+		var data = new MissionPlannerMessage();
+		data.MessageType = MissionPlannerMessageType.PauseMission;
+		MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicMissionPlanner, JsonSerializer.Serialize(data));
 		return;
 	}
 
 	private void CancelMission()
 	{
+		var data = new MissionPlannerMessage();
+		data.MessageType = MissionPlannerMessageType.CancelMission;
+		_nextTargetWaypoint = null;
+		_nextWaypointNumber = 0;
+		_missionActive = false;
+		MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicMissionPlanner, JsonSerializer.Serialize(data));
 		return;
 	}
 
