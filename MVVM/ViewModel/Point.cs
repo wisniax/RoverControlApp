@@ -21,6 +21,6 @@ public partial class Point : Control
 	public void SetNumber(int number)
 	{
 		Number = number;
-		label.Text = number.ToString();
+		label.Text = (number+1).ToString();
 	}
 }

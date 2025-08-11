@@ -41,6 +41,11 @@ public partial class Waypoint : Panel
 		}
 	}
 
+	public bool IsWaitChecked
+	{
+		get => waitCheckBox.IsPressed();
+	}
+
 	private int _number;
 	private Vector2 _position;
 	private float _deadzone;
@@ -61,12 +66,17 @@ public partial class Waypoint : Panel
 
 	}
 
+	public void SetColor(Color color)
+	{
+		this.Modulate = color;
+	}
+
 	void MovePoint()
 	{
 		if (GetParent().GetParent().GetParent().GetParent() is MissionPlanner missionPlanner)
 		{
 			var temp = new Vector2(float.Parse(xaxisEdit.Text), float.Parse(yaxisEdit.Text));
-			missionPlanner.MovePoint(temp, Number-1);
+			missionPlanner.MovePoint(temp, Number);
 			Coordinates = temp;
 		}
 		else
@@ -77,7 +87,7 @@ public partial class Waypoint : Panel
 
 	void ShowOnScreen()
 	{
-		numberLabel.Text = _number.ToString();
+		numberLabel.Text = (_number+1).ToString();
 		xaxisEdit.Text = Math.Round(_position.X, 4).ToString();
 		yaxisEdit.Text = Math.Round(_position.Y, 4).ToString();
 		deadzoneEdit.Text = _deadzone.ToString();	

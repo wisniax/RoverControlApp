@@ -148,23 +148,54 @@ public partial class MissionPlanner : Panel
 
 		if (!_missionActive) return;
 		var distance = roverPos.DistanceTo((Vector2)_nextTargetWaypoint);
-		distanceLabel.Text = $"DistanceToTarget: {distance:f2}m";
-
 		if (distance < waypoints[_nextWaypointNumber].Deadzone)
 		{
-			points[_nextWaypointNumber].SetColor(Colors.Green);
-			_nextWaypointNumber++;
-			_nextTargetWaypoint = waypoints[_nextWaypointNumber].Coordinates;
-			SendNextWaypointToRover(waypoints[_nextWaypointNumber]);
+			HandleReachingPoint();
+			distance = roverPos.DistanceTo((Vector2)_nextTargetWaypoint);
 		}
+
+		distanceLabel.Text = $"DistanceToTarget: {distance:f2}m";
+	}
+
+	void HandleReachingPoint()
+	{
+		points[_nextWaypointNumber].SetColor(Colors.Green);
+		waypoints[_nextWaypointNumber].SetColor(Colors.Green);
+
+		if (waypoints.Last<Waypoint>() == waypoints[_nextWaypointNumber])
+		{
+			ResetWaypoints();
+			return;
+		}
+
+		_nextWaypointNumber++;
+		_nextTargetWaypoint = waypoints[_nextWaypointNumber].Coordinates;
+
+		if (waypoints[_nextWaypointNumber-1].IsWaitChecked) return; //Next waypoint will be sent when start button is pressed again
+
+		SendNextWaypointToRover(waypoints[_nextWaypointNumber]);
+	}
+
+	private void ResetWaypoints()
+	{
+		foreach (var point in points)
+		{
+			point.SetColor(Colors.Blue);
+		}
+		foreach (var waypoint in waypoints)
+		{
+			waypoint.SetColor(Colors.White);
+		}
+
+		_nextWaypointNumber = 0;
 	}
 
 	public override void _Ready()
 	{
 		referencePoints[0].SetColor(Colors.DarkGreen);
-		referencePoints[0].SetNumber(1);
+		referencePoints[0].SetNumber(0);
 		referencePoints[1].SetColor(Colors.DarkRed);
-		referencePoints[1].SetNumber(2);
+		referencePoints[1].SetNumber(1);
 
 		roverPosition.SetColor(Colors.DarkOrange);
 		roverPosition.SetString("R");
@@ -260,6 +291,15 @@ public partial class MissionPlanner : Panel
 			}
 			else
 			{
+				if (mouseButton.ButtonIndex == MouseButton.Left)
+				{
+					_lastSelectedReferencePoint = 0;
+				}
+
+				if (mouseButton.ButtonIndex == MouseButton.Right)
+				{
+					_lastSelectedReferencePoint = 1;
+				}
 				MoveReferencePoint(GetLocalMousePosition());
 			}	
 		}
@@ -275,7 +315,7 @@ public partial class MissionPlanner : Panel
 		{
 			pointsContainer.AddChild(inst);
 			point.SetColor(Colors.Blue);
-			point.SetNumber(points.Count + 1);
+			point.SetNumber(points.Count);
 			point.Position = pos;
 			points.Add(point);
 			GD.Print($"Point added at position: {pos}, total points: {points.Count}");
@@ -291,7 +331,7 @@ public partial class MissionPlanner : Panel
 		if (inst is Waypoint waypoint)
 		{
 			waypoint.Coordinates = PhotoToReal(pos);
-			waypoint.Number = waypoints.Count + 1;
+			waypoint.Number = waypoints.Count;
 			waypoint.Deadzone = 0.2f;
 			waypoints.Add(waypoint);
 
@@ -315,7 +355,7 @@ public partial class MissionPlanner : Panel
 		{
 			if (point.Position.DistanceTo(pos) < 20)
 			{
-				RemoveWaypoint(waypoints[point.Number-1]);
+				RemoveWaypoint(waypoints[point.Number]);
 
 				break;
 			}
@@ -328,9 +368,9 @@ public partial class MissionPlanner : Panel
 	{
 		if (waypoint == null) return;
 
-		points[waypoint.Number - 1].QueueFree();
+		points[waypoint.Number].QueueFree();
 		points.RemoveAll(p => p.Number == waypoint.Number);
-		points.ForEach(p => p.SetNumber(points.IndexOf(p) + 1));
+		points.ForEach(p => p.SetNumber(points.IndexOf(p)));
 
 
 		waypointsContainer.RemoveChild(waypoint);
@@ -338,7 +378,7 @@ public partial class MissionPlanner : Panel
 		waypoints.Remove(waypoint);
 		for (int i = 0; i < waypoints.Count; i++)
 		{
-			waypoints[i].Number = i + 1;
+			waypoints[i].Number = i;
 			waypointsContainer.MoveChild(waypoints[i], i);
 		}
 	}
@@ -501,7 +541,8 @@ public partial class MissionPlanner : Panel
 		data.Deadzone = waypoint.Deadzone;
 		data.MessageType = MqttClasses.MissionPlannerMessageType.PointToNavigate;
 
-		points[waypoint.Number - 1].SetColor(Colors.Yellow);
+		points[waypoint.Number].SetColor(Colors.Yellow);
+		waypoints[waypoint.Number].SetColor(Colors.Yellow);
 		await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicMissionPlanner, JsonSerializer.Serialize(data));
 	}
 }
