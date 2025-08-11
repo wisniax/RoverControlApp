@@ -96,7 +96,10 @@ public partial class MissionPlanner : Panel
 	{
 		var data = new MissionPlannerMessage();
 		data.MessageType = MissionPlannerMessageType.PauseMission;
+		waypoints[_nextWaypointNumber].SetColor(Colors.White);
+		points[_nextWaypointNumber].SetColor(Colors.Blue);
 		MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicMissionPlanner, JsonSerializer.Serialize(data));
+
 		return;
 	}
 
@@ -107,7 +110,9 @@ public partial class MissionPlanner : Panel
 		_nextTargetWaypoint = null;
 		_nextWaypointNumber = 0;
 		_missionActive = false;
+		ResetWaypoints();
 		MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicMissionPlanner, JsonSerializer.Serialize(data));
+
 		return;
 	}
 
