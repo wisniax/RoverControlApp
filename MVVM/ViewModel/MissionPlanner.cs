@@ -252,8 +252,18 @@ public partial class MissionPlanner : Panel
 					break;
 
 				default:
-					if (!File.Exists(LocalSettings.Singleton.General.MissionControlMapPath)) break;
-					picture.Texture = GD.Load<Texture2D>(LocalSettings.Singleton.General.MissionControlMapPath);
+					string exeDir = OS.GetExecutablePath().GetBaseDir();
+					string filePath = exeDir + "/" + LocalSettings.Singleton.General.MissionControlMapPath;
+					if (!File.Exists(filePath)) break;
+
+					var img = new Image();
+					var err = img.Load(filePath);
+					if (err == Error.Ok)
+					{
+						var tex = ImageTexture.CreateFromImage(img);
+						picture.Texture = tex;
+					}
+
 					EventLogger.LogMessage("MissionPlanner", EventLogger.LogLevel.Info, $"Picture loaded from path: {LocalSettings.Singleton.General.MissionControlMapPath}");
 					break;
 			}

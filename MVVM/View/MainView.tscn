@@ -310,6 +310,7 @@ grow_horizontal = 0
 grow_vertical = 1
 
 [node name="MissionPlanner" parent="." instance=ExtResource("12_4ihq0")]
+visible = false
 layout_mode = 0
 offset_left = 8.0
 offset_top = 33.0
