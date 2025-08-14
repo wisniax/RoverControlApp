@@ -522,7 +522,7 @@ public partial class MissionPlanner : Panel
 		real.Y = (float)(scale * (photo.X * Math.Sin(fi) + photo.Y * Math.Cos(fi)) + t_p2r[1]);
 
 		real.X = MathF.Round(real.X, 4);
-		real.Y = MathF.Round(real.Y, 4);
+		real.Y = -MathF.Round(real.Y, 4);
 
 		return real;
 	}
@@ -531,8 +531,8 @@ public partial class MissionPlanner : Panel
 	{
 		Vector2 photo = new Vector2();
 
-		photo.X = (float)(1 / scale * (real.X * Math.Cos(-fi) - real.Y * Math.Sin(-fi)) + t_r2p[0]);
-		photo.Y = (float)(1 / scale * (real.X * Math.Sin(-fi) + real.Y * Math.Cos(-fi)) + t_r2p[1]);
+		photo.X = (float)(1 / scale * (real.X * Math.Cos(-fi) - (-1)*real.Y * Math.Sin(-fi)) + t_r2p[0]);
+		photo.Y = (float)(1 / scale * (real.X * Math.Sin(-fi) + (-1)*real.Y * Math.Cos(-fi)) + t_r2p[1]);
 		GD.Print(photo);
 
 		photo = ToGoodCoordinates(photo);
