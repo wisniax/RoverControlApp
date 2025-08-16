@@ -2,7 +2,7 @@ using Godot;
 using RoverControlApp.Core.JSONConverter;
 using System;
 using System.Text.Json.Serialization;
-//using Microsoft.MixedReality.WebRTC;
+using Microsoft.MixedReality.WebRTC;
 
 namespace RoverControlApp.Core.Settings;
 

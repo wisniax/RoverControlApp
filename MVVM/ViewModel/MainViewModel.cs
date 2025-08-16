@@ -543,5 +543,41 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			Task.Run(() => CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()));
 		}
+		
+		private void OnWebRtcCapture()
+		{
+
+			if(_isWebRtcOpened && this._webRtcWindow is not null)
+			{
+				this._webRtcWindow.Visible = true;
+				this._webRtcWindow.PopupCentered();
+				return;
+			}
+
+			this._webRtcWindow = new Window
+				{
+					Title = "WebRTC Capture",
+					Size = new Vector2I(800, 600),
+					MaxSize = new Vector2I(1920, 1080),
+			};
+
+			AddChild(this._webRtcWindow);
+
+			var packedScene = GD.Load<PackedScene>("res://MVVM/View/WebRTCStreamDisp.tscn");
+			var sceneInstance = packedScene.Instantiate();
+
+			this._webRtcWindow.CloseRequested += () =>
+			{
+				_isWebRtcOpened = false;
+				this._webRtcWindow.QueueFree();
+				this._webRtcWindow = null;
+			};
+
+			this._webRtcWindow.AddChild(sceneInstance);
+
+			this._isWebRtcOpened = true;
+
+			this._webRtcWindow.PopupCentered();
+		}
 	}
 }
