@@ -15,8 +15,9 @@ public class SamplerContainerConverter : JsonConverter<SamplerContainer>
 			throw new JsonException("Expected start of an object.");
 
 		string? customName = null;
-		float? closedDegrees = null;
-		float? openDegrees = null;
+		float? position0 = null;
+		float? position1 = null;
+		float? position2 = null;
 
 		while (reader.Read())
 		{
@@ -34,11 +35,14 @@ public class SamplerContainerConverter : JsonConverter<SamplerContainer>
 				case nameof(SamplerContainer.CustomName):
 					customName = reader.GetString();
 					break;
-				case nameof(SamplerContainer.ClosedDegrees):
-					closedDegrees = reader.GetSingle();
+				case nameof(SamplerContainer.Position0):
+					position0 = reader.GetSingle();
 					break;
-				case nameof(SamplerContainer.OpenDegrees):
-					openDegrees = reader.GetSingle();
+				case nameof(SamplerContainer.Position1):
+					position1 = reader.GetSingle();
+					break;
+				case nameof(SamplerContainer.Position2):
+					position2 = reader.GetSingle();
 					break;
 				default:
 					reader.Skip();
@@ -49,8 +53,9 @@ public class SamplerContainerConverter : JsonConverter<SamplerContainer>
 		return new SamplerContainer
 		(
 			customName ?? Default.CustomName,
-			closedDegrees ?? Default.ClosedDegrees,
-			openDegrees ?? Default.OpenDegrees
+			position0 ?? Default.Position0,
+			position1 ?? Default.Position1,
+			position0 ?? Default.Position2
 		);
 	}
 
@@ -58,8 +63,9 @@ public class SamplerContainerConverter : JsonConverter<SamplerContainer>
 	{
 		writer.WriteStartObject();
 		writer.WriteString(nameof(SamplerContainer.CustomName), value.CustomName);
-		writer.WriteNumber(nameof(SamplerContainer.ClosedDegrees), value.ClosedDegrees);
-		writer.WriteNumber(nameof(SamplerContainer.OpenDegrees), value.OpenDegrees);
+		writer.WriteNumber(nameof(SamplerContainer.Position0), value.Position0);
+		writer.WriteNumber(nameof(SamplerContainer.Position1), value.Position1);
+		writer.WriteNumber(nameof(SamplerContainer.Position2), value.Position2);
 		writer.WriteEndObject();
 	}
 }

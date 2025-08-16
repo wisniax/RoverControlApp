@@ -69,14 +69,32 @@ public class SamplerController : IRoverSamplerController
 		if (!changeState)
 			return lastState;
 
-		if (Mathf.IsEqualApprox(lastState, samplerContainer.OpenDegrees))
+		if (samplerContainer.Position1 == samplerContainer.Position2)
 		{
-			return samplerContainer.ClosedDegrees;
+			return Switch2(samplerContainer, lastState);
 		}
-		else
-		{
-			return samplerContainer.OpenDegrees;
-		}
+
+		return Switch3(samplerContainer, lastState);
+	}
+
+	private static float Switch2(Settings.SamplerContainer samplerContainer, float lastState)
+	{
+		if (samplerContainer.Position0 == lastState)
+			return samplerContainer.Position1;
+		if (samplerContainer.Position1 == lastState)
+			return samplerContainer.Position0;
+		return samplerContainer.Position0;
+	}
+
+	private static float Switch3(Settings.SamplerContainer samplerContainer, float lastState)
+	{
+		if (samplerContainer.Position0 == lastState)
+			return samplerContainer.Position1;
+		if (samplerContainer.Position1 == lastState)
+			return samplerContainer.Position2;
+		if (samplerContainer.Position2 == lastState)
+			return samplerContainer.Position0;
+		return samplerContainer.Position0;
 	}
 
 	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
