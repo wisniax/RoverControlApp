@@ -22,7 +22,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			SkipCamera = 2,
 			SkipCameraAndNotes = 3,
 		}
-
+		private bool _isWebRtcOpened = false;
 		public PressedKeys PressedKeys { get; private set; }
 		public RoverCommunication RoverCommunication { get; private set; }
 		public MissionStatus MissionStatus { get; private set; }
@@ -39,6 +39,8 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ImageTexture? _imTexture;
 
 		private InputHelpHintMode _inputHelpHintMode = InputHelpHintMode.Hidden;
+
+		private Window? _webRtcWindow = null;
 
 		[Export]
 		private TextureRect imTextureRect = null!;
@@ -543,9 +545,14 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			Task.Run(() => CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()));
 		}
-		
+
 		private void OnWebRtcCapture()
 		{
+			/*if(_isWebRtcOpened || this._webRtcWindow is null)
+			{
+				EventLogger.LogMessage("MainViewModel/WebRTC", EventLogger.LogLevel.Warning, "WebRTC window already opened!");
+				return;
+			}*/
 
 			if(_isWebRtcOpened && this._webRtcWindow is not null)
 			{
@@ -572,6 +579,8 @@ namespace RoverControlApp.MVVM.ViewModel
 				this._webRtcWindow.QueueFree();
 				this._webRtcWindow = null;
 			};
+
+
 
 			this._webRtcWindow.AddChild(sceneInstance);
 

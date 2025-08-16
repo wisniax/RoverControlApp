@@ -50,9 +50,9 @@ public partial class WebRTCStreamConverter : JsonConverter<WebRTCStream>
 			}
 		}
 
-		return new SpeedLimiter
+		return new WebRTCStream
 		(
-			IceServers ?? Default.IceServers,
+			IceServers ?? Default.IceServer,
 			SignalingServer ?? Default.SignalingServer,
 			MaxBitrate ?? Default.MaxBitrate,
 			PreferedVideoCodec ?? Default.PreferedVideoCodec
@@ -62,7 +62,7 @@ public partial class WebRTCStreamConverter : JsonConverter<WebRTCStream>
 	public override void Write(Utf8JsonWriter writer, WebRTCStream value, JsonSerializerOptions options)
 	{
 		writer.WriteStartObject();
-		writer.WriteString(nameof(WebRTCStream.IceServers), value.IceServers);
+		writer.WriteString(nameof(WebRTCStream.IceServer), value.IceServer);
 		writer.WriteString(nameof(WebRTCStream.SignalingServer), value.SignalingServer);
 		writer.WriteNumber(nameof(WebRTCStream.MaxBitrate), value.MaxBitrate);
 		writer.WriteString(nameof(WebRTCStream.PreferedVideoCodec), value.PreferedVideoCodec);
