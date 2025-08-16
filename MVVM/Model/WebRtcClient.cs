@@ -186,10 +186,6 @@ namespace RoverControlApp.MVVM.Model
 			}
 
 			string path = uri.AbsolutePath;
-			GD.Print(path);
-			GD.Print(uri);
-			GD.Print(headers);
-			GD.Print(body);
 			error = httpClient.RequestRaw(Godot.HttpClient.Method.Post, "/offer", headers, body);
 			if (error != Error.Ok)
 				throw new Exception("Error sending request: " + error);

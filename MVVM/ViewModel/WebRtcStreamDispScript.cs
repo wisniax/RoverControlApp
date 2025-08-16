@@ -102,7 +102,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 
 					var tex = ImageTexture.CreateFromImage(img);
-					GD.Print("WebRtcStream max width: ", _textureMaxWidht, ", max height: ", _textureMaxHeight);
+					//GD.Print("WebRtcStream max width: ", _textureMaxWidht, ", max height: ", _textureMaxHeight);
 					//GD.Print("WebRtcStreamDispScript: New frame received, width: ", img.GetWidth(), ", height: ", img.GetHeight());
 
 					_videoDisplay.Texture = tex;
