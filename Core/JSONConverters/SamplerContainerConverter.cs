@@ -18,6 +18,7 @@ public class SamplerContainerConverter : JsonConverter<SamplerContainer>
 		float? position0 = null;
 		float? position1 = null;
 		float? position2 = null;
+		float? preciseStep = null;
 
 		while (reader.Read())
 		{
@@ -44,6 +45,9 @@ public class SamplerContainerConverter : JsonConverter<SamplerContainer>
 				case nameof(SamplerContainer.Position2):
 					position2 = reader.GetSingle();
 					break;
+				case nameof(SamplerContainer.PreciseStep):
+					preciseStep = reader.GetSingle();
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -55,7 +59,8 @@ public class SamplerContainerConverter : JsonConverter<SamplerContainer>
 			customName ?? Default.CustomName,
 			position0 ?? Default.Position0,
 			position1 ?? Default.Position1,
-			position0 ?? Default.Position2
+			position0 ?? Default.Position2,
+			preciseStep ?? Default.PreciseStep
 		);
 	}
 
@@ -66,6 +71,7 @@ public class SamplerContainerConverter : JsonConverter<SamplerContainer>
 		writer.WriteNumber(nameof(SamplerContainer.Position0), value.Position0);
 		writer.WriteNumber(nameof(SamplerContainer.Position1), value.Position1);
 		writer.WriteNumber(nameof(SamplerContainer.Position2), value.Position2);
+		writer.WriteNumber(nameof(SamplerContainer.PreciseStep), value.PreciseStep);
 		writer.WriteEndObject();
 	}
 }

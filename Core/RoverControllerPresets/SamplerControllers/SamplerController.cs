@@ -19,7 +19,11 @@ public class SamplerController : IRoverSamplerController
 		"sampler_container_0",
 		"sampler_container_1",
 		"sampler_container_2",
+		"sampler_container_3",
+		"sampler_container_4",
 	];
+
+	public static int LastMovedContainer { get; set; } = -1;
 
 	public SamplerControl CalculateMoveVector(in InputEvent inputEvent, in SamplerControl lastState)
 	{
@@ -39,27 +43,109 @@ public class SamplerController : IRoverSamplerController
 			ContainerDegrees0 = lastState.ContainerDegrees0,
 			ContainerDegrees1 = lastState.ContainerDegrees1,
 			ContainerDegrees2 = lastState.ContainerDegrees2,
+			ContainerDegrees3 = lastState.ContainerDegrees3,
+			ContainerDegrees4 = lastState.ContainerDegrees4,
 			Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
 		};
 
 		if (inputEvent.IsActionPressed("sampler_container_0", allowEcho: false, exactMatch: true))
+		{
+			LastMovedContainer = 0;
 			newSamplerControl.ContainerDegrees0 = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container0,
 				true,
 				lastState.ContainerDegrees0
 			);
+		}
 		if (inputEvent.IsActionPressed("sampler_container_1", allowEcho: false, exactMatch: true))
+		{
+			LastMovedContainer = 1;
 			newSamplerControl.ContainerDegrees1 = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container1,
 				true,
 				lastState.ContainerDegrees1
 			);
+		}
 		if (inputEvent.IsActionPressed("sampler_container_2", allowEcho: false, exactMatch: true))
+		{
+			LastMovedContainer = 2;
 			newSamplerControl.ContainerDegrees2 = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container2,
 				true,
 				lastState.ContainerDegrees2
 			);
+		}
+		if (inputEvent.IsActionPressed("sampler_container_3", allowEcho: false, exactMatch: true))
+		{
+			LastMovedContainer = 3;
+			newSamplerControl.ContainerDegrees3 = OperateContainer(
+				LocalSettings.Singleton.Sampler.Container3,
+				true,
+				lastState.ContainerDegrees3
+			);
+		}
+		if (inputEvent.IsActionPressed("sampler_container_4", allowEcho: false, exactMatch: true))
+		{
+			LastMovedContainer = 4;
+			newSamplerControl.ContainerDegrees4 = OperateContainer(
+				LocalSettings.Singleton.Sampler.Container4,
+				true,
+				lastState.ContainerDegrees4
+			);
+		}
+
+		if (inputEvent.IsActionPressed("sampler_container_precise_up", allowEcho: false, exactMatch: true))
+		{
+			switch (LastMovedContainer)
+			{
+				case 0:
+					newSamplerControl.ContainerDegrees0 += LocalSettings.Singleton.Sampler.Container0.PreciseStep;
+					if (newSamplerControl.ContainerDegrees0 > 180f) newSamplerControl.ContainerDegrees0 = 180f;
+					break;
+				case 1:
+					newSamplerControl.ContainerDegrees1 += LocalSettings.Singleton.Sampler.Container1.PreciseStep;
+					if (newSamplerControl.ContainerDegrees1 > 180f) newSamplerControl.ContainerDegrees1 = 180f;
+					break;
+				case 2:
+					newSamplerControl.ContainerDegrees2 += LocalSettings.Singleton.Sampler.Container2.PreciseStep;
+					if (newSamplerControl.ContainerDegrees2 > 180f) newSamplerControl.ContainerDegrees2 = 180f;
+					break;
+				case 3:
+					newSamplerControl.ContainerDegrees3 += LocalSettings.Singleton.Sampler.Container3.PreciseStep;
+					if (newSamplerControl.ContainerDegrees3 > 180f) newSamplerControl.ContainerDegrees3 = 180f;
+					break;
+				case 4:
+					newSamplerControl.ContainerDegrees4 += LocalSettings.Singleton.Sampler.Container4.PreciseStep;
+					if (newSamplerControl.ContainerDegrees4 > 180f) newSamplerControl.ContainerDegrees4 = 180f;
+					break;
+			}
+		}
+		if (inputEvent.IsActionPressed("sampler_container_precise_down", allowEcho: false, exactMatch: true))
+		{
+			switch (LastMovedContainer)
+			{
+				case 0:
+					newSamplerControl.ContainerDegrees0 -= LocalSettings.Singleton.Sampler.Container0.PreciseStep;
+					if (newSamplerControl.ContainerDegrees0 < 0f) newSamplerControl.ContainerDegrees0 = 0f;
+					break;
+				case 1:
+					newSamplerControl.ContainerDegrees1 -= LocalSettings.Singleton.Sampler.Container1.PreciseStep;
+					if (newSamplerControl.ContainerDegrees1 < 0f) newSamplerControl.ContainerDegrees1 = 0f;
+					break;
+				case 2:
+					newSamplerControl.ContainerDegrees2 -= LocalSettings.Singleton.Sampler.Container2.PreciseStep;
+					if (newSamplerControl.ContainerDegrees2 < 0f) newSamplerControl.ContainerDegrees2 = 0f;
+					break;
+				case 3:
+					newSamplerControl.ContainerDegrees3 -= LocalSettings.Singleton.Sampler.Container3.PreciseStep;
+					if (newSamplerControl.ContainerDegrees3 < 0f) newSamplerControl.ContainerDegrees3 = 0f;
+					break;
+				case 4:
+					newSamplerControl.ContainerDegrees4 -= LocalSettings.Singleton.Sampler.Container4.PreciseStep;
+					if (newSamplerControl.ContainerDegrees4 < 0f) newSamplerControl.ContainerDegrees4 = 0f;
+					break;
+			}
+		}
 
 		return newSamplerControl;
 	}
