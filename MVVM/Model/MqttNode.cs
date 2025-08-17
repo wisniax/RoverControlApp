@@ -26,7 +26,7 @@ namespace RoverControlApp.MVVM.Model;
 public partial class MqttNode : Node
 {
 	[Signal]
-	public delegate void ConnectionChangedEventHandler(ConnectionState state);
+	public delegate void ConnectionChangedEventHandler(CommunicationState state);
 
 	[Signal]
 	public delegate void MessageReceivedEventHandler(string topic, MqttNodeMessage message);
@@ -375,11 +375,11 @@ public partial class MqttNode : Node
 		_managedMqttClient.SynchronizingSubscriptionsFailedAsync += ThOnSynchronizingSubscriptionsFailedAsync;
 		_managedMqttClient.ApplicationMessageReceivedAsync += ThOnApplicationMessageReceivedAsync;
 
+		ConnectionState = CommunicationState.Opening;
+
 		await _managedMqttClient.StartAsync(managedMqttClientOptions);
 
 		await MqSubscribeAllAsync();
-
-		ConnectionState = CommunicationState.Opening;
 	}
 
 	private async Task ThClientDisconnect()

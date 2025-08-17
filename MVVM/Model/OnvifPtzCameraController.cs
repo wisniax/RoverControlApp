@@ -27,6 +27,8 @@ namespace RoverControlApp.MVVM.Model
 		private CancellationTokenSource _cts;
 		private DateTime _lastComTimeStamp = System.DateTime.Now;
 
+		public event Action<CommunicationState>? StateChange;
+
 		public Vector4 CameraMotion
 		{
 			get
@@ -38,7 +40,7 @@ namespace RoverControlApp.MVVM.Model
 			}
 			private set
 			{
-				EventLogger.LogMessage("OnvifPtzCameraController",EventLogger.LogLevel.Verbose, $"CameraMotion update: {value}");
+				EventLogger.LogMessage("OnvifPtzCameraController", EventLogger.LogLevel.Verbose, $"CameraMotion update: {value}");
 				_dataMutex.WaitOne();
 				_cameraMotion = value;
 				_dataMutex.ReleaseMutex();
@@ -52,6 +54,7 @@ namespace RoverControlApp.MVVM.Model
 			{
 				EventLogger.LogMessage("OnvifPtzCameraController", EventLogger.LogLevel.Info, $"CommunicationState update: {value}");
 				_state = value;
+				StateChange?.Invoke(_state);
 			}
 		}
 
@@ -103,7 +106,7 @@ namespace RoverControlApp.MVVM.Model
 
 			if (_ptzThreadError is not null)
 			{
-				EventLogger.LogMessage("OnvifPtzCameraController", EventLogger.LogLevel.Error, $"Connecting to camera failed after " 
+				EventLogger.LogMessage("OnvifPtzCameraController", EventLogger.LogLevel.Error, $"Connecting to camera failed after "
 					+ $"{(int)_generalPurposeStopwatch.Elapsed.TotalSeconds}s with error: {_ptzThreadError}");
 				State = CommunicationState.Faulted;
 				return;

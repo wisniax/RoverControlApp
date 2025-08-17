@@ -1,0 +1,43 @@
+[gd_scene load_steps=6 format=3 uid="uid://iocpx8rpo2a8"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/WidgetPanel.cs" id="1_f2d4b"]
+[ext_resource type="PackedScene" uid="uid://3nfkg2sjo5lv" path="res://MVVM/View/Widget/WidgetDragControl.tscn" id="2_uaj7n"]
+[ext_resource type="PackedScene" uid="uid://cisg0j3itxgm1" path="res://MVVM/View/Widget/WindowBar.tscn" id="3_tgta4"]
+[ext_resource type="PackedScene" uid="uid://cma0xbahpt60p" path="res://MVVM/View/Widget/WindowBorder.tscn" id="4_4pp4i"]
+[ext_resource type="PackedScene" uid="uid://fi3fxtj15swf" path="res://MVVM/View/Widget/EditInfo.tscn" id="6_qlbgg"]
+
+[node name="WidgetPanel" type="Container" node_paths=PackedStringArray("_widgetDragControl", "_windowBar", "_editInfo", "_leftDistanceLabel", "_topDistanceLabel", "_rightDistanceLabel", "_bottomDistanceLabel", "_anchorPointLabel", "_windowBarTitleLabel", "_windowBorder")]
+offset_right = 163.0
+offset_bottom = 85.0
+mouse_filter = 2
+script = ExtResource("1_f2d4b")
+_widgetDragControl = NodePath("WidgetDragControl")
+_windowBar = NodePath("WindowBar")
+_editInfo = NodePath("EditInfo")
+_leftDistanceLabel = NodePath("EditInfo/PositionInfo/MiddleRow/LeftDistance")
+_topDistanceLabel = NodePath("EditInfo/PositionInfo/TopDistance")
+_rightDistanceLabel = NodePath("EditInfo/PositionInfo/MiddleRow/RightDistance")
+_bottomDistanceLabel = NodePath("EditInfo/PositionInfo/BottomDistance")
+_anchorPointLabel = NodePath("EditInfo/PositionInfo/MiddleRow/Anchors")
+_windowBarTitleLabel = NodePath("WindowBar/HBoxContainer/Title")
+_windowBorder = NodePath("WindowBorder")
+
+[node name="WindowBar" parent="." instance=ExtResource("3_tgta4")]
+layout_mode = 2
+
+[node name="WindowBorder" parent="." instance=ExtResource("4_4pp4i")]
+layout_mode = 2
+
+[node name="WidgetDragControl" parent="." instance=ExtResource("2_uaj7n")]
+layout_mode = 2
+
+[node name="EditInfo" parent="." instance=ExtResource("6_qlbgg")]
+layout_mode = 2
+
+[connection signal="gui_input" from="WindowBar" to="." method="OnDragWindowBar"]
+[connection signal="pressed" from="WindowBar/HBoxContainer/Exit" to="." method="OnButtonExit"]
+[connection signal="Drag" from="WidgetDragControl" to="." method="OnDrag"]
+[connection signal="ResizeZone" from="WidgetDragControl" to="." method="OnResizeZone"]
+
+[editable path="WindowBar"]
+[editable path="EditInfo"]
