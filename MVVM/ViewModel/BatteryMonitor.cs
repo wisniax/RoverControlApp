@@ -21,7 +21,9 @@ public partial class BatteryMonitor : PanelContainer
 
 	private bool showOnLowFired = false;
 
-	public event Action<int, int, Color>? OnBatteryDataChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
+	[Signal]
+	//enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
+	public delegate void OnBatteryDataEventHandler(int enabledBatts, int percentOrVolt, Color warningColor);
 
 	public int ConnectedBatts
 	{
@@ -109,11 +111,16 @@ public partial class BatteryMonitor : PanelContainer
 		if (!altDataValidId) return Task.CompletedTask;
 
 		_currentVoltageAlt = _currentVoltageAlt * 0.9f + 0.1f * (float)altData.VoltsIn;
-		CallDeferred("ShowAltVoltage", true);
 
-		OnBatteryDataChanged?.Invoke(0, (int)(_currentVoltageAlt * 10), CheckForWarnings());
+		CallThreadSafe(MethodName.ShowAltVoltage, true);
+		CallThreadSafe(MethodName.InvokeOnBatteryData_AltMode);
 
 		return Task.CompletedTask;
+	}
+
+	private void InvokeOnBatteryData_AltMode()
+	{
+		EmitSignal(SignalName.OnBatteryData, 0, (int)(_currentVoltageAlt * 10), CheckForWarnings());
 	}
 
 	void ShowAltVoltage(bool show)
@@ -124,7 +131,7 @@ public partial class BatteryMonitor : PanelContainer
 
 	Task SendToHUD()
 	{
-		OnBatteryDataChanged?.Invoke(
+		EmitSignal(SignalName.OnBatteryData,
 			LocalSettings.Singleton.Battery.AltMode ? 0 : CountConnectedBatts(),
 			FetchBatteryPercentOrVoltage(),
 			CheckForWarnings()

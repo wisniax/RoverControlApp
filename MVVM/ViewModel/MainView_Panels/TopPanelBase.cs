@@ -61,7 +61,7 @@ public abstract partial class TopPanelBase : Node
 	protected static string BattLevel2 => " \xe92d";
 	protected static string BattLevel3 => " \xe92b";
 	protected static string BattLevelCharge => " \xe92a";
-	protected static string BattLevelAltView => "\xe92e\xe90a";
+	protected static string BattLevelAltView => "\xe92e\xeb31";
 
 	protected UIOverlay2.AnimationAlert AnimationSlow => UseSoftAnimation ? UIOverlay2.AnimationAlert.AlertSoft_Slow : UIOverlay2.AnimationAlert.AlertHard_Slow;
 	protected UIOverlay2.AnimationAlert AnimationNormal => UseSoftAnimation ? UIOverlay2.AnimationAlert.AlertSoft_Normal : UIOverlay2.AnimationAlert.AlertHard_Normal;
@@ -121,7 +121,7 @@ public abstract partial class TopPanelBase : Node
 		if (batteryMonitorNode is null)
 			EventLogger.LogMessage(nameof(TopPanelBase), EventLogger.LogLevel.Warning, "Can't access battery info!");
 		else
-			batteryMonitorNode.OnBatteryDataChanged += OnBatteryInfo;
+			batteryMonitorNode.OnBatteryData += OnBatteryInfo;
 
 		_roverOverlay_controlMode = PressedKeys.Singleton.ControlMode;
 		_roverOverlay_kinematicMode = PressedKeys.Singleton.RoverMovement.Mode;
@@ -147,7 +147,7 @@ public abstract partial class TopPanelBase : Node
 		LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
 
 		if (batteryMonitorNode is not null)
-			batteryMonitorNode.OnBatteryDataChanged -= OnBatteryInfo;
+			batteryMonitorNode.OnBatteryData -= OnBatteryInfo;
 
 		base.Dispose(disposing);
 	}
@@ -218,8 +218,7 @@ public abstract partial class TopPanelBase : Node
 
 		if (voltsMode)
 		{
-			percentagesOrVolts /= 10;
-			text = string.Format("{0:0.0}V", percentagesOrVolts);
+			text = string.Format("{0:0.0}V", percentagesOrVolts / 10.0f);
 
 			_batteryLabel.Text = BattLevelAltView;
 		}
