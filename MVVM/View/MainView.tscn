@@ -1100,6 +1100,6 @@ autostart = true
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowMissionControl" to="VBoxContainer/MainCenter/ScreenPanels/MissionControl" method="set_visible"]
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowZedMonitor" to="VBoxContainer/MainCenter/ScreenPanels/ZedMonitor" method="set_visible"]
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="VBoxContainer/MainCenter/ScreenPanels/SettingsManager" method="set_visible"]
-[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="VBoxContainer/MainCenter/ScreenPanels/SettingsManager" method="Redraw"]
 [connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="VBoxContainer/MainCenter/ScreenPanels/SettingsManager" method="OnVisibilityChange"]
+[connection signal="toggled" from="VBoxContainer/MainPanelBottom/BottomButtons/ShowSettingsBtn" to="VBoxContainer/MainCenter/ScreenPanels/SettingsManager" method="Redraw"]
 [connection signal="timeout" from="CameraDataPulser" to="." method="OnCameraDataPulserTimeout"]

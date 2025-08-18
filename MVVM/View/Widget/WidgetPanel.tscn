@@ -29,9 +29,11 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="WidgetDragControl" parent="." instance=ExtResource("2_uaj7n")]
+visible = false
 layout_mode = 2
 
 [node name="EditInfo" parent="." instance=ExtResource("6_qlbgg")]
+visible = false
 layout_mode = 2
 
 [connection signal="gui_input" from="WindowBar" to="." method="OnDragWindowBar"]

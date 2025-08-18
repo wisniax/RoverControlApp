@@ -311,7 +311,7 @@ public partial class WidgetPanel : Container
 
 	public void OnDrag(InputEventMouseMotion eventMouseMotion)
 	{
-		if (!EditMode)
+		if (!EditMode || GetViewport().GuiIsDragging())
 			return;
 		if (!eventMouseMotion.ButtonMask.HasFlag(MouseButtonMask.Left))
 		{
@@ -371,7 +371,7 @@ public partial class WidgetPanel : Container
 
 	public void OnResizeZone(InputEventMouseMotion eventMouseMotion, LayoutPreset layoutPreset)
 	{
-		if (!EditMode)
+		if (!EditMode || GetViewport().GuiIsDragging())
 			return;
 		if (!eventMouseMotion.ButtonMask.HasFlag(MouseButtonMask.Left))
 		{

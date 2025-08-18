@@ -1,0 +1,74 @@
+[gd_scene load_steps=3 format=3 uid="uid://cnjjx0nvfj7tc"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/WidgetManagerItemGrip.cs" id="1_bhy0n"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/WidgetManagerItem.cs" id="1_i8qve"]
+
+[node name="WidgetManagerItem" type="PanelContainer" node_paths=PackedStringArray("_itemLabel", "_windowBtn", "_visibleBtn", "_trashBtn")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_type_variation = &"PanelContainerRcaSemiTransparent"
+script = ExtResource("1_i8qve")
+_itemLabel = NodePath("Layout/Label")
+_windowBtn = NodePath("Layout/ButtonCenter/WndBtn")
+_visibleBtn = NodePath("Layout/ButtonCenter/VisBtn")
+_trashBtn = NodePath("Layout/ButtonCenter/DelBtn")
+ItemString = "ZedMonitor #1"
+WidgetStateWindow = true
+
+[node name="Layout" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Grip" type="Label" parent="Layout" node_paths=PackedStringArray("_dropDataProxy")]
+layout_mode = 2
+mouse_filter = 1
+mouse_default_cursor_shape = 6
+theme_override_font_sizes/font_size = 30
+text = ""
+vertical_alignment = 1
+script = ExtResource("1_bhy0n")
+_dropDataProxy = NodePath("../..")
+
+[node name="Label" type="Label" parent="Layout"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Widget Name #1"
+
+[node name="ButtonCenter" type="HBoxContainer" parent="Layout"]
+layout_mode = 2
+size_flags_horizontal = 10
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="WndBtn" type="Button" parent="Layout/ButtonCenter"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"ButtonRcaNoOutline"
+theme_override_font_sizes/font_size = 26
+toggle_mode = true
+text = ""
+
+[node name="VisBtn" type="Button" parent="Layout/ButtonCenter"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"ButtonRcaNoOutline"
+theme_override_font_sizes/font_size = 26
+toggle_mode = true
+text = ""
+
+[node name="DelBtn" type="Button" parent="Layout/ButtonCenter"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+size_flags_vertical = 4
+theme_type_variation = &"ButtonRcaNoOutline"
+theme_override_font_sizes/font_size = 26
+disabled = true
+text = ""
+
+[connection signal="toggled" from="Layout/ButtonCenter/WndBtn" to="." method="OnWindowButton"]
+[connection signal="toggled" from="Layout/ButtonCenter/VisBtn" to="." method="OnVisibleButton"]
+[connection signal="pressed" from="Layout/ButtonCenter/DelBtn" to="." method="OnTrashButton"]

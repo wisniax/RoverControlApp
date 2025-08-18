@@ -1,0 +1,110 @@
+[gd_scene load_steps=3 format=3 uid="uid://xtyfpymjskqk"]
+
+[ext_resource type="PackedScene" uid="uid://cnjjx0nvfj7tc" path="res://MVVM/View/Widget/WidgetManagerItem.tscn" id="1_5ld4k"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/WidgetManager.cs" id="1_yin5a"]
+
+[node name="WidgetManager" type="PanelContainer" node_paths=PackedStringArray("_scrollContainer")]
+offset_right = 410.0
+offset_bottom = 321.0
+mouse_filter = 1
+theme_type_variation = &"PanelContainerRcaSemiTransparent"
+script = ExtResource("1_yin5a")
+_scrollContainer = NodePath("Layout/Widgets/ScrollRegion/ScrollContainer")
+
+[node name="Layout" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="EditBtn" type="Button" parent="Layout"]
+layout_mode = 2
+theme_type_variation = &"ButtonRca"
+theme_override_font_sizes/font_size = 24
+toggle_mode = true
+text = "  Edit Mode"
+
+[node name="Widgets" type="VBoxContainer" parent="Layout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Heading" type="HBoxContainer" parent="Layout/Widgets"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Layout/Widgets/Heading"]
+layout_mode = 2
+theme_type_variation = &"LabelRcaH1"
+theme_override_font_sizes/font_size = 24
+text = "Widgets"
+
+[node name="AddBtn" type="Button" parent="Layout/Widgets/Heading"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_type_variation = &"ButtonRcaH1"
+theme_override_font_sizes/font_size = 30
+text = "  "
+
+[node name="ScrollRegion" type="VBoxContainer" parent="Layout/Widgets"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Up" type="Control" parent="Layout/Widgets/ScrollRegion"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_vertical = 0
+mouse_filter = 1
+
+[node name="Label" type="Label" parent="Layout/Widgets/ScrollRegion/Up"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Layout/Widgets/ScrollRegion"]
+custom_minimum_size = Vector2(0, 132)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="List" type="VBoxContainer" parent="Layout/Widgets/ScrollRegion/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="WidgetManagerItem" parent="Layout/Widgets/ScrollRegion/ScrollContainer/List" instance=ExtResource("1_5ld4k")]
+layout_mode = 2
+
+[node name="WidgetManagerItem2" parent="Layout/Widgets/ScrollRegion/ScrollContainer/List" instance=ExtResource("1_5ld4k")]
+layout_mode = 2
+ItemString = "ZedMonitor #2"
+
+[node name="WidgetManagerItem3" parent="Layout/Widgets/ScrollRegion/ScrollContainer/List" instance=ExtResource("1_5ld4k")]
+layout_mode = 2
+ItemString = "ZedMonitor #3"
+
+[node name="Down" type="Control" parent="Layout/Widgets/ScrollRegion"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_vertical = 8
+mouse_filter = 1
+
+[node name="Label" type="Label" parent="Layout/Widgets/ScrollRegion/Down"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = ""
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Layout/Widgets"]
+layout_mode = 2
+
+[connection signal="mouse_entered" from="Layout/Widgets/ScrollRegion/Up" to="." method="ScrollUp_Begin"]
+[connection signal="mouse_exited" from="Layout/Widgets/ScrollRegion/Up" to="." method="ScrollUp_End"]
+[connection signal="mouse_entered" from="Layout/Widgets/ScrollRegion/Down" to="." method="ScrollDown_Begin"]
+[connection signal="mouse_exited" from="Layout/Widgets/ScrollRegion/Down" to="." method="ScrollDown_End"]
