@@ -14,7 +14,6 @@ public class SamplerConverter : JsonConverter<Sampler>
 		if (reader.TokenType != JsonTokenType.StartObject)
 			throw new JsonException("Expected start of an object.");
 
-		SamplerContainer? container0 = null;
 		SamplerContainer? container1 = null;
 		SamplerContainer? container2 = null;
 		SamplerContainer? container3 = null;
@@ -33,9 +32,6 @@ public class SamplerConverter : JsonConverter<Sampler>
 
 			switch (propertyName)
 			{
-				case nameof(Sampler.Container0):
-					container0 = JsonSerializer.Deserialize<SamplerContainer>(ref reader, options);
-					break;
 				case nameof(Sampler.Container1):
 					container1 = JsonSerializer.Deserialize<SamplerContainer>(ref reader, options);
 					break;
@@ -56,7 +52,6 @@ public class SamplerConverter : JsonConverter<Sampler>
 
 		return new Sampler
 		(
-			container0 ?? Default.Container0,
 			container1 ?? Default.Container1,
 			container2 ?? Default.Container2,
 			container3 ?? Default.Container3,
@@ -67,8 +62,6 @@ public class SamplerConverter : JsonConverter<Sampler>
 	public override void Write(Utf8JsonWriter writer, Sampler value, JsonSerializerOptions options)
 	{
 		writer.WriteStartObject();
-		writer.WritePropertyName(nameof(Sampler.Container0));
-		JsonSerializer.Serialize(writer, value.Container0, options);
 		writer.WritePropertyName(nameof(Sampler.Container1));
 		JsonSerializer.Serialize(writer, value.Container1, options);
 		writer.WritePropertyName(nameof(Sampler.Container2));

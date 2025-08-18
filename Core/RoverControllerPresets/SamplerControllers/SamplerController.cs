@@ -16,14 +16,15 @@ public class SamplerController : IRoverSamplerController
 		"sampler_drill_movement",
 		"sampler_platform_movement",
 		"sampler_drill_enable",
-		"sampler_container_0",
+		"sampler_alt_mode",
 		"sampler_container_1",
 		"sampler_container_2",
 		"sampler_container_3",
-		"sampler_container_4",
+		"sampler_container_4"
 	];
 
 	public static int LastMovedContainer { get; set; } = -1;
+	public static bool AltMode { get; set; } = false;
 
 	public SamplerControl CalculateMoveVector(in InputEvent inputEvent, in SamplerControl lastState)
 	{
@@ -35,28 +36,42 @@ public class SamplerController : IRoverSamplerController
 		if (Mathf.Abs(drillSpeed) < LocalSettings.Singleton.Joystick.MinimalInput)
 			drillSpeed = 0f;
 
-		SamplerControl newSamplerControl = new()
+		if (inputEvent.IsActionPressed("sampler_alt_mode", allowEcho: false, exactMatch: true)) AltMode = true;
+		if (inputEvent.IsActionReleased("sampler_alt_mode", exactMatch: true)) AltMode = false;
+
+
+
+		SamplerControl newSamplerControl;
+
+		if (AltMode)
 		{
-			DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
-			PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
-			DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
-			ContainerDegrees0 = lastState.ContainerDegrees0,
-			ContainerDegrees1 = lastState.ContainerDegrees1,
-			ContainerDegrees2 = lastState.ContainerDegrees2,
-			ContainerDegrees3 = lastState.ContainerDegrees3,
-			ContainerDegrees4 = lastState.ContainerDegrees4,
-			Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+			newSamplerControl = new()
+			{
+				DrillMovement = movement,
+				PlatformMovement = 0f,
+				DrillAction = movement,
+				ContainerDegrees1 = lastState.ContainerDegrees1,
+				ContainerDegrees2 = lastState.ContainerDegrees2,
+				ContainerDegrees3 = lastState.ContainerDegrees3,
+				ContainerDegrees4 = lastState.ContainerDegrees4,
+				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+			};
+		}
+		else
+		{
+			newSamplerControl = new()
+			{
+				DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
+				PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
+				DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
+				ContainerDegrees1 = lastState.ContainerDegrees1,
+				ContainerDegrees2 = lastState.ContainerDegrees2,
+				ContainerDegrees3 = lastState.ContainerDegrees3,
+				ContainerDegrees4 = lastState.ContainerDegrees4,
+				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+			};
 		};
 
-		if (inputEvent.IsActionPressed("sampler_container_0", allowEcho: false, exactMatch: true))
-		{
-			LastMovedContainer = 0;
-			newSamplerControl.ContainerDegrees0 = OperateContainer(
-				LocalSettings.Singleton.Sampler.Container0,
-				true,
-				lastState.ContainerDegrees0
-			);
-		}
 		if (inputEvent.IsActionPressed("sampler_container_1", allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 1;
@@ -98,10 +113,6 @@ public class SamplerController : IRoverSamplerController
 		{
 			switch (LastMovedContainer)
 			{
-				case 0:
-					newSamplerControl.ContainerDegrees0 += LocalSettings.Singleton.Sampler.Container0.PreciseStep;
-					if (newSamplerControl.ContainerDegrees0 > 180f) newSamplerControl.ContainerDegrees0 = 180f;
-					break;
 				case 1:
 					newSamplerControl.ContainerDegrees1 += LocalSettings.Singleton.Sampler.Container1.PreciseStep;
 					if (newSamplerControl.ContainerDegrees1 > 180f) newSamplerControl.ContainerDegrees1 = 180f;
@@ -124,10 +135,6 @@ public class SamplerController : IRoverSamplerController
 		{
 			switch (LastMovedContainer)
 			{
-				case 0:
-					newSamplerControl.ContainerDegrees0 -= LocalSettings.Singleton.Sampler.Container0.PreciseStep;
-					if (newSamplerControl.ContainerDegrees0 < 0f) newSamplerControl.ContainerDegrees0 = 0f;
-					break;
 				case 1:
 					newSamplerControl.ContainerDegrees1 -= LocalSettings.Singleton.Sampler.Container1.PreciseStep;
 					if (newSamplerControl.ContainerDegrees1 < 0f) newSamplerControl.ContainerDegrees1 = 0f;
