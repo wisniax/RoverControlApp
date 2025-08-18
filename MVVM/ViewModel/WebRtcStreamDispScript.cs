@@ -8,8 +8,8 @@ namespace RoverControlApp.MVVM.ViewModel
 {
 	public partial class WebRtcStreamDispScript : Node, IDisposable
 	{
-		private WebRtcClient _webRtcClient;
-		private TextureRect _videoDisplay;
+		private WebRtcClient _webRtcClient = null!;
+		private TextureRect _videoDisplay = null!;
 		private Button _startStreamButton = null!, _stopStreamButton = null!, _minimiseWindow = null!;
 		private bool _streamStarted = false;
 		private int _textureMaxWidht = 800;
@@ -17,19 +17,26 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		public override void _Ready()
 		{
-			_videoDisplay = GetNode<TextureRect>("MarginContainer/VBoxContainer/VideoDisplay");
-			GD.Print("WebRtcStreamDispScript " + _videoDisplay.Name);
-			var buttonContainer = GetNode<HBoxContainer>("MarginContainer/VBoxContainer/HBoxContainer");
+			try
+			{
+				//_videoDisplay = GetNode<TextureRect>("MarginContainer/VBoxContainer/VideoDisplay");
+				//GD.Print("WebRtcStreamDispScript " + _videoDisplay.Name);
+				var buttonContainer = GetNode<HBoxContainer>("MarginContainer/VBoxContainer/HBoxContainer");
 
 
-			_startStreamButton = buttonContainer.GetNode<Button>("StartStream");
-			_stopStreamButton = buttonContainer.GetNode<Button>("StopStream");
-			_minimiseWindow = buttonContainer.GetNode<Button>("MinimiseWindow");		
+				_startStreamButton = buttonContainer.GetNode<Button>("StartStream");
+				_stopStreamButton = buttonContainer.GetNode<Button>("StopStream");
+				_minimiseWindow = buttonContainer.GetNode<Button>("MinimiseWindow");
 
-			_videoDisplay.Resized += OnWindowResized;
-			_startStreamButton.Pressed += OnStartStreamButtonPressed;
-			_stopStreamButton.Pressed += OnStopStreamButtonPressed;
-			_minimiseWindow.Pressed += OnMinimiseWindowPressed;
+				_videoDisplay.Resized += OnWindowResized;
+				_startStreamButton.Pressed += OnStartStreamButtonPressed;
+				_stopStreamButton.Pressed += OnStopStreamButtonPressed;
+				_minimiseWindow.Pressed += OnMinimiseWindowPressed;
+			}
+			catch (Exception ex)
+			{
+				GD.PrintErr("WebRtcStreamDispScript _Ready error: ", ex.Message);
+			}
 		}
 
 		private async void OnStartStreamButtonPressed()

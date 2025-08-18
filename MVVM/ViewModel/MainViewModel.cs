@@ -31,6 +31,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private WeakReference<RtspStreamClient>? _rtspClientWeak;
 		private WeakReference<OnvifPtzCameraController>? _ptzClientWeak;
 
+		private WebRtcClient? _webRtcClient;
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
 		private JoyVibrato _joyVibrato;
@@ -201,8 +202,24 @@ namespace RoverControlApp.MVVM.ViewModel
 				_rtspClient.UnLockGrabbingFrames();
 				imTextureRect.Texture = _imTexture;
 				_rtspClient.MarkFrameOld();
+			}else if(_isWebRtcOpened && _webRtcClient != null && _webRtcClient.NewFrameAvailable)
+			{
+				try
+				{
+					var img = _webRtcClient.LatestImage;
+					if (img != null)
+					{
+						_imTexture = ImageTexture.CreateFromImage(img);
+						imTextureRect.Texture = _imTexture;
+					}
+					_webRtcClient.NewFrameAvailable = false;
+				}
+				catch(Exception e)
+				{
+					EventLogger.LogMessage("MainViewModel/_Process", EventLogger.LogLevel.Error, $"WebRTC error: {e.Message}");
+				}
 			}
-			UpdateLabel();
+				UpdateLabel();
 		}
 
 		/*
@@ -546,47 +563,37 @@ namespace RoverControlApp.MVVM.ViewModel
 			Task.Run(() => CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()));
 		}
 
-		private void OnWebRtcCapture()
+		private async void OnWebRtcCapture()
 		{
-			/*if(_isWebRtcOpened || this._webRtcWindow is null)
+			if (_isWebRtcOpened)
 			{
-				EventLogger.LogMessage("MainViewModel/WebRTC", EventLogger.LogLevel.Warning, "WebRTC window already opened!");
-				return;
-			}*/
-
-			if(_isWebRtcOpened && this._webRtcWindow is not null)
-			{
-				this._webRtcWindow.Visible = true;
-				this._webRtcWindow.PopupCentered();
-				return;
-			}
-
-			this._webRtcWindow = new Window
+				try
 				{
-					Title = "WebRTC Capture",
-					Size = new Vector2I(800, 600),
-					MaxSize = new Vector2I(1920, 1080),
-			};
-
-			AddChild(this._webRtcWindow);
-
-			var packedScene = GD.Load<PackedScene>("res://MVVM/View/WebRTCStreamDisp.tscn");
-			var sceneInstance = packedScene.Instantiate();
-
-			this._webRtcWindow.CloseRequested += () =>
+					_webRtcClient?.Dispose();
+					_webRtcClient = null;
+					_isWebRtcOpened = false;
+				}
+				catch(Exception ex)
+				{
+					GD.PrintErr("WebRTC capture failed: ", ex.Message);
+					EventLogger.LogMessage("MainViewModel/WebRTC", EventLogger.LogLevel.Error, $"WebRTC capture failed: {ex.Message}");
+				}
+			}
+			else
 			{
-				_isWebRtcOpened = false;
-				this._webRtcWindow.QueueFree();
-				this._webRtcWindow = null;
-			};
-
-
-
-			this._webRtcWindow.AddChild(sceneInstance);
-
-			this._isWebRtcOpened = true;
-
-			this._webRtcWindow.PopupCentered();
+				try
+				{
+					_webRtcClient = new WebRtcClient();
+					await _webRtcClient.InitializeAsync(LocalSettings.Singleton.WebRTCStream.IceServer);
+					await _webRtcClient.ExchangeOfferWithServerAsync(LocalSettings.Singleton.WebRTCStream.SignalingServer);
+					_isWebRtcOpened = true;
+				}catch(Exception ex)
+				{
+					GD.PrintErr("WebRTC initialization failed: ", ex.Message);
+					EventLogger.LogMessage("MainViewModel/WebRTC", EventLogger.LogLevel.Error, $"WebRTC initialization failed: {ex.Message}");
+					_isWebRtcOpened = false;
+				}
+			}
 		}
 	}
 }
