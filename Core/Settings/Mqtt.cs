@@ -28,6 +28,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicSamplerControlControl = "SamplerControl";
 		_topicBatteryInfo = "BatteryInfo";
 		_topicBatteryControl = "BatteryControl";
+		_topicWeightSensor = "WeightSensor";
 	}
 
 	public Mqtt
@@ -45,7 +46,8 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicKmlListOfActiveObj,
 		string topicSamplerControlControl,
 		string topicBatteryInfo,
-		string topicBatteryControl
+		string topicBatteryControl,
+		string topicWeightSensor
 	)
 	{
 		_clientSettings = clientSettings;
@@ -62,7 +64,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicSamplerControlControl = topicSamplerControlControl;
 		_topicBatteryInfo = topicBatteryInfo;
 		_topicBatteryControl = topicBatteryControl;
-		
+		_topicWeightSensor = topicWeightSensor;
 	}
 
 	public object Clone()
@@ -83,7 +85,8 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicKmlListOfActiveObj = _topicKmlListOfActiveObj,
 			TopicSamplerControl = _topicSamplerControlControl,
 			TopicBatteryInfo = _topicBatteryInfo,
-			TopicBatteryControl = _topicBatteryControl
+			TopicBatteryControl = _topicBatteryControl,
+			TopicWeightSensor = _topicWeightSensor
 		};
 	}
 
@@ -185,6 +188,12 @@ public partial class Mqtt : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _topicBatteryControl, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicWeightSensor
+	{
+		get => _topicWeightSensor;
+		set => EmitSignal_SettingChanged(ref _topicWeightSensor, value);
+	}
 
 	MqttClientOptions _clientSettings;
 
@@ -201,6 +210,7 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicSamplerControlControl;
 	string _topicBatteryInfo;
 	string _topicBatteryControl;
+	string _topicWeightSensor;
 }
 
 

@@ -241,5 +241,13 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; }
 		}
 
+		public class WeightSensorData
+		{
+			//Pair of sensor name and value
+
+			public Dictionary<string, float> WeightSensors { get; set; } = new();
+			
+		}
+
 	}
 }
