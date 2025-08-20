@@ -1,0 +1,62 @@
+[gd_scene load_steps=3 format=3 uid="uid://dhn0n07cia2px"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/WebRtcStreamDispScript.cs" id="1_f0gof"]
+[ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_acyat"]
+
+[node name="WebRtcStreamDisp" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_f0gof")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="VideoDisplay" type="TextureRect" parent="MarginContainer/VBoxContainer"]
+layout_direction = 1
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("2_acyat")
+expand_mode = 2
+stretch_mode = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_constants/separation = 50
+
+[node name="StartStream" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+z_index = 100
+layout_mode = 2
+text = "Start stream"
+
+[node name="StopStream" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+z_index = 100
+layout_mode = 2
+text = "Stop stream"
+
+[node name="MinimiseWindow" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+z_index = 100
+layout_mode = 2
+text = "Minimise window"
+
+[connection signal="resized" from="MarginContainer/VBoxContainer/VideoDisplay" to="." method="OnWindowResized"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/StartStream" to="." method="OnStartStreamButtonPressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/MinimiseWindow" to="." method="OnMinimiseWindowPressed"]

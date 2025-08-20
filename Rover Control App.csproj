@@ -10,6 +10,7 @@
     <None Include="api-doc.md" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.MixedReality.WebRTC" Version="2.0.2" />
     <PackageReference Include="MQTTnet" Version="4.3.3.952" />
     <PackageReference Include="MQTTnet.Extensions.ManagedClient" Version="4.3.3.952" />
     <PackageReference Include="Onvif.Core" Version="2.2.2" />
