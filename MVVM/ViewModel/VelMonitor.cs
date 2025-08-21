@@ -1,155 +1,207 @@
 using Godot;
 using RoverControlApp.Core;
+using RoverControlApp.Core.Settings;
 using RoverControlApp.MVVM.Model;
+using MQTTnet;
+using System.Text.Json;
+using System.Threading.Tasks;
+using System.Text;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+
 
 namespace RoverControlApp.MVVM.ViewModel;
 public partial class VelMonitor : Panel
 {
-	const int ITEMS = 6;
+	[Export] private Label _flLabel = null!;
+	[Export] private Label _frLabel = null!;
+	[Export] private Label _brLabel = null!;
+	[Export] private Label _blLabel = null!;
 
-	[ExportGroup("Settings")]
-	[Export]
-	string headStr = "ID ";
-	[ExportGroup("Settings")]
-	[Export]
-	string angvelStr = "AngVel: ";
-	string steerangStr = "SteerAng: ";
+	[Export] private Label[] _driveLabel = null!;
+	[Export] private Label[] _rotationLabel = null!;
+	[Export] private Label[] _delayLabel = null!;
+	DateTime[] _lastUpdate = new DateTime[8];
+	TimeSpan[] _lastDelay = new TimeSpan[8];
 
-	[ExportGroup("Settings")]
-	[Export]
-	float SliderMaxVal = 5;
-	[ExportGroup("Settings")]
-	[Export]
-	float SliderMinVal = -5;
+	[Export] private Sprite2D[] _wheelSprites = new Sprite2D[4];
+	[Export] private VSlider[] _wheelSlider = new VSlider[4];
 
-	[ExportGroup("NodePaths")]
-	[Export]
-	NodePath[] headLabs_NodePaths = new NodePath[6];
-	[ExportGroup("NodePaths")]
-	[Export]
-	NodePath[] dataLabs_NodePaths = new NodePath[6];
-	[ExportGroup("NodePaths")]
-	[Export]
-	NodePath[] sliders_NodePaths = new NodePath[6];
+	[Export] private Sprite2D[] _ghostSprites = new Sprite2D[4];
 
-	Dictionary<int, int> idSettings = new()
+	int[] driveMotorID = new int[4];
+	int[] rotationMotorID = new int[4];
+	
+	enum Pos
 	{
-		{ 1, 1 },
-		{ 2, 0 },
-		{ 3, 3 },
-		{ 4, 2 },
-		{ 5, 5 },
-		{ 6, 4 },
-	};
-
-	Label[] headLabs;
-	Label[] dataLabs;
-	SliderController[] sliderControllers;
-
-	private bool LenCheck()
-	{
-		return headLabs_NodePaths.Length == 6 && dataLabs_NodePaths.Length == 6 && sliders_NodePaths.Length == 6 && idSettings.Count == 6;
+		FrontLeft = 0,
+		FrontRight = 1,
+		BackRight = 2,
+		BackLeft = 3
 	}
 
-	public override void _Ready()
+	public override void _EnterTree()
 	{
-		if (!LenCheck())
-			throw new Exception("Array lenght missmath!");
-
-		headLabs = new Label[ITEMS];
-		dataLabs = new Label[ITEMS];
-		sliderControllers = new SliderController[ITEMS];
-		for (int i = 0; i < ITEMS; i++)
+		UpdateCanIDLabels();
+		foreach (var i in _lastUpdate)
 		{
-			headLabs[i] = GetNode<Label>(headLabs_NodePaths[i]);
-			dataLabs[i] = GetNode<Label>(dataLabs_NodePaths[i]);
-
-			var keyOfValue = idSettings.First(kvp => kvp.Value == i).Key;
-
-			headLabs[i].Text = headStr + keyOfValue.ToString();
-			dataLabs[i].Text = angvelStr + "N/A";
-
-			sliderControllers[i] = GetNode<SliderController>(sliders_NodePaths[i]);
-			sliderControllers[i].InputMinValue(SliderMinVal);
-			sliderControllers[i].InputMaxValue(SliderMaxVal);
+			_lastUpdate[Array.IndexOf(_lastUpdate, i)] = DateTime.Now - TimeSpan.FromSeconds(10);
 		}
 
-		MqttNode.Singleton.Connect(MqttNode.SignalName.MessageReceived, Callable.From<string, MqttNodeMessage>(MqttSubscriber));
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		MqttNode.Singleton.MessageReceivedAsync += VelInfoChanged;
+
+	}
+	public override void _ExitTree()
+	{
+		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		MqttNode.Singleton.MessageReceivedAsync -= VelInfoChanged;
 	}
 
-	struct SingleWheel
+	public override void _Process(double delta)
 	{
-		public UInt32 id;
-		public float angleVelocity;
-		public float steerAngle;
-
-		public SingleWheel(uint id, float angleVelocity, float steerAngle)
+		foreach (var i in _lastUpdate)
 		{
-			this.id = id;
-			this.angleVelocity = angleVelocity;
-			this.steerAngle = steerAngle;
-		}
+			TimeSpan delay = DateTime.Now - i;
 
-		public static unsafe SingleWheel FromBytes(byte* rawdata)
-		{
-			byte* idPtr = &rawdata[0];
-			byte* angleVelocityPtr = &rawdata[4];
-			byte* steerAnglePtr = &rawdata[8];
-
-			return new SingleWheel(*(UInt32*)idPtr, *(float*)angleVelocityPtr, *(float*)steerAnglePtr);
-		}
-	}
-
-	public void MqttSubscriber(string subTopic, MqttNodeMessage msg)
-	{
-		return;
-		if (LocalSettings.Singleton.Mqtt.TopicWheelFeedback is null || subTopic != LocalSettings.Singleton.Mqtt.TopicWheelFeedback)
-			return;
-
-		if (msg is null || msg.Message.PayloadSegment.Count == 0)
-		{
-			EventLogger.LogMessage("VelMonitor", EventLogger.LogLevel.Warning, $"Empty payload!");
-			return;
-		}
-
-		//base64
-		//var ka = System.Text.Encoding.ASCII.GetString(msg.PayloadSegment);
-		//var iat = System.Convert.FromBase64String(ka);
-
-		try
-		{
-			CallDeferred(MethodName.UpdateVisual, msg.Message.PayloadSegment.Array);
-		}
-		catch (Exception e)
-		{
-			EventLogger.LogMessage("VelMonitor", EventLogger.LogLevel.Error, $"VelMonitor ERROR: Well.. Something went wrong:\n{e.Message}");
-		}
-	}
-
-	public unsafe void UpdateVisual(byte[]? rawdata)
-	{
-		if (rawdata is null)
-			throw new ArgumentNullException("rawdata is null");
-
-		if (rawdata.Length != 76)
-		{
-			throw new ArgumentException("rawdata.Length mismatch (!= 76)");
-		}
-
-		if (!LenCheck())
-			throw new Exception("Internal array lenght missmath!");
-
-		fixed (byte* rawdataPtr = &rawdata[0])
-			for (int offset = 4; offset < 76; offset += 12)
+			if (delay > TimeSpan.FromSeconds(5))
 			{
-				var wheelData = SingleWheel.FromBytes(&rawdataPtr[offset]);
-
-				var localIdx = idSettings[(int)wheelData.id];
-				dataLabs[localIdx].Text = angvelStr + $"{wheelData.angleVelocity}";
-				sliderControllers[localIdx].InputValue(wheelData.angleVelocity);
+				if (Array.IndexOf(_lastUpdate, i) <= 3)
+				{
+					_driveLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Drive:\n" +
+																	   $"RPM: ??? rpm\n" +
+																	   $"Current: ??? A\n" +
+																	   $"Temperature: ??? C");	
+				}
+				else
+				{
+					_rotationLabel[Array.IndexOf(_lastUpdate, i)-4].SetText($"Rotation:\n" +
+																		    $"RPM: ??? rpm\n" +
+																			$"Current: ??? A\n" +
+																			$"Temperature: ??? C");
+				}
+				_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: ??? s");
 			}
+			else
+			{
+				if (delay > _lastDelay[Array.IndexOf(_lastUpdate, i)])
+				{
+					_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: {delay.TotalSeconds * 1000.0:F0} ms");
+					_lastDelay[Array.IndexOf(_lastUpdate, i)] = delay;
+				}
+				else
+				{
+					_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: {_lastDelay[Array.IndexOf(_lastUpdate, i)].TotalSeconds * 1000.0:F0} ms");
+				}
+			}
+
+		}
+	}
+
+	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
+	{
+		if (category != nameof(WheelData)) return;
+		UpdateCanIDLabels();
+	}
+
+	private void UpdateCanIDLabels()
+	{
+		_flLabel.SetText($"D: {LocalSettings.Singleton.WheelData.FrontLeftDrive}\n" +
+						 $"R: {LocalSettings.Singleton.WheelData.FrontLeftTurn}");
+		_frLabel.SetText($"D: {LocalSettings.Singleton.WheelData.FrontRightDrive}\n" +
+						 $"R: {LocalSettings.Singleton.WheelData.FrontRightTurn}");
+		_blLabel.SetText($"D: {LocalSettings.Singleton.WheelData.BackLeftDrive}\n" +
+						 $"R: {LocalSettings.Singleton.WheelData.BackLeftTurn}");
+		_brLabel.SetText($"D: {LocalSettings.Singleton.WheelData.BackRightDrive}\n" +
+						 $"R: {LocalSettings.Singleton.WheelData.BackRightTurn}");
+
+		driveMotorID[(int)Pos.FrontLeft] = StringToHexInt(LocalSettings.Singleton.WheelData.FrontLeftDrive);
+		driveMotorID[(int)Pos.FrontRight] = StringToHexInt(LocalSettings.Singleton.WheelData.FrontRightDrive);
+		driveMotorID[(int)Pos.BackRight] = StringToHexInt(LocalSettings.Singleton.WheelData.BackRightDrive);
+		driveMotorID[(int)Pos.BackLeft] = StringToHexInt(LocalSettings.Singleton.WheelData.BackLeftDrive);
+
+		rotationMotorID[(int)Pos.FrontLeft] = StringToHexInt(LocalSettings.Singleton.WheelData.FrontLeftTurn);
+		rotationMotorID[(int)Pos.FrontRight] = StringToHexInt(LocalSettings.Singleton.WheelData.FrontRightTurn);
+		rotationMotorID[(int)Pos.BackRight] = StringToHexInt(LocalSettings.Singleton.WheelData.BackRightTurn);
+		rotationMotorID[(int)Pos.BackLeft] = StringToHexInt(LocalSettings.Singleton.WheelData.BackLeftTurn);
+	}
+
+	private async Task VelInfoChanged(string subTopic, MqttApplicationMessage? msg)
+	{
+		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicWheelFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicWheelFeedback)
+			return;
+		if (msg is null || msg.PayloadSegment.Count == 0)
+			return;
+
+		string payload = System.Text.Encoding.UTF8.GetString(msg.PayloadSegment.ToArray());
+		var velData = JsonSerializer.Deserialize<MqttClasses.WheelFeedback>(payload);
+		if (velData is null) return;
+
+		int vescID = velData.VescId;
+
+		for (int i = 0; i < 8; i++)
+		{
+			if (i <= 3)
+			{
+				if (driveMotorID[i] == velData.VescId)
+				{
+					UpdateDriveMotorInfoHandler(i, velData);
+					_lastDelay[i] = DateTime.Now - _lastUpdate[i];
+					_lastUpdate[i] = DateTime.Now;
+
+					break;
+				}
+			}
+			else
+			{
+				if (rotationMotorID[i - 4] == velData.VescId)
+				{
+					UpdateRotationMotorInfoHandler(i - 4, velData);
+					_lastDelay[i] = DateTime.Now - _lastUpdate[i];
+					_lastUpdate[i] = DateTime.Now;
+					break;
+				}
+			}
+		}
+		await Task.Yield();
+	}
+
+	void UpdateDriveMotorInfoHandler(int motor, MqttClasses.WheelFeedback data)
+	{
+		CallDeferred("UpdateDriveMotorInfo", motor, (int)data.ERPM, (int)data.Current, (float)data.TempMotor);
+	}
+
+	void UpdateDriveMotorInfo(int motor, int erpm, int current, float temp)
+	{
+		_driveLabel[motor].SetText($"Drive:\n" +
+						 $"RPM: {erpm} rpm\n" +
+						 $"Current: {current} A\n" +
+						 $"Temperature: {temp} C");
+		_wheelSlider[motor].Value = (float)erpm;
+		_wheelSlider[motor].MinValue = - LocalSettings.Singleton.WheelData.MaxRPM;
+		_wheelSlider[motor].MaxValue = LocalSettings.Singleton.WheelData.MaxRPM;
+		_wheelSlider[motor].Modulate = (erpm < 0) ? Colors.Red : Colors.Green;
+		if (erpm > -LocalSettings.Singleton.WheelData.MaxRPM/100 && erpm < LocalSettings.Singleton.WheelData.MaxRPM / 100)
+			_wheelSlider[motor].Modulate = Colors.White;
+	}
+
+	void UpdateRotationMotorInfoHandler(int motor, MqttClasses.WheelFeedback data)
+	{
+		CallDeferred("UpdateRotationMotorInfo", motor, (int)data.ERPM, (int)data.Current, (int)data.TempMotor, (int)data.PrecisePos, (int)data.PidPos);
+	}
+
+	void UpdateRotationMotorInfo(int motor, int erpm, int current, int temp, int precisePos, int pidPos)
+	{
+		_rotationLabel[motor].SetText($"Rotation:\n" +
+						 $"RPM: {erpm} rpm\n" +
+						 $"Current: {current:F0} A\n" +
+						 $"Temperature: {temp} C");
+		_wheelSprites[motor].RotationDegrees = (float)precisePos + ((motor == 0 || motor == 3) ? 90f : -90f);
+		_ghostSprites[motor].RotationDegrees = (float)pidPos + ((motor == 0 || motor == 3) ? 90f : -90f);
+	}
+
+	private int StringToHexInt(string hexString)
+	{
+		int value = Convert.ToInt32(hexString.Replace("0x", ""), 16);
+		return value;
 	}
 }
