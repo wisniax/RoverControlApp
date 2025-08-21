@@ -85,12 +85,12 @@ public partial class VelMonitor : Panel
 			{
 				if (delay > _lastDelay[Array.IndexOf(_lastUpdate, i)])
 				{
-					_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: {delay.Milliseconds:F0} ms");
+					_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: {delay.TotalSeconds * 1000.0:F0} ms");
 					_lastDelay[Array.IndexOf(_lastUpdate, i)] = delay;
 				}
 				else
 				{
-					_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: {_lastDelay[Array.IndexOf(_lastUpdate, i)].Milliseconds:F0} ms");
+					_delayLabel[Array.IndexOf(_lastUpdate, i)].SetText($"Last update: {_lastDelay[Array.IndexOf(_lastUpdate, i)].TotalSeconds * 1000.0:F0} ms");
 				}
 			}
 
