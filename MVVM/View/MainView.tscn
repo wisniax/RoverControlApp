@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=25 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://dugqdg2bjure7" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SafeMode_UIOverlay.cs" id="7_ssyiv"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/MaxSizeContainer.cs" id="13_0svft"]
+[ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
@@ -49,7 +51,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -73,6 +75,7 @@ FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
 BatteryMonitor = NodePath("BatteryMonitor")
+InputHelpMaster = NodePath("MaxSizeContainer/InputHelpMaster")
 
 [node name="CameraView" type="TextureRect" parent="."]
 layout_mode = 1
@@ -312,6 +315,31 @@ offset_right = -5.40991
 offset_bottom = -45.38
 grow_horizontal = 0
 grow_vertical = 0
+
+[node name="MaxSizeContainer" type="Container" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 36.0
+offset_bottom = -133.0
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("13_0svft")
+ChildMaxSize = Vector2(450, 9999)
+MinimalMargin = Vector2(700, 0)
+
+[node name="InputHelpMaster" parent="MaxSizeContainer" instance=ExtResource("13_1wevo")]
+visible = false
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+ReactiveHints = true
+ShowEmpty = true
+CycleHints = true
+metadata/_edit_lock_ = true
 
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false

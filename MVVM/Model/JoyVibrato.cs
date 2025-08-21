@@ -1,9 +1,11 @@
-﻿using Godot;
-using RoverControlApp.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Godot;
+
+using RoverControlApp.Core;
 
 namespace RoverControlApp.MVVM.Model;
 
@@ -70,13 +72,16 @@ public class JoyVibrato : IDisposable
 		}
 	};
 
+	private PressedKeys _pressedKeys;
+
 	private Task? _taskVibrato;
 	private CancellationTokenSource _ctSource;
 	private CancellationToken _ctToken;
 	private bool _disposedValue = false;
 
-	public JoyVibrato()
+	public JoyVibrato(PressedKeys pressedKeys)
 	{
+		_pressedKeys = pressedKeys;
 		_ctSource = new CancellationTokenSource();
 		_ctToken = _ctSource.Token;
 	}
@@ -86,18 +91,34 @@ public class JoyVibrato : IDisposable
 		if (_taskVibrato?.IsCompleted == false)
 		{
 			_ctSource.Cancel();
-			try { await _taskVibrato; } 
+			try { await _taskVibrato; }
 			catch (Exception) { /*its just canceled*/ }
 			_ctSource = new();
 			_ctToken = _ctSource.Token;
 		}
 
-		if(LocalSettings.Singleton.Joystick.VibrateOnModeChange)
-			_taskVibrato = Task.Run(async () => await Vibrate(newMode), _ctToken);
+		switch (newMode)
+		{
+			case var _ when !LocalSettings.Singleton.Joystick.VibrateOnModeChange:
+				// no vibrato
+				break;
+			case MqttClasses.ControlMode.EStop
+			when LocalSettings.Singleton.General.NoInputSecondsToEstop > 0
+			&& !LocalSettings.Singleton.Joystick.VibrateOnAutoEstop
+			&& _pressedKeys.TimeToAutoEStopMsec <= 0:
+				// no vibrato on Auto E-Stop
+				break;
+			default:
+				_taskVibrato = Task.Run(async () => await Vibrate(newMode), _ctToken);
+				break;
+
+		}
 	}
 
 	private async Task Vibrate(MqttClasses.ControlMode controlMode)
 	{
+		await Task.Delay(300, _ctToken);
+
 		_ctToken.ThrowIfCancellationRequested();
 
 		VibrationSequence[] sequence = Presets[controlMode];
@@ -107,7 +128,7 @@ public class JoyVibrato : IDisposable
 		{
 			if(_ctToken.IsCancellationRequested)
 			{
-				foreach(var joyId in Input.GetConnectedJoypads()) 
+				foreach(var joyId in Input.GetConnectedJoypads())
 					Input.StopJoyVibration(joyId);
 				_ctToken.ThrowIfCancellationRequested();
 			}

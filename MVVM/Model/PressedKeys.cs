@@ -1,329 +1,341 @@
-﻿using Godot;
-using RoverControlApp.Core;
-using System;
+﻿using System;
 using System.Threading.Tasks;
+
+using Godot;
+
+using RoverControlApp.Core;
 using RoverControlApp.Core.RoverControllerPresets;
-using RoverControlApp.Core.RoverControllerPresets.DriveControllers;
+using RoverControlApp.Core.RoverControllerPresets.CameraControllers;
+using RoverControlApp.Core.RoverControllerPresets.ControlModeControllers;
 using RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 using RoverControlApp.Core.RoverControllerPresets.SamplerControllers;
+using RoverControlApp.MVVM.ViewModel;
+
 using static RoverControlApp.Core.MqttClasses;
 
-namespace RoverControlApp.MVVM.Model
+namespace RoverControlApp.MVVM.Model;
+
+public class PressedKeys : IDisposable
 {
-	public class PressedKeys : IDisposable
+	#region Fields
+	private ControlMode _controlMode;
+	private Vector4 _cameraMoveVector;
+	private RoverControl _roverMovement;
+	private ManipulatorControl _manipulatorMovement;
+	private SamplerControl _samplerControl = null!;
+	private IControlModeController _roverModeControllerPreset = null!;
+	private IRoverDriveController _roverDriveControllerPreset = null!;
+	private IRoverManipulatorController _roverManipulatorControllerPreset = null!;
+	private IRoverSamplerController _roverSamplerControllerPreset = null!;
+	private ICameraController _roverCameraControllerPreset = null!;
+	private bool _disposedValue;
+	private ulong _autoEstop_lastInput = 0;
+
+	#endregion Fields
+
+	#region Events
+
+	public delegate void ControllerPresetChangedEventHandler();
+	public delegate void LastAcceptedInputEventHandler(InputHelpHint.HintVisibility type);
+
+	public event Action<Vector4>? CameraMoveVectorChanged;
+	public event Func<RoverControl, Task>? OnRoverMovementVector;
+	public event Func<ManipulatorControl, Task>? OnManipulatorMovement;
+	public event Func<SamplerControl, Task>? OnSamplerMovement;
+	public event Func<bool, Task>? OnPadConnectionChanged;
+	public event Func<ControlMode, Task>? OnControlModeChanged;
+	public event Func<KinematicMode, Task>? OnKinematicModeChanged;
+	public event ControllerPresetChangedEventHandler? ControllerPresetChanged;
+	public event LastAcceptedInputEventHandler? LastAcceptedInput;
+
+	#endregion Events
+
+	#region Properties
+
+	public ControlMode ControlMode
 	{
-		private volatile ControlMode _controlMode;
-		private volatile KinematicMode _kinematicMode;
-		private Vector4 _lastAbsoluteVector;
-		private RoverControl _roverMovement;
-		private ManipulatorControl _manipulatorMovement;
-		private SamplerControl _samplerControl = null!;
-		private RoverContainer _containerMovement;
-		private IRoverDriveController _roverDriveControllerPreset = null!;
-		private IRoverManipulatorController _roverManipulatorControllerPreset = null!;
-		private IRoverSamplerController _roverSamplerControllerPreset = null!;
-		private bool _disposedValue;
-
-		public event EventHandler<Vector4>? OnAbsoluteVectorChanged;
-		public event Func<RoverControl, Task>? OnRoverMovementVector;
-		public event Func<ManipulatorControl, Task>? OnManipulatorMovement;
-		public event Func<SamplerControl, Task>? OnSamplerMovement;
-		public event Func<RoverContainer, Task>? OnContainerMovement;
-		public event Func<bool, Task>? OnPadConnectionChanged;
-		public event Func<ControlMode, Task>? OnControlModeChanged;
-		public event Func<KinematicMode, Task>? OnKinematicModeChanged;
-
-		public ControlMode ControlMode
+		get => _controlMode;
+		private set
 		{
-			get => _controlMode;
-			private set
-			{
-				_controlMode = value;
-				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Control Mode changed {value}");
-				OnControlModeChanged?.Invoke(value);
-			}
-		}
-
-		public KinematicMode KinematicMode
-		{
-			get => _kinematicMode;
-			private set
-			{
-				if(_kinematicMode == value) return;
-				_kinematicMode = value;
-				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Kinematic Mode changed {value}");
-				OnKinematicModeChanged?.Invoke(value);
-			}
-		}
-
-		public static bool PadConnected => Input.GetConnectedJoypads().Count > 0;
-
-		public Vector4 LastAbsoluteVector
-		{
-			get => _lastAbsoluteVector;
-			private set
-			{
-				_lastAbsoluteVector = value;
-				OnAbsoluteVectorChanged?.Invoke(this, value);
-			}
-		}
-
-		public RoverControl RoverMovement
-		{
-			get => _roverMovement;
-			private set
-			{
-				_roverMovement = value;
-				OnRoverMovementVector?.Invoke(value);
-			}
-		}
-
-		public ManipulatorControl ManipulatorMovement
-		{
-			get => _manipulatorMovement;
-			private set
-			{
-				_manipulatorMovement = value;
-				OnManipulatorMovement?.Invoke(value);
-			}
-		}
-
-		public SamplerControl SamplerMovement
-		{
-			get => _samplerControl;
-			private set
-			{
-				_samplerControl = value;
-				OnSamplerMovement?.Invoke(value);
-			}
-		}
-
-		public RoverContainer ContainerMovement
-		{
-			get => _containerMovement;
-			private set
-			{
-				_containerMovement = value;
-				OnContainerMovement?.Invoke(value);
-			}
-		}
-
-		public PressedKeys()
-		{
-			Input.JoyConnectionChanged += InputOnJoyConnectionChanged;
-			_lastAbsoluteVector = Vector4.Zero;
-			_roverMovement = new();
-			_manipulatorMovement = new();
-			_samplerControl = new();
-			_containerMovement = new();
-			SetupControllerPresets();
-
-			LocalSettings.Singleton.CategoryChanged += OnSettingsCategoryChanged;
-			LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
-		}
-
-		void SetupControllerPresets()
-		{
-			_manipulatorMovement = new();
-			_roverDriveControllerPreset =
-				RoverDriveControllerSelector.GetController(
-					(RoverDriveControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverDriveController
-				);
-			_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
-			_roverSamplerControllerPreset = new SamplerController();
-		}
-
-		/*
-		* Settings event handlers
-		*/
-
-		void OnSettingsCategoryChanged(StringName property)
-		{
-			if (property != nameof(LocalSettings.Joystick)) return;
-
-			SetupControllerPresets();
-		}
-
-		void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
-		{
-			if(category != nameof(LocalSettings.Joystick)) return;
-
-			switch (name)
-			{
-				case nameof(LocalSettings.Joystick.RoverDriveController):
-					SetupControllerPresets();
-					break;
-			}
-		}
-
-		/*
-		 * settings handlers end
-		 */
-
-		private void InputOnJoyConnectionChanged(long device, bool connected)
-		{
-			var status = connected ? "connected" : "disconnected";
-			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Pad {status}");
-			OnPadConnectionChanged?.Invoke(PadConnected);
-			StopAll();
-		}
-
-		public void HandleInputEvent(InputEvent _)
-		{
-			HandleFunctionInputEvent();
-			HandleCameraInputEvent();
-			HandleMovementInputEvent();
-			HandleManipulatorInputEvent();
-			HandleContainerInputEvent();
-			HandleSamplerInputEvent();
-			HandleDriveModeChangeToggle();
-			HandleDriveModeChangeHold();
-		}
-
-		private void HandleContainerInputEvent()
-		{
-			if (ControlMode != ControlMode.Manipulator) return;
-			var axis = Input.GetAxis("camera_focus_out", "camera_focus_in");
-			if (Mathf.IsEqualApprox(axis, ContainerMovement.Axis1, 0.01f)) return;
-			ContainerMovement = new RoverContainer { Axis1 = axis };
-		}
-
-		private void HandleManipulatorInputEvent()
-		{
-			if (ControlMode != ControlMode.Manipulator) return;
-
-			ManipulatorControl manipulatorControl = _roverManipulatorControllerPreset.CalculateMoveVector();
-			if(_roverManipulatorControllerPreset.IsMoveVectorChanged(manipulatorControl, ManipulatorMovement))
-				ManipulatorMovement = manipulatorControl;
-		}
-		private void HandleSamplerInputEvent()
-		{
-			if (ControlMode != ControlMode.Sampler) return;
-
-			SamplerControl samplerControl = _roverSamplerControllerPreset.CalculateMoveVector(SamplerMovement);
-			if (_roverSamplerControllerPreset.IsMoveVectorChanged(samplerControl, SamplerMovement))
-				SamplerMovement = samplerControl;
-
-		}
-
-		private void HandleCameraInputEvent()
-		{
-			if (ControlMode == ControlMode.Manipulator) return;
-
-			Vector4 absoluteVector4 = Vector4.Zero;
-
-			Vector2 velocity = Input.GetVector("camera_move_left", "camera_move_right", "camera_move_down", "camera_move_up");
-			velocity = velocity.Clamp(new Vector2(-1f, -1f), new Vector2(1f, 1f));
-			absoluteVector4.X = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, LocalSettings.Singleton.Joystick.Deadzone)) ? 0 : velocity.X;
-			absoluteVector4.Y = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, LocalSettings.Singleton.Joystick.Deadzone)) ? 0 : velocity.Y;
-			velocity = Input.GetVector("camera_zoom_out", "camera_zoom_in", "camera_focus_out", "camera_focus_in");
-			absoluteVector4.Z = Mathf.IsEqualApprox(velocity.X, 0f, Mathf.Max(0.1f, LocalSettings.Singleton.Joystick.Deadzone)) ? 0 : velocity.X;
-			absoluteVector4.W = Mathf.IsEqualApprox(velocity.Y, 0f, Mathf.Max(0.1f, LocalSettings.Singleton.Joystick.Deadzone)) ? 0 : velocity.Y;
-
-			absoluteVector4 = absoluteVector4.Clamp(new Vector4(-1f, -1f, -1f, -1f), new Vector4(1f, 1f, 1f, 1f));
-			LastAbsoluteVector = absoluteVector4;
-		}
-
-		private void HandleMovementInputEvent()
-		{
-			if (ControlMode != ControlMode.Rover) return;
-
-			RoverControl roverControl = _roverDriveControllerPreset.CalculateMoveVector();
-
-			roverControl.Mode = _roverDriveControllerPreset.Mode;
-
-			if (_roverDriveControllerPreset.IsMoveVectorChanged(roverControl, RoverMovement) || RoverMovement.Mode != roverControl.Mode)
-				RoverMovement = roverControl;
-		}
-		private void HandleFunctionInputEvent()
-		{
-			HandleControlModeChange();
-		}
-
-
-		private void HandleControlModeChange()
-		{
-			if (!Input.IsActionJustPressed("ControlModeChange", true)) return;
-
-			if ((int)ControlMode + 1 >= Enum.GetNames<ControlMode>().Length)
-				ControlMode = ControlMode.EStop;
-			else ControlMode++;
-
-			StopAll();
-		}
-
-		private void HandleDriveModeChangeToggle()
-		{
-			if (LocalSettings.Singleton.Joystick.RoverDriveController != (int)RoverDriveControllerSelector.Controller.DirectDrive) return;
-
-			if (!LocalSettings.Singleton.Joystick.ToggleableKinematics) return;
-
-			if (ControlMode != ControlMode.Rover) return;
-
-			if (Input.IsActionJustPressed("crab_mode", true))
-				KinematicMode = KinematicMode.Crab;
-			else if (Input.IsActionJustPressed("spinner_mode", true))
-				KinematicMode = KinematicMode.Spinner;
-			else if (Input.IsActionJustPressed("ackermann_mode", true))
-				KinematicMode = KinematicMode.Ackermann;
-			else if (Input.IsActionJustPressed("ebrake_mode", true))
-				KinematicMode = KinematicMode.EBrake;
-			
-			_roverDriveControllerPreset.Mode = KinematicMode;
-
-			HandleMovementInputEvent();
-		}
-
-		void HandleDriveModeChangeHold()
-		{
-			if (LocalSettings.Singleton.Joystick.RoverDriveController != (int)RoverDriveControllerSelector.Controller.DirectDrive) return;
-
-			if (LocalSettings.Singleton.Joystick.ToggleableKinematics) return;
-
-			if (ControlMode != ControlMode.Rover) return;
-
-
-			if (Input.IsActionPressed("crab_mode", true))
-				KinematicMode = KinematicMode.Crab;
-			else if (Input.IsActionPressed("spinner_mode", true))
-				KinematicMode = KinematicMode.Spinner;
-			else if (Input.IsActionPressed("ebrake_mode", true))
-				KinematicMode = KinematicMode.EBrake;
-			else
-				KinematicMode = KinematicMode.Ackermann;
-
-			_roverDriveControllerPreset.Mode = KinematicMode;
-
-			HandleMovementInputEvent();
-		}
-
-		private void StopAll()
-		{
-			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, "Stopping all movement");
-			RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = _kinematicMode};
-			ContainerMovement = new RoverContainer { Axis1 = 0f };
-			ManipulatorMovement = new ManipulatorControl();
-
-			LastAbsoluteVector = Vector4.Zero;
-		}
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (_disposedValue)	return;
-
-			if (disposing)
-			{
-				LocalSettings.Singleton.CategoryChanged -= OnSettingsCategoryChanged;
-				LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
-			}
-
-			_disposedValue = true;
-		}
-
-		public void Dispose()
-		{
-			Dispose(disposing: true);
-			GC.SuppressFinalize(this);
+			_controlMode = value;
+			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Control Mode changed {value}");
+			OnControlModeChanged?.Invoke(value);
 		}
 	}
+
+	public static bool PadConnected => Input.GetConnectedJoypads().Count > 0;
+
+	public Vector4 CameraMoveVector
+	{
+		get => _cameraMoveVector;
+		private set
+		{
+			_cameraMoveVector = value;
+			CameraMoveVectorChanged?.Invoke(value);
+		}
+	}
+
+	public RoverControl RoverMovement
+	{
+		get => _roverMovement;
+		private set
+		{
+			_roverMovement = value;
+			OnKinematicModeChanged?.Invoke(value.Mode);
+			OnRoverMovementVector?.Invoke(value);
+		}
+	}
+
+	public ManipulatorControl ManipulatorMovement
+	{
+		get => _manipulatorMovement;
+		private set
+		{
+			_manipulatorMovement = value;
+			OnManipulatorMovement?.Invoke(value);
+		}
+	}
+
+	public SamplerControl SamplerMovement
+	{
+		get => _samplerControl;
+		private set
+		{
+			_samplerControl = value;
+			OnSamplerMovement?.Invoke(value);
+		}
+	}
+
+	public IControlModeController RoverModeControllerPreset => _roverModeControllerPreset;
+	public IRoverDriveController RoverDriveControllerPreset => _roverDriveControllerPreset;
+	public IRoverManipulatorController RoverManipulatorControllerPreset => _roverManipulatorControllerPreset;
+	public IRoverSamplerController RoverSamplerControllerPreset => _roverSamplerControllerPreset;
+	public ICameraController RoverCameraControllerPreset => _roverCameraControllerPreset;
+
+	/// <summary>
+	/// Time left to Auto-EStop.
+	/// 0 means Auto-EStop inactive.
+	/// </summary>
+	public long TimeToAutoEStopMsec
+	{
+		get
+		{
+			if (LocalSettings.Singleton.General.NoInputSecondsToEstop == 0)
+				return 0;
+			var lastInput = Time.GetTicksMsec() - _autoEstop_lastInput;
+			return (long)LocalSettings.Singleton.General.NoInputMsecToEstop - (long)lastInput;
+		}
+	}
+
+	#endregion Properties
+
+	#region Ctor
+
+	public PressedKeys()
+	{
+		Input.JoyConnectionChanged += InputOnJoyConnectionChanged;
+
+		_cameraMoveVector = Vector4.Zero;
+		_roverMovement = new();
+		_manipulatorMovement = new();
+		_samplerControl = new();
+		SetupControllerPresets();
+
+		LocalSettings.Singleton.CategoryChanged += OnSettingsCategoryChanged;
+		LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
+	}
+
+	#endregion Ctor
+
+	#region Methods.Settings
+
+	void OnSettingsCategoryChanged(StringName property)
+	{
+		if (property != nameof(LocalSettings.Joystick)) return;
+
+		SetupControllerPresets();
+	}
+
+	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
+	{
+		if (category != nameof(LocalSettings.Joystick)) return;
+
+		switch (name)
+		{
+			case nameof(LocalSettings.Joystick.RoverDriveController):
+				SetupControllerPresets();
+				break;
+		}
+	}
+
+	#endregion Methods.Settings
+
+	#region Methods.HandleInput
+
+	public void HandleEstop()
+	{
+		var lastInput = Time.GetTicksMsec() - _autoEstop_lastInput;
+
+		if (
+			LocalSettings.Singleton.General.NoInputSecondsToEstop > 0 && // Must be enabled
+			lastInput > LocalSettings.Singleton.General.NoInputMsecToEstop && // Last input longer than expected
+			ControlMode != ControlMode.EStop // Not in EStop already
+		)
+		{
+			ControlMode = ControlMode.EStop;
+			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by Auto-EStop).");
+		}
+
+		if (_roverModeControllerPreset.EstopReq())
+		{
+			_autoEstop_lastInput = Time.GetTicksMsec(); //or else will not vibrate when already in Auto E-Stop
+			ControlMode = ControlMode.EStop;
+			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by InputController).");
+		}
+	}
+
+	public bool HandleInputEvent(InputEvent inputEvent)
+	{
+		if (_roverModeControllerPreset.HandleInput(inputEvent, _controlMode, out _controlMode))
+		{
+			OnControlModeChanged?.Invoke(_controlMode);
+			StopAll();
+			OnAcceptedInput(inputEvent);
+			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as ControlMode");
+			return true;
+		}
+
+		if (LocalSettings.Singleton.General.PedanticEstop && ControlMode == ControlMode.EStop)
+		{
+			//print only if some controller is happy to take input
+			bool isInputHandled =
+				_roverCameraControllerPreset.HandleInput(inputEvent, _cameraMoveVector, out _);
+
+			if(isInputHandled)
+				EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "PedanticEstop is enabled. Input rejected.");
+			return false;
+		}
+
+		// camera control
+		switch (this.ControlMode)
+		{
+			case ControlMode.EStop:
+			case ControlMode.Rover:
+			case ControlMode.Manipulator: // was disabled originally
+			case ControlMode.Sampler:
+			case ControlMode.Autonomy:
+			default:
+				if (_roverCameraControllerPreset.HandleInput(inputEvent, _cameraMoveVector, out _cameraMoveVector))
+				{
+					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as Camera");
+					return true;
+				}
+				break;
+		}
+
+		// rover control
+		switch (this.ControlMode)
+		{
+			case ControlMode.Rover:
+				if (_roverDriveControllerPreset.HandleInput(inputEvent, _roverMovement, out _roverMovement))
+				{
+					OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
+					OnRoverMovementVector?.Invoke(_roverMovement);
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as RoverDrive");
+					return true;
+				}
+				break;
+			case ControlMode.Manipulator:
+				if (_roverManipulatorControllerPreset.HandleInput(inputEvent, _manipulatorMovement, out _manipulatorMovement))
+				{
+					OnManipulatorMovement?.Invoke(_manipulatorMovement);
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as RoverManipulator");
+					return true;
+				}
+				break;
+			case ControlMode.Sampler:
+				if (_roverSamplerControllerPreset.HandleInput(inputEvent, _samplerControl, out _samplerControl))
+				{
+					OnSamplerMovement?.Invoke(_samplerControl);
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as RoverSampler");
+					return true;
+				}
+				break;
+		}
+
+		return false;
+	}
+
+	#endregion Methods.HandleInput
+
+	#region Methods
+
+	private void SetupControllerPresets()
+	{
+		_roverModeControllerPreset = new StandardModeController();
+		_roverDriveControllerPreset =
+			RoverDriveControllerSelector.GetController(
+				(RoverDriveControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverDriveController
+			);
+		_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
+		_roverSamplerControllerPreset = new SamplerController();
+		_roverCameraControllerPreset = new OriginalCameraController();
+
+		ControllerPresetChanged?.Invoke();
+	}
+
+	private void InputOnJoyConnectionChanged(long device, bool connected)
+	{
+		var status = connected ? "connected" : "disconnected";
+		EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Pad {status}");
+		OnPadConnectionChanged?.Invoke(PadConnected);
+		StopAll();
+	}
+
+	private void StopAll()
+	{
+		EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Verbose, "Stopping all movement");
+		RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = KinematicMode.Ackermann };
+		ManipulatorMovement = new ManipulatorControl();
+		SamplerMovement = new SamplerControl();
+
+		CameraMoveVector = Vector4.Zero;
+	}
+
+	private void OnAcceptedInput(InputEvent inputEvent)
+	{
+		_autoEstop_lastInput = Time.GetTicksMsec();
+		bool inputIsJoystick = inputEvent is InputEventJoypadButton or InputEventJoypadMotion;
+		LastAcceptedInput?.Invoke(inputIsJoystick ? InputHelpHint.HintVisibility.Joy : InputHelpHint.HintVisibility.Kb);
+	}
+
+	#endregion Methods
+
+	#region IDisposable
+
+	public void Dispose()
+	{
+		Dispose(disposing: true);
+		GC.SuppressFinalize(this);
+	}
+
+	protected virtual void Dispose(bool disposing)
+	{
+		if (_disposedValue) return;
+
+		if (disposing)
+		{
+			LocalSettings.Singleton.CategoryChanged -= OnSettingsCategoryChanged;
+			LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
+		}
+
+		_disposedValue = true;
+	}
+
+	#endregion IDisposable
 }

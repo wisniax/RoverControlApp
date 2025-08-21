@@ -38,7 +38,7 @@ namespace RoverControlApp.MVVM.Model
 
 		private void ThreadWork()
 		{
-			EventLogger.LogMessageDebug("MissionStatus", EventLogger.LogLevel.Verbose, "Retrieving status in progress");
+			EventLogger.LogMessage("MissionStatus", EventLogger.LogLevel.Verbose, "Retrieving status in progress");
 			string? serialized = "";
 			SpinWait.SpinUntil(() => MqttNode.Singleton.ConnectionState == CommunicationState.Opened);
 			SpinWait.SpinUntil(() =>

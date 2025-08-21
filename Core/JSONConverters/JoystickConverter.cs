@@ -1,7 +1,8 @@
-﻿using RoverControlApp.Core.Settings;
-using System;
+﻿using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+
+using RoverControlApp.Core.Settings;
 
 namespace RoverControlApp.Core.JSONConverters;
 
@@ -16,8 +17,9 @@ public class JoystickConverter : JsonConverter<Joystick>
 
 		int? roverDriveController = null;
 		bool? toggleableKinematics = null;
-		float? deadzone = null;
+		float? minimalInput = null;
 		bool? vibrateOnModeChange = null;
+		bool? vibrateOnAutoEstop = null;
 
 		while (reader.Read())
 		{
@@ -38,11 +40,14 @@ public class JoystickConverter : JsonConverter<Joystick>
 				case nameof(Joystick.ToggleableKinematics):
 					toggleableKinematics = reader.GetBoolean();
 					break;
-				case nameof(Joystick.Deadzone):
-					deadzone = reader.GetSingle();
+				case nameof(Joystick.MinimalInput):
+					minimalInput = reader.GetSingle();
 					break;
 				case nameof(Joystick.VibrateOnModeChange):
 					vibrateOnModeChange = reader.GetBoolean();
+					break;
+				case nameof(Joystick.VibrateOnAutoEstop):
+					vibrateOnAutoEstop = reader.GetBoolean();
 					break;
 				default:
 					reader.Skip();
@@ -54,8 +59,9 @@ public class JoystickConverter : JsonConverter<Joystick>
 		(
 			roverDriveController ?? Default.RoverDriveController,
 			toggleableKinematics ?? Default.ToggleableKinematics,
-			deadzone ?? Default.Deadzone,
-			vibrateOnModeChange ?? Default.VibrateOnModeChange
+			minimalInput ?? Default.MinimalInput,
+			vibrateOnModeChange ?? Default.VibrateOnModeChange,
+			vibrateOnAutoEstop ?? Default.VibrateOnAutoEstop
 		);
 	}
 
@@ -64,8 +70,9 @@ public class JoystickConverter : JsonConverter<Joystick>
 		writer.WriteStartObject();
 		writer.WriteNumber(nameof(Joystick.RoverDriveController), value.RoverDriveController);
 		writer.WriteBoolean(nameof(Joystick.ToggleableKinematics), value.ToggleableKinematics);
-		writer.WriteNumber(nameof(Joystick.Deadzone), value.Deadzone);
+		writer.WriteNumber(nameof(Joystick.MinimalInput), value.MinimalInput);
 		writer.WriteBoolean(nameof(Joystick.VibrateOnModeChange), value.VibrateOnModeChange);
+		writer.WriteBoolean(nameof(Joystick.VibrateOnAutoEstop), value.VibrateOnAutoEstop);
 		writer.WriteEndObject();
 	}
 }

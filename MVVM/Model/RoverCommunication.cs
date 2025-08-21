@@ -1,10 +1,13 @@
-﻿using Godot;
-using MQTTnet.Protocol;
-using RoverControlApp.Core;
-using System;
+﻿using System;
 using System.ServiceModel;
 using System.Text.Json;
 using System.Threading.Tasks;
+
+using Godot;
+
+using MQTTnet.Protocol;
+
+using RoverControlApp.Core;
 
 namespace RoverControlApp.MVVM.Model
 {
@@ -53,7 +56,6 @@ namespace RoverControlApp.MVVM.Model
 			pressedKeys.OnRoverMovementVector += RoverMovementVectorChanged;
 			pressedKeys.OnManipulatorMovement += RoverManipulatorVectorChanged;
 			pressedKeys.OnSamplerMovement += RoverSamplerVectorChanged;
-			pressedKeys.OnContainerMovement += PressedKeysOnOnContainerMovement;
 
 			missionStatus.OnRoverMissionStatusChanged += OnRoverMissionStatusChanged;
 
@@ -65,16 +67,20 @@ namespace RoverControlApp.MVVM.Model
 			RoverCommunication_OnControlStatusChanged(GenerateRoverStatus()).Wait(250);
 		}
 
-		private async Task PressedKeysOnOnContainerMovement(MqttClasses.RoverContainer arg)
-		{
-			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicRoverContainer,
-				JsonSerializer.Serialize(arg));
-		}
-
 		private async void OnMqttConnectionChanged(CommunicationState arg)
 		{
+			//this needs to be called or else no updates.
+			GenerateRoverStatus(connection: arg);
+			switch (arg)
+			{
+				case CommunicationState.Opened:
+				case CommunicationState.Faulted:
+					break; // continue as normal
+				default:
+					return; // poker face
+			}
 			await RoverMovementVectorChanged(_pressedKeys.RoverMovement);
-			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(connection: arg));
+			await RoverCommunication_OnControlStatusChanged(RoverStatus!);
 		}
 
 		private async Task OnPadConnectionChanged(bool arg)

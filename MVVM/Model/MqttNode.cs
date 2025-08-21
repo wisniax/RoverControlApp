@@ -1,24 +1,30 @@
-﻿using Godot;
-using MQTTnet;
-using MQTTnet.Client;
-using MQTTnet.Extensions.ManagedClient;
-using MQTTnet.Protocol;
-using MQTTnet.Server;
-using RoverControlApp.Core;
-using RoverControlApp.Core.Settings;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Godot;
+
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Extensions.ManagedClient;
+using MQTTnet.Protocol;
+using MQTTnet.Server;
+
+using RoverControlApp.Core;
+using RoverControlApp.Core.Settings;
+
 namespace RoverControlApp.MVVM.Model;
 
 public partial class MqttNode : Node
-{ 
+{
 	[Signal]
 	public delegate void ConnectionChangedEventHandler(ConnectionState state);
 
@@ -37,7 +43,7 @@ public partial class MqttNode : Node
 			if (_connectionState == value) return;
 			_connectionState = value;
 			CallDeferred(MethodName.EmitSignal, SignalName.ConnectionChanged, (int)_connectionState);
-			EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Connection state changed to \"{value}\"");
+			EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Verbose, $"Connection state changed to \"{value}\"");
 		}
 	}
 
@@ -70,7 +76,7 @@ public partial class MqttNode : Node
 
 	/*
 	 * Settings handlers
-	 */ 
+	 */
 
 	void OnSettingsCategoryChanged(StringName property)
 	{
@@ -97,7 +103,7 @@ public partial class MqttNode : Node
 	{
 		if (category != nameof(Mqtt) || name != nameof(Mqtt.ClientSettings)) return;
 
-		MqRestart();		
+		MqRestart();
 	}
 
 	/*
@@ -113,16 +119,41 @@ public partial class MqttNode : Node
 	 * Public methods Mqtt
 	 */
 
-	public async Task EnqueueMessageAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
+	/// <summary>
+	/// Adds message to be send. <br/>
+	/// Queue is drpooed when changing server to another one<br/>
+	/// NOTE Messages have guarantee to be enqueued only on state Opening, Opened and Faulted !
+	/// </summary>
+	/// <returns>false when message was ignored</returns>
+	public async Task<bool> EnqueueMessageAsync(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
-		await _managedMqttClient.EnqueueAsync(TopicFull(subtopic),arg, qos, retain);
-		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued at subtopic: \"{subtopic}\" with:\n{arg}");
+		if (_managedMqttClient is null)
+		{
+			EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Warning, $"Message was not enqueued (async) MqttClient not ready - state {ConnectionState}");
+			return false;
+		}
+		await _managedMqttClient.EnqueueAsync(TopicFull(subtopic), arg, qos, retain);
+		EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (async) at subtopic: \"{subtopic}\" with:\n{arg}");
+		return true;
 	}
 
-	public void EnqueueMessage(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
+	/// <summary>
+	/// Adds message to be send. <br/>
+	/// Queue is drpooed when changing server to another one<br/>
+	/// NOTE Messages have guarantee to be enqueued only on state Opening, Opened and Faulted !
+	/// </summary>
+	/// <returns>false when message was ignored</returns>
+	public bool EnqueueMessage(string subtopic, string? arg, MqttQualityOfServiceLevel qos = MqttQualityOfServiceLevel.AtMostOnce, bool retain = false)
 	{
-		Task.Run(async () => await _managedMqttClient.EnqueueAsync(subtopic, arg, qos, retain));
-		EventLogger.LogMessageDebug("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued at subtopic: \"{subtopic}\" with:\n{arg}");
+		if (_managedMqttClient is null)
+		{
+			EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Warning, $"Message was NOT enqueued (sync). MqttClient not ready - state {ConnectionState}");
+			return false;
+		}
+		//await completion
+		_managedMqttClient.EnqueueAsync(subtopic, arg, qos, retain).ConfigureAwait(false).GetAwaiter().GetResult();
+		EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (sync) at subtopic: \"{subtopic}\" with:\n{arg}");
+		return true;
 	}
 
 	public MqttApplicationMessage? GetReceivedMessageOnTopic(string? subtopic)
@@ -147,18 +178,17 @@ public partial class MqttNode : Node
 	{
 		if (ConnectionState == CommunicationState.Created)
 		{
-			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is already starting!");
+			EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is already starting!");
 			return false;
 		}
 
 		if (ConnectionState != CommunicationState.Closed)
 		{
-			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is not fully closed!");
+			EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Warning, "Can't start, mqtt is not fully closed!");
 			return false;
 		}
 
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Starting mqtt");
-		ConnectionState = CommunicationState.Created;
 
 		_cts = new CancellationTokenSource();
 		_responses = new Dictionary<string, MqttApplicationMessage?>();
@@ -172,24 +202,24 @@ public partial class MqttNode : Node
 		switch (ConnectionState)
 		{
 			case CommunicationState.Closed:
-				EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is stopped!");
+				EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is stopped!");
 				return false;
 			case CommunicationState.Closing:
-				EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is already stopping!");
+				EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Warning, "Can't stop, mqtt is already stopping!");
 				return false;
 		}
 
-		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, "Requesting thread stop");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Requesting thread stop");
 		_cts!.Cancel();
 
 		if(awaitFullStop)
 		{
 			_mqttThread!.Join();
-			EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
+			EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
 			return true;
 		}
 
-		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose,
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose,
 			_mqttThread!.Join(200) ? "Thread stop confirmed!" : "Thread stop not confirmed. Proceeding");
 
 		return true;
@@ -242,22 +272,54 @@ public partial class MqttNode : Node
 	 * Methods used only on thread
 	 */
 
+	bool ValidateCertificate(MqttClientCertificateValidationEventArgs args)
+	{
+		// 0. Skip if user want to skip
+		if (LocalSettings.Singleton.Mqtt.ClientSettings.SkipCAVerification)
+			return true;
+
+		// 1. Check for no errors
+		if (args.SslPolicyErrors == SslPolicyErrors.None)
+			return true;
+
+		// 2. Validate against known CA
+		if (!File.Exists(LocalSettings.Singleton.Mqtt.ClientSettings.CertificateAuthorityCertPath))
+			return false;
+
+		var caCert = new X509Certificate2(LocalSettings.Singleton.Mqtt.ClientSettings.CertificateAuthorityCertPath);
+		var cert2 = new X509Certificate2(args.Certificate);
+
+		// Verify certificate chain
+		args.Chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+		args.Chain.ChainPolicy.TrustMode = X509ChainTrustMode.CustomRootTrust;
+		args.Chain.ChainPolicy.CustomTrustStore.Add(caCert);
+
+		if (args.Chain.Build(cert2))
+		{
+			var valid = args.Chain.ChainElements
+				.Cast<X509ChainElement>()
+				.Any(x => x.Certificate.Thumbprint == caCert.Thumbprint);
+
+			return valid;
+		}
+
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Error, "Mqtt server certificate validation failed!");
+		return false;
+	}
+
 	private void ThWork()
 	{
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread started");
-		ConnectionState = CommunicationState.Opening;
-		
+
 		//kind of worried about this one
 		ThClientConnect().Wait();
 		SpinWait.SpinUntil(() => _cts!.IsCancellationRequested);
 
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread stopping");
-		ConnectionState = CommunicationState.Closing;
 
 		//and this
 		ThClientDisconnect().Wait();
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread quit");
-		ConnectionState = CommunicationState.Closed;
 	}
 
 	private async Task ThClientConnect()
@@ -269,17 +331,40 @@ public partial class MqttNode : Node
 
 		_managedMqttClient = mqttFactory.CreateManagedMqttClient();
 
-		var mqttClientOptions = new MqttClientOptionsBuilder()
+		ConnectionState = CommunicationState.Created;
+
+
+
+
+		var mqttClientOptionsBuilder = new MqttClientOptionsBuilder()
 			.WithTcpServer(LocalSettings.Singleton.Mqtt.ClientSettings.BrokerIp, LocalSettings.Singleton.Mqtt.ClientSettings.BrokerPort)
 			.WithKeepAlivePeriod(TimeSpan.FromSeconds(LocalSettings.Singleton.Mqtt.ClientSettings.PingInterval))
 			.WithWillTopic(TopicFull(LocalSettings.Singleton.Mqtt.TopicRoverStatus))
 			.WithWillPayload(JsonSerializer.Serialize(new MqttClasses.RoverStatus() { CommunicationState = CommunicationState.Faulted }))
 			.WithWillQualityOfServiceLevel(MqttQualityOfServiceLevel.ExactlyOnce)
 			.WithWillRetain()
-			.Build();
+			.WithTimeout(new TimeSpan(0, 0, 3));
+
+		if (!string.IsNullOrWhiteSpace(LocalSettings.Singleton.Mqtt.ClientSettings.Username))
+		{
+			mqttClientOptionsBuilder.WithCredentials(
+				LocalSettings.Singleton.Mqtt.ClientSettings.Username,
+				LocalSettings.Singleton.Mqtt.ClientSettings.Password
+			);
+		}
+
+		if (LocalSettings.Singleton.Mqtt.ClientSettings.UseTls)
+		{
+			var mqttTls = new MqttClientTlsOptionsBuilder()
+				.WithSslProtocols(System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13)
+				.WithCertificateValidationHandler(ValidateCertificate)
+				.Build();
+
+			mqttClientOptionsBuilder.WithTlsOptions(mqttTls);
+		}
 
 		var managedMqttClientOptions = new ManagedMqttClientOptionsBuilder()
-			.WithClientOptions(mqttClientOptions)
+			.WithClientOptions(mqttClientOptionsBuilder.Build())
 			.WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
 			.WithMaxPendingMessages(99)
 			.WithPendingMessagesOverflowStrategy(MqttPendingMessagesOverflowStrategy.DropOldestQueuedMessage)
@@ -292,14 +377,17 @@ public partial class MqttNode : Node
 
 		await _managedMqttClient.StartAsync(managedMqttClientOptions);
 
-
 		await MqSubscribeAllAsync();
+
+		ConnectionState = CommunicationState.Opening;
 	}
 
 	private async Task ThClientDisconnect()
 	{
 		if (_managedMqttClient is null)
 			return;
+
+		ConnectionState = CommunicationState.Closing;
 
 		_managedMqttClient.DisconnectedAsync -= ThOnDisconnectedAsync;
 		_managedMqttClient.ConnectedAsync -= ThOnConnectedAsync;
@@ -339,6 +427,7 @@ public partial class MqttNode : Node
 		_managedMqttClient.Dispose();
 		_managedMqttClient = null;
 
+		ConnectionState = CommunicationState.Closed;
 	}
 
 	private Task ThOnConnectedAsync(MqttClientConnectedEventArgs arg)
@@ -350,7 +439,17 @@ public partial class MqttNode : Node
 
 	private Task ThOnDisconnectedAsync(MqttClientDisconnectedEventArgs arg)
 	{
-		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Info, "Mqtt is now Disconnected!");
+		var clientSettings = LocalSettings.Singleton.Mqtt.ClientSettings;
+		switch (arg.ConnectResult?.ResultCode)
+		{
+			case null:
+				EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Error, $"Mqtt cant connect. Exception: \"{arg.Exception.Message}\".");
+				break;
+			default:
+				EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Error, $"Mqtt cant connect. Error: \"{arg.ConnectResult.ResultCode}\"");
+				break;
+		}
+
 		ConnectionState = CommunicationState.Faulted;
 		return Task.CompletedTask;
 	}
@@ -363,7 +462,7 @@ public partial class MqttNode : Node
 
 	private Task ThOnApplicationMessageReceivedAsync(MqttApplicationMessageReceivedEventArgs arg)
 	{
-		EventLogger.LogMessageDebug(LogSource, EventLogger.LogLevel.Verbose, $"Message received on topic {arg.ApplicationMessage.Topic} with:\n   {arg.ApplicationMessage.ConvertPayloadToString()}");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, $"Message received on topic {arg.ApplicationMessage.Topic} with:\n   {arg.ApplicationMessage.ConvertPayloadToString()}");
 
 		if (_responses == null) return Task.CompletedTask;
 

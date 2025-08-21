@@ -1,16 +1,28 @@
-using Godot;
-using RoverControlApp.Core;
-using RoverControlApp.MVVM.Model;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.ServiceModel;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+using Godot;
+
+using RoverControlApp.Core;
+using RoverControlApp.Core.RoverControllerPresets;
+using RoverControlApp.MVVM.Model;
+
 namespace RoverControlApp.MVVM.ViewModel
 {
 	public partial class MainViewModel : Control
 	{
+		private enum InputHelpHintMode
+		{
+			Hidden = 0,
+			All = 1,
+			SkipCamera = 2,
+			SkipCameraAndNotes = 3,
+		}
+
 		public PressedKeys PressedKeys { get; private set; }
 		public RoverCommunication RoverCommunication { get; private set; }
 		public MissionStatus MissionStatus { get; private set; }
@@ -21,10 +33,12 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
-		private JoyVibrato _joyVibrato = new();
+		private JoyVibrato _joyVibrato;
 		private BackCapture _backCapture = new();
 
 		private ImageTexture? _imTexture;
+
+		private InputHelpHintMode _inputHelpHintMode = InputHelpHintMode.Hidden;
 
 		[Export]
 		private TextureRect imTextureRect = null!;
@@ -40,7 +54,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private MissionStatus_UIOverlay MissionStatusUIDis = null!;
 
 		[Export]
-		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!, ShowBatteryMonitor;
+		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!, ShowBatteryMonitor = null!;
 		[Export]
 		private SettingsManager SettingsManagerNode = null!;
 		[Export]
@@ -57,12 +71,16 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private BatteryMonitor BatteryMonitor = null!;
 
+		[Export]
+		private InputHelpMaster InputHelpMaster = null!;
+
 		public MainViewModel()
 		{
 			PressedKeys = new PressedKeys();
 			MissionStatus = new MissionStatus();
 			RoverCommunication = new RoverCommunication(PressedKeys, MissionStatus);
 			MissionSetPoint = new MissionSetPoint();
+			_joyVibrato = new(PressedKeys);
 		}
 
 		public override void _EnterTree()
@@ -74,12 +92,14 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.OnControlModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged += InputHelp_HandleControlModeChanged;
+			PressedKeys.ControllerPresetChanged += InputHelp_HandleInputPresetChanged;
 			MissionStatus.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			BatteryMonitor.OnBatteryDataChanged += HandleBatteryPercentageChangedHandler;
 
-
+			InputHelp_HandleControlModeChanged(PressedKeys.ControlMode);
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
 		}
 
@@ -93,6 +113,8 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			ManagePtzStatus();
 			ManageRtspStatus();
+			InputHelpMaster.GenerateHints();
+			InputHelpMaster.HintType = PressedKeys.PadConnected ? InputHelpHint.HintVisibility.Joy : InputHelpHint.HintVisibility.Kb;
 
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -107,6 +129,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.OnControlModeChanged -= DriveModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
+			PressedKeys.OnControlModeChanged -= InputHelp_HandleControlModeChanged;
+			PressedKeys.ControllerPresetChanged -= InputHelp_HandleInputPresetChanged;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
@@ -118,6 +142,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		protected override void Dispose(bool disposing)
 		{
+			_joyVibrato?.Dispose();
 			PressedKeys.Dispose();
 			RoverCommunication.Dispose();
 			_rtspClient?.Dispose();
@@ -125,10 +150,20 @@ namespace RoverControlApp.MVVM.ViewModel
 			base.Dispose(disposing);
 		}
 
-		public override void _Input(InputEvent @event)
+		public override void _UnhandledInput(InputEvent @event)
 		{
+			if (@event is InputEventKey inputEvKey && inputEvKey.Keycode != Key.Shift)
+				InputHelpMaster.HintType = InputHelpHint.HintVisibility.Kb;
+			else if (@event is InputEventJoypadButton)
+				InputHelpMaster.HintType = InputHelpHint.HintVisibility.Joy;
+
 			if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion)) return;
-			PressedKeys?.HandleInputEvent(@event);
+
+			if (PressedKeys.HandleInputEvent(@event))
+			{
+				GetViewport().SetInputAsHandled();
+				return;
+			}
 
 			if (@event.IsActionPressed("app_backcapture_save"))
 			{
@@ -136,12 +171,21 @@ namespace RoverControlApp.MVVM.ViewModel
 					EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Info, "Saved capture!");
 				else
 					EventLogger.LogMessage("MainViewModel/BackCapture", EventLogger.LogLevel.Error, "Save failed!");
+				GetViewport().SetInputAsHandled();
+			}
+
+			if (InputHelp_HandleInput(@event))
+			{
+				GetViewport().SetInputAsHandled();
+				return;
 			}
 		}
 
 		// Called every frame. 'delta' is the elapsed time since the previous frame.
 		public override void _Process(double delta)
 		{
+			PressedKeys.HandleEstop();
+
 			if (_rtspClient is { NewFrameSaved: true })
 			{
 				_backCapture.CleanUpHistory();
@@ -212,10 +256,10 @@ namespace RoverControlApp.MVVM.ViewModel
 				case true when _ptzClient is null:
 					_ptzClient = new OnvifPtzCameraController();
 					_ptzClientWeak = new(_ptzClient);
-					PressedKeys.OnAbsoluteVectorChanged += _ptzClient.ChangeMoveVector;
+					PressedKeys.CameraMoveVectorChanged += _ptzClient.ChangeMoveVector;
 					break;
 				case false when _ptzClient is not null:
-					PressedKeys.OnAbsoluteVectorChanged -= _ptzClient.ChangeMoveVector;
+					PressedKeys.CameraMoveVectorChanged -= _ptzClient.ChangeMoveVector;
 					_ptzClient.Dispose();
 					_ptzClient = null;
 					break;
@@ -267,8 +311,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			string? rtspAge = rtspClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 			string? ptzAge = ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
-			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode}, " + 
-			              $"{(RoverCommunication?.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
+			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication?.RoverStatus?.ControlMode}, " +
+						  $"{(RoverCommunication?.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
 						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication?.RoverStatus?.CommunicationState}[/color], " +
 						  $"Pad connected: {RoverCommunication?.RoverStatus?.PadConnected}\n");
 			switch (RoverCommunication?.RoverStatus?.ControlMode)
@@ -278,20 +322,20 @@ namespace RoverControlApp.MVVM.ViewModel
 						(float)PressedKeys.RoverMovement.YAxis);
 
 					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {vecc.X:F2}, XAxis: {vecc.Y:F2}, YAxis: {vecc.Z:F2}, Mode: {PressedKeys.RoverMovement.Mode}\n");
-					
+
 					break;
 				case MqttClasses.ControlMode.Manipulator:
 					FancyDebugViewRLab.AppendText($"PressedKeys: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys?.ManipulatorMovement)}\n");
 					break;
 				case MqttClasses.ControlMode.Sampler:
 					FancyDebugViewRLab.AppendText($"PressedKeys: Sampler DrillAction: {PressedKeys.SamplerMovement.DrillAction:F2}, " +
-					                              $"DrillMov: {PressedKeys.SamplerMovement.DrillMovement:F2}, " +
-					                              $"PlatformMov: {PressedKeys.SamplerMovement.PlatformMovement:F2}, " +
+												  $"DrillMov: {PressedKeys.SamplerMovement.DrillMovement:F2}, " +
+												  $"PlatformMov: {PressedKeys.SamplerMovement.PlatformMovement:F2}, " +
 												  $"{(LocalSettings.Singleton.Sampler.Container0.CustomName == "-" ? "Container0" : LocalSettings.Singleton.Sampler.Container0.CustomName)}" +
 																$": {PressedKeys.SamplerMovement.ContainerDegrees0:F1}, " +
 												  $"{(LocalSettings.Singleton.Sampler.Container1.CustomName == "-" ? "Container1" : LocalSettings.Singleton.Sampler.Container1.CustomName)}" +
 																$": {PressedKeys.SamplerMovement.ContainerDegrees1:F1}, " +
-					                              $"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "Container2" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
+												  $"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "Container2" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
 																$": {PressedKeys.SamplerMovement.ContainerDegrees2:F1}\n");
 					break;
 			}
@@ -308,6 +352,34 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			else
 				FancyDebugViewRLab.AppendText($"PTZ: [color={ptzStatusColor.ToHtml(false)}]{ptzClient?.State ?? CommunicationState.Closed}[/color], Time: {ptzAge ?? "N/A "}s\n");
+
+
+			Godot.Collections.Dictionary timeDictEStop;
+			if (PressedKeys!.TimeToAutoEStopMsec > 0)
+			{
+				timeDictEStop = Time.GetTimeDictFromUnixTime(PressedKeys!.TimeToAutoEStopMsec / 1000);
+				// for number to stop jumping
+				if (LocalSettings.Singleton.General.NoInputSecondsToEstop <= 30)
+					timeDictEStop["second"] = Math.Min(LocalSettings.Singleton.General.NoInputSecondsToEstop - 1, timeDictEStop["second"].AsUInt32());
+			}
+			else
+				timeDictEStop = Time.GetTimeDictFromUnixTime(PressedKeys!.TimeToAutoEStopMsec / -1000);
+
+			switch (LocalSettings.Singleton.General.NoInputSecondsToEstop)
+			{
+				case 0:
+					FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.Red.ToHtml()}]DISABLED[/color]\n");
+					break;
+				case var x when x > 0 && PressedKeys!.TimeToAutoEStopMsec < 0:
+					FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.Green.ToHtml()}]ACTIVE[/color] ({timeDictEStop["hour"].AsUInt32():D2}:{timeDictEStop["minute"].AsUInt32():D2}:{timeDictEStop["second"].AsUInt32():D2} since activation)\n");
+					break;
+				case var x when x > 30 && PressedKeys!.TimeToAutoEStopMsec >= LocalSettings.Singleton.General.NoInputSecondsToEstop * 1000 - 10000:
+					FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.LightCyan.ToHtml()}]INACTIVE[/color] (recent input)\n");
+					break;
+				case var x when x <= 30 || PressedKeys!.TimeToAutoEStopMsec < LocalSettings.Singleton.General.NoInputSecondsToEstop * 1000 - 10000:
+					FancyDebugViewRLab.AppendText($"Auto-EStop: [color={Colors.LightCyan.ToHtml()}]INACTIVE[/color] ({timeDictEStop["minute"].AsUInt32():D2}:{timeDictEStop["second"].AsUInt32():D2} left)\n");
+					break;
+			}
 		}
 
 		void HandleBatteryPercentageChangedHandler(int connectedBatts, int data, Color color)
@@ -323,18 +395,80 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			else
 			{
-				ShowBatteryMonitor.SetText($"BATTERY {(float)data/10}V");
+				ShowBatteryMonitor.SetText($"BATTERY {(float)data / 10}V");
 			}
 			ShowBatteryMonitor.SetModulate(color);
-			if(color != Colors.Red) return;
-			if(LocalSettings.Singleton.Battery.ShowOnLow)
+			if (color != Colors.Red) return;
+			if (LocalSettings.Singleton.Battery.ShowOnLow)
 			{
 				ShowBatteryMonitor.SetPressed(true);
 				BatteryMonitor.SetVisible(true);
 			}
 		}
 
-		public async Task<bool> CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
+		private void InputHelp_HandleInputPresetChanged()
+		{
+			InputHelp_HandleControlModeChanged(PressedKeys.ControlMode);
+		}
+
+		private Task InputHelp_HandleControlModeChanged(MqttClasses.ControlMode controlMode)
+		{
+			if (_inputHelpHintMode == InputHelpHintMode.Hidden)
+				return Task.CompletedTask;
+			InputHelpMaster.ActionAwareControllers = InputHelp_HintsToShow(controlMode);
+			return Task.CompletedTask;
+		}
+
+		private IActionAwareController[] InputHelp_HintsToShow(MqttClasses.ControlMode controlMode)
+		{
+			List<IActionAwareController> wipList = [PressedKeys.RoverModeControllerPreset];
+
+			if (_inputHelpHintMode == InputHelpHintMode.All)
+			{
+				wipList.Add(PressedKeys.RoverCameraControllerPreset);
+			}
+
+			switch (controlMode)
+			{
+				case MqttClasses.ControlMode.EStop:
+					break; //empty
+				case MqttClasses.ControlMode.Rover:
+					wipList.Add(PressedKeys.RoverDriveControllerPreset);
+					break;
+				case MqttClasses.ControlMode.Manipulator:
+					wipList.Add(PressedKeys.RoverManipulatorControllerPreset);
+					break;
+				case MqttClasses.ControlMode.Sampler:
+					wipList.Add(PressedKeys.RoverSamplerControllerPreset);
+					break;
+				case MqttClasses.ControlMode.Autonomy:
+					break; //empty
+			}
+
+			return [.. wipList];
+		}
+
+		private bool InputHelp_HandleInput(InputEvent @event)
+		{
+			if (@event.IsActionPressed("input_help_show", exactMatch: true))
+			{
+				_inputHelpHintMode++;
+				if (_inputHelpHintMode > InputHelpHintMode.SkipCameraAndNotes)
+				{
+					_inputHelpHintMode = InputHelpHintMode.Hidden;
+				}
+
+
+
+				InputHelpMaster.ShowAdditionalNotes = _inputHelpHintMode < InputHelpHintMode.SkipCameraAndNotes;
+				InputHelpMaster.Visible = _inputHelpHintMode != InputHelpHintMode.Hidden;
+				InputHelp_HandleControlModeChanged(PressedKeys.ControlMode);
+				return true;
+			}
+			return false;
+		}
+
+		public bool CaptureCameraImage(string subfolder = "CapturedImages", string? fileName = null, string fileExtension = "jpg")
 		{
 			if (_rtspClient is null)
 				return false;
@@ -407,7 +541,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void OnRTSPCapture()
 		{
-			CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString());
+			Task.Run(() => CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()));
 		}
 	}
 }
