@@ -1,0 +1,62 @@
+[gd_scene load_steps=2 format=3 uid="uid://dlppkwr8yuhdw"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/Waypoint.cs" id="1_6fbkx"]
+
+[node name="Waypoint" type="Panel" node_paths=PackedStringArray("numberLabel", "xaxisEdit", "yaxisEdit", "deadzoneEdit", "waitCheckBox", "deleteButton")]
+custom_minimum_size = Vector2(0, 36)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -799.0
+offset_bottom = -609.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6fbkx")
+numberLabel = NodePath("HBoxContainer/Label")
+xaxisEdit = NodePath("HBoxContainer/TextEdit")
+yaxisEdit = NodePath("HBoxContainer/TextEdit2")
+deadzoneEdit = NodePath("HBoxContainer/TextEdit3")
+waitCheckBox = NodePath("HBoxContainer/CheckBox")
+deleteButton = NodePath("HBoxContainer/Button")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 2.0
+offset_right = 353.0
+offset_bottom = 37.0
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+custom_minimum_size = Vector2(26.595, 0)
+layout_mode = 2
+text = "XX."
+
+[node name="TextEdit" type="TextEdit" parent="HBoxContainer"]
+custom_minimum_size = Vector2(78.015, 0)
+layout_mode = 2
+placeholder_text = "x axis"
+scroll_fit_content_height = true
+
+[node name="TextEdit2" type="TextEdit" parent="HBoxContainer"]
+custom_minimum_size = Vector2(78.015, 0)
+layout_mode = 2
+placeholder_text = "y axis"
+scroll_fit_content_height = true
+
+[node name="TextEdit3" type="TextEdit" parent="HBoxContainer"]
+custom_minimum_size = Vector2(84.805, 0)
+layout_mode = 2
+placeholder_text = "deadzone"
+scroll_fit_content_height = true
+
+[node name="CheckBox" type="CheckBox" parent="HBoxContainer"]
+custom_minimum_size = Vector2(24.985, 0)
+layout_mode = 2
+alignment = 1
+
+[node name="Button" type="Button" parent="HBoxContainer"]
+modulate = Color(1, 0, 0, 1)
+custom_minimum_size = Vector2(39.6, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 19
+text = "X"

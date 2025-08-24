@@ -19,9 +19,10 @@ public partial class General : SettingBase, ICloneable
 		_backCaptureLength = 15000;
 		_noInputSecondsToEstop = 120;
 		_pedanticEstop = true;
+		_missionControlMapPath = "ExampleMap.jpg";
 	}
 
-	public General(bool verboseDebug, string missionControlPosition, string missionControlSize, long backCaptureLength, int noInputSecondsToEstop, bool pedanticEstop)
+	public General(bool verboseDebug, string missionControlPosition, string missionControlSize, long backCaptureLength, int noInputSecondsToEstop, bool pedanticEstop, string missionControlMapPath)
 	{
 		_verboseDebug = verboseDebug;
 		_missionControlPosition = missionControlPosition;
@@ -29,6 +30,7 @@ public partial class General : SettingBase, ICloneable
 		_backCaptureLength = backCaptureLength;
 		_noInputSecondsToEstop = noInputSecondsToEstop;
 		_pedanticEstop = pedanticEstop;
+		_missionControlMapPath = missionControlMapPath;
 	}
 
 	public object Clone()
@@ -40,7 +42,8 @@ public partial class General : SettingBase, ICloneable
 			MissionControlSize = _missionControlSize,
 			BackCaptureLength = _backCaptureLength,
 			NoInputSecondsToEstop = _noInputSecondsToEstop,
-			PedanticEstop = _pedanticEstop
+			PedanticEstop = _pedanticEstop,
+			MissionControlMapPath = _missionControlMapPath
 		};
 	}
 
@@ -86,6 +89,13 @@ public partial class General : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _pedanticEstop, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, customTooltip: "Path to the map for Mission Control")]
+	public string MissionControlMapPath
+	{
+		get => _missionControlMapPath;
+		set => EmitSignal_SettingChanged(ref _missionControlMapPath, value);
+	}
+
 	public ulong NoInputMsecToEstop => (ulong)_noInputSecondsToEstop * 1000;
 
 
@@ -95,4 +105,5 @@ public partial class General : SettingBase, ICloneable
 	long _backCaptureLength;
 	int _noInputSecondsToEstop;
 	bool _pedanticEstop;
+	string _missionControlMapPath;
 }
