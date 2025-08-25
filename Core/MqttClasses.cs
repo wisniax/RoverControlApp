@@ -78,6 +78,13 @@ namespace RoverControlApp.Core
 			//RequestData = 3
 		}
 
+		public enum SensorRequest {
+			DEEP_WEIGHT = 0,
+			SURFACE_WEIGHT = 1,
+			ROCK_SAMPLE_WEIGHT = 2,
+			PH_VALUE = 4
+		}
+
 		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
@@ -241,12 +248,26 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; }
 		}
 
-		public class WeightSensorData
+		public class SensorData
 		{
-			//Pair of sensor name and value
+			public string SensorLabel { get; set; } = string.Empty;
+			public float SensorLastValue { get; set; } = 0.00f;
+			public int VescId { get; set; } // VESC ID for weight sensors
 
-			public Dictionary<string, float> WeightSensors { get; set; } = new();
-			
+			public SensorData()
+			{
+				SensorLabel = string.Empty;
+				SensorLastValue = 0f;
+				VescId = 0;
+			}
+
+			public SensorData(string label, int vescId)
+			{
+				VescId = vescId;
+				SensorLabel = label;
+				SensorLastValue = 0f;
+			}
+
 		}
 
 	}

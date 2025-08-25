@@ -1,0 +1,53 @@
+[gd_scene load_steps=3 format=3 uid="uid://4xff2wa857p"]
+
+[ext_resource type="PackedScene" uid="uid://edfpbq8seeph" path="res://MVVM/View/SensorData.tscn" id="1_cysh8"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/SensorManager.cs" id="1_l62uu"]
+
+[node name="SensorManager" type="Panel" node_paths=PackedStringArray("_surfaceWeightData", "_deepWeightData", "_rockWeightData", "_phData")]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_right = 230.0
+offset_bottom = 500.0
+grow_horizontal = 0
+script = ExtResource("1_l62uu")
+_surfaceWeightData = NodePath("MarginContainer/VBoxContainer2/SurfaceWeightSampleData")
+_deepWeightData = NodePath("MarginContainer/VBoxContainer2/DeepWeightSampleData")
+_rockWeightData = NodePath("MarginContainer/VBoxContainer2/RockWeightSampleData")
+_phData = NodePath("MarginContainer/VBoxContainer2/PhSensorData")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer2"]
+layout_mode = 2
+text = "Sensor readings"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="SurfaceWeightSampleData" parent="MarginContainer/VBoxContainer2" instance=ExtResource("1_cysh8")]
+layout_mode = 2
+
+[node name="DeepWeightSampleData" parent="MarginContainer/VBoxContainer2" instance=ExtResource("1_cysh8")]
+layout_mode = 2
+
+[node name="RockWeightSampleData" parent="MarginContainer/VBoxContainer2" instance=ExtResource("1_cysh8")]
+layout_mode = 2
+
+[node name="PhSensorData" parent="MarginContainer/VBoxContainer2" instance=ExtResource("1_cysh8")]
+layout_mode = 2

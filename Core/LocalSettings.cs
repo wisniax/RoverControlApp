@@ -21,7 +21,6 @@ public partial class LocalSettings : Node
 		public Settings.General? General { get; set; } = null;
 		public Settings.Sampler? Sampler { get; set; } = null;
 		public Settings.Battery? Battery { get; set; } = null;
-		public Settings.WebRTCStream? WebRTCStream { get; set; } = null;
 	}
 
 	private JsonSerializerOptions serializerOptions = new() { WriteIndented = true };
@@ -59,7 +58,7 @@ public partial class LocalSettings : Node
 		_general = new();
 		_sampler = new();
 		_battery = new();
-		_webRTCStream = new();
+
 
 		if (LoadSettings()) return;
 
@@ -97,7 +96,6 @@ public partial class LocalSettings : Node
 			General = packedSettings.General ?? new();
 			Sampler = packedSettings.Sampler ?? new();
 			Battery = packedSettings.Battery ?? new();
-			WebRTCStream = packedSettings.WebRTCStream ?? new();
 		}
 		catch (Exception e)
 		{
@@ -130,7 +128,6 @@ public partial class LocalSettings : Node
 				General = General,
 				Sampler = Sampler,
 				Battery = Battery,
-				WebRTCStream = WebRTCStream
 			};
 
 			settingsFileAccess.StoreString(JsonSerializer.Serialize(packedSettings, serializerOptions));
@@ -158,7 +155,6 @@ public partial class LocalSettings : Node
 		General = new();
 		Sampler = new();
 		Battery = new();
-		WebRTCStream = new();
 	}
 
 	private void EmitSignalCategoryChanged(string sectionName)
@@ -338,24 +334,7 @@ public partial class LocalSettings : Node
 		}
 	}
 
-	[SettingsManagerVisible(customName: "WebRTC Stream Settings")]
-	public Settings.WebRTCStream WebRTCStream
-	{
-		get => _webRTCStream;
-		set
-		{
-			_webRTCStream = value;
-			_webRTCStream.Connect(
-				Settings.WebRTCStream.SignalName.SubcategoryChanged,
-				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
-			);
-			_webRTCStream.Connect(
-				Settings.WebRTCStream.SignalName.PropertyChanged,
-				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
-			);
-			EmitSignalCategoryChanged(nameof(WebRTCStream));
-		}
-	}
+
 
 	Settings.Camera _camera;
 	Settings.Mqtt _mqtt;
@@ -364,5 +343,4 @@ public partial class LocalSettings : Node
 	Settings.General _general;
 	Settings.Sampler _sampler;
 	Settings.Battery _battery;
-	Settings.WebRTCStream _webRTCStream;
 }

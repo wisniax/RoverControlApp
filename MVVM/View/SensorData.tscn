@@ -1,0 +1,80 @@
+[gd_scene load_steps=5 format=3 uid="uid://edfpbq8seeph"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/SensorDataController.cs" id="1_h4m4p"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/SliderControllerStartLeft.cs" id="2_65df5"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ayhym"]
+bg_color = Color(0.211765, 0.211765, 0.211765, 0.584314)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k2cs2"]
+
+[node name="SensorData" type="Panel" node_paths=PackedStringArray("_sensorLabel", "_sensorValue", "_sensorValueMin", "_sensorValueMax", "_sensorSlider")]
+custom_minimum_size = Vector2(200, 100)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -5.0
+offset_right = -854.0
+offset_bottom = -553.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ayhym")
+script = ExtResource("1_h4m4p")
+_sensorLabel = NodePath("Margin/HBoxContainer/Vbox/SensorLabel")
+_sensorValue = NodePath("Margin/HBoxContainer/Vbox/NumericValue")
+_sensorValueMin = NodePath("Margin/HBoxContainer/Vbox/HBoxContainer/MinLabel")
+_sensorValueMax = NodePath("Margin/HBoxContainer/Vbox/HBoxContainer/MaxLabel")
+_sensorSlider = NodePath("Margin/HBoxContainer/Vbox/HBoxContainer/DataSlider")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Margin"]
+layout_mode = 2
+
+[node name="Vbox" type="VBoxContainer" parent="Margin/HBoxContainer"]
+layout_mode = 2
+
+[node name="SensorLabel" type="Label" parent="Margin/HBoxContainer/Vbox"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Sensor label"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Margin/HBoxContainer/Vbox"]
+layout_mode = 2
+
+[node name="MinLabel" type="Label" parent="Margin/HBoxContainer/Vbox/HBoxContainer"]
+layout_mode = 2
+text = "val min"
+
+[node name="DataSlider" type="HSlider" parent="Margin/HBoxContainer/Vbox/HBoxContainer"]
+custom_minimum_size = Vector2(160, 0)
+layout_mode = 2
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_k2cs2")
+step = 0.01
+editable = false
+scrollable = false
+tick_count = 5
+ticks_on_borders = true
+script = ExtResource("2_65df5")
+ForegroundColor = Color(1, 0, 0, 1)
+BackgroundColor = Color(0, 1, 0, 1)
+
+[node name="MaxLabel" type="Label" parent="Margin/HBoxContainer/Vbox/HBoxContainer"]
+layout_mode = 2
+text = "val max"
+
+[node name="NumericValue" type="Label" parent="Margin/HBoxContainer/Vbox"]
+layout_mode = 2
+text = "numeric value"
+horizontal_alignment = 1

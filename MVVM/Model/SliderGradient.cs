@@ -43,15 +43,41 @@ public class SliderGradient
 		}
 	}
 
-	public SliderGradient(Color active, Color inActive, float startValue = 0.0f)
+	public float SliderValueNoOffset
 	{
+		get => _gradientTexture.Gradient.GetOffset(1);
+		set
+		{
+			float clamped = Mathf.Clamp(value, 0f, 1f);
+
+			_gradientTexture.Gradient.SetOffset(1, clamped);
+			_gradientTexture.Gradient.SetOffset(2, clamped);
+		}
+	}
+
+	public SliderGradient(Color active, Color inActive, float startValue = 0.0f, bool addOffset = true)
+	{
+
+		float []offsets;
+
+		if (addOffset)
+		{
+			offsets = new[] { 0.0f, 0.49999999f, 0.5f, 0.50000001f };
+		}
+		else
+		{
+			offsets = new[] { 0.0f, 1.0f };
+		}
 		_gradientTexture = new()
 		{
 			Width = 512,
+
+			
+
 			Gradient = new()
 			{
 				InterpolationMode = Gradient.InterpolationModeEnum.Constant,
-				Offsets = new[] { 0.0f, 0.49999999f, 0.5f, 0.50000001f },
+				Offsets = offsets,
 				Colors = new[] { inActive, active, active, inActive }
 			}
 		};

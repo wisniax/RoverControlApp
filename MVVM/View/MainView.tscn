@@ -11,8 +11,8 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/DriveMode_UIOverlay.cs" id="6_j447r"]
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SafeMode_UIOverlay.cs" id="7_ssyiv"]
-[ext_resource type="Script" path="res://MVVM/ViewModel/WebRtcStreamDispScript.cs" id="9_7s371"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
+[ext_resource type="PackedScene" uid="uid://4xff2wa857p" path="res://MVVM/View/SensorManager.tscn" id="12_exi3w"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MaxSizeContainer.cs" id="13_0svft"]
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
@@ -52,7 +52,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster", "SensorManagerController", "ToggleSensorManager")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -77,8 +77,11 @@ VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
 BatteryMonitor = NodePath("BatteryMonitor")
 InputHelpMaster = NodePath("MaxSizeContainer/InputHelpMaster")
+SensorManagerController = NodePath("SensorManager")
+ToggleSensorManager = NodePath("HBoxContainer/ShowSensorManager")
 
 [node name="CameraView" type="TextureRect" parent="."]
+z_index = -1
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -171,7 +174,6 @@ offset_left = -2.0
 offset_right = 178.0
 
 [node name="SpeedLimiterUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
-visible = false
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -187,6 +189,7 @@ BackgroundNodePath = NodePath("RoverMode/Background")
 LabelNodePath = NodePath("RoverMode/Label")
 
 [node name="RoverMode" parent="SpeedLimiterUIDis" index="0"]
+visible = false
 custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
 offset_right = 178.0
@@ -231,12 +234,6 @@ layout_mode = 2
 focus_mode = 0
 text = "RTSP Capture"
 
-[node name="WebRTCcapture" type="Button" parent="HBoxContainer"]
-layout_mode = 2
-focus_mode = 0
-text = "WebRTC capture"
-script = ExtResource("9_7s371")
-
 [node name="Separator" type="Control" parent="HBoxContainer"]
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
@@ -268,6 +265,13 @@ focus_mode = 0
 toggle_mode = true
 shortcut = SubResource("Shortcut_nofgb")
 text = "GYRO"
+
+[node name="ShowSensorManager" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+shortcut = SubResource("Shortcut_psw5f")
+text = "SENSORS"
 
 [node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
 layout_mode = 2
@@ -323,7 +327,21 @@ offset_bottom = -45.38
 grow_horizontal = 0
 grow_vertical = 0
 
+[node name="SensorManager" parent="." instance=ExtResource("12_exi3w")]
+visible = false
+z_index = -1
+layout_mode = 1
+anchors_preset = 6
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -242.0
+offset_top = -210.0
+offset_right = -9.0
+offset_bottom = 264.0
+grow_vertical = 2
+
 [node name="MaxSizeContainer" type="Container" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -358,12 +376,12 @@ offset_bottom = -40.0
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
-[connection signal="pressed" from="HBoxContainer/WebRTCcapture" to="." method="OnWebRtcCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
+[connection signal="pressed" from="HBoxContainer/ShowSensorManager" to="." method="OnToggleSensorManager"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]

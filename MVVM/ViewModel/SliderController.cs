@@ -38,13 +38,13 @@ public partial class SliderController : Godot.Range
 		}
 	}
 
-	Color _foregroundColor;
-	Color _backgroundColor;
+	protected Color _foregroundColor;
+	protected Color _backgroundColor;
 
-	StyleBoxTexture _localStyle;
-	bool skipChange = false;
-	bool skipUpdate = false;
-	SliderGradient _sliderGradient;
+	protected StyleBoxTexture _localStyle;
+	protected bool skipChange = false;
+	protected bool skipUpdate = false;
+	protected SliderGradient _sliderGradient;
 
 
 
@@ -97,7 +97,7 @@ public partial class SliderController : Godot.Range
 		UpdateGradient();
 	}
 
-	void UpdateGradient()
+	protected virtual void UpdateGradient()
 	{
 		float range = (float)(MaxValue - MinValue);
 		float rangeVal = (float)Value - (float)MinValue;

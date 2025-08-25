@@ -53,7 +53,6 @@ text = "Type:"
 layout_mode = 2
 item_count = 4
 popup/item_0/text = "Landmark"
-popup/item_0/id = 0
 popup/item_1/text = "Obstacle"
 popup/item_1/id = 1
 popup/item_2/text = "Poly"
@@ -76,7 +75,6 @@ text = "Photo:"
 layout_mode = 2
 item_count = 3
 popup/item_0/text = "None"
-popup/item_0/id = 0
 popup/item_1/text = "Generic"
 popup/item_1/id = 1
 popup/item_2/text = "Spheric"
@@ -109,8 +107,8 @@ text = "Type:"
 
 [node name="PointTypeOpBtn" type="OptionButton" parent="POIController/SectionRemovePoint/HBC"]
 layout_mode = 2
-item_count = 2
 selected = 0
+item_count = 2
 popup/item_0/text = "Point"
 popup/item_0/id = 2
 popup/item_1/text = "Poly"
@@ -123,10 +121,9 @@ text = "Target:"
 [node name="TargetOpBtn" type="OptionButton" parent="POIController/SectionRemovePoint/HBC"]
 layout_mode = 2
 size_flags_horizontal = 3
-item_count = 2
 selected = 0
+item_count = 2
 popup/item_0/text = "POI JD"
-popup/item_0/id = 0
 popup/item_1/text = "POI JPII"
 popup/item_1/id = 1
 
