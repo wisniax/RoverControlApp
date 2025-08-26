@@ -150,7 +150,7 @@ namespace RoverControlApp.Core
 			public HotswapStatus HotswapStatus { get; set; }
 			public float Current { get; set; }
 			public int Temperature { get; set; }
-			public int Time { get; set; }
+			public long Timestamp { get; set; }
 		}
 
 		public class BatteryControl

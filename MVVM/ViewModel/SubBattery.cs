@@ -82,7 +82,7 @@ public partial class SubBattery : VBoxContainer
 		else
 			_temperatureLabel.SetModulate(Colors.White);
 
-		_timeLabel.Text = "Est. Time: " + data.Time.ToString("F0") + "min";
+		_timeLabel.Text = "Est. Time: " + /*data.Time.ToString("F0") + "min" */ "No time :c";
 
 		NewBatteryInfo.Invoke();
 		
