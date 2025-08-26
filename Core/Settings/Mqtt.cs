@@ -28,8 +28,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicSamplerControlControl = "SamplerControl";
 		_topicBatteryInfo = "BatteryInfo";
 		_topicBatteryControl = "BatteryControl";
-		_topicWeightSensor = "WeightSensor";
-		_topicPhSensor = "PhSensor";
+		_topicSamplerFeedback = "SamplerFeedback";
 	}
 
 	public Mqtt
@@ -48,8 +47,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicSamplerControlControl,
 		string topicBatteryInfo,
 		string topicBatteryControl,
-		string topicWeightSensor,
-		string topicPhSensor
+		string topicSamplerFeedback
 	)
 	{
 		_clientSettings = clientSettings;
@@ -66,8 +64,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicSamplerControlControl = topicSamplerControlControl;
 		_topicBatteryInfo = topicBatteryInfo;
 		_topicBatteryControl = topicBatteryControl;
-		_topicWeightSensor = topicWeightSensor;
-		_topicPhSensor = topicPhSensor;
+		_topicSamplerFeedback = topicSamplerFeedback;
 	}
 
 	public object Clone()
@@ -89,8 +86,8 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicSamplerControl = _topicSamplerControlControl,
 			TopicBatteryInfo = _topicBatteryInfo,
 			TopicBatteryControl = _topicBatteryControl,
-			TopicWeightSensor = _topicWeightSensor,
-			TopicPhSensor = _topicPhSensor
+			TopicSamplerFeedback = _topicSamplerFeedback,
+		
 		};
 	}
 
@@ -193,17 +190,10 @@ public partial class Mqtt : SettingBase, ICloneable
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-	public string TopicWeightSensor
+	public string TopicSamplerFeedback
 	{
-		get => _topicWeightSensor;
-		set => EmitSignal_SettingChanged(ref _topicWeightSensor, value);
-	}
-
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
-	public string TopicPhSensor
-	{
-		get => _topicPhSensor;
-		set => EmitSignal_SettingChanged(ref _topicPhSensor, value);
+		get => _topicSamplerFeedback;
+		set => EmitSignal_SettingChanged(ref _topicSamplerFeedback, value);
 	}
 
 	MqttClientOptions _clientSettings;
@@ -221,8 +211,7 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicSamplerControlControl;
 	string _topicBatteryInfo;
 	string _topicBatteryControl;
-	string _topicWeightSensor;
-	string _topicPhSensor;
+	string _topicSamplerFeedback;
 }
 
 

@@ -29,8 +29,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 		string? topicSampler = null;
 		string? topicBatteryInfo = null;
 		string? topicBatteryControl = null;
-		string? topicWeightSensor = null;
-		string? topicPhSensor = null;
+		string? topicSamplerFeedback = null;
 
 		while (reader.Read())
 		{
@@ -87,11 +86,8 @@ public class MqttConverter : JsonConverter<Mqtt>
 				case nameof(Mqtt.TopicBatteryControl):
 					topicBatteryControl = reader.GetString();
 					break;
-				case nameof(Mqtt.TopicWeightSensor):
-					topicWeightSensor = reader.GetString();
-					break;
-				case nameof(Mqtt.TopicPhSensor):
-					topicPhSensor = reader.GetString();
+				case nameof(Mqtt.TopicSamplerFeedback):
+					topicSamplerFeedback = reader.GetString();
 					break;
 				default:
 					reader.Skip();
@@ -115,8 +111,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 			topicSampler ?? Default.TopicSamplerControl,
 			topicBatteryInfo ?? Default.TopicBatteryInfo,
 			topicBatteryControl ?? Default.TopicBatteryControl,
-			topicWeightSensor ?? Default.TopicWeightSensor,
-			topicPhSensor ?? Default.TopicPhSensor
+			topicSamplerFeedback ?? Default.TopicSamplerFeedback
 		);
 	}
 
@@ -138,8 +133,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 		writer.WriteString(nameof(Mqtt.TopicSamplerControl), value.TopicSamplerControl);
 		writer.WriteString(nameof(Mqtt.TopicBatteryInfo), value.TopicBatteryInfo);
 		writer.WriteString(nameof(Mqtt.TopicBatteryControl), value.TopicBatteryControl);
-		writer.WriteString(nameof(Mqtt.TopicWeightSensor), value.TopicWeightSensor);
-		writer.WriteString(nameof(Mqtt.TopicPhSensor), value.TopicPhSensor);
+		writer.WriteString(nameof(Mqtt.TopicSamplerFeedback), value.TopicSamplerFeedback);
 		writer.WriteEndObject();
 	}
 }

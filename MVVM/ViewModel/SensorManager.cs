@@ -1,4 +1,5 @@
 ﻿using Godot;
+using MQTTnet;
 using RoverControlApp.Core;
 using RoverControlApp.Core.Settings;
 using RoverControlApp.MVVM.Model;
@@ -6,7 +7,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.MVVM.ViewModel
 {
@@ -21,14 +24,61 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		SensorDataController _phData = null!;
 
+		SamplerFeedback _lastData = null!;
 
+		public SensorManager()
+		{
+			_lastData = new SamplerFeedback();
+		}
 
 		public override void _EnterTree()
 		{
-			_surfaceWeightData.Initialize("Surface Weight", 0f, 750f, "g", LocalSettings.Singleton.Mqtt.TopicWeightSensor, 0x85);
-			_deepWeightData.Initialize("Deep Weight", 0f, 750f, "g", LocalSettings.Singleton.Mqtt.TopicWeightSensor, 0x85);
-			_rockWeightData.Initialize("Rock Weight", 0f, 750f, "g", LocalSettings.Singleton.Mqtt.TopicWeightSensor, 0x85);
-			_phData.Initialize( "Soil pH", 0f, 14f, "pH", LocalSettings.Singleton.Mqtt.TopicPhSensor, 0x76);
+			if (MqttNode.Singleton is not null)
+				MqttNode.Singleton.MessageReceivedAsync += OnSensorDataChanged;
+				GD.Print("SensorManager subscribed to MQTT messages.");
+			_surfaceWeightData.Initialize("Surface Weight", 0f, 750f, "g" );
+			_deepWeightData.Initialize("Deep Weight", 0f, 750f, "g");
+			_rockWeightData.Initialize("Rock Weight", 0f, 750f, "g");
+			_phData.Initialize( "Soil pH", 0f, 14f, "pH");
+		}
+
+		public override void _ExitTree()
+		{
+			if (MqttNode.Singleton is not null)
+				MqttNode.Singleton.MessageReceivedAsync -= OnSensorDataChanged;
+		}
+
+		public async Task OnSensorDataChanged(string subTopic, MqttApplicationMessage? msg)
+		{
+			GD.Print($"SensorManager got message on topic: {subTopic}");
+			if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicSamplerFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicSamplerFeedback)
+				return;
+			if (msg is null || msg.PayloadSegment.Count == 0)
+			{
+				EventLogger.LogMessage("WeightSensorController", EventLogger.LogLevel.Error, "Empty payload");
+				return;
+			}
+			SamplerFeedback? dataNullable = JsonSerializer.Deserialize<SamplerFeedback>(msg.ConvertPayloadToString());
+			if (dataNullable == null)
+			{
+				EventLogger.LogMessage("WeightSensorController", EventLogger.LogLevel.Error, "Deserialization returned null");
+				return;
+			}
+			_lastData = dataNullable;
+
+			GD.Print(msg.ConvertPayloadToString());
+
+			CallDeferred(nameof(UpdateSensorValues));
+
+			return;
+		}
+
+		private void UpdateSensorValues()
+		{
+			_surfaceWeightData.SensorLastValue = _lastData.SurfaceWeight;
+			_deepWeightData.SensorLastValue = _lastData.DeepWeight;
+			_rockWeightData.SensorLastValue = _lastData.RockWeight;
+			_phData.SensorLastValue = _lastData.Ph;
 		}
 
 		public override void _Ready()

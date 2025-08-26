@@ -15,11 +15,11 @@ namespace RoverControlApp.MVVM.ViewModel
 {
 	public partial class SensorDataController : Panel
 	{
-		private SensorData _sensor = null!;
+		private float _sensorLastValue;
+		private string _sensorLabelText = String.Empty;
 		float _sensorMin;
 		float _sensorMax;
 
-		private string _sensorTopic = String.Empty;
 		[Export]
 		private Label _sensorLabel = null!;
 		[Export]
@@ -36,13 +36,12 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		public string SensorLabel
 		{
-			get => _sensor.SensorLabel;
+			get => _sensorLabelText;
 			set
 			{
 				try
 				{
-					if(_sensor is not null)
-						_sensor.SensorLabel = value;
+					_sensorLabelText = value;
 					_sensorLabel.Text = value;
 				}
 				catch (Exception ex)
@@ -88,14 +87,14 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		public float SensorLastValue
 		{
-			get => _sensor.SensorLastValue;
+			get => _sensorLastValue;
 			set
 			{
 				try
 				{
-					if(_sensor is not null)
-						_sensor.SensorLastValue = value;
-
+					
+					_sensorLastValue = value;
+					UpdateSensorDisplay();
 				}
 				catch (Exception ex)
 				{
@@ -104,53 +103,15 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 		}
 
-
-		public string SensorTopic
-		{
-			get => _sensorTopic;
-			set
-			{
-				try
-				{
-					_sensorTopic = value;
-					GD.Print($"Sensor topic set to: {_sensorTopic}");
-				}
-				catch (Exception ex)
-				{
-					GD.PrintErr(ex.Message);
-				}
-			}
-		}
-
-		public int VescId
-		{
-			get => _sensor.VescId;
-			set
-			{
-				try
-				{
-					if(_sensor is not null)
-						_sensor.VescId = value;
-				}
-				catch (Exception ex)
-				{
-					GD.PrintErr(ex.Message);
-				}
-			}
-		}
-
-		public void Initialize(string sensorLabel, float sensorMin, float sensorMax,string sensorUnit ,string sensorTopic, int vescId)
+		public void Initialize(string sensorLabel, float sensorMin, float sensorMax,string sensorUnit)
 		{
 			this.SensorLabel = sensorLabel;
 			this.SensorMin = sensorMin;
 			this.SensorMax = sensorMax;
 			this.SensorUnit = sensorUnit;
-			this._sensor = new SensorData(sensorLabel, vescId);
-			_sensorTopic = sensorTopic;
-
+			
 			CallDeferred(nameof(SetSliderBounds));
 
-			MqttNode.Singleton.MessageReceivedAsync += OnSensorDataChanged;
 		}
 
 		public SensorDataController()
@@ -158,8 +119,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			this.SensorLabel = "No Name";
 			this.SensorMin = 0f;
 			this.SensorMax = 100f;
-			this._sensor = new SensorData("No Name", 0);
-			_sensorTopic = String.Empty;
+			this._sensorLastValue = 0f;
 		}
 
 		public override void _EnterTree()
@@ -169,7 +129,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		public override void _ExitTree()
 		{
-			MqttNode.Singleton.MessageReceivedAsync -= OnSensorDataChanged;
+
 		}
 
 		public override void _Ready()
@@ -177,38 +137,14 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		}
 
-		public async Task OnSensorDataChanged(string subTopic, MqttApplicationMessage? msg)
-		{
-			if (string.IsNullOrEmpty(_sensorTopic) || subTopic != _sensorTopic)
-				return ;
-			if (msg is null || msg.PayloadSegment.Count == 0)
-			{
-				EventLogger.LogMessage("WeightSensorController", EventLogger.LogLevel.Error, "Empty payload");
-				return ;
-			}
-			SensorData? dataNullable = JsonSerializer.Deserialize<SensorData>(msg.ConvertPayloadToString());
-			if (dataNullable == null)
-			{
-				EventLogger.LogMessage("WeightSensorController", EventLogger.LogLevel.Error, "Deserialization returned null");
-				return ;
-			}
-			SensorData data = dataNullable;
-			
-			if (data.SensorLabel != _sensor.SensorLabel)
-				return ;
-			SensorLastValue = data.SensorLastValue;
-
-			CallDeferred(nameof(UpdateSensorDisplay));
-
-			return ;
-		}
+		
 
 		private void UpdateSensorDisplay()
 		{
-			_sensorValue.Text = $"Last value: {_sensor.SensorLastValue} {SensorUnit}";
+			_sensorValue.Text = $"Last value: {_sensorLastValue:F2} {SensorUnit}";
 			if (_sensorSlider is not null)
 			{
-				_sensorSlider.InputValue(Mathf.Clamp(_sensor.SensorLastValue, SensorMin, SensorMax));
+				_sensorSlider.InputValue(Mathf.Clamp(_sensorLastValue, SensorMin, SensorMax));
 			}
 		}
 

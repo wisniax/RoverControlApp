@@ -248,25 +248,16 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; }
 		}
 
-		public class SensorData
+		public class SamplerFeedback
 		{
-			public string SensorLabel { get; set; } = string.Empty;
-			public float SensorLastValue { get; set; } = 0.00f;
-			public int VescId { get; set; } // VESC ID for weight sensors
+			public float SurfaceWeight { get; set; } = 0f; // grams
+			public float DeepWeight { get; set; } = 0f; // grams
+			public float RockWeight { get; set; } = 0f; // grams
+			public float Ph { get; set; } = 0f; // Ph?
+			public float Distance { get; set; } = 0f; // cm
 
-			public SensorData()
-			{
-				SensorLabel = string.Empty;
-				SensorLastValue = 0f;
-				VescId = 0;
-			}
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-			public SensorData(string label, int vescId)
-			{
-				VescId = vescId;
-				SensorLabel = label;
-				SensorLastValue = 0f;
-			}
 
 		}
 
