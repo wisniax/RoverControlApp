@@ -42,7 +42,8 @@ namespace RoverControlApp.MVVM.ViewModel
 				try
 				{
 					_sensorLabelText = value;
-					_sensorLabel.Text = value;
+					if(_sensorLabel is not null)
+						_sensorLabel.Text = value;
 				}
 				catch (Exception ex)
 				{
@@ -59,7 +60,8 @@ namespace RoverControlApp.MVVM.ViewModel
 				try
 				{
 					_sensorMin = value;
-					_sensorValueMin.Text = value.ToString();
+					if( _sensorValueMin is not null)
+						_sensorValueMin.Text = value.ToString();
 				}
 				catch (Exception ex)
 				{
@@ -76,7 +78,8 @@ namespace RoverControlApp.MVVM.ViewModel
 				try
 				{
 					_sensorMax = value;
-					_sensorValueMax.Text = value.ToString();
+					if( _sensorValueMax is not null)
+						_sensorValueMax.Text = value.ToString();
 				}
 				catch (Exception ex)
 				{
@@ -141,7 +144,8 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void UpdateSensorDisplay()
 		{
-			_sensorValue.Text = $"Last value: {_sensorLastValue:F2} {SensorUnit}";
+			if (_sensorValue is not null)
+				_sensorValue.Text = $"Last value: {_sensorLastValue:F2} {SensorUnit}";
 			if (_sensorSlider is not null)
 			{
 				_sensorSlider.InputValue(Mathf.Clamp(_sensorLastValue, SensorMin, SensorMax));

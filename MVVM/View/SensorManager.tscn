@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://edfpbq8seeph" path="res://MVVM/View/SensorData.tscn" id="1_cysh8"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SensorManager.cs" id="1_l62uu"]
 
-[node name="SensorManager" type="Panel" node_paths=PackedStringArray("_surfaceWeightData", "_deepWeightData", "_rockWeightData", "_phData")]
+[node name="SensorManager" type="Panel" node_paths=PackedStringArray("_surfaceWeightData", "_deepWeightData", "_rockWeightData", "_phData", "_lastUpdateLabel")]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -15,6 +15,7 @@ _surfaceWeightData = NodePath("MarginContainer/VBoxContainer2/SurfaceWeightSampl
 _deepWeightData = NodePath("MarginContainer/VBoxContainer2/DeepWeightSampleData")
 _rockWeightData = NodePath("MarginContainer/VBoxContainer2/RockWeightSampleData")
 _phData = NodePath("MarginContainer/VBoxContainer2/PhSensorData")
+_lastUpdateLabel = NodePath("MarginContainer/VBoxContainer2/LastRead")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -35,6 +36,12 @@ layout_mode = 2
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer2"]
 layout_mode = 2
 text = "Sensor readings"
+horizontal_alignment = 1
+
+[node name="LastRead" type="Label" parent="MarginContainer/VBoxContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Last update at: 00:00:00"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer2"]

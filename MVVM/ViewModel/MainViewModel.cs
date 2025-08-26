@@ -77,11 +77,11 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		private InputHelpMaster InputHelpMaster = null!;
 
-		//[Export]
-		//private SensorManager SensorManagerController = null!;
+		[Export]
+		private SensorManager SensorManagerController = null!;
 
-		//[Export]
-		//private Button ToggleSensorManager = null!;
+		[Export]
+		private Button ToggleSensorManager = null!;
 		public MainViewModel()
 		{
 			PressedKeys = new PressedKeys();
@@ -552,10 +552,10 @@ namespace RoverControlApp.MVVM.ViewModel
 			Task.Run(() => CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()));
 		}
 
-		//private void OnToggleSensorManager()
-		//{
-		//	if(SensorManagerController is null) return;
-		//	SensorManagerController.Visible = !SensorManagerController.Visible;
-		//}
+		private void OnToggleSensorManager()
+		{
+			if(SensorManagerController is null) return;
+			SensorManagerController.Visible = !SensorManagerController.Visible;
+		}
 	}
 }

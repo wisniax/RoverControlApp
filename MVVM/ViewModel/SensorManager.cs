@@ -23,6 +23,8 @@ namespace RoverControlApp.MVVM.ViewModel
 		SensorDataController _rockWeightData = null!;
 		[Export]
 		SensorDataController _phData = null!;
+		[Export]
+		Label _lastUpdateLabel = null!;
 
 		SamplerFeedback _lastData = null!;
 
@@ -79,6 +81,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			_deepWeightData.SensorLastValue = _lastData.DeepWeight;
 			_rockWeightData.SensorLastValue = _lastData.RockWeight;
 			_phData.SensorLastValue = _lastData.Ph;
+			_lastUpdateLabel.Text = $"Last Update: {_lastData.Timestamp.ToString("HH:mm:ss")}";
 		}
 
 		public override void _Ready()
