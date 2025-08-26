@@ -33,8 +33,8 @@ public class SamplerController : IRoverSamplerController
 			movement = 0f;
 
 		float drillSpeed = Input.GetAxis("sampler_drill_down", "sampler_drill_up");
-		if (Mathf.Abs(drillSpeed) < LocalSettings.Singleton.Joystick.MinimalInput)
-			drillSpeed = 0f;
+		//if (Mathf.Abs(drillSpeed) < LocalSettings.Singleton.Joystick.MinimalInput)
+		//	drillSpeed = 0f; //No deadzone for trigger
 
 		if (inputEvent.IsActionPressed("sampler_alt_mode", allowEcho: false, exactMatch: true)) AltMode = true;
 		if (inputEvent.IsActionReleased("sampler_alt_mode", exactMatch: true)) AltMode = false;
