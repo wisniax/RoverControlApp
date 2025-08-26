@@ -184,6 +184,7 @@ public class PressedKeys : IDisposable
 		{
 			ControlMode = ControlMode.EStop;
 			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by Auto-EStop).");
+			StopAll();
 		}
 
 		if (_roverModeControllerPreset.EstopReq())
@@ -191,6 +192,7 @@ public class PressedKeys : IDisposable
 			_autoEstop_lastInput = Time.GetTicksMsec(); //or else will not vibrate when already in Auto E-Stop
 			ControlMode = ControlMode.EStop;
 			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by InputController).");
+			StopAll();
 		}
 	}
 
