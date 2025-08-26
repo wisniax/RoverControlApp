@@ -28,8 +28,8 @@ public class SamplerController : IRoverSamplerController
 			movement = 0f;
 
 		float drillSpeed = Input.GetAxis("sampler_drill_down", "sampler_drill_up");
-		if (Mathf.Abs(drillSpeed) < LocalSettings.Singleton.Joystick.MinimalInput)
-			drillSpeed = 0f;
+		//if (Mathf.Abs(drillSpeed) < LocalSettings.Singleton.Joystick.MinimalInput)
+		//	drillSpeed = 0f; //No deadzone for trigger
 
 		SamplerControl newSamplerControl = new()
 		{
