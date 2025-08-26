@@ -9,13 +9,13 @@ bg_color = Color(0.211765, 0.211765, 0.211765, 0.584314)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k2cs2"]
 
 [node name="SensorData" type="Panel" node_paths=PackedStringArray("_sensorLabel", "_sensorValue", "_sensorValueMin", "_sensorValueMax", "_sensorSlider")]
-custom_minimum_size = Vector2(200, 100)
+custom_minimum_size = Vector2(200, 80)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_top = -5.0
 offset_right = -854.0
-offset_bottom = -553.0
+offset_bottom = -573.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ayhym")
@@ -67,7 +67,7 @@ scrollable = false
 tick_count = 5
 ticks_on_borders = true
 script = ExtResource("2_65df5")
-ForegroundColor = Color(1, 0, 0, 1)
+ForegroundColor = Color(0.541176, 0.541176, 0.541176, 1)
 BackgroundColor = Color(0, 1, 0, 1)
 
 [node name="MaxLabel" type="Label" parent="Margin/HBoxContainer/Vbox/HBoxContainer"]

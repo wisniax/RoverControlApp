@@ -1,12 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://4xff2wa857p"]
+[gd_scene load_steps=4 format=3 uid="uid://4xff2wa857p"]
 
 [ext_resource type="PackedScene" uid="uid://edfpbq8seeph" path="res://MVVM/View/SensorData.tscn" id="1_cysh8"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SensorManager.cs" id="1_l62uu"]
+[ext_resource type="PackedScene" uid="uid://3ie4nc14jqkx" path="res://MVVM/View/DistanceSensor.tscn" id="2_3f2cd"]
 
-[node name="SensorManager" type="Panel" node_paths=PackedStringArray("_surfaceWeightData", "_deepWeightData", "_rockWeightData", "_phData", "_lastUpdateLabel")]
+[node name="SensorManager" type="Panel" node_paths=PackedStringArray("_surfaceWeightData", "_deepWeightData", "_rockWeightData", "_phData", "_distanceSensor", "_lastUpdateLabel")]
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
+offset_top = -129.0
 offset_right = 230.0
 offset_bottom = 500.0
 grow_horizontal = 0
@@ -15,6 +17,7 @@ _surfaceWeightData = NodePath("MarginContainer/VBoxContainer2/SurfaceWeightSampl
 _deepWeightData = NodePath("MarginContainer/VBoxContainer2/DeepWeightSampleData")
 _rockWeightData = NodePath("MarginContainer/VBoxContainer2/RockWeightSampleData")
 _phData = NodePath("MarginContainer/VBoxContainer2/PhSensorData")
+_distanceSensor = NodePath("MarginContainer/VBoxContainer2/DistanceSensor")
 _lastUpdateLabel = NodePath("MarginContainer/VBoxContainer2/LastRead")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -45,6 +48,9 @@ text = "Last update at: 00:00:00"
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer2"]
+layout_mode = 2
+
+[node name="DistanceSensor" parent="MarginContainer/VBoxContainer2" instance=ExtResource("2_3f2cd")]
 layout_mode = 2
 
 [node name="SurfaceWeightSampleData" parent="MarginContainer/VBoxContainer2" instance=ExtResource("1_cysh8")]

@@ -1,0 +1,46 @@
+[gd_scene load_steps=4 format=3 uid="uid://3ie4nc14jqkx"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/DistanceSensorController.cs" id="1_4ta2p"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/DistanceIndicator.cs" id="2_26nlf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v31yk"]
+bg_color = Color(0.211765, 0.211765, 0.211765, 0.584314)
+
+[node name="DistanceSensor" type="Panel" node_paths=PackedStringArray("_indicator", "_currentValueLabel", "_nameLabelLabel")]
+custom_minimum_size = Vector2(200, 100)
+theme_override_styles/panel = SubResource("StyleBoxFlat_v31yk")
+script = ExtResource("1_4ta2p")
+_indicator = NodePath("MarginContainer/VBoxContainer/SignalInidcator")
+_currentValueLabel = NodePath("MarginContainer/VBoxContainer/SensorValue")
+_nameLabelLabel = NodePath("MarginContainer/VBoxContainer/SensorName")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="SensorName" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Sensor name"
+horizontal_alignment = 1
+
+[node name="SignalInidcator" type="Control" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+script = ExtResource("2_26nlf")
+SecondaryColor = Color(0.54099, 0.54099, 0.54099, 1)
+
+[node name="SensorValue" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Current value"
+horizontal_alignment = 1

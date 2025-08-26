@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using static RoverControlApp.Core.MqttClasses;
+using RoverControlApp.MVVM.ViewModel.SensorsModels;
 
 namespace RoverControlApp.MVVM.ViewModel
 {
@@ -24,7 +25,10 @@ namespace RoverControlApp.MVVM.ViewModel
 		[Export]
 		SensorDataController _phData = null!;
 		[Export]
+		DistanceSensorController _distanceSensor = null!;
+		[Export]
 		Label _lastUpdateLabel = null!;
+
 
 		SamplerFeedback _lastData = null!;
 
@@ -35,13 +39,14 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		public override void _EnterTree()
 		{
-			if (MqttNode.Singleton is not null)
+			if (MqttNode.Singleton is not null) {
 				MqttNode.Singleton.MessageReceivedAsync += OnSensorDataChanged;
-				GD.Print("SensorManager subscribed to MQTT messages.");
+			}
 			_surfaceWeightData.Initialize("Surface Weight", 0f, 750f, "g" );
 			_deepWeightData.Initialize("Deep Weight", 0f, 750f, "g");
 			_rockWeightData.Initialize("Rock Weight", 0f, 750f, "g");
 			_phData.Initialize( "Soil pH", 0f, 14f, "pH");
+			_distanceSensor.Initialize(50f, "cm","Distance");
 		}
 
 		public override void _ExitTree()
@@ -52,7 +57,6 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		public async Task OnSensorDataChanged(string subTopic, MqttApplicationMessage? msg)
 		{
-			GD.Print($"SensorManager got message on topic: {subTopic}");
 			if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicSamplerFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicSamplerFeedback)
 				return;
 			if (msg is null || msg.PayloadSegment.Count == 0)
@@ -68,8 +72,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 			_lastData = dataNullable;
 
-			GD.Print(msg.ConvertPayloadToString());
-
+			
 			CallDeferred(nameof(UpdateSensorValues));
 
 			return;
@@ -77,11 +80,24 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void UpdateSensorValues()
 		{
+			if(_rockWeightData is null || _deepWeightData is null || _surfaceWeightData is null || _phData is null || _lastUpdateLabel is null )
+			{
+				EventLogger.LogMessage("SensorManager", EventLogger.LogLevel.Error, "One or more UI elements are not assigned.");
+				return;
+			}
+			if(_lastData is null)
+			{
+				EventLogger.LogMessage("SensorManager", EventLogger.LogLevel.Error, "No data to update.");
+				return;
+			}
 			_surfaceWeightData.SensorLastValue = _lastData.SurfaceWeight;
 			_deepWeightData.SensorLastValue = _lastData.DeepWeight;
 			_rockWeightData.SensorLastValue = _lastData.RockWeight;
 			_phData.SensorLastValue = _lastData.Ph;
-			_lastUpdateLabel.Text = $"Last Update: {_lastData.Timestamp.ToString("HH:mm:ss")}";
+
+			_distanceSensor.SensorLastValue = _lastData.Distance;
+			var dt = DateTimeOffset.FromUnixTimeMilliseconds(_lastData.Timestamp).ToLocalTime();
+			_lastUpdateLabel.Text = $"Last Update: {dt:HH:mm:ss}";
 		}
 
 		public override void _Ready()
