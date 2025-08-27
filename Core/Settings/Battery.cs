@@ -61,7 +61,7 @@ public partial class Battery : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _criticalVoltage, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "30;120;5;f;f",
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;10;0.2;f;f",
 		 customTooltip: "Time interval the app would wait, before assuming that BMS communication died,\n"+
 						"and pulling voltage data from alt source (vesc)")]
 	public int ExpectedMessageInterval
