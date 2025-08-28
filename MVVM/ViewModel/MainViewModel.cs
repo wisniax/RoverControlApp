@@ -334,11 +334,11 @@ namespace RoverControlApp.MVVM.ViewModel
 												  $"{(LocalSettings.Singleton.Sampler.Container1.CustomName == "-" ? "Container0" : LocalSettings.Singleton.Sampler.Container1.CustomName)}" +
 																$": {PressedKeys.SamplerMovement.ContainerDegrees0:F1}, " +
 												  $"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "VacuumSuck" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
-																$": {PressedKeys.SamplerMovement.VacuumSuction:F1}, " +
+																$": {PressedKeys.SamplerMovement.VacuumSuction:F2}, " +
 												  $"{(LocalSettings.Singleton.Sampler.Container3.CustomName == "-" ? "VacuumA" : LocalSettings.Singleton.Sampler.Container3.CustomName)}" +
-																$": {PressedKeys.SamplerMovement.VaccumA:F1}, " +
+																$": {PressedKeys.SamplerMovement.VacuumA:F2}, " +
 												  $"{(LocalSettings.Singleton.Sampler.Container4.CustomName == "-" ? "VacuumB" : LocalSettings.Singleton.Sampler.Container4.CustomName)}" +
-																$": {PressedKeys.SamplerMovement.VacuumB:F1}\n");
+																$": {PressedKeys.SamplerMovement.VacuumB:F2}\n");
 					break;
 			}
 
