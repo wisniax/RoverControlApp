@@ -474,13 +474,13 @@ public partial class PressedKeys : Node
 		else
 		{
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({device}) disconnected.");
-			if (_masterJoy == device && _slaveJoy != 0)
+			if (_masterJoy == device && _slaveJoyConnected)
 			{
 				_masterJoy = _slaveJoy;
 				_slaveJoyConnected = false;
 				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({_masterJoy}) promoted to Master");
 			}
-			else if (_masterJoy == device && _slaveJoy == 0)
+			else if (_masterJoy == device && !_slaveJoyConnected)
 			{
 				_masterJoyConnected = false;
 				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({device}) - Master lost.");
