@@ -33,8 +33,8 @@ public interface IRoverSamplerController : IActionAwareController
 		!Mathf.IsEqualApprox(currentState.DrillMovement, lastState.DrillMovement) ||
 		!Mathf.IsEqualApprox(currentState.PlatformMovement, lastState.PlatformMovement) ||
 		!Mathf.IsEqualApprox(currentState.DrillAction, lastState.DrillAction) ||
-		!Mathf.IsEqualApprox(currentState.ContainerDegrees1, lastState.ContainerDegrees1) ||
-		!Mathf.IsEqualApprox(currentState.ContainerDegrees2, lastState.ContainerDegrees2) ||
-		!Mathf.IsEqualApprox(currentState.ContainerDegrees3, lastState.ContainerDegrees3) ||
-		!Mathf.IsEqualApprox(currentState.ContainerDegrees4, lastState.ContainerDegrees4);
+		!Mathf.IsEqualApprox(currentState.ContainerDegrees0, lastState.ContainerDegrees0) ||
+		!Mathf.IsEqualApprox(currentState.VacuumSuction, lastState.VacuumSuction) ||
+		!Mathf.IsEqualApprox(currentState.VaccumA, lastState.VaccumA) ||
+		!Mathf.IsEqualApprox(currentState.VacuumB, lastState.VacuumB);
 }
