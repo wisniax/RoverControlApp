@@ -38,10 +38,10 @@ public class SamplerController : IRoverSamplerController
 				DrillMovement = movement,
 				PlatformMovement = 0f,
 				DrillAction = movement,
-				ContainerDegrees0 = lastState.ContainerDegrees0 * 90 + 90,
-				VacuumSuction = lastState.VacuumSuction * 90 + 90,
-				VacuumA = lastState.VacuumA * 90 + 90,
-				VacuumB = lastState.VacuumB * 90 + 90,
+				ContainerDegrees0 = lastState.ContainerDegrees0,
+				VacuumSuction = lastState.VacuumSuction,
+				VacuumA = lastState.VacuumA,
+				VacuumB = lastState.VacuumB,
 				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
 			};
 		}
@@ -52,10 +52,10 @@ public class SamplerController : IRoverSamplerController
 				DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
 				PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
 				DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
-				ContainerDegrees0 = lastState.ContainerDegrees0 * 90 + 90,
-				VacuumSuction = lastState.VacuumSuction * 90 + 90,
-				VacuumA = lastState.VacuumA * 90 + 90,
-				VacuumB = lastState.VacuumB * 90 + 90,
+				ContainerDegrees0 = lastState.ContainerDegrees0,
+				VacuumSuction = lastState.VacuumSuction,
+				VacuumA = lastState.VacuumA,
+				VacuumB = lastState.VacuumB,
 				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
 			};
 		};
@@ -108,19 +108,19 @@ public class SamplerController : IRoverSamplerController
 			{
 				case 1:
 					newSamplerControl.ContainerDegrees0 += LocalSettings.Singleton.Sampler.Container1.PreciseStep;
-					if (newSamplerControl.ContainerDegrees0 > 180f) newSamplerControl.ContainerDegrees0 = 180f;
+					if (newSamplerControl.ContainerDegrees0 > 1f) newSamplerControl.ContainerDegrees0 = 1f;
 					break;
 				case 2:
 					newSamplerControl.VacuumSuction += LocalSettings.Singleton.Sampler.Container2.PreciseStep;
-					if (newSamplerControl.VacuumSuction > 180f) newSamplerControl.VacuumSuction = 180f;
+					if (newSamplerControl.VacuumSuction > 1f) newSamplerControl.VacuumSuction = 1f;
 					break;
 				case 3:
 					newSamplerControl.VacuumA += LocalSettings.Singleton.Sampler.Container3.PreciseStep;
-					if (newSamplerControl.VacuumA > 180f) newSamplerControl.VacuumA = 180f;
+					if (newSamplerControl.VacuumA > 1f) newSamplerControl.VacuumA = 1f;
 					break;
 				case 4:
 					newSamplerControl.VacuumB += LocalSettings.Singleton.Sampler.Container4.PreciseStep;
-					if (newSamplerControl.VacuumB > 180f) newSamplerControl.VacuumB = 180f;
+					if (newSamplerControl.VacuumB > 1f) newSamplerControl.VacuumB = 1f;
 					break;
 			}
 		}
@@ -130,28 +130,22 @@ public class SamplerController : IRoverSamplerController
 			{
 				case 1:
 					newSamplerControl.ContainerDegrees0 -= LocalSettings.Singleton.Sampler.Container1.PreciseStep;
-					if (newSamplerControl.ContainerDegrees0 < 0f) newSamplerControl.ContainerDegrees0 = 0f;
+					if (newSamplerControl.ContainerDegrees0 < -1f) newSamplerControl.ContainerDegrees0 = -1f;
 					break;
 				case 2:
 					newSamplerControl.VacuumSuction -= LocalSettings.Singleton.Sampler.Container2.PreciseStep;
-					if (newSamplerControl.VacuumSuction < 0f) newSamplerControl.VacuumSuction = 0f;
+					if (newSamplerControl.VacuumSuction < -1f) newSamplerControl.VacuumSuction = -1f;
 					break;
 				case 3:
 					newSamplerControl.VacuumA -= LocalSettings.Singleton.Sampler.Container3.PreciseStep;
-					if (newSamplerControl.VacuumA < 0f) newSamplerControl.VacuumA = 0f;
+					if (newSamplerControl.VacuumA < -1f) newSamplerControl.VacuumA = -1f;
 					break;
 				case 4:
 					newSamplerControl.VacuumB -= LocalSettings.Singleton.Sampler.Container4.PreciseStep;
-					if (newSamplerControl.VacuumB < 0f) newSamplerControl.VacuumB = 0f;
+					if (newSamplerControl.VacuumB < -1f) newSamplerControl.VacuumB = -1f;
 					break;
 			}
 		}
-
-		newSamplerControl.ContainerDegrees0 = (newSamplerControl.ContainerDegrees0 - 90) / 90;
-		newSamplerControl.VacuumSuction = (newSamplerControl.VacuumSuction - 90) / 90;
-		newSamplerControl.VacuumA = (newSamplerControl.VacuumA - 90) / 90;
-		newSamplerControl.VacuumB = (newSamplerControl.VacuumB - 90) / 90;
-
 
 		return newSamplerControl;
 	}
