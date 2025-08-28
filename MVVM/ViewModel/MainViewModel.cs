@@ -28,7 +28,8 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private RtspStreamClient? _rtspClient;
 		private OnvifPtzCameraController? _ptzClient;
-		private JoyVibrato _joyVibrato = new();
+		private JoyVibrato _joyVibratoMaster = new(true);
+		private JoyVibrato _joyVibratoSlave = new(false);
 		private BackCapture _backCapture = new();
 
 		private ImageTexture? _imTexture;
@@ -75,19 +76,24 @@ namespace RoverControlApp.MVVM.ViewModel
 			SettingsManagerNode.Target = LocalSettings.Singleton;
 
 			PressedKeys.Singleton.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnSlaveControlModeChanged += GrzybUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnKinematicModeChanged += DriveModeUIDis.KinematicModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnSlaveControlModeChanged += DriveModeUIDis.SlaveControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged += _joyVibrato.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnSlaveControlModeChanged += SafeModeUIDis.SlaveControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnControlModeChanged += _joyVibratoMaster.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnSlaveControlModeChanged += _joyVibratoSlave.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged += InputHelp_HandleControlModeChanged;
 			PressedKeys.Singleton.ControllerPresetChanged += InputHelp_HandleInputPresetChanged;
+			PressedKeys.Singleton.OnPadConnectionChanged += OnPadConnectionChanged;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			BatteryMonitor.OnBatteryDataChanged += HandleBatteryPercentageChangedHandler;
 
 			InputHelp_HandleControlModeChanged(PressedKeys.Singleton.ControlMode);
-			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys.Singleton.ControlMode));
+			OnPadConnectionChanged(false);
 		}
 
 		// Called when the node enters the scene tree for the first time.
@@ -113,12 +119,17 @@ namespace RoverControlApp.MVVM.ViewModel
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 
 			PressedKeys.Singleton.OnControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnSlaveControlModeChanged -= GrzybUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnKinematicModeChanged -= DriveModeUIDis.KinematicModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged -= DriveModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnSlaveControlModeChanged -= DriveModeUIDis.SlaveControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged -= _joyVibrato.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnSlaveControlModeChanged -= SafeModeUIDis.SlaveControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnControlModeChanged -= _joyVibratoMaster.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnSlaveControlModeChanged -= _joyVibratoSlave.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnControlModeChanged -= InputHelp_HandleControlModeChanged;
 			PressedKeys.Singleton.ControllerPresetChanged -= InputHelp_HandleInputPresetChanged;
+			PressedKeys.Singleton.OnPadConnectionChanged -= OnPadConnectionChanged;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
@@ -130,7 +141,8 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		protected override void Dispose(bool disposing)
 		{
-			_joyVibrato?.Dispose();
+			_joyVibratoMaster?.Dispose();
+			_joyVibratoSlave?.Dispose();
 			_rtspClient?.Dispose();
 			_ptzClient?.Dispose();
 			base.Dispose(disposing);
@@ -291,7 +303,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			string? ptzAge = ptzClient?.ElapsedSecondsOnCurrentState.ToString("f2", new CultureInfo("en-US"));
 
 			FancyDebugViewRLab.AppendText($"MQTT: Control Mode: {RoverCommunication.Singleton.RoverStatus?.ControlMode}, " +
-			              $"{(RoverCommunication.Singleton.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
+						  $"{(RoverCommunication.Singleton.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
 						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication.Singleton.RoverStatus?.CommunicationState}[/color], " +
 						  $"Pad connected: {RoverCommunication.Singleton.RoverStatus?.PadConnected}\n");
 			switch (RoverCommunication.Singleton.RoverStatus?.ControlMode)
@@ -523,6 +535,13 @@ namespace RoverControlApp.MVVM.ViewModel
 		private void OnRTSPCapture()
 		{
 			Task.Run(() => CaptureCameraImage(subfolder: "Screenshots", fileName: DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()));
+		}
+
+		private Task OnPadConnectionChanged(bool _)
+		{
+			Task.Run(async () => await _joyVibratoMaster.VibrateMaster());
+			Task.Run(async () => await _joyVibratoSlave.VibrateSlave());
+			return Task.CompletedTask;
 		}
 	}
 }

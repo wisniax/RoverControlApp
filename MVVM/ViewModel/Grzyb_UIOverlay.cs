@@ -1,9 +1,10 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 using Godot;
+
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.Json;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
@@ -11,34 +12,16 @@ public partial class Grzyb_UIOverlay : UIOverlay
 {
 	public override Dictionary<int, Setting> Presets { get; } = new()
 	{
-		{ 0, new(Colors.DarkGreen, Colors.LightGreen, "Moshroom: Free", "Moshroom: ") },
-		{ 1, new(Colors.DarkRed, Colors.Orange, "Moshroom: MOLDED", "Moshroom: ") }
+		{ 0, new(Colors.DarkRed, Colors.Orange, "Slave: Off", "Slave: ") },
+		{ 1, new(Colors.DarkGreen, Colors.LightGreen, "Slave: Driving","Slave: ") },
+		{ 2, new(Colors.DarkOliveGreen, Colors.LightGreen, "Slave: Manipulator","Slave: ") },
+		{ 3, new (Colors.LightGreen, Colors.DarkGreen, "Slave: Sampler", "Slave: ")},
+		{ 4, new(Colors.DarkRed, Colors.Orange, "Slave: Off","Slave: ") }
 	};
 
-	public override void _Ready()
+	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
-		base._Ready();
-		ControlMode = 1;
-
-		var lastMessage = MqttNode.Singleton.GetReceivedMessageOnTopic(LocalSettings.Singleton.Mqtt.TopicEStopStatus);
-
-		if (lastMessage is not null)
-			MqttSubscriber(LocalSettings.Singleton.Mqtt.TopicEStopStatus, new MqttNodeMessage(lastMessage));
-
-		MqttNode.Singleton.Connect(MqttNode.SignalName.MessageReceived, Callable.From<string, MqttNodeMessage>(MqttSubscriber));
-	}
-
-	public void MqttSubscriber(string subTopic, MqttNodeMessage msg)
-	{
-		if (LocalSettings.Singleton.Mqtt.TopicEStopStatus is null || subTopic != LocalSettings.Singleton.Mqtt.TopicEStopStatus || msg == null || msg.Message.PayloadSegment.Count == 0)
-			return;
-
-		//skip first 4bytes dunno what it is
-		string payloadStingified = Encoding.UTF8.GetString(msg.Message.PayloadSegment.Array!, 4, msg.Message.PayloadSegment.Count - 4);
-
-		var doc = JsonDocument.Parse(payloadStingified);
-		doc.RootElement.GetProperty("mushroom");
-
-		ControlMode = doc.RootElement.GetProperty("mushroom").GetInt32();
+		ControlMode = (int)newMode;
+		return Task.CompletedTask;
 	}
 }

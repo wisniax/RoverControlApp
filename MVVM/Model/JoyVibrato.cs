@@ -77,10 +77,13 @@ public class JoyVibrato : IDisposable
 	private CancellationToken _ctToken;
 	private bool _disposedValue = false;
 
-	public JoyVibrato()
+	private bool _isMasterVibrato;
+
+	public JoyVibrato(bool master)
 	{
 		_ctSource = new CancellationTokenSource();
 		_ctToken = _ctSource.Token;
+		_isMasterVibrato = master;
 	}
 
 	public async Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
@@ -100,9 +103,9 @@ public class JoyVibrato : IDisposable
 				// no vibrato
 				break;
 			case MqttClasses.ControlMode.EStop
-			when LocalSettings.Singleton.General.NoInputSecondsToEstop > 0
-			&& !LocalSettings.Singleton.Joystick.VibrateOnAutoEstop
-			&& PressedKeys.Singleton.TimeToAutoEStopMsec <= 0:
+				when LocalSettings.Singleton.General.NoInputSecondsToEstop > 0
+				&& !LocalSettings.Singleton.Joystick.VibrateOnAutoEstop
+				&& PressedKeys.Singleton.TimeToAutoEStopMsec <= 0:
 				// no vibrato on Auto E-Stop
 				break;
 			default:
@@ -121,27 +124,88 @@ public class JoyVibrato : IDisposable
 		VibrationSequence[] sequence = Presets[controlMode];
 		long offset;
 
-		foreach(var vibration in sequence)
+				int joyId = _isMasterVibrato ? (int)PressedKeys.Singleton.MasterJoyDevice : (int)PressedKeys.Singleton.SlaveJoyDevice;
+
+		foreach (var vibration in sequence)
 		{
-			if(_ctToken.IsCancellationRequested)
+			if (_ctToken.IsCancellationRequested)
 			{
-				foreach(var joyId in Input.GetConnectedJoypads())
-					Input.StopJoyVibration(joyId);
+				Input.StopJoyVibration(joyId);
 				_ctToken.ThrowIfCancellationRequested();
 			}
 
 			offset = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-			foreach (var joyId in Input.GetConnectedJoypads())
-				Input.StartJoyVibration(joyId, vibration.WeakMotor, vibration.StrongMotor, vibration.Duration);
+			Input.StartJoyVibration(joyId, vibration.WeakMotor, vibration.StrongMotor, vibration.Duration);
 
-			await Task.Delay(Math.Max(0,Convert.ToInt32(Convert.ToInt64(vibration.Duration * 1000f) - (DateTimeOffset.Now.ToUnixTimeMilliseconds() - offset))));
+			await Task.Delay(Math.Max(0, Convert.ToInt32(Convert.ToInt64(vibration.Duration * 1000f) - (DateTimeOffset.Now.ToUnixTimeMilliseconds() - offset))));
+		}
+	}
+	public async Task VibrateMaster()
+	{
+		await Task.Delay(300, _ctToken);
+
+		_ctToken.ThrowIfCancellationRequested();
+
+		VibrationSequence[] sequence =
+		[
+			new VibrationSequence(0.5f, 0.0f, 1.0f),
+		];
+		long offset;
+
+		int joyId = (int)PressedKeys.Singleton.MasterJoyDevice;
+
+		foreach (var vibration in sequence)
+		{
+			if (_ctToken.IsCancellationRequested)
+			{
+				Input.StopJoyVibration(joyId);
+				_ctToken.ThrowIfCancellationRequested();
+			}
+
+			offset = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+			Input.StartJoyVibration(joyId, vibration.WeakMotor, vibration.StrongMotor, vibration.Duration);
+
+			await Task.Delay(Math.Max(0, Convert.ToInt32(Convert.ToInt64(vibration.Duration * 1000f) - (DateTimeOffset.Now.ToUnixTimeMilliseconds() - offset))));
+		}
+	}
+
+	public async Task VibrateSlave()
+	{
+		await Task.Delay(300, _ctToken);
+
+		_ctToken.ThrowIfCancellationRequested();
+
+		VibrationSequence[] sequence =
+		[
+			new VibrationSequence(0.5f, 0.0f, 1.0f),
+			new VibrationSequence(0.2f, 0.0f, 0.0f),
+			new VibrationSequence(0.5f, 0.0f, 1.0f),
+		];
+		long offset;
+
+		int joyId = (int)PressedKeys.Singleton.SlaveJoyDevice;
+
+		foreach (var vibration in sequence)
+		{
+			if (_ctToken.IsCancellationRequested)
+			{
+				Input.StopJoyVibration(joyId);
+				_ctToken.ThrowIfCancellationRequested();
+			}
+
+			offset = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+			Input.StartJoyVibration(joyId, vibration.WeakMotor, vibration.StrongMotor, vibration.Duration);
+
+			await Task.Delay(Math.Max(0, Convert.ToInt32(Convert.ToInt64(vibration.Duration * 1000f) - (DateTimeOffset.Now.ToUnixTimeMilliseconds() - offset))));
 		}
 	}
 
 	protected virtual void Dispose(bool disposing)
 	{
-		if (_disposedValue)	return;
+		if (_disposedValue) return;
 
 		if (disposing && (_taskVibrato?.IsCompleted == false))
 			_ctSource.Cancel();
