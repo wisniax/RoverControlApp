@@ -1,17 +1,20 @@
-﻿using Godot;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using Godot;
+
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class DriveMode_UIOverlay : UIOverlay
 {
-	[Export] 
+	[Export]
 	PanelContainer _panelContainer = null!;
 
-	private int _inputMode; 
+	private int _inputMode;
+	private int _inputModeSlave;
 
 	public override Dictionary<int, Setting> Presets { get; } = new()
 	{
@@ -37,6 +40,14 @@ public partial class DriveMode_UIOverlay : UIOverlay
 		return Task.CompletedTask;
 	}
 
+	public Task SlaveControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
+	{
+		_inputModeSlave = (int)newMode;
+		UpdateIndicatorVisibility();
+
+		return Task.CompletedTask;
+	}
+
 	public override void _Ready()
 	{
 		base._Ready();
@@ -45,9 +56,9 @@ public partial class DriveMode_UIOverlay : UIOverlay
 
 	void UpdateIndicatorVisibility()
 	{
-		if (_inputMode != (int)MqttClasses.ControlMode.Rover)
+		if (_inputMode != (int)MqttClasses.ControlMode.Rover && _inputModeSlave != (int)MqttClasses.ControlMode.Rover)
 		{
-			this.Visible = false; 
+			this.Visible = false;
 			return;
 		}
 

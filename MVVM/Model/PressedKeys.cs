@@ -69,8 +69,19 @@ public partial class PressedKeys : Node
 		private set
 		{
 			_controlMode = value;
-			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Control Mode changed {value}");
+			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Master Control Mode changed {value}");
 			OnControlModeChanged?.Invoke(value);
+		}
+	}
+
+	public ControlMode SlaveControlMode
+	{
+		get => _slaveControlMode;
+		private set
+		{
+			_slaveControlMode = value;
+			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Slave Control Mode changed {value}");
+			OnSlaveControlModeChanged?.Invoke(value);
 		}
 	}
 
@@ -116,6 +127,9 @@ public partial class PressedKeys : Node
 			OnSamplerMovement?.Invoke(value);
 		}
 	}
+
+	public long MasterJoyDevice { get => _masterJoy; }
+	public long SlaveJoyDevice { get => _slaveJoy; }
 
 	public IControlModeController RoverModeControllerPreset => _roverModeControllerPreset;
 	public IRoverDriveController RoverDriveControllerPreset => _roverDriveControllerPreset;
@@ -177,6 +191,9 @@ public partial class PressedKeys : Node
 
 		if (HandleInputEvent(@event))
 			GetViewport().SetInputAsHandled();
+
+		if (HandleSlaveInputEvent(@event))
+			GetViewport().SetInputAsHandled();
 	}
 
 	public override void _Process(double delta)
@@ -237,6 +254,7 @@ public partial class PressedKeys : Node
 		{
 			_autoEstop_lastInput = Time.GetTicksMsec(); //or else will not vibrate when already in Auto E-Stop
 			ControlMode = ControlMode.EStop;
+			SlaveControlMode = ControlMode.EStop;
 			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by InputController).");
 			StopAll();
 		}
@@ -334,6 +352,11 @@ public partial class PressedKeys : Node
 			return false;
 		}
 
+		if (_controlMode == ControlMode.EStop)
+		{
+			return false;
+		}
+
 		if (_roverModeControllerPreset.HandleInput(inputEvent, _slaveControlMode, out _slaveControlMode))
 		{
 			OnSlaveControlModeChanged?.Invoke(_slaveControlMode);
@@ -343,7 +366,7 @@ public partial class PressedKeys : Node
 			return true;
 		}
 
-		if (LocalSettings.Singleton.General.PedanticEstop && ControlMode == ControlMode.EStop)
+		if (LocalSettings.Singleton.General.PedanticEstop && _slaveControlMode == ControlMode.EStop)
 		{
 			//print only if some controller is happy to take input
 			bool isInputHandled =
@@ -477,17 +500,22 @@ public partial class PressedKeys : Node
 			if (_masterJoy == device && _slaveJoyConnected)
 			{
 				_masterJoy = _slaveJoy;
+				_slaveJoy = -1;
+				SlaveControlMode = ControlMode.EStop;
 				_slaveJoyConnected = false;
 				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({_masterJoy}) promoted to Master");
 			}
 			else if (_masterJoy == device && !_slaveJoyConnected)
 			{
+				_masterJoy = -1;
 				_masterJoyConnected = false;
 				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({device}) - Master lost.");
 			}
 			else if (_slaveJoy == device)
 			{
+				_slaveJoy = -1;
 				_slaveJoyConnected = false;
+				SlaveControlMode = ControlMode.EStop;
 				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({device}) - Slave lost.");
 			}
 		}

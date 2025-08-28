@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=26 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/DriveMode_UIOverlay.cs" id="6_j447r"]
 [ext_resource type="PackedScene" uid="uid://dugqdg2bjure7" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SafeMode_UIOverlay.cs" id="7_ssyiv"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/DualSeatSlave_UIOverlay.cs" id="8_yrt6e"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MaxSizeContainer.cs" id="13_0svft"]
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
@@ -51,7 +52,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -65,6 +66,7 @@ DriveModeUIDis = NodePath("DriveModeUIDis")
 SafeModeUIDis = NodePath("SpeedLimiterUIDis")
 GrzybUIDis = NodePath("GrzybUIDis")
 MissionStatusUIDis = NodePath("MissonStatusUIDis")
+DualSeatSlaveUIDis = NodePath("DualSeatSlaveUIDis")
 ShowSettingsBtn = NodePath("HBoxContainer/ShowSettingsBtn")
 ShowVelMonitor = NodePath("HBoxContainer/ShowVelMonitor")
 ShowMissionControlBrn = NodePath("HBoxContainer/ShowMissionControl")
@@ -112,9 +114,9 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -378.0
+offset_left = -890.0
 offset_top = 4.0
-offset_right = -378.0
+offset_right = -890.0
 offset_bottom = 4.0
 grow_horizontal = 0
 script = ExtResource("4_2nwr4")
@@ -190,6 +192,22 @@ offset_right = 178.0
 
 [node name="Background" parent="SpeedLimiterUIDis/RoverMode" index="0"]
 color = Color(0.321569, 0.792157, 0.956863, 1)
+
+[node name="DualSeatSlaveUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
+offset_left = 751.0
+offset_top = 5.0
+offset_right = 751.0
+offset_bottom = 5.0
+script = ExtResource("8_yrt6e")
+Animator = NodePath("RoverMode/AnimationPlayer")
+BackgroundNodePath = NodePath("RoverMode/Background")
+LabelNodePath = NodePath("RoverMode/Label")
+
+[node name="RoverMode" parent="DualSeatSlaveUIDis" index="0"]
+offset_left = 31.0
+offset_top = -1.0
+offset_right = 211.0
+offset_bottom = 25.0
 
 [node name="MissonStatusUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
@@ -363,4 +381,5 @@ offset_bottom = -40.0
 [editable path="RoverModeUIDis"]
 [editable path="DriveModeUIDis"]
 [editable path="SpeedLimiterUIDis"]
+[editable path="DualSeatSlaveUIDis"]
 [editable path="MissonStatusUIDis"]
