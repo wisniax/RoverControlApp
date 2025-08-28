@@ -31,10 +31,10 @@ public partial class PressedKeys : Node
 	private ICameraController _roverCameraControllerPreset = null!;
 	private ulong _autoEstop_lastInput = 0;
 
-	private bool _masterJoyConnected;
-	private long _masterJoy;
-	private bool _slaveJoyConnected;
-	private long _slaveJoy;
+	private bool _masterJoyConnected = false;
+	private long _masterJoy = -1;
+	private bool _slaveJoyConnected = false;
+	private long _slaveJoy = -1;
 
 	#endregion Fields
 

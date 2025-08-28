@@ -149,6 +149,7 @@ public class JoyVibrato : IDisposable
 
 		VibrationSequence[] sequence =
 		[
+			new VibrationSequence(0.5f, 0.0f, 0.0f),
 			new VibrationSequence(0.5f, 0.0f, 1.0f),
 		];
 		long offset;
@@ -179,6 +180,7 @@ public class JoyVibrato : IDisposable
 
 		VibrationSequence[] sequence =
 		[
+			new VibrationSequence(0.5f, 0.0f, 0.0f),
 			new VibrationSequence(0.5f, 0.0f, 1.0f),
 			new VibrationSequence(0.2f, 0.0f, 0.0f),
 			new VibrationSequence(0.5f, 0.0f, 1.0f),
