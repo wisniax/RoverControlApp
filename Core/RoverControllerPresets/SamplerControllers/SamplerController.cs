@@ -51,9 +51,9 @@ public class SamplerController : IRoverSamplerController
 				PlatformMovement = 0f,
 				DrillAction = movement,
 				ContainerDegrees0 = lastState.ContainerDegrees0,
-				VacuumSuction = lastState.VacuumSuction,
-				VaccumA = lastState.VaccumA,
-				VacuumB = lastState.VacuumB,
+				VacuumSuction = lastState.VacuumSuction * 90 + 90,
+				VacuumA = lastState.VacuumA * 90 + 90,
+				VacuumB = lastState.VacuumB * 90 + 90,
 				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
 			};
 		}
@@ -65,9 +65,9 @@ public class SamplerController : IRoverSamplerController
 				PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
 				DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
 				ContainerDegrees0 = lastState.ContainerDegrees0,
-				VacuumSuction = lastState.VacuumSuction,
-				VaccumA = lastState.VaccumA,
-				VacuumB = lastState.VacuumB,
+				VacuumSuction = lastState.VacuumSuction * 90 + 90,
+				VacuumA = lastState.VacuumA * 90 + 90,
+				VacuumB = lastState.VacuumB * 90 + 90,
 				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
 			};
 		};
@@ -87,16 +87,16 @@ public class SamplerController : IRoverSamplerController
 			newSamplerControl.VacuumSuction = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container2,
 				true,
-				lastState.VacuumSuction
+				newSamplerControl.VacuumSuction
 			);
 		}
 		if (inputEvent.IsActionPressed("sampler_container_3", allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 3;
-			newSamplerControl.VaccumA = OperateContainer(
+			newSamplerControl.VacuumA = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container3,
 				true,
-				lastState.VaccumA
+				newSamplerControl.VacuumA
 			);
 		}
 		if (inputEvent.IsActionPressed("sampler_container_4", allowEcho: false, exactMatch: true))
@@ -105,7 +105,7 @@ public class SamplerController : IRoverSamplerController
 			newSamplerControl.VacuumB = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container4,
 				true,
-				lastState.VacuumB
+				newSamplerControl.VacuumB
 			);
 		}
 
@@ -122,8 +122,8 @@ public class SamplerController : IRoverSamplerController
 					if (newSamplerControl.VacuumSuction > 180f) newSamplerControl.VacuumSuction = 180f;
 					break;
 				case 3:
-					newSamplerControl.VaccumA += LocalSettings.Singleton.Sampler.Container3.PreciseStep;
-					if (newSamplerControl.VaccumA > 180f) newSamplerControl.VaccumA = 180f;
+					newSamplerControl.VacuumA += LocalSettings.Singleton.Sampler.Container3.PreciseStep;
+					if (newSamplerControl.VacuumA > 180f) newSamplerControl.VacuumA = 180f;
 					break;
 				case 4:
 					newSamplerControl.VacuumB += LocalSettings.Singleton.Sampler.Container4.PreciseStep;
@@ -144,8 +144,8 @@ public class SamplerController : IRoverSamplerController
 					if (newSamplerControl.VacuumSuction < 0f) newSamplerControl.VacuumSuction = 0f;
 					break;
 				case 3:
-					newSamplerControl.VaccumA -= LocalSettings.Singleton.Sampler.Container3.PreciseStep;
-					if (newSamplerControl.VaccumA < 0f) newSamplerControl.VaccumA = 0f;
+					newSamplerControl.VacuumA -= LocalSettings.Singleton.Sampler.Container3.PreciseStep;
+					if (newSamplerControl.VacuumA < 0f) newSamplerControl.VacuumA = 0f;
 					break;
 				case 4:
 					newSamplerControl.VacuumB -= LocalSettings.Singleton.Sampler.Container4.PreciseStep;
@@ -153,6 +153,11 @@ public class SamplerController : IRoverSamplerController
 					break;
 			}
 		}
+
+		newSamplerControl.VacuumSuction = (newSamplerControl.VacuumSuction - 90) / 90;
+		newSamplerControl.VacuumA = (newSamplerControl.VacuumA - 90) / 90;
+		newSamplerControl.VacuumB = (newSamplerControl.VacuumB - 90) / 90;
+
 
 		return newSamplerControl;
 	}
