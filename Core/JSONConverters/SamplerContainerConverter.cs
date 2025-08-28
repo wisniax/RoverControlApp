@@ -49,8 +49,10 @@ public class SamplerContainerConverter : JsonConverter<SamplerContainer>
 		return new SamplerContainer
 		(
 			customName ?? Default.CustomName,
-			closedDegrees ?? Default.ClosedDegrees,
-			openDegrees ?? Default.OpenDegrees
+			position0 ?? Default.Position0,
+			position1 ?? Default.Position1,
+			position2 ?? Default.Position2,
+			preciseStep ?? Default.PreciseStep
 		);
 	}
 
