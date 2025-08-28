@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionPlanner.cs" id="1_jdbma"]
 [ext_resource type="Texture2D" uid="uid://chmjbt2gknt8f" path="res://Resources/ERC2025.png" id="2_fxakj"]
-[ext_resource type="PackedScene" path="res://MVVM/View/Point.tscn" id="3_kj2xc"]
+[ext_resource type="PackedScene" uid="uid://djb630ht7i3m3" path="res://MVVM/View/Point.tscn" id="3_kj2xc"]
 
 [node name="MissionPlanner" type="Panel" node_paths=PackedStringArray("picture", "picturePathLabel", "mousePosLabel", "localPosLabel", "waypointsContainer", "selectReferencePoint", "referencePoints", "pointsContainer", "startButton", "pauseButton", "cancelButton", "roverPosition", "refPoint1", "refPoint2", "roverPosLabel", "distanceLabel")]
 offset_right = 1596.0
