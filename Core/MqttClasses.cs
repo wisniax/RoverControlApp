@@ -143,6 +143,17 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
+		public class SamplerFeedback
+		{
+			public float WeightA { get; set; } = 0f; // grams
+			public float WeightB { get; set; } = 0f; // grams
+			public float WeightC { get; set; } = 0f; // grams
+			public float Ph { get; set; } = 0f; // Ph?
+			public float Distance { get; set; } = 0f; // cm
+
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+
 		public class BatteryInfo
 		{
 			public BatteryStatus Status { get; set; }

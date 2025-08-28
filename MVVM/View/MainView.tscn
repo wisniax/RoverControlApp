@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=27 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -12,9 +12,10 @@
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SafeMode_UIOverlay.cs" id="7_ssyiv"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
-[ext_resource type="PackedScene" uid="uid://8utu5btakgnh" path="res://MVVM/View/MissionPlanner.tscn" id="12_4ihq0"]
+[ext_resource type="PackedScene" path="res://MVVM/View/MissionPlanner.tscn" id="12_4ihq0"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MaxSizeContainer.cs" id="13_0svft"]
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
+[ext_resource type="PackedScene" uid="uid://bh30n087mmlc4" path="res://MVVM/View/SensorsMonitor.tscn" id="13_4tft6"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
@@ -270,6 +271,13 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_nofgb")
 text = "GYRO"
 
+[node name="ShowSensors" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+shortcut = SubResource("Shortcut_nofgb")
+text = "SENSORS"
+
 [node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
@@ -318,6 +326,14 @@ offset_right = 1606.0
 offset_bottom = 840.0
 scale = Vector2(0.6, 0.6)
 
+[node name="SensorsMonitor" parent="." instance=ExtResource("13_4tft6")]
+visible = false
+layout_mode = 0
+offset_left = 9.0
+offset_top = 42.0
+offset_right = 238.0
+offset_bottom = 287.0
+
 [node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
 visible = false
 layout_mode = 1
@@ -334,6 +350,7 @@ grow_horizontal = 0
 grow_vertical = 0
 
 [node name="MaxSizeContainer" type="Container" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -374,6 +391,7 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowSensors" to="SensorsMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]

@@ -1,0 +1,92 @@
+[gd_scene load_steps=2 format=3 uid="uid://bh30n087mmlc4"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/SensorsMonitor.cs" id="1_6r28j"]
+
+[node name="SensorsMonitor" type="Panel" node_paths=PackedStringArray("sensorLabel", "sensorSlider")]
+offset_right = 229.0
+offset_bottom = 245.0
+script = ExtResource("1_6r28j")
+sensorLabel = [NodePath("VBoxContainer/Distance"), NodePath("VBoxContainer/WeightA"), NodePath("VBoxContainer/WeightB"), NodePath("VBoxContainer/WeightC"), NodePath("VBoxContainer/Ph")]
+sensorSlider = [NodePath("VBoxContainer/HSlider"), NodePath("VBoxContainer/HSlider2"), NodePath("VBoxContainer/HSlider3"), NodePath("VBoxContainer/HSlider4"), NodePath("VBoxContainer/HSlider5")]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 13.0
+offset_right = 218.0
+offset_bottom = 238.0
+
+[node name="Label" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Sensors Monitor"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Distance" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Distance: ???"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSlider" type="HSlider" parent="VBoxContainer"]
+layout_mode = 2
+max_value = 50.0
+editable = false
+scrollable = false
+tick_count = 6
+
+[node name="WeightA" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "WeightA: ???"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSlider2" type="HSlider" parent="VBoxContainer"]
+layout_mode = 2
+max_value = 750.0
+editable = false
+scrollable = false
+tick_count = 6
+
+[node name="WeightB" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "WeightB: ???"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSlider3" type="HSlider" parent="VBoxContainer"]
+layout_mode = 2
+max_value = 750.0
+editable = false
+scrollable = false
+tick_count = 6
+
+[node name="WeightC" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "WeightC: ???"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSlider4" type="HSlider" parent="VBoxContainer"]
+layout_mode = 2
+max_value = 750.0
+editable = false
+scrollable = false
+tick_count = 6
+
+[node name="Ph" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Ph: ???"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSlider5" type="HSlider" parent="VBoxContainer"]
+layout_mode = 2
+max_value = 14.0
+editable = false
+scrollable = false
+tick_count = 6
