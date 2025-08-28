@@ -59,7 +59,7 @@ public class SamplerContainerConverter : JsonConverter<SamplerContainer>
 			customName ?? Default.CustomName,
 			position0 ?? Default.Position0,
 			position1 ?? Default.Position1,
-			position0 ?? Default.Position2,
+			position2 ?? Default.Position2,
 			preciseStep ?? Default.PreciseStep
 		);
 	}
