@@ -19,6 +19,7 @@ public partial class PressedKeys : Node
 {
 	#region Fields
 	private ControlMode _controlMode;
+	private ControlMode _slaveControlMode;
 	private Vector4 _cameraMoveVector;
 	private RoverControl _roverMovement;
 	private ManipulatorControl _manipulatorMovement;
@@ -29,6 +30,11 @@ public partial class PressedKeys : Node
 	private IRoverSamplerController _roverSamplerControllerPreset = null!;
 	private ICameraController _roverCameraControllerPreset = null!;
 	private ulong _autoEstop_lastInput = 0;
+
+	private bool _masterJoyConnected;
+	private long _masterJoy;
+	private bool _slaveJoyConnected;
+	private long _slaveJoy;
 
 	#endregion Fields
 
@@ -46,6 +52,8 @@ public partial class PressedKeys : Node
 	public event Func<KinematicMode, Task>? OnKinematicModeChanged;
 	public event ControllerPresetChangedEventHandler? ControllerPresetChanged;
 	public event LastAcceptedInputEventHandler? LastAcceptedInput;
+
+	public event Func<ControlMode, Task>? OnSlaveControlModeChanged;
 
 	#endregion Events
 
@@ -66,7 +74,7 @@ public partial class PressedKeys : Node
 		}
 	}
 
-	public static bool PadConnected => Input.GetConnectedJoypads().Count > 0;
+	public bool PadConnected => _masterJoyConnected;
 
 	public Vector4 CameraMoveVector
 	{
@@ -236,12 +244,20 @@ public partial class PressedKeys : Node
 
 	public bool HandleInputEvent(InputEvent inputEvent)
 	{
+		//GD.Print($"IsKB:{IsInputFromKeyboard(inputEvent)} IsMasterJoy:{_masterJoyConnected && IsInputFromController(inputEvent, _masterJoy)}");
+
+		if (!IsInputFromKeyboard(inputEvent) && (!_masterJoyConnected || !IsInputFromController(inputEvent, _masterJoy)))
+		{
+			return false;
+		}
+
+
 		if (_roverModeControllerPreset.HandleInput(inputEvent, _controlMode, out _controlMode))
 		{
 			OnControlModeChanged?.Invoke(_controlMode);
 			StopAll();
 			OnAcceptedInput(inputEvent);
-			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as ControlMode");
+			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) ControlMode");
 			return true;
 		}
 
@@ -265,7 +281,7 @@ public partial class PressedKeys : Node
 					OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
 					OnRoverMovementVector?.Invoke(_roverMovement);
 					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as RoverDrive");
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) RoverDrive");
 					return true;
 				}
 				break;
@@ -274,7 +290,7 @@ public partial class PressedKeys : Node
 				{
 					OnManipulatorMovement?.Invoke(_manipulatorMovement);
 					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as RoverManipulator");
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) RoverManipulator");
 					return true;
 				}
 				break;
@@ -283,7 +299,7 @@ public partial class PressedKeys : Node
 				{
 					OnSamplerMovement?.Invoke(_samplerControl);
 					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as RoverSampler");
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) RoverSampler");
 					return true;
 				}
 				break;
@@ -302,7 +318,7 @@ public partial class PressedKeys : Node
 				{
 					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
 					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as Camera");
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) Camera");
 					return true;
 				}
 				break;
@@ -310,6 +326,115 @@ public partial class PressedKeys : Node
 
 		return false;
 	}
+
+	public bool HandleSlaveInputEvent(InputEvent inputEvent)
+	{
+		if (!_slaveJoyConnected || !IsInputFromController(inputEvent, _slaveJoy))
+		{
+			return false;
+		}
+
+		if (_roverModeControllerPreset.HandleInput(inputEvent, _slaveControlMode, out _slaveControlMode))
+		{
+			OnSlaveControlModeChanged?.Invoke(_slaveControlMode);
+			StopAll();
+			OnAcceptedInput(inputEvent);
+			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) ControlMode");
+			return true;
+		}
+
+		if (LocalSettings.Singleton.General.PedanticEstop && ControlMode == ControlMode.EStop)
+		{
+			//print only if some controller is happy to take input
+			bool isInputHandled =
+				_roverCameraControllerPreset.HandleInput(inputEvent, _cameraMoveVector, out _);
+
+			if(isInputHandled)
+				EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "PedanticEstop is enabled. Input rejected.");
+			return false;
+		}
+
+		// rover control
+		if (_controlMode == _slaveControlMode)
+		{
+			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input rejected (Slave). Master is in same mode.");
+			return false;
+		}
+
+		switch (_slaveControlMode)
+		{
+			case ControlMode.Rover:
+				if (_roverDriveControllerPreset.HandleInput(inputEvent, _roverMovement, out _roverMovement))
+				{
+					OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
+					OnRoverMovementVector?.Invoke(_roverMovement);
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) RoverDrive");
+					return true;
+				}
+				break;
+			case ControlMode.Manipulator:
+				if (_roverManipulatorControllerPreset.HandleInput(inputEvent, _manipulatorMovement, out _manipulatorMovement))
+				{
+					OnManipulatorMovement?.Invoke(_manipulatorMovement);
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) RoverManipulator");
+					return true;
+				}
+				break;
+			case ControlMode.Sampler:
+				if (_roverSamplerControllerPreset.HandleInput(inputEvent, _samplerControl, out _samplerControl))
+				{
+					OnSamplerMovement?.Invoke(_samplerControl);
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) RoverSampler");
+					return true;
+				}
+				break;
+		}
+
+		// camera control
+		switch (_slaveControlMode)
+		{
+			case ControlMode.EStop:
+			case ControlMode.Rover:
+			case ControlMode.Manipulator: // was disabled originally
+			case ControlMode.Sampler:
+			case ControlMode.Autonomy:
+			default:
+				if (_roverCameraControllerPreset.HandleInput(inputEvent, _cameraMoveVector, out _cameraMoveVector))
+				{
+					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) Camera");
+					return true;
+				}
+				break;
+		}
+
+		return false;
+	}
+
+	static bool IsInputFromController(InputEvent input, long device)
+	{
+		if (input is not InputEventJoypadButton && input is not InputEventJoypadMotion)
+		{
+			return false;
+		}
+
+		return input.Device == device;
+	}
+
+	static bool IsInputFromKeyboard(InputEvent input)
+	{
+		if (input is InputEventJoypadButton || input is InputEventJoypadMotion)
+		{
+			return false;
+		}
+
+		return input.Device == 0;
+	}
+
 
 	#endregion Methods.HandleInput
 
@@ -331,8 +456,42 @@ public partial class PressedKeys : Node
 
 	private void InputOnJoyConnectionChanged(long device, bool connected)
 	{
-		var status = connected ? "connected" : "disconnected";
-		EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Pad {status}");
+		if (connected)
+		{
+			if (!_masterJoyConnected)
+			{
+				_masterJoy = device;
+				_masterJoyConnected = true;
+				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({device}) connected as Master");
+			}
+			else if (_masterJoyConnected && !_slaveJoyConnected)
+			{
+				_slaveJoy = device;
+				_slaveJoyConnected = true;
+				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({device}) connected as Slave");
+			}
+		}
+		else
+		{
+			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({device}) disconnected.");
+			if (_masterJoy == device && _slaveJoy != 0)
+			{
+				_masterJoy = _slaveJoy;
+				_slaveJoyConnected = false;
+				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({_masterJoy}) promoted to Master");
+			}
+			else if (_masterJoy == device && _slaveJoy == 0)
+			{
+				_masterJoyConnected = false;
+				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({device}) - Master lost.");
+			}
+			else if (_slaveJoy == device)
+			{
+				_slaveJoyConnected = false;
+				EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Controller ({device}) - Slave lost.");
+			}
+		}
+
 		OnPadConnectionChanged?.Invoke(PadConnected);
 		StopAll();
 	}
