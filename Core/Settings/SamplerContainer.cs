@@ -15,7 +15,7 @@ public partial class SamplerContainer : RefCounted
 		Position0 = 0f;
 		Position1 = 90f;
 		Position2 = 180f;
-		PreciseStep = 1f;
+		PreciseStep = 90f;
 	}
 
 	public SamplerContainer(string customName, float position0, float position1, float position2, float preciseStep)
@@ -39,6 +39,6 @@ public partial class SamplerContainer : RefCounted
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;180;0.1;f;f")]
 	public float Position2 { get; init; }
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;10;0.1;f;f")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;100;0.1;f;f")]
 	public float PreciseStep { get; init; }
 }
