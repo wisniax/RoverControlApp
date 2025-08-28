@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=26 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://de8ong5scxoka" path="res://MVVM/View/VelMonitor.tscn" id="6_wqihy"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/SafeMode_UIOverlay.cs" id="7_ssyiv"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
+[ext_resource type="PackedScene" uid="uid://8utu5btakgnh" path="res://MVVM/View/MissionPlanner.tscn" id="12_4ihq0"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MaxSizeContainer.cs" id="13_0svft"]
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
@@ -234,6 +235,13 @@ text = "RTSP Capture"
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 
+[node name="ShowMissionPlanner" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+shortcut = SubResource("Shortcut_psw5f")
+text = "MISSION PLANNER"
+
 [node name="ShowMissionControl" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
@@ -301,6 +309,15 @@ offset_bottom = 236.0
 grow_horizontal = 0
 grow_vertical = 1
 
+[node name="MissionPlanner" parent="." instance=ExtResource("12_4ihq0")]
+visible = false
+layout_mode = 0
+offset_left = 8.0
+offset_top = 33.0
+offset_right = 1606.0
+offset_bottom = 840.0
+scale = Vector2(0.6, 0.6)
+
 [node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
 visible = false
 layout_mode = 1
@@ -351,6 +368,7 @@ offset_bottom = -40.0
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
+[connection signal="toggled" from="HBoxContainer/ShowMissionPlanner" to="MissionPlanner" method="set_visible"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]

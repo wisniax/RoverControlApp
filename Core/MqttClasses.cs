@@ -34,7 +34,8 @@ namespace RoverControlApp.Core
 			Started = 2,
 			Stopping = 3,
 			Stopped = 4,
-			Interrupted = 5
+			Interrupted = 5,
+			Waiting = 6
 		}
 		public enum PointType
 		{
@@ -193,6 +194,32 @@ namespace RoverControlApp.Core
 			public bool EStop { get; set; } = true;
 			public string Status { get; set; } = string.Empty;
 		}
+
+		public enum MissionPlannerMessageType
+		{
+			PointToNavigate = 0,
+			StartSlashContinue = 1,
+			PauseMission = 2,
+			CancelMission = 3
+		}
+
+		public class MissionPlannerMessage
+		{
+			public float RequestedPosX { get; set; }
+			public float RequestedPosY { get; set; }
+			public float Deadzone { get; set; }
+			public MissionPlannerMessageType MessageType { get; set; }
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+
+		public class MissionPlannerFeedback
+		{
+			public float CurrentPosX { get; set; }
+			public float CurrentPosY { get; set; }
+			public MissionStatus MissionStatus { get; set; }
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+		}
+
 		public class RoverMissionStatus
 		{
 			public MissionStatus MissionStatus { get; set; } = MissionStatus.Stopped;
