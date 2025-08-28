@@ -330,13 +330,15 @@ namespace RoverControlApp.MVVM.ViewModel
 				case MqttClasses.ControlMode.Sampler:
 					FancyDebugViewRLab.AppendText($"PressedKeys: Sampler DrillAction: {PressedKeys.SamplerMovement.DrillAction:F2}, " +
 												  $"DrillMov: {PressedKeys.SamplerMovement.DrillMovement:F2}, " +
-												  $"PlatformMov: {PressedKeys.SamplerMovement.PlatformMovement:F2}, " +
-												  $"{(LocalSettings.Singleton.Sampler.Container0.CustomName == "-" ? "Container0" : LocalSettings.Singleton.Sampler.Container0.CustomName)}" +
+												  $"PlatformMov: {PressedKeys.SamplerMovement.PlatformMovement:F2}, \n" +
+												  $"{(LocalSettings.Singleton.Sampler.Container1.CustomName == "-" ? "Container0" : LocalSettings.Singleton.Sampler.Container1.CustomName)}" +
 																$": {PressedKeys.SamplerMovement.ContainerDegrees0:F1}, " +
-												  $"{(LocalSettings.Singleton.Sampler.Container1.CustomName == "-" ? "Container1" : LocalSettings.Singleton.Sampler.Container1.CustomName)}" +
-																$": {PressedKeys.SamplerMovement.ContainerDegrees1:F1}, " +
-												  $"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "Container2" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
-																$": {PressedKeys.SamplerMovement.ContainerDegrees2:F1}\n");
+												  $"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "VacuumSuck" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
+																$": {PressedKeys.SamplerMovement.VacuumSuction:F1}, " +
+												  $"{(LocalSettings.Singleton.Sampler.Container3.CustomName == "-" ? "VacuumA" : LocalSettings.Singleton.Sampler.Container3.CustomName)}" +
+																$": {PressedKeys.SamplerMovement.VaccumA:F1}, " +
+												  $"{(LocalSettings.Singleton.Sampler.Container4.CustomName == "-" ? "VacuumB" : LocalSettings.Singleton.Sampler.Container4.CustomName)}" +
+																$": {PressedKeys.SamplerMovement.VacuumB:F1}\n");
 					break;
 			}
 

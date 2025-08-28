@@ -33,13 +33,31 @@ public class SamplerController : IRoverSamplerController
 
 		SamplerControl newSamplerControl = new()
 		{
-			DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
-			PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
-			DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
-			ContainerDegrees0 = lastState.ContainerDegrees0,
-			ContainerDegrees1 = lastState.ContainerDegrees1,
-			ContainerDegrees2 = lastState.ContainerDegrees2,
-			Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+			newSamplerControl = new()
+			{
+				DrillMovement = movement,
+				PlatformMovement = 0f,
+				DrillAction = movement,
+				ContainerDegrees0 = lastState.ContainerDegrees0,
+				VacuumSuction = lastState.VacuumSuction,
+				VaccumA = lastState.VaccumA,
+				VacuumB = lastState.VacuumB,
+				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+			};
+		}
+		else
+		{
+			newSamplerControl = new()
+			{
+				DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
+				PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
+				DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
+				ContainerDegrees0 = lastState.ContainerDegrees0,
+				VacuumSuction = lastState.VacuumSuction,
+				VaccumA = lastState.VaccumA,
+				VacuumB = lastState.VacuumB,
+				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
+			};
 		};
 
 		if (inputEvent.IsActionPressed("sampler_container_0", allowEcho: false, exactMatch: true))
@@ -49,17 +67,85 @@ public class SamplerController : IRoverSamplerController
 				lastState.ContainerDegrees0
 			);
 		if (inputEvent.IsActionPressed("sampler_container_1", allowEcho: false, exactMatch: true))
-			newSamplerControl.ContainerDegrees1 = OperateContainer(
+		{
+			LastMovedContainer = 1;
+			newSamplerControl.ContainerDegrees0 = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container1,
 				true,
-				lastState.ContainerDegrees1
+				lastState.ContainerDegrees0
 			);
 		if (inputEvent.IsActionPressed("sampler_container_2", allowEcho: false, exactMatch: true))
-			newSamplerControl.ContainerDegrees2 = OperateContainer(
+		{
+			LastMovedContainer = 2;
+			newSamplerControl.VacuumSuction = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container2,
 				true,
-				lastState.ContainerDegrees2
+				lastState.VacuumSuction
 			);
+		}
+		if (inputEvent.IsActionPressed("sampler_container_3", allowEcho: false, exactMatch: true))
+		{
+			LastMovedContainer = 3;
+			newSamplerControl.VaccumA = OperateContainer(
+				LocalSettings.Singleton.Sampler.Container3,
+				true,
+				lastState.VaccumA
+			);
+		}
+		if (inputEvent.IsActionPressed("sampler_container_4", allowEcho: false, exactMatch: true))
+		{
+			LastMovedContainer = 4;
+			newSamplerControl.VacuumB = OperateContainer(
+				LocalSettings.Singleton.Sampler.Container4,
+				true,
+				lastState.VacuumB
+			);
+		}
+
+		if (inputEvent.IsActionPressed("sampler_container_precise_up", allowEcho: false, exactMatch: true))
+		{
+			switch (LastMovedContainer)
+			{
+				case 1:
+					newSamplerControl.ContainerDegrees0 += LocalSettings.Singleton.Sampler.Container1.PreciseStep;
+					if (newSamplerControl.ContainerDegrees0 > 180f) newSamplerControl.ContainerDegrees0 = 180f;
+					break;
+				case 2:
+					newSamplerControl.VacuumSuction += LocalSettings.Singleton.Sampler.Container2.PreciseStep;
+					if (newSamplerControl.VacuumSuction > 180f) newSamplerControl.VacuumSuction = 180f;
+					break;
+				case 3:
+					newSamplerControl.VaccumA += LocalSettings.Singleton.Sampler.Container3.PreciseStep;
+					if (newSamplerControl.VaccumA > 180f) newSamplerControl.VaccumA = 180f;
+					break;
+				case 4:
+					newSamplerControl.VacuumB += LocalSettings.Singleton.Sampler.Container4.PreciseStep;
+					if (newSamplerControl.VacuumB > 180f) newSamplerControl.VacuumB = 180f;
+					break;
+			}
+		}
+		if (inputEvent.IsActionPressed("sampler_container_precise_down", allowEcho: false, exactMatch: true))
+		{
+			switch (LastMovedContainer)
+			{
+				case 1:
+					newSamplerControl.ContainerDegrees0 -= LocalSettings.Singleton.Sampler.Container1.PreciseStep;
+					if (newSamplerControl.ContainerDegrees0 < 0f) newSamplerControl.ContainerDegrees0 = 0f;
+					break;
+				case 2:
+					newSamplerControl.VacuumSuction -= LocalSettings.Singleton.Sampler.Container2.PreciseStep;
+					if (newSamplerControl.VacuumSuction < 0f) newSamplerControl.VacuumSuction = 0f;
+					break;
+				case 3:
+					newSamplerControl.VaccumA -= LocalSettings.Singleton.Sampler.Container3.PreciseStep;
+					if (newSamplerControl.VaccumA < 0f) newSamplerControl.VaccumA = 0f;
+					break;
+				case 4:
+					newSamplerControl.VacuumB -= LocalSettings.Singleton.Sampler.Container4.PreciseStep;
+					if (newSamplerControl.VacuumB < 0f) newSamplerControl.VacuumB = 0f;
+					break;
+			}
+		}
 
 		return newSamplerControl;
 	}

@@ -130,9 +130,13 @@ namespace RoverControlApp.Core
 			public float DrillMovement { get; set; } = 0f;
 			public float PlatformMovement { get; set; } = 0f;
 			public float DrillAction { get; set; } = 0f;
+			public float ContainerDegrees0 { get; set; } = 0f;
 			public float ContainerDegrees1 { get; set; } = 0f;
-			public float ContainerDegrees2 { get; set; } = 0f;
-			
+			public float VacuumSuction { get; set; } = 0f;
+			public float VaccumA { get; set; } = 0f;
+			public float VacuumB { get; set; } = 0f;
+
+
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
