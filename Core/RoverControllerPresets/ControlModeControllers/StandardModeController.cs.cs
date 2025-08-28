@@ -3,8 +3,6 @@ using System;
 using Godot;
 using Godot.Collections;
 
-using RoverControlApp.MVVM.Model;
-
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets.ControlModeControllers;
@@ -45,7 +43,7 @@ public class StandardModeController : IControlModeController
 	{
 		ControlMode newState = lastState;
 
-		if (Input.IsActionPressed("controlmode_estop") || PressedKeys.IsInputFromKeyboard(inputEvent))
+		if (Input.IsActionPressed("controlmode_estop"))
 		{
 			if (inputEvent.IsActionPressed("controlmode_drive", exactMatch: true))
 			{
