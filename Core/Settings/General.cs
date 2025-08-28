@@ -19,7 +19,7 @@ public partial class General : SettingBase, ICloneable
 		_backCaptureLength = 15000;
 		_noInputSecondsToEstop = 120;
 		_pedanticEstop = true;
-		_missionControlMapPath = "ExampleMap.jpg";
+		_missionControlMapPath = "ERC2025.png";
 	}
 
 	public General(bool verboseDebug, string missionControlPosition, string missionControlSize, long backCaptureLength, int noInputSecondsToEstop, bool pedanticEstop, string missionControlMapPath)
