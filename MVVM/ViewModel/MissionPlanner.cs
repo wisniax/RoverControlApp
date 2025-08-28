@@ -239,6 +239,10 @@ public partial class MissionPlanner : Panel
 		{
 			switch (LocalSettings.Singleton.General.MissionControlMapPath)
 			{
+				case "ERC2025.png":
+					picture.Texture = GD.Load<Texture2D>("res://Resources/ERC2025.png");
+					EventLogger.LogMessage("MissionPlanner", EventLogger.LogLevel.Info, "Using ERC map.");
+					break;
 				case "ExampleMap.png":
 				case "ExampleMap.jpg":
 				case "ExampleMap.jpeg":
