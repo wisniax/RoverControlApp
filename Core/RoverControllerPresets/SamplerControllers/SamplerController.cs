@@ -38,7 +38,7 @@ public class SamplerController : IRoverSamplerController
 				DrillMovement = movement,
 				PlatformMovement = 0f,
 				DrillAction = movement,
-				ContainerDegrees0 = lastState.ContainerDegrees0,
+				ContainerDegrees0 = lastState.ContainerDegrees0 * 90 + 90,
 				VacuumSuction = lastState.VacuumSuction * 90 + 90,
 				VacuumA = lastState.VacuumA * 90 + 90,
 				VacuumB = lastState.VacuumB * 90 + 90,
@@ -52,7 +52,7 @@ public class SamplerController : IRoverSamplerController
 				DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
 				PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
 				DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
-				ContainerDegrees0 = lastState.ContainerDegrees0,
+				ContainerDegrees0 = lastState.ContainerDegrees0 * 90 + 90,
 				VacuumSuction = lastState.VacuumSuction * 90 + 90,
 				VacuumA = lastState.VacuumA * 90 + 90,
 				VacuumB = lastState.VacuumB * 90 + 90,
@@ -72,7 +72,7 @@ public class SamplerController : IRoverSamplerController
 			newSamplerControl.ContainerDegrees0 = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container1,
 				true,
-				lastState.ContainerDegrees0
+				newSamplerControl.ContainerDegrees0
 			);
 		if (inputEvent.IsActionPressed("sampler_container_2", allowEcho: false, exactMatch: true))
 		{
@@ -147,6 +147,7 @@ public class SamplerController : IRoverSamplerController
 			}
 		}
 
+		newSamplerControl.ContainerDegrees0 = (newSamplerControl.ContainerDegrees0 - 90) / 90;
 		newSamplerControl.VacuumSuction = (newSamplerControl.VacuumSuction - 90) / 90;
 		newSamplerControl.VacuumA = (newSamplerControl.VacuumA - 90) / 90;
 		newSamplerControl.VacuumB = (newSamplerControl.VacuumB - 90) / 90;

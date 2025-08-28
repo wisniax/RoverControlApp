@@ -12,8 +12,10 @@ public partial class SamplerContainer : RefCounted
 	public SamplerContainer()
 	{
 		CustomName = "-";
-		ClosedDegrees = 0f;
-		OpenDegrees = 180f;
+		Position0 = 0f;
+		Position1 = 90f;
+		Position2 = 180f;
+		PreciseStep = 90f;
 	}
 
 	public SamplerContainer(string customName, float closedDegrees, float openDegrees)
@@ -30,5 +32,8 @@ public partial class SamplerContainer : RefCounted
 	public float ClosedDegrees { get; init; }
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;180;0.1;f;f")]
-	public float OpenDegrees { get; init; }
+	public float Position2 { get; init; }
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;100;0.1;f;f")]
+	public float PreciseStep { get; init; }
 }
