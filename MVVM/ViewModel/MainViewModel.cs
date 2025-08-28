@@ -102,7 +102,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			ManagePtzStatus();
 			ManageRtspStatus();
 			InputHelpMaster.GenerateHints();
-			InputHelpMaster.HintType = PressedKeys.PadConnected ? InputHelpHint.HintVisibility.Joy : InputHelpHint.HintVisibility.Kb;
+			InputHelpMaster.HintType = PressedKeys.Singleton.PadConnected ? InputHelpHint.HintVisibility.Joy : InputHelpHint.HintVisibility.Kb;
 
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
