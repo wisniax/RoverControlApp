@@ -84,7 +84,7 @@ namespace RoverControlApp.Core
 
 					if (!string.IsNullOrEmpty(formatData))
 					{
-						var tester = RegEx.CreateFromString(@"(?i)^(?:[0-9]+(?:\.|,)?[0-9]*;){3}(?:f|t);(?:i|ui|l|ul|f|d|m)$");
+						var tester = RegEx.CreateFromString(@"(?i)^(?:-?[0-9]+(?:\.|,)?-?[0-9]*;){3}(?:f|t);(?:i|ui|l|ul|f|d|m)$");
 						if (tester.Search(formatData) is not null)
 							break;
 						EventLogger.LogMessage("SettingsManagerVisibleAttribute", EventLogger.LogLevel.Error, $"Invalid format for range on property/field \"{customName}\"! (using default instead)");
