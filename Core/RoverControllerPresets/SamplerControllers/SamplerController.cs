@@ -13,14 +13,16 @@ public class SamplerController : IRoverSamplerController
 	[
 		"sampler_move_down", "sampler_move_up",
 		"sampler_drill_down", "sampler_drill_up",
+		"sampler_alt_mode",
 		"sampler_drill_movement",
 		"sampler_platform_movement",
 		"sampler_drill_enable",
-		"sampler_alt_mode",
 		"sampler_container_1",
 		"sampler_container_2",
 		"sampler_container_3",
-		"sampler_container_4"
+		"sampler_container_4",
+		"sampler_container_precise_up",
+		"sampler_container_precise_down",
 	];
 
 	public static int LastMovedContainer { get; set; } = -1;
