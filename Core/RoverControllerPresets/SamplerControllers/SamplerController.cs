@@ -108,7 +108,7 @@ public class SamplerController : IRoverSamplerController
 			{
 				case 1:
 					newSamplerControl.ContainerDegrees0 += LocalSettings.Singleton.Sampler.Container1.PreciseStep;
-					if (newSamplerControl.ContainerDegrees0 > 1f) newSamplerControl.ContainerDegrees0 = 1f;
+					if (newSamplerControl.ContainerDegrees0 > 1000000f) newSamplerControl.ContainerDegrees0 = 1000000f;
 					break;
 				case 2:
 					newSamplerControl.VacuumSuction += LocalSettings.Singleton.Sampler.Container2.PreciseStep;
