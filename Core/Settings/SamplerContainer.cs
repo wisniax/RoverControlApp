@@ -28,15 +28,15 @@ public partial class SamplerContainer : RefCounted
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string CustomName { get; init; }
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "-1;1;0.01;f;f")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "-1;1000000;0.01;t;f")]
 	public float Position0 { get; init; }
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "-1;1;0.01;f;f")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "-1;1000000;0.01;t;f")]
 	public float Position1 { get; init; }
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "-1;1;0.01;f;f")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "-1;1000000;0.01;t;f")]
 	public float Position2 { get; init; }
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.01;1;0.01;f;f")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.01;10000000;0.01;t;f")]
 	public float PreciseStep { get; init; }
 }
