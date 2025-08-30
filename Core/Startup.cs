@@ -21,23 +21,44 @@ public partial class Startup : Node
 		var actions = InputMap.GetActions().SkipWhile((m) => m.ToString().StartsWith("ui"));
 		foreach (var item in actions)
 		{
-			var events0 = InputMap.ActionGetEvents(item);
-			var events1 = InputMap.ActionGetEvents(item);
+			var events = InputMap.ActionGetEvents(item);
 			var deadzone = InputMap.ActionGetDeadzone(item);
 
 			InputMap.AddAction(item + "_0", deadzone);
 			InputMap.AddAction(item + "_1", deadzone);
 
-			foreach (var ev in events0)
+			foreach (var ev in events)
 			{
-				ev.Device = 0;
-				InputMap.ActionAddEvent(item + "_0", ev);
-			}
+				if (ev is InputEventKey kev)
+				{
+					var kev0 = kev.DeepCopy();
+					kev0.Device = 0;
+					InputMap.ActionAddEvent(item + "_0", kev0);
 
-			foreach (var ev in events1)
-			{
-				ev.Device = 1;
-				InputMap.ActionAddEvent(item + "_1", ev);
+					var kev1 = kev.DeepCopy();
+					kev1.Device = 1;
+					InputMap.ActionAddEvent(item + "_1", kev1);
+				}
+				else if (ev is InputEventJoypadButton jbev)
+				{
+					var jbev0 = jbev.DeepCopy();
+					jbev0.Device = 0;
+					InputMap.ActionAddEvent(item + "_0", jbev0);
+
+					var jbev1 = jbev.DeepCopy();
+					jbev1.Device = 1;
+					InputMap.ActionAddEvent(item + "_1", jbev1);
+				}
+				else if (ev is InputEventJoypadMotion jmev)
+				{
+					var jmev0 = jmev.DeepCopy();
+					jmev0.Device = 0;
+					InputMap.ActionAddEvent(item + "_0", jmev0);
+
+					var jmev1 = jmev.DeepCopy();
+					jmev1.Device = 1;
+					InputMap.ActionAddEvent(item + "_1", jmev1);
+				}
 			}
 		}
 
