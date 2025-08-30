@@ -21,15 +21,22 @@ public partial class Startup : Node
 		var actions = InputMap.GetActions().SkipWhile((m) => m.ToString().StartsWith("ui"));
 		foreach (var item in actions)
 		{
-			var events = InputMap.ActionGetEvents(item);
+			var events0 = InputMap.ActionGetEvents(item);
+			var events1 = InputMap.ActionGetEvents(item);
 			var deadzone = InputMap.ActionGetDeadzone(item);
 
 			InputMap.AddAction(item + "_0", deadzone);
 			InputMap.AddAction(item + "_1", deadzone);
 
-			foreach (var ev in events)
+			foreach (var ev in events0)
 			{
+				ev.Device = 0;
 				InputMap.ActionAddEvent(item + "_0", ev);
+			}
+
+			foreach (var ev in events1)
+			{
+				ev.Device = 1;
 				InputMap.ActionAddEvent(item + "_1", ev);
 			}
 		}
