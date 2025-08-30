@@ -124,7 +124,7 @@ public class JoyVibrato : IDisposable
 		VibrationSequence[] sequence = Presets[controlMode];
 		long offset;
 
-				int joyId = _isMasterVibrato ? (int)PressedKeys.Singleton.MasterJoyDevice : (int)PressedKeys.Singleton.SlaveJoyDevice;
+		int joyId = _isMasterVibrato ? 0 : 1;
 
 		foreach (var vibration in sequence)
 		{
@@ -153,7 +153,7 @@ public class JoyVibrato : IDisposable
 		];
 		long offset;
 
-		int joyId = (int)PressedKeys.Singleton.MasterJoyDevice;
+		int joyId = 0;
 
 		foreach (var vibration in sequence)
 		{
@@ -185,7 +185,7 @@ public class JoyVibrato : IDisposable
 		];
 		long offset;
 
-		int joyId = (int)PressedKeys.Singleton.SlaveJoyDevice;
+		int joyId = 1;
 
 		foreach (var vibration in sequence)
 		{

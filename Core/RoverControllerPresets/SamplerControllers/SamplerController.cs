@@ -28,18 +28,18 @@ public class SamplerController : IRoverSamplerController
 	public static int LastMovedContainer { get; set; } = -1;
 	public static bool AltMode { get; set; } = false;
 
-	public SamplerControl CalculateMoveVector(in InputEvent inputEvent, in SamplerControl lastState)
+	public SamplerControl CalculateMoveVector(in string actionSurffix, in InputEvent inputEvent, in SamplerControl lastState)
 	{
-		float movement = Input.GetAxis("sampler_move_down", "sampler_move_up");
+		float movement = Input.GetAxis("sampler_move_down" + actionSurffix, "sampler_move_up" + actionSurffix);
 		if (Mathf.Abs(movement) < LocalSettings.Singleton.Joystick.MinimalInput)
 			movement = 0f;
 
-		float drillSpeed = Input.GetAxis("sampler_drill_down", "sampler_drill_up");
+		float drillSpeed = Input.GetAxis("sampler_drill_down" + actionSurffix, "sampler_drill_up" + actionSurffix);
 		//if (Mathf.Abs(drillSpeed) < LocalSettings.Singleton.Joystick.MinimalInput)
 		//	drillSpeed = 0f; //No deadzone for trigger
 
-		if (inputEvent.IsActionPressed("sampler_alt_mode", allowEcho: false, exactMatch: true)) AltMode = true;
-		if (inputEvent.IsActionReleased("sampler_alt_mode", exactMatch: true)) AltMode = false;
+		if (inputEvent.IsActionPressed("sampler_alt_mode" + actionSurffix, allowEcho: false, exactMatch: true)) AltMode = true;
+		if (inputEvent.IsActionReleased("sampler_alt_mode" + actionSurffix, exactMatch: true)) AltMode = false;
 
 
 
@@ -63,9 +63,9 @@ public class SamplerController : IRoverSamplerController
 		{
 			newSamplerControl = new()
 			{
-				DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
-				PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
-				DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
+				DrillMovement = Input.IsActionPressed("sampler_drill_movement" + actionSurffix) ? movement : 0f,
+				PlatformMovement = Input.IsActionPressed("sampler_platform_movement" + actionSurffix) ? movement : 0f,
+				DrillAction = Input.IsActionPressed("sampler_drill_enable" + actionSurffix) ? drillSpeed : 0f,
 				ContainerDegrees0 = lastState.ContainerDegrees0,
 				VacuumSuction = lastState.VacuumSuction * 90 + 90,
 				VacuumA = lastState.VacuumA * 90 + 90,
@@ -74,7 +74,7 @@ public class SamplerController : IRoverSamplerController
 			};
 		};
 
-		if (inputEvent.IsActionPressed("sampler_container_1", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_1" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 1;
 			newSamplerControl.ContainerDegrees0 = OperateContainer(
@@ -83,7 +83,7 @@ public class SamplerController : IRoverSamplerController
 				lastState.ContainerDegrees0
 			);
 		}
-		if (inputEvent.IsActionPressed("sampler_container_2", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_2" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 2;
 			newSamplerControl.VacuumSuction = OperateContainer(
@@ -92,7 +92,7 @@ public class SamplerController : IRoverSamplerController
 				newSamplerControl.VacuumSuction
 			);
 		}
-		if (inputEvent.IsActionPressed("sampler_container_3", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_3" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 3;
 			newSamplerControl.VacuumA = OperateContainer(
@@ -101,7 +101,7 @@ public class SamplerController : IRoverSamplerController
 				newSamplerControl.VacuumA
 			);
 		}
-		if (inputEvent.IsActionPressed("sampler_container_4", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_4" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 4;
 			newSamplerControl.VacuumB = OperateContainer(
@@ -111,7 +111,7 @@ public class SamplerController : IRoverSamplerController
 			);
 		}
 
-		if (inputEvent.IsActionPressed("sampler_container_precise_up", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_precise_up" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			switch (LastMovedContainer)
 			{
@@ -133,7 +133,7 @@ public class SamplerController : IRoverSamplerController
 					break;
 			}
 		}
-		if (inputEvent.IsActionPressed("sampler_container_precise_down", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_precise_down" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			switch (LastMovedContainer)
 			{
