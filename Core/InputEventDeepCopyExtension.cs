@@ -29,6 +29,7 @@ public static class InputEventDeepCopyExtensions
 		return new InputEventJoypadMotion
 		{
 			Axis = original.Axis,
+			AxisValue = original.AxisValue,
 			Device = original.Device
 		};
 	}
