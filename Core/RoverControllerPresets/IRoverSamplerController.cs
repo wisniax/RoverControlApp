@@ -11,15 +11,15 @@ public interface IRoverSamplerController : IActionAwareController
 	/// <summary>
 	/// Probes Godot.Input and returns SamplerControl
 	/// </summary>
-	public SamplerControl CalculateMoveVector(in InputEvent inputEvent, in SamplerControl lastState);
+	public SamplerControl CalculateMoveVector(in string actionSurffix, in InputEvent inputEvent, in SamplerControl lastState);
 
 	/// <summary>
 	/// Processes input
 	/// </summary>
 	/// <returns>True when input causes state change</returns>
-	public bool HandleInput(in InputEvent inputEvent, SamplerControl lastState, out SamplerControl newState)
+	public bool HandleInput(in string actionSurffix, in InputEvent inputEvent, SamplerControl lastState, out SamplerControl newState)
 	{
-		newState = CalculateMoveVector(inputEvent, lastState);
+		newState = CalculateMoveVector(actionSurffix, inputEvent, lastState);
 		bool changed = IsMoveVectorChanged(newState, lastState);
 		newState.Timestamp = changed ? DateTimeOffset.Now.ToUnixTimeMilliseconds() : lastState.Timestamp;
 		return changed;

@@ -9,15 +9,15 @@ public interface ICameraController : IActionAwareController
 	/// <summary>
 	/// Checks InputEvent and returns new state
 	/// </summary>
-	public Vector4 CalculateMoveVector(in InputEvent inputEvent, in Vector4 lastState);
+	public Vector4 CalculateMoveVector(in string actionSurffix, in InputEvent inputEvent, in Vector4 lastState);
 
 	/// <summary>
 	/// Processes input
 	/// </summary>
 	/// <returns>True when input causes state change</returns>
-	public bool HandleInput(in InputEvent inputEvent, Vector4 lastState, out Vector4 newState)
+	public bool HandleInput(in string actionSurffix, in InputEvent inputEvent, Vector4 lastState, out Vector4 newState)
 	{
-		newState = CalculateMoveVector(inputEvent, lastState);
+		newState = CalculateMoveVector(actionSurffix, inputEvent, lastState);
 		return IsMoveVectorChanged(newState, lastState);
 	}
 

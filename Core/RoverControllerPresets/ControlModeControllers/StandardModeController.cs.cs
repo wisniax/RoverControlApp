@@ -39,34 +39,34 @@ public class StandardModeController : IControlModeController
 	}
 
 
-	public ControlMode GetControlMode(in InputEvent inputEvent, in ControlMode lastState)
+	public ControlMode GetControlMode(in string actionSurffix, in InputEvent inputEvent, in ControlMode lastState)
 	{
 		ControlMode newState = lastState;
 
-		if (Input.IsActionPressed("controlmode_estop"))
+		if (Input.IsActionPressed("controlmode_estop" + actionSurffix))
 		{
-			if (inputEvent.IsActionPressed("controlmode_drive", exactMatch: true))
+			if (inputEvent.IsActionPressed("controlmode_drive" + actionSurffix, exactMatch: true))
 			{
 				estopStart = null;
 				newState = ControlMode.Rover;
 			}
-			else if (inputEvent.IsActionPressed("controlmode_manipulator", exactMatch: true))
+			else if (inputEvent.IsActionPressed("controlmode_manipulator" + actionSurffix, exactMatch: true))
 			{
 				estopStart = null;
 				newState = ControlMode.Manipulator;
 			}
-			else if (inputEvent.IsActionPressed("controlmode_sampler", exactMatch: true))
+			else if (inputEvent.IsActionPressed("controlmode_sampler" + actionSurffix, exactMatch: true))
 			{
 				estopStart = null;
 				newState = ControlMode.Sampler;
 			}
-			else if (inputEvent.IsActionPressed("controlmode_autonomy", exactMatch: true))
+			else if (inputEvent.IsActionPressed("controlmode_autonomy" + actionSurffix, exactMatch: true))
 			{
 				estopStart = null;
 				newState = ControlMode.Autonomy;
 			}
 		}
-		else if (inputEvent.IsActionPressed("controlmode_change", exactMatch: true))
+		else if (inputEvent.IsActionPressed("controlmode_change" + actionSurffix, exactMatch: true))
 		{
 			if ((int)lastState + 1 >= Enum.GetNames<ControlMode>().Length)
 				newState = ControlMode.Rover;
