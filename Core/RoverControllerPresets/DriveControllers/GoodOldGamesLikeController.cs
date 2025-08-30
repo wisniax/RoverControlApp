@@ -17,7 +17,7 @@ public class GoodOldGamesLikeController : IRoverDriveController
 		"rover_move_up",
 	];
 
-	public RoverControl CalculateMoveVector(in InputEvent inputEvent, in RoverControl lastState)
+	public RoverControl CalculateMoveVector(in string actionSurffix, in InputEvent inputEvent, in RoverControl lastState)
 	{
 		//deadzone have to be non zero for IsEqualApprox
 		var joyDeadZone = Mathf.Max(
@@ -34,12 +34,12 @@ public class GoodOldGamesLikeController : IRoverDriveController
 		velocity.Y = Mathf.IsEqualApprox(velocity.Y, 0f, joyDeadZone) ? 0 : velocity.Y;
 
 		var ret = velocity.ToRoverControl();
-		ret.Mode = OperateKinematicMode(inputEvent, lastState);
+		ret.Mode = OperateKinematicMode("", inputEvent, lastState);
 
 		return ret;
 	}
 
-	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
+	public KinematicMode OperateKinematicMode(in string actionSurffix, in InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
 
 	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
 		IActionAwareController.FetchAllActionEvents(_usedActions);

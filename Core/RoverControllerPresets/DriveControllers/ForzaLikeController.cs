@@ -19,7 +19,7 @@ public class ForzaLikeController : IRoverDriveController
 		"rover_rotate_left",
 	];
 
-	public RoverControl CalculateMoveVector(in InputEvent inputEvent, in RoverControl lastState)
+	public RoverControl CalculateMoveVector(in string actionSurffix, in InputEvent inputEvent, in RoverControl lastState)
 	{
 		float velocity = Input.GetAxis("rover_move_backward", "rover_move_forward");
 		velocity = Mathf.IsEqualApprox(velocity, 0f, 0.005f) ? 0 : velocity;
@@ -38,12 +38,12 @@ public class ForzaLikeController : IRoverDriveController
 			vec.Y = forcedSteer / 5f;
 
 		var ret = vec.ToRoverControl();
-		ret.Mode = OperateKinematicMode(inputEvent, lastState);
+		ret.Mode = OperateKinematicMode("", inputEvent, lastState);
 
 		return ret;
 	}
 
-	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
+	public KinematicMode OperateKinematicMode(in string actionSurffix, in InputEvent inputEvent, in RoverControl lastState) => KinematicMode.Compatibility;
 
 	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
 		IActionAwareController.FetchAllActionEvents(_usedActions);

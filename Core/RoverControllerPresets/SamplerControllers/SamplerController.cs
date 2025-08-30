@@ -41,19 +41,19 @@ public class SamplerController : IRoverSamplerController
 		};
 	}
 
-	public SamplerControl CalculateMoveVector(in InputEvent inputEvent, in SamplerControl lastState)
+	public SamplerControl CalculateMoveVector(in string actionSurffix, in InputEvent inputEvent, in SamplerControl lastState)
 	{
-		float movement = Input.GetAxis("sampler_move_down", "sampler_move_up");
+		float movement = Input.GetAxis("sampler_move_down" + actionSurffix, "sampler_move_up" + actionSurffix);
 		if (Mathf.Abs(movement) < LocalSettings.Singleton.Joystick.MinimalInput)
 			movement = 0f;
 
-		float drillSpeed = Input.GetAxis("sampler_drill_down", "sampler_drill_up");
+		float drillSpeed = Input.GetAxis("sampler_drill_down" + actionSurffix, "sampler_drill_up" + actionSurffix);
 		//if (Mathf.Abs(drillSpeed) < LocalSettings.Singleton.Joystick.MinimalInput)
 		//	drillSpeed = 0f; //No deadzone for trigger
 
 		SamplerControl newSamplerControl;
 
-		if (Input.IsActionPressed("sampler_drilling_altmode"))
+		if (Input.IsActionPressed("sampler_drilling_altmode" + actionSurffix))
 		{
 			newSamplerControl = new()
 			{
@@ -72,9 +72,9 @@ public class SamplerController : IRoverSamplerController
 		{
 			newSamplerControl = new()
 			{
-				DrillMovement = Input.IsActionPressed("sampler_drill_movement") ? movement : 0f,
-				PlatformMovement = Input.IsActionPressed("sampler_platform_movement") ? movement : 0f,
-				DrillAction = Input.IsActionPressed("sampler_drill_enable") ? drillSpeed : 0f,
+				DrillMovement = Input.IsActionPressed("sampler_drill_movement" + actionSurffix) ? movement : 0f,
+				PlatformMovement = Input.IsActionPressed("sampler_platform_movement" + actionSurffix) ? movement : 0f,
+				DrillAction = Input.IsActionPressed("sampler_drill_enable" + actionSurffix) ? drillSpeed : 0f,
 				ContainerDegrees0 = lastState.ContainerDegrees0,
 				ContainerDegrees1 = lastState.ContainerDegrees1,
 				ContainerDegrees2 = lastState.ContainerDegrees2,
@@ -84,7 +84,7 @@ public class SamplerController : IRoverSamplerController
 			};
 		};
 
-		if (inputEvent.IsActionPressed("sampler_container_0", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_0" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 0;
 			newSamplerControl.ContainerDegrees0 = OperateContainer(
@@ -93,7 +93,7 @@ public class SamplerController : IRoverSamplerController
 				newSamplerControl.ContainerDegrees0
 			);
 		}
-		if (inputEvent.IsActionPressed("sampler_container_1", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_1" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 1;
 			newSamplerControl.ContainerDegrees1 = OperateContainer(
@@ -102,7 +102,7 @@ public class SamplerController : IRoverSamplerController
 				newSamplerControl.ContainerDegrees1
 			);
 		}
-		if (inputEvent.IsActionPressed("sampler_container_2", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_2" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 2;
 			newSamplerControl.ContainerDegrees2 = OperateContainer(
@@ -111,7 +111,7 @@ public class SamplerController : IRoverSamplerController
 				newSamplerControl.ContainerDegrees2
 			);
 		}
-		if (inputEvent.IsActionPressed("sampler_container_3", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_3" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 3;
 			newSamplerControl.ContainerDegrees3 = OperateContainer(
@@ -120,7 +120,7 @@ public class SamplerController : IRoverSamplerController
 				newSamplerControl.ContainerDegrees3
 			);
 		}
-		if (inputEvent.IsActionPressed("sampler_container_4", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_4" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 4;
 			newSamplerControl.ContainerDegrees4 = OperateContainer(
@@ -130,13 +130,13 @@ public class SamplerController : IRoverSamplerController
 			);
 		}
 
-		if (inputEvent.IsActionPressed("sampler_container_precise_up", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_precise_up" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			newSamplerControl[LastMovedContainer] += PreciseStep(LastMovedContainer);
 			Mathf.Clamp(newSamplerControl[LastMovedContainer], -1f, 1000000f);
 		}
 
-		if (inputEvent.IsActionPressed("sampler_container_precise_down", allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed("sampler_container_precise_down" + actionSurffix, allowEcho: false, exactMatch: true))
 		{
 			newSamplerControl[LastMovedContainer] -= PreciseStep(LastMovedContainer);
 			Mathf.Clamp(newSamplerControl[LastMovedContainer], -1f, 1000000f);
@@ -203,7 +203,7 @@ public class SamplerController : IRoverSamplerController
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-	"""	
+	"""
 	Drilling:
 	Press and hold 'X' to keep drill enabled. Press triggers to control drill speed and direction.
 
