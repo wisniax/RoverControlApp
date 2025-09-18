@@ -17,7 +17,7 @@ public partial class SubBattery : VBoxContainer
 	[Export] private Label _statusLabel = new();
 	[Export] private Label _currentLabel = new();
 	[Export] private Label _temperatureLabel = new();
-	[Export] private Label _timeLabel = new();
+	[Export] private Label _delayLabel = new();
 
 	[Export] private Button _autoButton = new();
 	[Export] private Button _onButton = new();
@@ -36,6 +36,7 @@ public partial class SubBattery : VBoxContainer
 	public event Func<int, MqttClasses.BatterySet, Task>? OnBatteryControl; //slot, command
 
 	public volatile bool UpToDate = false;
+	private long LastTimestamp = 0;
 
 	public void SetSlotNumber(int slot)
 	{
@@ -73,16 +74,18 @@ public partial class SubBattery : VBoxContainer
 		else
 			_vbatLabel.SetModulate(Colors.White);
 
-		_hotswapLabel.Text = "Hotswap: " + data.HotswapStatus.ToString();
-		_statusLabel.Text = "Status: " + data.Status.ToString();
-		_currentLabel.Text = "Current: " + data.Current.ToString("F1") + "A";
+		_hotswapLabel.Text = "Hotswap: " + ((((int)data.HotswapStatus & (1 << _slot - 1)) != 0) ? "Closed" : "Opened");
+		_statusLabel.Text = "Status: " + ((data.Current < 0) ? "Discarging" : "Charging");
+		_currentLabel.Text = "Current: " + ((data.Current > 0) ? "+" : "") + (data.Current * 4).ToString("F1") + "A";
 		_temperatureLabel.Text = "Temperature: " + data.Temperature.ToString("F1") + "C";
 		if (data.Temperature > LocalSettings.Singleton.Battery.WarningTemperature)
 			_temperatureLabel.SetModulate(Colors.Orange);
 		else
 			_temperatureLabel.SetModulate(Colors.White);
 
-		_timeLabel.Text = "Est. Time: " + data.Time.ToString("F0") + "min";
+
+		_delayLabel.Text = "Delay: " + (data.Timestamp - LastTimestamp) + " ms";
+		LastTimestamp = data.Timestamp;
 
 		NewBatteryInfo.Invoke();
 		

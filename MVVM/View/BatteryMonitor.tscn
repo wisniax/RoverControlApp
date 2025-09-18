@@ -31,18 +31,22 @@ vertical_alignment = 1
 [node name="AltData" type="VBoxContainer" parent="HBoxContainer"]
 visible = false
 layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 3
 
-[node name="Name" type="Label" parent="HBoxContainer/AltData"]
+[node name="VescVoltage" type="Label" parent="HBoxContainer/AltData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "Vesc Voltage:"
 horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Voltage" type="Label" parent="HBoxContainer/AltData"]
+[node name="SumCurrent" type="Label" parent="HBoxContainer/AltData"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "00.0V"
+theme_override_font_sizes/font_size = 12
+text = "Sum Current:"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="BatBoxes" type="HBoxContainer" parent="."]
 layout_mode = 0

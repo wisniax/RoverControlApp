@@ -139,16 +139,16 @@ namespace RoverControlApp.Core
 
 		public class BatteryInfo
 		{
-			public int Slot { get; set; }
-			public int ID { get; set; }
-			public float ChargePercent { get; set; }
-			public float Voltage { get; set; }
-
 			public BatteryStatus Status { get; set; }
 			public HotswapStatus HotswapStatus { get; set; }
+			public int ID { get; set; }
+			public int Slot { get; set; }
+			public float ChargePercent { get; set; }
 			public float Current { get; set; }
-			public int Temperature { get; set; }
-			public int Time { get; set; }
+			public float Temperature { get; set; }
+			public float Voltage { get; set; }
+
+			public long Timestamp { get; set; }
 		}
 
 		public class BatteryControl
