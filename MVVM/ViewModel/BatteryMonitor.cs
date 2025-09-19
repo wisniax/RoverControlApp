@@ -14,6 +14,7 @@ public partial class BatteryMonitor : Panel
 	[Export] private volatile VBoxContainer altDataDisp = new ();
 
 	private volatile float _currentVoltageAlt = 0;
+	private volatile float[] _currentCurrent = new float[3]; //XD
 
 	public event Action<int, int, Color>? OnBatteryDataChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
 
@@ -110,7 +111,10 @@ public partial class BatteryMonitor : Panel
 
 	Task SendToHUD()
 	{
-		OnBatteryDataChanged.Invoke(CountConnectedBatts(), CalculateBatteryPercentSum(), CheckForWarnings());
+		if (LocalSettings.Singleton.Battery.AverageAll)
+			OnBatteryDataChanged.Invoke(0, CalculateBatteryAverageVoltage(), CheckForWarnings());
+		else
+			OnBatteryDataChanged.Invoke(CountConnectedBatts(), CalculateBatteryPercentSum(), CheckForWarnings());
 
 		return Task.CompletedTask;
 	}
@@ -171,11 +175,9 @@ public partial class BatteryMonitor : Panel
 		foreach (var batt in battery)
 		{
 			if (batt.myData == null) continue;
-			if ((batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
-				batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) && batt.UpToDate)
+			if (((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0)
 				count++;
 		}
-
 		return count;
 	}
 
@@ -186,11 +188,30 @@ public partial class BatteryMonitor : Panel
 		foreach (var batt in battery)
 		{
 			if (batt.myData == null) continue;
-			if ((batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto ||
-				batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) && batt.UpToDate)
+			if (((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0)
 				sum += (int)batt.myData.ChargePercent;
 		}
 
 		return sum;
+	}
+
+	int CalculateBatteryAverageVoltage()
+	{
+		int batts = 0;
+		int avgVolt = 0;
+
+		foreach (var batt in battery)
+		{
+			if (batt.myData == null) continue;
+			if (((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0)
+			{
+				batts++;
+				avgVolt += (int)(10 * batt.myData.Voltage);
+			}
+		}
+
+		if (batts == 0) return 0;
+
+		return avgVolt/batts;
 	}
 }
