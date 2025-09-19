@@ -142,8 +142,8 @@ public partial class BatteryMonitor : Panel
 			}
 		}
 
-		if (battVoltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage) return Colors.Red;
-		if (battVoltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage) return Colors.Yellow;
+		if (battVoltage < LocalSettings.Singleton.Battery.CriticalVoltage) return Colors.Red;
+		if (battVoltage < LocalSettings.Singleton.Battery.WarningVoltage) return Colors.Yellow;
 		
 
 		return Colors.White;

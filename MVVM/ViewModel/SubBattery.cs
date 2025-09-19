@@ -67,9 +67,9 @@ public partial class SubBattery : VBoxContainer
 
 		_vbatLabel.Text = "VBat: " + data.Voltage.ToString("F1") + "V";
 
-		if (data.Voltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage)
+		if (data.Voltage < LocalSettings.Singleton.Battery.CriticalVoltage)
 			_vbatLabel.SetModulate(Colors.Red);
-		else if (data.Voltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage)
+		else if (data.Voltage < LocalSettings.Singleton.Battery.WarningVoltage)
 			_vbatLabel.SetModulate(Colors.Yellow);
 		else
 			_vbatLabel.SetModulate(Colors.White);

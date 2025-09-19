@@ -11,8 +11,8 @@ public partial class Battery : SettingBase, ICloneable
 
 	public Battery()
 	{
-		_warningVoltage = 3.6f;
-		_criticalVoltage = 3.2f;
+		_warningVoltage = 21.6f;
+		_criticalVoltage = 20f;
 		_warningTemperature = 70f;
 		_expectedMessageInterval = 5;
 		_averageAll = false;
@@ -45,16 +45,16 @@ public partial class Battery : SettingBase, ICloneable
 		};
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "3.2;4.3;0.1;f;f",
-		 customTooltip: "Warning per cell voltage 3.6*6=21.6 (below that point battery label goes yellow)")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "19;25.2;0.1;f;f",
+		 customTooltip: "Warning voltage (below that point battery label goes yellow)")]
 	public float WarningVoltage
 	{
 		get => _warningVoltage;
 		set => EmitSignal_SettingChanged(ref _warningVoltage, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "3.2;4.3;0.1;f;f",
-		 customTooltip: "Warning per cell voltage 3.2*6=19.2 (below that point battery label goes red)")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "19;25.2;0.1;f;f",
+		 customTooltip: "Warning voltage (below that point battery label goes red)")]
 	public float CriticalVoltage
 	{
 		get => _criticalVoltage;
