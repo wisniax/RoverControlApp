@@ -74,11 +74,6 @@ public partial class BatteryMonitor : Panel
 
 	public Task AltBatteryInfoChanged(string subTopic, MqttApplicationMessage? msg)
 	{
-		if (!LocalSettings.Singleton.Battery.AltMode && CountConnectedBatts() != 0)
-		{
-			CallDeferred("ShowAltVoltage", false);
-			return Task.CompletedTask;
-		}
 		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicWheelFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicWheelFeedback)
 			return Task.CompletedTask;
 		if (msg is null || msg.PayloadSegment.Count == 0)
