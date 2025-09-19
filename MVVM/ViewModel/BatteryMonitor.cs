@@ -112,6 +112,7 @@ public partial class BatteryMonitor : Panel
 
 	Task SendToHUD()
 	{
+		if (LocalSettings.Singleton.Battery.AltMode) return Task.CompletedTask;
 		if (LocalSettings.Singleton.Battery.AverageAll)
 			OnBatteryDataChanged.Invoke(0, CalculateBatteryAverageVoltage(), CheckForWarnings());
 		else
