@@ -96,6 +96,12 @@ public partial class BatteryMonitor : Panel
 			  return Task.CompletedTask;
 
 		_currentVoltageAlt = _currentVoltageAlt * 0.9f + 0.1f * (float)altData.VoltsIn;
+
+		if (!LocalSettings.Singleton.Battery.AltMode && CountConnectedBatts() != 0)
+		{
+			CallDeferred("ShowAltVoltage", false);
+			return Task.CompletedTask;
+		}
 		CallDeferred("ShowAltVoltage", true);
 
 		OnBatteryDataChanged.Invoke(0,(int)(_currentVoltageAlt*10),CheckForWarnings());
