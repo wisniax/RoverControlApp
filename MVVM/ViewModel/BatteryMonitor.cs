@@ -73,7 +73,7 @@ public partial class BatteryMonitor : Panel
 
 		await (battery[data.Slot - 1].UpdateBattInfoHandler(msg.ConvertPayloadToString()));
 
-		UpdateGeneralPowerInfo();
+		UpdateGeneralPowerInfo(data.HotswapStatus);
 
 		return;
 	}
@@ -99,6 +99,8 @@ public partial class BatteryMonitor : Panel
 
 		_currentVoltageAlt = _currentVoltageAlt * 0.9f + 0.1f * (float)altData.VoltsIn;
 
+		UpdateGeneralPowerInfo();
+
 		if (!LocalSettings.Singleton.Battery.AltMode && CountConnectedBatts() != 0)
 		{
 			CallDeferred("ShowAltVoltage", false);
@@ -108,9 +110,14 @@ public partial class BatteryMonitor : Panel
 
 		OnBatteryDataChanged.Invoke(0,(int)(_currentVoltageAlt*10),CheckForWarnings());
 
-		UpdateGeneralPowerInfo();
-
 		return Task.CompletedTask;
+	}
+
+	private void UpdateGeneralPowerInfo(MqttClasses.HotswapStatus newHotswapStatus)
+	{
+		battery[0].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap1));
+		battery[1].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap2));
+		battery[2].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap3));
 	}
 
 	private void UpdateGeneralPowerInfo()
@@ -176,11 +183,6 @@ public partial class BatteryMonitor : Panel
 	{
 		await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicBatteryControl,
 			JsonSerializer.Serialize(arg));
-	}
-
-	public void HotswapStatusChange(MqttClasses.HotswapStatus newStatus)
-	{
-
 	}
 
 	int CountConnectedBatts()

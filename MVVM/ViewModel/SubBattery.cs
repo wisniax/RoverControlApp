@@ -74,7 +74,6 @@ public partial class SubBattery : VBoxContainer
 		else
 			_vbatLabel.SetModulate(Colors.White);
 
-		_hotswapLabel.Text = "Hotswap: " + ((((int)data.HotswapStatus & (1 << _slot - 1)) != 0) ? "Closed" : "Opened");
 		_statusLabel.Text = "Status: " + ((data.Current < 0) ? "Discarging" : "Charging");
 		_currentLabel.Text = "Current: " + ((data.Current > 0) ? "+" : "") + (data.Current * 4).ToString("F1") + "A";
 		_temperatureLabel.Text = "Temperature: " + data.Temperature.ToString("F1") + "C";
@@ -117,5 +116,15 @@ public partial class SubBattery : VBoxContainer
 		_slotEmptyLabel.SetVisible(!detected);
 		_labels.SetVisible(detected);                //buttons stay visible so that we can force close the hotswap even if bms died or we use a non-bms battery
 		_batteryMonitor.SendToHUD();
+	}
+
+	public void ShowHotswapStatusHandler(bool closed)
+	{
+		CallDeferred("ShowHotswapStatus", closed);
+	}
+
+	public void ShowHotswapStatus(bool closed)
+	{
+		_hotswapLabel.Text = (closed ? "Hotswap: Closed" : "Hotswap: Opened");
 	}
 }
