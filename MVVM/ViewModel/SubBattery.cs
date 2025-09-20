@@ -28,7 +28,7 @@ public partial class SubBattery : VBoxContainer
 
 	private BatteryMonitor _batteryMonitor;
 
-	public volatile MqttClasses.BatteryInfo myData;
+	public volatile MqttClasses.BatteryInfo myData = new();
 
 	private volatile int _slot;
 
@@ -107,8 +107,15 @@ public partial class SubBattery : VBoxContainer
 
 	void batteryDetectedHandler(bool detected)
 	{
+		if (!detected)
+		{
+			myData.Voltage = 0;
+			myData.ChargePercent = 0;
+			myData.Current = 0;
+		}
 		UpToDate = detected;
 		_slotEmptyLabel.SetVisible(!detected);
 		_labels.SetVisible(detected);                //buttons stay visible so that we can force close the hotswap even if bms died or we use a non-bms battery
+		_batteryMonitor.SendToHUD();
 	}
 }

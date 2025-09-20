@@ -15,6 +15,7 @@ public partial class BatteryMonitor : Panel
 	[Export] private Label _battVoltageLabel = new();
 	[Export] private Label _sumCurrentLabel = new();
 	[Export] private Label _blackMushroomLabel = new();
+	[Export] private Label _hotswapGPIO = new();
 
 
 	private volatile float _currentVoltageAlt = 0;
@@ -71,9 +72,12 @@ public partial class BatteryMonitor : Panel
 		data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
 
 		await (battery[data.Slot - 1].UpdateBattInfoHandler(msg.ConvertPayloadToString()));
-		
+
+		UpdateGeneralPowerInfo();
+
 		return;
 	}
+
 
 	public Task AltBatteryInfoChanged(string subTopic, MqttApplicationMessage? msg)
 	{
@@ -104,10 +108,17 @@ public partial class BatteryMonitor : Panel
 
 		OnBatteryDataChanged.Invoke(0,(int)(_currentVoltageAlt*10),CheckForWarnings());
 
+		UpdateGeneralPowerInfo();
+
 		return Task.CompletedTask;
 	}
 
-	Task SendToHUD()
+	private void UpdateGeneralPowerInfo()
+	{
+
+	}
+
+	public Task SendToHUD()
 	{
 		if (LocalSettings.Singleton.Battery.AltMode) return Task.CompletedTask;
 		if (LocalSettings.Singleton.Battery.AverageAll)
@@ -132,7 +143,7 @@ public partial class BatteryMonitor : Panel
 			{
 				if (batt.myData == null) continue;
 				if ((((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0) &&
-				   battVoltage > batt.myData.Voltage)
+				   battVoltage > batt.myData.Voltage && batt.UpToDate)
 				{
 					battVoltage = batt.myData.Voltage;
 				}
@@ -179,7 +190,7 @@ public partial class BatteryMonitor : Panel
 		foreach (var batt in battery)
 		{
 			if (batt.myData == null) continue;
-			if (((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0)
+			if ((((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0) && batt.UpToDate)
 				count++;
 		}
 		return count;
@@ -192,7 +203,7 @@ public partial class BatteryMonitor : Panel
 		foreach (var batt in battery)
 		{
 			if (batt.myData == null) continue;
-			if (((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0)
+			if ((((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0) && batt.UpToDate)
 				sum += (int)batt.myData.ChargePercent;
 		}
 
@@ -207,7 +218,7 @@ public partial class BatteryMonitor : Panel
 		foreach (var batt in battery)
 		{
 			if (batt.myData == null) continue;
-			if (((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0)
+			if ((((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0) && batt.myData.Voltage != 0)
 			{
 				batts++;
 				avgVolt += (int)(10 * batt.myData.Voltage);
