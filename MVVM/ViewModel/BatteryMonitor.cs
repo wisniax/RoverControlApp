@@ -11,10 +11,13 @@ namespace RoverControlApp.MVVM.ViewModel;
 public partial class BatteryMonitor : Panel
 {
 	[Export] volatile SubBattery[] battery = new SubBattery[3];
-	[Export] private volatile VBoxContainer altDataDisp = new ();
+	[Export] private Label _vescVoltageLabel = new();
+	[Export] private Label _battVoltageLabel = new();
+	[Export] private Label _sumCurrentLabel = new();
+	[Export] private Label _blackMushroomLabel = new();
+
 
 	private volatile float _currentVoltageAlt = 0;
-	private volatile float[] _currentCurrent = new float[3]; //XD
 
 	public event Action<int, int, Color>? OnBatteryDataChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
 
@@ -104,12 +107,6 @@ public partial class BatteryMonitor : Panel
 		return Task.CompletedTask;
 	}
 
-	void ShowAltVoltage(bool show)
-	{
-		altDataDisp.SetVisible(show);
-		altDataDisp.GetChild(1).Set("text", "VBat: " + _currentVoltageAlt.ToString("F1") + "V");
-	}
-
 	Task SendToHUD()
 	{
 		if (LocalSettings.Singleton.Battery.AltMode) return Task.CompletedTask;
@@ -134,7 +131,7 @@ public partial class BatteryMonitor : Panel
 			foreach (var batt in battery)
 			{
 				if (batt.myData == null) continue;
-				if ((batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnAuto || batt.myData.HotswapStatus == MqttClasses.HotswapStatus.OnMan) &&
+				if ((((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0) &&
 				   battVoltage > batt.myData.Voltage)
 				{
 					battVoltage = batt.myData.Voltage;
@@ -168,6 +165,11 @@ public partial class BatteryMonitor : Panel
 	{
 		await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicBatteryControl,
 			JsonSerializer.Serialize(arg));
+	}
+
+	public void HotswapStatusChange(MqttClasses.HotswapStatus newStatus)
+	{
+
 	}
 
 	int CountConnectedBatts()

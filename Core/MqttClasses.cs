@@ -62,12 +62,18 @@ namespace RoverControlApp.Core
 			Empty = 6
 		}
 
+		[Flags]
 		public enum HotswapStatus
 		{
-			OffMan = 0,
-			OnMan = 1,
-			OffAuto = 2,
-			OnAuto = 3
+			None = 0,
+			Hotswap1 = 1 << 0,
+			Hotswap2 = 1 << 1,
+			Hotswap3 = 1 << 2,
+			BlackMushroom = 1 << 3,
+			GPIO1 = 1 << 4,
+			GPIO2 = 1 << 5,
+			GPIO3 = 1 << 6,
+			GPIO4 = 1 << 7,
 		}
 
 		public enum BatterySet

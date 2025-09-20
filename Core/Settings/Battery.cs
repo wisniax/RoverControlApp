@@ -15,17 +15,20 @@ public partial class Battery : SettingBase, ICloneable
 		_criticalVoltage = 20f;
 		_warningTemperature = 70f;
 		_expectedMessageInterval = 5;
+		_batteryStatusByBMS = false;
+
 		_averageAll = true;
 		_altMode = false;
 		_showOnLow = false;
 	}
 
-	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature, int expectedMessageInterval, bool averageAll, bool altMode, bool showOnLow)
+	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature, int expectedMessageInterval, bool batteryStatusByBMS, bool averageAll, bool altMode, bool showOnLow)
 	{
 		_warningVoltage = warningVoltage;
 		_criticalVoltage = criticalVoltage;
 		_warningTemperature = warningTemperature;
 		_expectedMessageInterval = expectedMessageInterval;
+		_batteryStatusByBMS = batteryStatusByBMS;
 		_averageAll = averageAll;
 		_altMode = altMode;
 		_showOnLow = showOnLow;
@@ -39,6 +42,7 @@ public partial class Battery : SettingBase, ICloneable
 			CriticalVoltage = _criticalVoltage,
 			WarningTemperature = _warningTemperature,
 			ExpectedMessageInterval = _expectedMessageInterval,
+			BatteryStatusByBMS = _batteryStatusByBMS,
 			AverageAll = _averageAll,
 			AltMode = _altMode,
 			ShowOnLow = _showOnLow
@@ -78,6 +82,15 @@ public partial class Battery : SettingBase, ICloneable
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check,
+		 customTooltip: "When enabled pulls battery status (full, charging, empty etc.) from BMS.\n" +
+						"When disabled generates battery status based on battery current sign (+/-).")]
+	public bool BatteryStatusByBMS
+	{
+		get => _batteryStatusByBMS;
+		set => EmitSignal_SettingChanged(ref _batteryStatusByBMS, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check,
 		 customTooltip: "(REQUIRES Alt Mode OFF)\n" +
 						"When enabled shows average battery percentage and amount of (active) batteries.\n" +
 						"When disabled shows a sum of battery percentages and number of (active) batteries")]
@@ -109,6 +122,7 @@ public partial class Battery : SettingBase, ICloneable
 	float _criticalVoltage;
 	float _warningTemperature;
 	int _expectedMessageInterval;
+	bool _batteryStatusByBMS;
 	bool _averageAll;
 	bool _altMode;
 	bool _showOnLow;

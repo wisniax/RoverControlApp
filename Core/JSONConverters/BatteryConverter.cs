@@ -18,6 +18,7 @@ public class BatteryConverter : JsonConverter<Battery>
 		float? criticalVoltage = null;
 		float? warningTemperature = null;
 		int? expectedMessageInterval = null;
+		bool? batteryStatusByBMS = null;
 		bool? averageAll = null;
 		bool? altMode = null;
 		bool? showOnLow = null;
@@ -44,6 +45,12 @@ public class BatteryConverter : JsonConverter<Battery>
 				case nameof(Battery.WarningTemperature):
 					warningTemperature = reader.GetSingle();
 					break;
+				case nameof(Battery.ExpectedMessageInterval):
+					expectedMessageInterval = reader.GetInt32();
+					break;
+				case nameof(Battery.BatteryStatusByBMS):
+					batteryStatusByBMS = reader.GetBoolean();
+					break;
 				case nameof(Battery.AverageAll):
 					averageAll = reader.GetBoolean();
 					break;
@@ -62,6 +69,7 @@ public class BatteryConverter : JsonConverter<Battery>
 			criticalVoltage ?? Default.CriticalVoltage,
 			warningTemperature ?? Default.WarningTemperature,
 			expectedMessageInterval ?? Default.ExpectedMessageInterval,
+			batteryStatusByBMS ?? Default.BatteryStatusByBMS,
 			averageAll ?? Default.AverageAll,
 			altMode ?? Default.AltMode,
 			showOnLow ?? Default.ShowOnLow
@@ -75,6 +83,7 @@ public class BatteryConverter : JsonConverter<Battery>
 		writer.WriteNumber(nameof(Battery.CriticalVoltage), value.CriticalVoltage);
 		writer.WriteNumber(nameof(Battery.WarningTemperature), value.WarningTemperature);
 		writer.WriteNumber(nameof(Battery.ExpectedMessageInterval), value.ExpectedMessageInterval);
+		writer.WriteBoolean(nameof(Battery.BatteryStatusByBMS), value.BatteryStatusByBMS);
 		writer.WriteBoolean(nameof(Battery.AverageAll), value.AverageAll);
 		writer.WriteBoolean(nameof(Battery.AltMode), value.AltMode);
 		writer.WriteBoolean(nameof(Battery.ShowOnLow), value.ShowOnLow);
