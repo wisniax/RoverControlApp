@@ -76,7 +76,10 @@ public partial class SubBattery : VBoxContainer
 		else
 			_vbatLabel.SetModulate(Colors.White);
 
-		_statusLabel.Text = "Status: " + ((data.Current < 0) ? "Discarging" : "Charging");
+		_statusLabel.Text = "Status: " +
+			((LocalSettings.Singleton.Battery.BatteryStatusByBMS) ?
+				data.Status.ToString() :
+				((data.Current < 0) ? "Discarging" : "Charging"));
 		_currentLabel.Text = "Current: " + ((data.Current > 0) ? "+" : "") + (data.Current * 4).ToString("F1") + "A";
 		_temperatureLabel.Text = "Temperature: " + data.Temperature.ToString("F1") + "C";
 		if (data.Temperature > LocalSettings.Singleton.Battery.WarningTemperature)
