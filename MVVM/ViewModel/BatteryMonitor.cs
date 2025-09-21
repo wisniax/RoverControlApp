@@ -148,9 +148,8 @@ public partial class BatteryMonitor : Panel
 			battVoltage = 999;
 			foreach (var batt in battery)
 			{
-				if (batt.myData == null) continue;
-				if ((((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0) &&
-				   battVoltage > batt.myData.Voltage && batt.UpToDate)
+				if (batt.myData == null || !batt.UpToDate) continue;
+				if (batt.IsHotswapClosed && battVoltage > batt.myData.Voltage)
 				{
 					battVoltage = batt.myData.Voltage;
 				}
@@ -191,8 +190,8 @@ public partial class BatteryMonitor : Panel
 
 		foreach (var batt in battery)
 		{
-			if (batt.myData == null) continue;
-			if ((((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0) && batt.UpToDate)
+			if (batt.myData == null || !batt.UpToDate) continue;
+			if (batt.IsHotswapClosed)
 				count++;
 		}
 		return count;
@@ -204,8 +203,8 @@ public partial class BatteryMonitor : Panel
 
 		foreach (var batt in battery)
 		{
-			if (batt.myData == null) continue;
-			if ((((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0) && batt.UpToDate)
+			if (batt.myData == null || !batt.UpToDate) continue;
+			if (batt.IsHotswapClosed)
 				sum += (int)batt.myData.ChargePercent;
 		}
 
@@ -219,8 +218,8 @@ public partial class BatteryMonitor : Panel
 
 		foreach (var batt in battery)
 		{
-			if (batt.myData == null) continue;
-			if ((((int)batt.myData.HotswapStatus & (1 << batt.myData.Slot - 1)) != 0) && batt.myData.Voltage != 0)
+			if (batt.myData == null || !batt.UpToDate) continue;
+			if (batt.IsHotswapClosed)
 			{
 				batts++;
 				avgVolt += (int)(10 * batt.myData.Voltage);

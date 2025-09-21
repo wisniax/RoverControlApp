@@ -36,6 +36,8 @@ public partial class SubBattery : VBoxContainer
 	public event Func<int, MqttClasses.BatterySet, Task>? OnBatteryControl; //slot, command
 
 	public volatile bool UpToDate = false;
+	public volatile bool IsHotswapClosed = false;
+
 	private long LastTimestamp = 0;
 
 	public void SetSlotNumber(int slot)
@@ -120,6 +122,7 @@ public partial class SubBattery : VBoxContainer
 
 	public void ShowHotswapStatusHandler(bool closed)
 	{
+		IsHotswapClosed = closed;
 		CallDeferred("ShowHotswapStatus", closed);
 	}
 
