@@ -137,9 +137,9 @@ public partial class BatteryMonitor : Panel
 	{
 		if (CountConnectedBatts() == 0)
 		{
-			//battery[0].ShowHotswapStatusHandler(null);
-			//battery[1].ShowHotswapStatusHandler(null);
-			//battery[2].ShowHotswapStatusHandler(null);
+			battery[0].ShowHotswapStatusHandler(null);
+			battery[1].ShowHotswapStatusHandler(null);
+			battery[2].ShowHotswapStatusHandler(null);
 			CallDeferred("ClearQuickData");
 		}
 	}	

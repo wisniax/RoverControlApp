@@ -124,15 +124,20 @@ public partial class SubBattery : VBoxContainer
 		CallDeferred("ShowHotswapNoData");
 	}
 
-	public void ShowHotswapNoData(bool closed)
+	public void ShowHotswapNoData()
 	{
 		_hotswapLabel.Text = "Hotswap: NoData";
 	}
 
-	public void ShowHotswapStatusHandler(bool closed)
+	public void ShowHotswapStatusHandler(bool? closed)
 	{
-		IsHotswapClosed = closed;
-		CallDeferred("ShowHotswapStatus", closed);
+		if (closed == null)
+		{
+			ShowHotswapNoDataHandler();
+			return;
+		}
+		IsHotswapClosed = (bool)closed;
+		CallDeferred("ShowHotswapStatus", (bool)closed);
 	}
 
 	public void ShowHotswapStatus(bool closed)
