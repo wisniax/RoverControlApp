@@ -120,7 +120,7 @@ public partial class BatteryMonitor : Panel
 		battery[1].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap2));
 		battery[2].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap3));
 		CallDeferred("ShowInQuickData", 
-			CalculateBatteryAverageVoltage()/10,
+			CalculateBatteryAverageVoltage()/10f,
 			CalculateBatterySumCurrent(),
 			newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.BlackMushroom),
 			(int)(newHotswapStatus & (MqttClasses.HotswapStatus.GPIO1 | MqttClasses.HotswapStatus.GPIO2 |
@@ -133,10 +133,30 @@ public partial class BatteryMonitor : Panel
 		CallDeferred("ShowInQuickData");
 	}
 
+	public void ClearQuickDataHandler()
+	{
+		if (CountConnectedBatts() == 0)
+		{
+			//battery[0].ShowHotswapStatusHandler(null);
+			//battery[1].ShowHotswapStatusHandler(null);
+			//battery[2].ShowHotswapStatusHandler(null);
+			CallDeferred("ClearQuickData");
+		}
+	}	
+
+	void ClearQuickData()
+	{
+		_vescVoltageLabel.SetText("VESC Voltage:\nNoData");
+		_battVoltageLabel.SetText("Batt Voltage:\nNoData");
+		_sumCurrentLabel.SetText("Sum Current:\nNoData");
+		_blackMushroomLabel.SetText("Black Mushroom:\nNoData");
+		_hotswapGPIO.SetText("Hotswap GPIO:\nNoData");
+	}
+
 	void ShowInQuickData(float battVoltage, float sumCurrent, bool blackMushroom, int GPIO)
 	{
-		_battVoltageLabel.SetText($"Batt Voltage:\n{battVoltage:0.0} V");
-		_sumCurrentLabel.SetText($"Sum Current:\n{sumCurrent:0.0} A");
+		_battVoltageLabel.SetText($"Batt Voltage:\n{battVoltage:F1} V");
+		_sumCurrentLabel.SetText($"Sum Current:\n{sumCurrent:F1} A");
 		_blackMushroomLabel.SetText($"Black Mushroom:\n{(blackMushroom ? "Pressed" : "Released")}");
 		_hotswapGPIO.SetText($"Hotswap GPIO:\n{Convert.ToString(GPIO, 2).PadLeft(4, '0')}");
 	}

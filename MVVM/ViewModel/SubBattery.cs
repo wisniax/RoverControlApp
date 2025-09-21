@@ -108,16 +108,25 @@ public partial class SubBattery : VBoxContainer
 
 	void batteryDetectedHandler(bool detected)
 	{
-		if (!detected)
-		{
-			myData.Voltage = 0;
-			myData.ChargePercent = 0;
-			myData.Current = 0;
-		}
 		UpToDate = detected;
 		_slotEmptyLabel.SetVisible(!detected);
 		_labels.SetVisible(detected);                //buttons stay visible so that we can force close the hotswap even if bms died or we use a non-bms battery
 		_batteryMonitor.SendToHUD();
+		if (!detected)
+		{
+			_batteryMonitor.ClearQuickDataHandler();
+		}
+	}
+
+	public void ShowHotswapNoDataHandler()
+	{
+		IsHotswapClosed = false;
+		CallDeferred("ShowHotswapNoData");
+	}
+
+	public void ShowHotswapNoData(bool closed)
+	{
+		_hotswapLabel.Text = "Hotswap: NoData";
 	}
 
 	public void ShowHotswapStatusHandler(bool closed)
