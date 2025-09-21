@@ -1,10 +1,11 @@
 using Godot;
-using System;
-using RoverControlApp.Core;
 using MQTTnet;
-using System.Threading.Tasks;
-using System.Text.Json;
+using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
+using System;
+using System.Text.Json;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
@@ -118,11 +119,31 @@ public partial class BatteryMonitor : Panel
 		battery[0].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap1));
 		battery[1].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap2));
 		battery[2].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap3));
+		CallDeferred("ShowInQuickData", 
+			CalculateBatteryAverageVoltage()/10,
+			CalculateBatterySumCurrent(),
+			newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.BlackMushroom),
+			(int)(newHotswapStatus & (MqttClasses.HotswapStatus.GPIO1 | MqttClasses.HotswapStatus.GPIO2 |
+									  MqttClasses.HotswapStatus.GPIO3 | MqttClasses.HotswapStatus.GPIO4)) >> 4
+			);
 	}
 
 	private void UpdateGeneralPowerInfo()
 	{
+		CallDeferred("ShowInQuickData");
+	}
 
+	void ShowInQuickData(float battVoltage, float sumCurrent, bool blackMushroom, int GPIO)
+	{
+		_battVoltageLabel.SetText($"Batt Voltage:\n{battVoltage:0.0} V");
+		_sumCurrentLabel.SetText($"Sum Current:\n{sumCurrent:0.0} A");
+		_blackMushroomLabel.SetText($"Black Mushroom:\n{(blackMushroom ? "Pressed" : "Released")}");
+		_hotswapGPIO.SetText($"Hotswap GPIO:\n{Convert.ToString(GPIO, 2).PadLeft(4, '0')}");
+	}
+
+	void ShowInQuickData()
+	{
+		_vescVoltageLabel.SetText($"VESC Voltage:\n{_currentVoltageAlt:0.0} V");
 	}
 
 	public Task SendToHUD()
@@ -229,5 +250,17 @@ public partial class BatteryMonitor : Panel
 		if (batts == 0) return 0;
 
 		return avgVolt/batts;
+	}
+
+	float CalculateBatterySumCurrent()
+	{
+		float sumCurrent = 0;
+		foreach (var batt in battery)
+		{
+			if (batt.myData == null || !batt.UpToDate) continue;
+			if (batt.IsHotswapClosed)
+				sumCurrent += (float)(4 * batt.myData.Current);
+		}
+		return sumCurrent;
 	}
 }

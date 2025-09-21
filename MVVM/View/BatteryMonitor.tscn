@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/BatteryMonitor.cs" id="1_ktc3a"]
 [ext_resource type="PackedScene" uid="uid://cdbeb0yegexne" path="res://MVVM/View/SubBattery.tscn" id="2_4ptu6"]
 
-[node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("battery")]
+[node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("battery", "_vescVoltageLabel", "_battVoltageLabel", "_sumCurrentLabel", "_blackMushroomLabel", "_hotswapGPIO")]
 anchors_preset = -1
 anchor_left = 0.269
 anchor_right = 0.269
@@ -12,6 +12,11 @@ offset_right = 123.574
 offset_bottom = 351.0
 script = ExtResource("1_ktc3a")
 battery = [NodePath("BatBoxes/Batt1"), NodePath("BatBoxes/Batt2"), NodePath("BatBoxes/Batt3")]
+_vescVoltageLabel = NodePath("QuickData/VescVoltage")
+_battVoltageLabel = NodePath("QuickData/BatteryVoltage")
+_sumCurrentLabel = NodePath("QuickData/SumCurrent")
+_blackMushroomLabel = NodePath("QuickData/BlackMuchroom")
+_hotswapGPIO = NodePath("QuickData/HotswapGPIO")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
