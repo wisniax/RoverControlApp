@@ -249,6 +249,7 @@ shortcut = SubResource("Shortcut_x20sx")
 text = "VEL MONITOR"
 
 [node name="ShowBatteryMonitor" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true

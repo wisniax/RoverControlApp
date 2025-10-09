@@ -23,7 +23,7 @@ public partial class BatteryMonitor : Panel
 
 	private volatile float _currentVoltageAlt = 0;
 
-	public event Action<int, int, Color>? OnBatteryDataChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
+	public event Action<int, float, Color>? OnBatteryDataChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
 
 	public int ConnectedBatts
 	{
@@ -129,7 +129,7 @@ public partial class BatteryMonitor : Panel
 		battery[1].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap2));
 		battery[2].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap3));
 		CallDeferred("ShowInQuickData", 
-			CalculateBatteryAverageVoltage()/10f,
+			CalculateBatteryAverageVoltage(),
 			CalculateBatterySumCurrent(),
 			newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.BlackMushroom),
 			(int)(newHotswapStatus & (MqttClasses.HotswapStatus.GPIO1 | MqttClasses.HotswapStatus.GPIO2 |
@@ -178,7 +178,7 @@ public partial class BatteryMonitor : Panel
 	{
 		if (LocalSettings.Singleton.Battery.AltMode || CountConnectedBatts() == 0)
 		{
-			OnBatteryDataChanged.Invoke(0, (int)(_currentVoltageAlt * 10), CheckForWarnings());
+			OnBatteryDataChanged.Invoke(0, _currentVoltageAlt, CheckForWarnings());
 			return Task.CompletedTask;
 		}
 
@@ -265,10 +265,10 @@ public partial class BatteryMonitor : Panel
 		return sum;
 	}
 
-	int CalculateBatteryAverageVoltage()
+	float CalculateBatteryAverageVoltage()
 	{
 		int batts = 0;
-		int avgVolt = 0;
+		float avgVolt = 0;
 
 		foreach (var batt in battery)
 		{
@@ -276,7 +276,7 @@ public partial class BatteryMonitor : Panel
 			if (batt.IsHotswapClosed)
 			{
 				batts++;
-				avgVolt += (int)(10 * batt.myData.Voltage);
+				avgVolt += batt.myData.Voltage;
 			}
 		}
 
@@ -292,7 +292,7 @@ public partial class BatteryMonitor : Panel
 		{
 			if (batt.myData == null || !batt.UpToDate) continue;
 			if (batt.IsHotswapClosed)
-				sumCurrent += (float)(4 * batt.myData.Current);
+				sumCurrent += batt.myData.Current;
 		}
 		return sumCurrent;
 	}

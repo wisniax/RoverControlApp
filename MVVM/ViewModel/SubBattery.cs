@@ -80,7 +80,7 @@ public partial class SubBattery : VBoxContainer
 			((LocalSettings.Singleton.Battery.BatteryStatusByBMS) ?
 				data.Status.ToString() :
 				((data.Current < 0) ? "Discharging" : "Charging"));
-		_currentLabel.Text = "Current: " + ((data.Current > 0) ? "+" : "") + (data.Current * 4).ToString("F1") + "A";
+		_currentLabel.Text = "Current: " + ((data.Current > 0) ? "+" : "") + (data.Current).ToString("F1") + "A";
 		_temperatureLabel.Text = "Temperature: " + data.Temperature.ToString("F1") + "C";
 		if (data.Temperature > LocalSettings.Singleton.Battery.WarningTemperature)
 			_temperatureLabel.SetModulate(Colors.Orange);
@@ -88,7 +88,7 @@ public partial class SubBattery : VBoxContainer
 			_temperatureLabel.SetModulate(Colors.White);
 
 
-		_delayLabel.Text = "Delay: " + (data.Timestamp - LastTimestamp) + " ms";
+		_delayLabel.Text = $"Delay: {(((data.Timestamp - LastTimestamp)<100000000)?(data.Timestamp - LastTimestamp):"???")} ms";
 		LastTimestamp = data.Timestamp;
 
 		NewBatteryInfo.Invoke();
