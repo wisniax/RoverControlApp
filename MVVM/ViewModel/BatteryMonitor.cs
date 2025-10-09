@@ -156,7 +156,7 @@ public partial class BatteryMonitor : Panel
 	void ShowInQuickData(float battVoltage, float sumCurrent, bool blackMushroom, int GPIO)
 	{
 		_battVoltageLabel.SetText($"Batt Voltage:\n{battVoltage:F1} V");
-		_sumCurrentLabel.SetText($"Sum Current:\n{sumCurrent:F1} A");
+		_sumCurrentLabel.SetText($"Sum Current:\n{((sumCurrent > 0) ? "+" : "")}{sumCurrent:F1} A");
 		_blackMushroomLabel.SetText($"Black Mushroom:\n{(blackMushroom ? "Pressed" : "Released")}");
 		_hotswapGPIO.SetText($"Hotswap GPIO:\n{Convert.ToString(GPIO, 2).PadLeft(4, '0')}");
 	}
