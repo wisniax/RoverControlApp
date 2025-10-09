@@ -106,9 +106,7 @@ public partial class BatteryMonitor : Panel
 
 		UpdateGeneralPowerInfo();
 
-		if (!LocalSettings.Singleton.Battery.AltMode && CountConnectedBatts() != 0) return Task.CompletedTask;
-		
-		OnBatteryDataChanged.Invoke(0,(int)(_currentVoltageAlt*10),CheckForWarnings());
+		SendToHUD();
 		return Task.CompletedTask;
 	}
 
@@ -122,9 +120,7 @@ public partial class BatteryMonitor : Panel
 	{
 		_currentVoltageAlt = 0;
 		_vescVoltageLabel.SetText("VESC Voltage:\nNoData");
-		if (!LocalSettings.Singleton.Battery.AltMode && CountConnectedBatts() != 0) return;
-
-		OnBatteryDataChanged.Invoke(0, 0, Godot.Colors.Red);
+		SendToHUD();
 	}
 
 	private void UpdateGeneralPowerInfo(MqttClasses.HotswapStatus newHotswapStatus)
@@ -159,7 +155,6 @@ public partial class BatteryMonitor : Panel
 
 	void ClearQuickData()
 	{
-		_vescVoltageLabel.SetText("VESC Voltage:\nNoData");
 		_battVoltageLabel.SetText("Batt Voltage:\nNoData");
 		_sumCurrentLabel.SetText("Sum Current:\nNoData");
 		_blackMushroomLabel.SetText("Black Mushroom:\nNoData");
@@ -181,7 +176,12 @@ public partial class BatteryMonitor : Panel
 
 	public Task SendToHUD()
 	{
-		if (LocalSettings.Singleton.Battery.AltMode) return Task.CompletedTask;
+		if (LocalSettings.Singleton.Battery.AltMode || CountConnectedBatts() == 0)
+		{
+			OnBatteryDataChanged.Invoke(0, (int)(_currentVoltageAlt * 10), CheckForWarnings());
+			return Task.CompletedTask;
+		}
+
 		if (LocalSettings.Singleton.Battery.AverageAll)
 			OnBatteryDataChanged.Invoke(0, CalculateBatteryAverageVoltage(), CheckForWarnings());
 		else
