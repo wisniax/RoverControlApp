@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/BatteryMonitor.cs" id="1_ktc3a"]
 [ext_resource type="PackedScene" uid="uid://cdbeb0yegexne" path="res://MVVM/View/SubBattery.tscn" id="2_4ptu6"]
 
-[node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("battery", "_vescVoltageLabel", "_battVoltageLabel", "_sumCurrentLabel", "_blackMushroomLabel", "_hotswapGPIO")]
+[node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("battery", "_vescVoltageLabel", "_battVoltageLabel", "_sumCurrentLabel", "_blackMushroomLabel", "_hotswapGPIO", "_vescUpdateTimer")]
 anchors_preset = -1
 anchor_left = 0.269
 anchor_right = 0.269
@@ -17,6 +17,7 @@ _battVoltageLabel = NodePath("QuickData/BatteryVoltage")
 _sumCurrentLabel = NodePath("QuickData/SumCurrent")
 _blackMushroomLabel = NodePath("QuickData/BlackMuchroom")
 _hotswapGPIO = NodePath("QuickData/HotswapGPIO")
+_vescUpdateTimer = NodePath("Timer")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
@@ -127,3 +128,8 @@ text = "HotswapGPIO:
 NoData"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 5.0
+
+[connection signal="timeout" from="Timer" to="." method="NoVescDataHandler"]

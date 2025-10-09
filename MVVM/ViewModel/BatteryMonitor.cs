@@ -18,6 +18,8 @@ public partial class BatteryMonitor : Panel
 	[Export] private Label _blackMushroomLabel = new();
 	[Export] private Label _hotswapGPIO = new();
 
+	[Export] private Timer _vescUpdateTimer = new Timer();
+
 
 	private volatile float _currentVoltageAlt = 0;
 
@@ -89,7 +91,7 @@ public partial class BatteryMonitor : Panel
 			EventLogger.LogMessage("AltBatteryMonitor", EventLogger.LogLevel.Error, "Empty payload");
 			return Task.CompletedTask;
 		}
-		
+
 		var altData = JsonSerializer.Deserialize<MqttClasses.WheelFeedback>(msg.ConvertPayloadToString());
 		
 		if (!(altData.VescId == Convert.ToInt32(LocalSettings.Singleton.WheelData.FrontLeftDrive.Replace("0x", ""), 16) || 
@@ -98,20 +100,31 @@ public partial class BatteryMonitor : Panel
 			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.WheelData.BackLeftDrive.Replace("0x", ""), 16)))
 			  return Task.CompletedTask;
 
+		CallDeferred("ResetVescTimer");
+
 		_currentVoltageAlt = _currentVoltageAlt * 0.9f + 0.1f * (float)altData.VoltsIn;
 
 		UpdateGeneralPowerInfo();
 
-		if (!LocalSettings.Singleton.Battery.AltMode && CountConnectedBatts() != 0)
-		{
-			CallDeferred("ShowAltVoltage", false);
-			return Task.CompletedTask;
-		}
-		CallDeferred("ShowAltVoltage", true);
-
+		if (!LocalSettings.Singleton.Battery.AltMode && CountConnectedBatts() != 0) return Task.CompletedTask;
+		
 		OnBatteryDataChanged.Invoke(0,(int)(_currentVoltageAlt*10),CheckForWarnings());
-
 		return Task.CompletedTask;
+	}
+
+	private void ResetVescTimer()
+	{
+		_vescUpdateTimer.SetWaitTime(LocalSettings.Singleton.Battery.ExpectedMessageInterval);
+		_vescUpdateTimer.Start();
+	}
+
+	private void NoVescDataHandler()
+	{
+		_currentVoltageAlt = 0;
+		_vescVoltageLabel.SetText("VESC Voltage:\nNoData");
+		if (!LocalSettings.Singleton.Battery.AltMode && CountConnectedBatts() != 0) return;
+
+		OnBatteryDataChanged.Invoke(0, 0, Godot.Colors.Red);
 	}
 
 	private void UpdateGeneralPowerInfo(MqttClasses.HotswapStatus newHotswapStatus)
