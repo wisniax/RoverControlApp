@@ -84,6 +84,13 @@ namespace RoverControlApp.Core
 			//RequestData = 3
 		}
 
+		public enum MushroomStatus
+		{
+			Unmolded = 0,
+			Molded = 1,
+			NotAvailable = 2
+		}
+
 		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
