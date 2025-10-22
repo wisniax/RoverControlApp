@@ -12,23 +12,33 @@ public partial class SamplerContainer : RefCounted
 	public SamplerContainer()
 	{
 		CustomName = "-";
-		ClosedDegrees = 0f;
-		OpenDegrees = 180f;
+		Position0 = 0f;
+		Position1 = 1f;
+		Position2 = -1f;
+		PreciseStep = 1f;
 	}
 
-	public SamplerContainer(string customName, float closedDegrees, float openDegrees)
+	public SamplerContainer(string customName, float position0, float position1, float position2, float preciseStep)
 	{
 		CustomName = customName;
-		ClosedDegrees = closedDegrees;
-		OpenDegrees = openDegrees;
+		Position0 = position0;
+		Position1 = position1;
+		Position2 = position2;
+		PreciseStep = preciseStep;
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string CustomName { get; init; }
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;180;0.1;f;f")]
-	public float ClosedDegrees { get; init; }
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "-1;1000000;0.01;t;f")]
+	public float Position0 { get; init; }
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0;180;0.1;f;f")]
-	public float OpenDegrees { get; init; }
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "-1;1000000;0.01;t;f")]
+	public float Position1 { get; init; }
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "-1;1000000;0.01;t;f")]
+	public float Position2 { get; init; }
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "0.01;10000000;0.01;t;f")]
+	public float PreciseStep { get; init; }
 }
