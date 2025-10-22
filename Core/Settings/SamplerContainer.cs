@@ -18,11 +18,13 @@ public partial class SamplerContainer : RefCounted
 		PreciseStep = 1f;
 	}
 
-	public SamplerContainer(string customName, float closedDegrees, float openDegrees)
+	public SamplerContainer(string customName, float position0, float position1, float position2, float preciseStep)
 	{
 		CustomName = customName;
-		ClosedDegrees = closedDegrees;
-		OpenDegrees = openDegrees;
+		Position0 = position0;
+		Position1 = position1;
+		Position2 = position2;
+		PreciseStep = preciseStep;
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]

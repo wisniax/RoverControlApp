@@ -21,6 +21,8 @@ public class SamplerController : IRoverSamplerController
 		"sampler_container_2",
 	];
 
+	public static int LastMovedContainer { get; set; } = -1;
+	public static bool AltMode { get; set; } = false;
 	public SamplerControl CalculateMoveVector(in InputEvent inputEvent, in SamplerControl lastState)
 	{
 		float movement = Input.GetAxis("sampler_move_down", "sampler_move_up");
@@ -31,7 +33,8 @@ public class SamplerController : IRoverSamplerController
 		//if (Mathf.Abs(drillSpeed) < LocalSettings.Singleton.Joystick.MinimalInput)
 		//	drillSpeed = 0f; //No deadzone for trigger
 
-		SamplerControl newSamplerControl = new()
+		SamplerControl newSamplerControl;
+		if (AltMode)
 		{
 			newSamplerControl = new()
 			{
@@ -39,6 +42,7 @@ public class SamplerController : IRoverSamplerController
 				PlatformMovement = 0f,
 				DrillAction = movement,
 				ContainerDegrees0 = lastState.ContainerDegrees0,
+				ContainerDegrees1 = lastState.ContainerDegrees1,
 				VacuumSuction = lastState.VacuumSuction,
 				VacuumA = lastState.VacuumA,
 				VacuumB = lastState.VacuumB,
@@ -60,12 +64,6 @@ public class SamplerController : IRoverSamplerController
 			};
 		};
 
-		if (inputEvent.IsActionPressed("sampler_container_0", allowEcho: false, exactMatch: true))
-			newSamplerControl.ContainerDegrees0 = OperateContainer(
-				LocalSettings.Singleton.Sampler.Container0,
-				true,
-				lastState.ContainerDegrees0
-			);
 		if (inputEvent.IsActionPressed("sampler_container_1", allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 1;
@@ -74,6 +72,7 @@ public class SamplerController : IRoverSamplerController
 				true,
 				newSamplerControl.ContainerDegrees0
 			);
+		}
 		if (inputEvent.IsActionPressed("sampler_container_2", allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 2;
@@ -155,13 +154,20 @@ public class SamplerController : IRoverSamplerController
 		if (!changeState)
 			return lastState;
 
-		if (Mathf.IsEqualApprox(lastState, samplerContainer.OpenDegrees))
+		if (Mathf.IsEqualApprox(lastState, samplerContainer.Position0))
 		{
-			return samplerContainer.ClosedDegrees;
+			return samplerContainer.Position1;
 		}
 		else
 		{
-			return samplerContainer.OpenDegrees;
+			if (Mathf.IsEqualApprox(lastState, samplerContainer.Position1))
+			{
+				return samplerContainer.Position2;
+			}
+			else
+			{
+				return samplerContainer.Position0;
+			}
 		}
 	}
 
