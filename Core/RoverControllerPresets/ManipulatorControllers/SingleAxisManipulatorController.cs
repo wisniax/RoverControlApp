@@ -23,8 +23,8 @@ public class SingleAxisManipulatorController : IRoverManipulatorController
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, in ManipulatorControl lastState)
 	{
 		float velocity = Input.GetAxis("manipulator_speed_backward", "manipulator_speed_forward");
-		//if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.MinimalInput)
-		//	velocity = 0f; //No deadzone for trigger
+		if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.MinimalInput)
+			velocity = 0f;
 
 		ManipulatorControl manipulatorControl;
 		if (Input.IsActionPressed("manipulator_axis_5") && Input.IsActionPressed("manipulator_axis_6"))

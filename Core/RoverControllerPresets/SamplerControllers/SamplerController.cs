@@ -27,7 +27,6 @@ public class SamplerController : IRoverSamplerController
 	];
 
 	public static int LastMovedContainer { get; set; } = -1;
-	public static bool AltMode { get; set; } = false;
 	public SamplerControl CalculateMoveVector(in InputEvent inputEvent, in SamplerControl lastState)
 	{
 		float movement = Input.GetAxis("sampler_move_down", "sampler_move_up");

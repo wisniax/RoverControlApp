@@ -34,7 +34,7 @@ public class SamplerConverter : JsonConverter<Sampler>
 			switch (propertyName)
 			{
 				case nameof(Sampler.Container0):
-					container1 = JsonSerializer.Deserialize<SamplerContainer>(ref reader, options);
+					container0 = JsonSerializer.Deserialize<SamplerContainer>(ref reader, options);
 					break;
 				case nameof(Sampler.Container1):
 					container1 = JsonSerializer.Deserialize<SamplerContainer>(ref reader, options);

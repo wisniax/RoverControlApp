@@ -136,7 +136,6 @@ namespace RoverControlApp.Core
 			public float ContainerDegrees3 { get; set; } = 0f;
 			public float ContainerDegrees4 { get; set; } = 0f;
 
-
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
