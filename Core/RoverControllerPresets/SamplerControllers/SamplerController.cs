@@ -19,6 +19,8 @@ public class SamplerController : IRoverSamplerController
 		"sampler_container_0",
 		"sampler_container_1",
 		"sampler_container_2",
+		"sampler_container_3",
+		"sampler_container_4",
 	];
 
 	public static int LastMovedContainer { get; set; } = -1;
@@ -172,23 +174,66 @@ public class SamplerController : IRoverSamplerController
 		if (!changeState)
 			return lastState;
 
-		if (Mathf.IsEqualApprox(lastState, samplerContainer.Position0))
+		if (samplerContainer.Position0 == samplerContainer.Position1)
 		{
-			return samplerContainer.Position1;
+			return Switch2(samplerContainer, lastState, samplerContainer.Position1, samplerContainer.Position2);
 		}
+		if (samplerContainer.Position1 == samplerContainer.Position2)
+		{
+			return Switch2(samplerContainer, lastState, samplerContainer.Position0, samplerContainer.Position1);
+		}
+		if (samplerContainer.Position0 == samplerContainer.Position2)
+		{
+			return Switch2(samplerContainer, lastState, samplerContainer.Position0, samplerContainer.Position1);
+		}
+
+
+		return Switch3(samplerContainer, lastState);
+	}
+
+	private static float Switch2(Settings.SamplerContainer samplerContainer, float lastState, float pos1, float pos2)
+	{
+		float deltaPos1 = Mathf.Abs(lastState - pos1);
+		float deltaPos2 = Mathf.Abs(lastState - pos2);
+
+		if (deltaPos1 < deltaPos2)
+			return pos2;
 		else
-		{
-			if (Mathf.IsEqualApprox(lastState, samplerContainer.Position1))
-			{
-				return samplerContainer.Position2;
-			}
-			else
-			{
-				return samplerContainer.Position0;
-			}
-		}
+			return pos1;
+	}
+
+	private static float Switch3(Settings.SamplerContainer samplerContainer, float lastState)
+	{
+		float deltaPos0 = Mathf.Abs(lastState - samplerContainer.Position0);
+		float deltaPos1 = Mathf.Abs(lastState - samplerContainer.Position1);
+		float deltaPos2 = Mathf.Abs(lastState - samplerContainer.Position2);
+
+		if (deltaPos0 < deltaPos1 && deltaPos0 < deltaPos2)
+			return samplerContainer.Position1;
+		if (deltaPos1 < deltaPos0 && deltaPos1 < deltaPos2)
+			return samplerContainer.Position2;
+		if (deltaPos2 < deltaPos0 && deltaPos2 < deltaPos1)
+			return samplerContainer.Position0;
+
+		else
+			return samplerContainer.Position0;
 	}
 
 	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
 		IActionAwareController.FetchAllActionEvents(_usedActions);
+
+	public string GetInputActionsAdditionalNote() =>
+	"""	
+	Drilling:
+	Press and hold 'X' to keep drill enabled. Press triggers to control drill speed and direction.
+	Platform movement:
+	Press and hold 'Y' to keep platform movement enabled. Move left joystick up and down to control speed and direction.
+	Drill movement:
+	Press and hold 'Y' to keep drill movement enabled. Move left joystick up and down to control speed and direction.
+	Container control:
+	Press 'B', 'LB', 'RB', 'L-Dpad', 'R-Dpad' to move respective container to next position.
+	(settable in Sampler->ContainerX->PositionY. If all 3 positions are different 1->2->3, if only 2 differ it will switch between them)
+	Press 'Up-Dpad' or 'Down-Dpad' to precisely adjust last moved container position.
+	(Step settable in settings, "next position" will be "next" relative to one closest to current)
+	""";
 }
