@@ -12,14 +12,16 @@ public partial class Sampler : SettingBase, ICloneable
 
 	public Sampler()
 	{
+		_container0 = new();
 		_container1 = new();
 		_container2 = new();
 		_container3 = new();
 		_container4 = new();
 	}
 
-	public Sampler(SamplerContainer container1, SamplerContainer container2, SamplerContainer container3, SamplerContainer container4)
+	public Sampler(SamplerContainer container0, SamplerContainer container1, SamplerContainer container2, SamplerContainer container3, SamplerContainer container4)
 	{
+		_container0 = container0;
 		_container1 = container1;
 		_container2 = container2;
 		_container3 = container3;
@@ -30,11 +32,19 @@ public partial class Sampler : SettingBase, ICloneable
 	{
 		return new Sampler()
 		{
+			Container0 = _container0,
 			Container1 = _container1,
 			Container2 = _container2,
 			Container3 = _container3,
 			Container4 = _container4,
 		};
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
+	public SamplerContainer Container0
+	{
+		get => _container0;
+		set => EmitSignal_SectionChanged(ref _container0, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
@@ -65,6 +75,7 @@ public partial class Sampler : SettingBase, ICloneable
 		set => EmitSignal_SectionChanged(ref _container4, value);
 	}
 
+	SamplerContainer _container0;
 	SamplerContainer _container1;
 	SamplerContainer _container2;
 	SamplerContainer _container3;
