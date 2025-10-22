@@ -218,25 +218,6 @@ public class PressedKeys : IDisposable
 			return false;
 		}
 
-		// camera control
-		switch (this.ControlMode)
-		{
-			case ControlMode.EStop:
-			case ControlMode.Rover:
-			case ControlMode.Manipulator: // was disabled originally
-			case ControlMode.Sampler:
-			case ControlMode.Autonomy:
-			default:
-				if (_roverCameraControllerPreset.HandleInput(inputEvent, _cameraMoveVector, out _cameraMoveVector))
-				{
-					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
-					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as Camera");
-					return true;
-				}
-				break;
-		}
-
 		// rover control
 		switch (this.ControlMode)
 		{
@@ -265,6 +246,25 @@ public class PressedKeys : IDisposable
 					OnSamplerMovement?.Invoke(_samplerControl);
 					OnAcceptedInput(inputEvent);
 					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as RoverSampler");
+					return true;
+				}
+				break;
+		}
+
+		// camera control
+		switch (this.ControlMode)
+		{
+			case ControlMode.EStop:
+			case ControlMode.Rover:
+			case ControlMode.Manipulator: // was disabled originally
+			case ControlMode.Sampler:
+			case ControlMode.Autonomy:
+			default:
+				if (_roverCameraControllerPreset.HandleInput(inputEvent, _cameraMoveVector, out _cameraMoveVector))
+				{
+					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as Camera");
 					return true;
 				}
 				break;
