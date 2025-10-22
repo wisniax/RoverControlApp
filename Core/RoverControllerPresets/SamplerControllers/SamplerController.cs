@@ -248,6 +248,8 @@ public class SamplerController : IRoverSamplerController
 	Container control:
 	Press 'B', 'LB', 'RB', 'L-Dpad', 'R-Dpad' to move respective container to next position.
 	(settable in Sampler->ContainerX->PositionY. If all 3 positions are different 1->2->3, if only 2 differ it will switch between them)
+	!Set them smallest to largest to avoid unexpected behavior.!
+	(Example: when current command is in the middle of pos0 and pos2 after precise adjustments pos1 is skipped when next pos is pressed).
 
 	Container precise adjustment:
 	Press 'Up-Dpad' or 'Down-Dpad' to precisely adjust last moved container position.
