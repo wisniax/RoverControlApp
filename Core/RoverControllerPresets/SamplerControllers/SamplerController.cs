@@ -226,13 +226,18 @@ public class SamplerController : IRoverSamplerController
 	"""	
 	Drilling:
 	Press and hold 'X' to keep drill enabled. Press triggers to control drill speed and direction.
+
 	Platform movement:
 	Press and hold 'Y' to keep platform movement enabled. Move left joystick up and down to control speed and direction.
+
 	Drill movement:
 	Press and hold 'Y' to keep drill movement enabled. Move left joystick up and down to control speed and direction.
+
 	Container control:
 	Press 'B', 'LB', 'RB', 'L-Dpad', 'R-Dpad' to move respective container to next position.
 	(settable in Sampler->ContainerX->PositionY. If all 3 positions are different 1->2->3, if only 2 differ it will switch between them)
+
+	Container precise adjustment:
 	Press 'Up-Dpad' or 'Down-Dpad' to precisely adjust last moved container position.
 	(Step settable in settings, "next position" will be "next" relative to one closest to current)
 	""";
