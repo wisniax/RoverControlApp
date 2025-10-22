@@ -210,11 +210,11 @@ public class SamplerController : IRoverSamplerController
 		float deltaPos1 = Mathf.Abs(lastState - samplerContainer.Position1);
 		float deltaPos2 = Mathf.Abs(lastState - samplerContainer.Position2);
 
-		if (deltaPos0 < deltaPos1 && deltaPos0 < deltaPos2)
+		if (deltaPos0 <= deltaPos1 && deltaPos0 <= deltaPos2)
 			return samplerContainer.Position1;
-		if (deltaPos1 < deltaPos0 && deltaPos1 < deltaPos2)
+		if (deltaPos1 <= deltaPos0 && deltaPos1 <= deltaPos2)
 			return samplerContainer.Position2;
-		if (deltaPos2 < deltaPos0 && deltaPos2 < deltaPos1)
+		if (deltaPos2 <= deltaPos0 && deltaPos2 <= deltaPos1)
 			return samplerContainer.Position0;
 
 		else
@@ -233,7 +233,7 @@ public class SamplerController : IRoverSamplerController
 	Press and hold 'Y' to keep platform movement enabled. Move left joystick up and down to control speed and direction.
 
 	Drill movement:
-	Press and hold 'Y' to keep drill movement enabled. Move left joystick up and down to control speed and direction.
+	Press and hold 'A' to keep drill movement enabled. Move left joystick up and down to control speed and direction.
 
 	Drilling alt mode:
 	Press and hold left joystick button to map both drilling and drill movement to triggers.
