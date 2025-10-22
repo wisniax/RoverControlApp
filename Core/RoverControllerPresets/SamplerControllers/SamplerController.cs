@@ -210,11 +210,18 @@ public class SamplerController : IRoverSamplerController
 		float deltaPos1 = Mathf.Abs(lastState - samplerContainer.Position1);
 		float deltaPos2 = Mathf.Abs(lastState - samplerContainer.Position2);
 
-		if (deltaPos0 <= deltaPos1 && deltaPos0 <= deltaPos2)
+		if (deltaPos0 == deltaPos1 && deltaPos0 < deltaPos2)
 			return samplerContainer.Position1;
-		if (deltaPos1 <= deltaPos0 && deltaPos1 <= deltaPos2)
+		if (deltaPos1 == deltaPos2 && deltaPos1 < deltaPos0)
 			return samplerContainer.Position2;
-		if (deltaPos2 <= deltaPos0 && deltaPos2 <= deltaPos1)
+		if (deltaPos0 == deltaPos2 && deltaPos0 < deltaPos1)
+			return samplerContainer.Position0;
+
+		if (deltaPos0 < deltaPos1 && deltaPos0 < deltaPos2)
+			return samplerContainer.Position1;
+		if (deltaPos1 < deltaPos0 && deltaPos1 < deltaPos2)
+			return samplerContainer.Position2;
+		if (deltaPos2 < deltaPos0 && deltaPos2 < deltaPos1)
 			return samplerContainer.Position0;
 
 		else
