@@ -16,11 +16,14 @@ public class SamplerController : IRoverSamplerController
 		"sampler_drill_movement",
 		"sampler_platform_movement",
 		"sampler_drill_enable",
+		"sampler_drilling_altmode",
 		"sampler_container_0",
 		"sampler_container_1",
 		"sampler_container_2",
 		"sampler_container_3",
 		"sampler_container_4",
+		"sampler_container_precise_up",
+		"sampler_container_precise_down",
 	];
 
 	public static int LastMovedContainer { get; set; } = -1;
@@ -36,13 +39,13 @@ public class SamplerController : IRoverSamplerController
 		//	drillSpeed = 0f; //No deadzone for trigger
 
 		SamplerControl newSamplerControl;
-		if (AltMode)
+		if (Input.IsActionPressed("sampler_drilling_altmode"))
 		{
 			newSamplerControl = new()
 			{
-				DrillMovement = movement,
+				DrillMovement = drillSpeed,
 				PlatformMovement = 0f,
-				DrillAction = movement,
+				DrillAction = drillSpeed,
 				ContainerDegrees0 = lastState.ContainerDegrees0,
 				ContainerDegrees1 = lastState.ContainerDegrees1,
 				ContainerDegrees2 = lastState.ContainerDegrees2,
@@ -232,6 +235,9 @@ public class SamplerController : IRoverSamplerController
 
 	Drill movement:
 	Press and hold 'Y' to keep drill movement enabled. Move left joystick up and down to control speed and direction.
+
+	Drilling alt mode:
+	Press and hold left joystick button to map both drilling and drill movement to triggers.
 
 	Container control:
 	Press 'B', 'LB', 'RB', 'L-Dpad', 'R-Dpad' to move respective container to next position.
