@@ -88,7 +88,7 @@ public partial class SubBattery : VBoxContainer
 			_temperatureLabel.SetModulate(Colors.White);
 
 
-		_delayLabel.Text = $"Delay: {(((data.Timestamp - LastTimestamp)<100000000)?(data.Timestamp - LastTimestamp):"???")} ms";
+		_delayLabel.Text = $"Delay: {(((data.Timestamp - LastTimestamp)<10000)?(data.Timestamp - LastTimestamp):"???")} ms";
 		LastTimestamp = data.Timestamp;
 
 		NewBatteryInfo.Invoke();
