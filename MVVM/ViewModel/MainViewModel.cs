@@ -98,6 +98,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			BatteryMonitor.OnBatteryDataChanged += HandleBatteryPercentageChangedHandler;
+			BatteryMonitor.SetMushroomState += GrzybUIDis.SetMushroom;
 
 			InputHelp_HandleControlModeChanged(PressedKeys.ControlMode);
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));

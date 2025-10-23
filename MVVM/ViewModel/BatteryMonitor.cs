@@ -23,6 +23,7 @@ public partial class BatteryMonitor : Panel
 	private volatile float _currentVoltageAlt = 0;
 
 	public event Action<int, float, Color>? OnBatteryDataChanged; //enabled batteries (closed hotswaps) (0 if it's in alt mode), percentages (volts from alt mode), color to check for warnings
+	public event Action<MqttClasses.MushroomStatus>? SetMushroomState;
 
 	public int ConnectedBatts
 	{
@@ -134,6 +135,7 @@ public partial class BatteryMonitor : Panel
 			(int)(newHotswapStatus & (MqttClasses.HotswapStatus.GPIO1 | MqttClasses.HotswapStatus.GPIO2 |
 									  MqttClasses.HotswapStatus.GPIO3 | MqttClasses.HotswapStatus.GPIO4)) >> 4
 			);
+		SetMushroomState?.Invoke((newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.BlackMushroom)? MqttClasses.MushroomStatus.Molded : MqttClasses.MushroomStatus.Unmolded));
 	}
 
 	private void UpdateGeneralPowerInfo()
@@ -149,6 +151,7 @@ public partial class BatteryMonitor : Panel
 			battery[1].ShowHotswapStatusHandler(null);
 			battery[2].ShowHotswapStatusHandler(null);
 			CallDeferred("ClearQuickData");
+			SetMushroomState?.Invoke(MqttClasses.MushroomStatus.NotAvailable);
 		}
 	}	
 
