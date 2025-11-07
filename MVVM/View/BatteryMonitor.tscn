@@ -15,7 +15,7 @@ battery = [NodePath("BatBoxes/Batt1"), NodePath("BatBoxes/Batt2"), NodePath("Bat
 _vescVoltageLabel = NodePath("QuickData/VescVoltage")
 _battVoltageLabel = NodePath("QuickData/BatteryVoltage")
 _sumCurrentLabel = NodePath("QuickData/SumCurrent")
-_blackMushroomLabel = NodePath("QuickData/BlackMuchroom")
+_blackMushroomLabel = NodePath("QuickData/BlackMushroom")
 _hotswapGPIO = NodePath("QuickData/HotswapGPIO")
 _vescUpdateTimer = NodePath("Timer")
 
@@ -113,10 +113,10 @@ NoData"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BlackMuchroom" type="Label" parent="QuickData"]
+[node name="BlackMushroom" type="Label" parent="QuickData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
-text = "Black Muchroom:
+text = "Black Mushroom:
 NoData"
 horizontal_alignment = 1
 vertical_alignment = 1
