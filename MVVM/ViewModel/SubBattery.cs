@@ -54,7 +54,7 @@ public partial class SubBattery : VBoxContainer
 
 	public Task UpdateBattInfoHandler(string msg)
 	{
-		CallDeferred("UpdateBattInfo", msg);
+		CallDeferred(nameof(UpdateBattInfo), msg);
 		return Task.CompletedTask;
 	}
 
@@ -124,7 +124,7 @@ public partial class SubBattery : VBoxContainer
 	public void ShowHotswapNoDataHandler()
 	{
 		IsHotswapClosed = false;
-		CallDeferred("ShowHotswapNoData");
+		CallDeferred(nameof(ShowHotswapNoData));
 	}
 
 	public void ShowHotswapNoData()
@@ -140,7 +140,7 @@ public partial class SubBattery : VBoxContainer
 			return;
 		}
 		IsHotswapClosed = (bool)closed;
-		CallDeferred("ShowHotswapStatus", (bool)closed);
+		CallDeferred(nameof(ShowHotswapNoData), (bool)closed);
 	}
 
 	public void ShowHotswapStatus(bool closed)

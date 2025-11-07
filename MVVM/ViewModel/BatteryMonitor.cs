@@ -101,7 +101,7 @@ public partial class BatteryMonitor : Panel
 			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.WheelData.BackLeftDrive.Replace("0x", ""), 16)))
 			  return Task.CompletedTask;
 
-		CallDeferred("ResetVescTimer");
+		CallDeferred(nameof(ResetVescTimer));
 
 		_currentVoltageAlt = _currentVoltageAlt * 0.9f + 0.1f * (float)altData.VoltsIn;
 
@@ -129,7 +129,7 @@ public partial class BatteryMonitor : Panel
 		battery[0].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap1));
 		battery[1].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap2));
 		battery[2].ShowHotswapStatusHandler(newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.Hotswap3));
-		CallDeferred("ShowInQuickData", 
+		CallDeferred(nameof(ShowInQuickData), 
 			CalculateBatteryAverageVoltage(),
 			CalculateBatterySumCurrent(),
 			newHotswapStatus.HasFlag(MqttClasses.HotswapStatus.BlackMushroom),
@@ -141,7 +141,7 @@ public partial class BatteryMonitor : Panel
 
 	private void UpdateGeneralPowerInfo()
 	{
-		CallDeferred("ShowInQuickData");
+		CallDeferred(nameof(ShowInQuickData));
 	}
 
 	public void ClearQuickDataHandler()
@@ -151,7 +151,7 @@ public partial class BatteryMonitor : Panel
 			battery[0].ShowHotswapStatusHandler(null);
 			battery[1].ShowHotswapStatusHandler(null);
 			battery[2].ShowHotswapStatusHandler(null);
-			CallDeferred("ClearQuickData");
+			CallDeferred(nameof(ClearQuickData));
 			SetMushroomState?.Invoke(MqttClasses.MushroomStatus.NotAvailable);
 		}
 	}	

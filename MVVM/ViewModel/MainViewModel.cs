@@ -385,7 +385,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		void HandleBatteryPercentageChangedHandler(int connectedBatts, float data, Color color)
 		{
-			CallDeferred("HandleBatteryPercentageChanged", connectedBatts, data, color);
+			CallDeferred(nameof(HandleBatteryPercentageChanged), connectedBatts, data, color);
 		}
 
 		void HandleBatteryPercentageChanged(int connectedBatts, float data, Color color)
