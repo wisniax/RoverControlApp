@@ -140,7 +140,7 @@ public partial class SubBattery : VBoxContainer
 			return;
 		}
 		IsHotswapClosed = (bool)closed;
-		CallDeferred(nameof(ShowHotswapNoData), (bool)closed);
+		CallDeferred(nameof(ShowHotswapStatus), (bool)closed);
 	}
 
 	public void ShowHotswapStatus(bool closed)
