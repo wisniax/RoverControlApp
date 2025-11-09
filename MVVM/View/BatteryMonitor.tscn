@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cdbeb0yegexne" path="res://MVVM/View/SubBattery.tscn" id="2_4ptu6"]
 
 [node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("battery", "_vescVoltageLabel", "_battVoltageLabel", "_sumCurrentLabel", "_blackMushroomLabel", "_hotswapGPIO", "_vescUpdateTimer")]
-anchors_preset = -1
+custom_minimum_size = Vector2(434, 351)
 offset_right = 434.0
 offset_bottom = 351.0
 script = ExtResource("1_ktc3a")
