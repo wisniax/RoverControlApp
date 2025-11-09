@@ -5,25 +5,26 @@
 
 [node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("battery", "_vescVoltageLabel", "_battVoltageLabel", "_sumCurrentLabel", "_blackMushroomLabel", "_hotswapGPIO", "_vescUpdateTimer")]
 anchors_preset = -1
-anchor_right = 0.376
-anchor_bottom = 0.542
-offset_right = 0.0959778
-offset_bottom = -0.216034
+offset_right = 434.0
+offset_bottom = 351.0
 script = ExtResource("1_ktc3a")
 battery = [NodePath("BatBoxes/Batt1"), NodePath("BatBoxes/Batt2"), NodePath("BatBoxes/Batt3")]
-_vescVoltageLabel = NodePath("ReadabilityPanels/QuickData/VescVoltage")
-_battVoltageLabel = NodePath("ReadabilityPanels/QuickData/BatteryVoltage")
-_sumCurrentLabel = NodePath("ReadabilityPanels/QuickData/SumCurrent")
-_blackMushroomLabel = NodePath("ReadabilityPanels/QuickData/BlackMushroom")
-_hotswapGPIO = NodePath("ReadabilityPanels/QuickData/HotswapGPIO")
+_vescVoltageLabel = NodePath("QuickData/VescVoltage")
+_battVoltageLabel = NodePath("QuickData/BatteryVoltage")
+_sumCurrentLabel = NodePath("QuickData/SumCurrent")
+_blackMushroomLabel = NodePath("QuickData/BlackMushroom")
+_hotswapGPIO = NodePath("QuickData/HotswapGPIO")
 _vescUpdateTimer = NodePath("Timer")
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = -1
 anchor_right = 1.0
-offset_bottom = 40.0
+anchor_bottom = 0.111
+offset_right = 3.05176e-05
+offset_bottom = 0.0389709
 grow_horizontal = 2
+grow_vertical = 2
 alignment = 1
 
 [node name="Label" type="Label" parent="HBoxContainer"]
@@ -37,10 +38,12 @@ vertical_alignment = 1
 [node name="BatBoxes" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
+anchor_top = 0.1
 anchor_right = 1.0
-anchor_bottom = 0.946
-offset_top = 35.0
-offset_bottom = -0.0460205
+anchor_bottom = 0.878
+offset_top = -0.0999985
+offset_right = 3.05176e-05
+offset_bottom = -0.177979
 rotation = 0.000224471
 alignment = 1
 
@@ -61,41 +64,57 @@ layout_mode = 2
 [node name="Batt3" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
 layout_mode = 2
 
-[node name="ReadabilityPanels" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_top = 312.0
-offset_right = -394.0
-offset_bottom = 352.0
+[node name="Timer" type="Timer" parent="."]
+wait_time = 5.0
 
-[node name="Panel" type="Panel" parent="ReadabilityPanels"]
-layout_mode = 0
-offset_right = 79.0
-offset_bottom = 39.0
-
-[node name="Panel2" type="Panel" parent="ReadabilityPanels"]
-layout_mode = 0
-offset_left = 160.0
-offset_right = 239.0
-offset_bottom = 39.0
-
-[node name="Panel3" type="Panel" parent="ReadabilityPanels"]
-layout_mode = 0
-offset_left = 346.0
-offset_right = 434.0
-offset_bottom = 39.0
-
-[node name="QuickData" type="HBoxContainer" parent="ReadabilityPanels"]
+[node name="VisiblilityPanel" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 10.85
-anchor_bottom = 0.002
-offset_bottom = 38.92
+anchor_left = 0.002
+anchor_top = 0.889
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.132
+offset_top = -0.0390015
+offset_right = 3.05176e-05
+offset_bottom = 3.05176e-05
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Panel" type="Panel" parent="VisiblilityPanel"]
+custom_minimum_size = Vector2(79.35, 0)
+layout_mode = 2
+
+[node name="Separator" type="Control" parent="VisiblilityPanel"]
+custom_minimum_size = Vector2(71.1, 0)
+layout_mode = 2
+
+[node name="Panel2" type="Panel" parent="VisiblilityPanel"]
+custom_minimum_size = Vector2(82.05, 0)
+layout_mode = 2
+
+[node name="Separator2" type="Control" parent="VisiblilityPanel"]
+custom_minimum_size = Vector2(96.84, 0)
+layout_mode = 2
+
+[node name="Panel3" type="Panel" parent="VisiblilityPanel"]
+custom_minimum_size = Vector2(88.875, 0)
+layout_mode = 2
+
+[node name="QuickData" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.883
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 0.0670166
+offset_right = 3.05176e-05
+offset_bottom = 3.05176e-05
 rotation = 0.000224471
 alignment = 1
 
-[node name="VescVoltage" type="Label" parent="ReadabilityPanels/QuickData"]
+[node name="VescVoltage" type="Label" parent="QuickData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "Vesc Voltage:
@@ -103,7 +122,7 @@ NoData"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BatteryVoltage" type="Label" parent="ReadabilityPanels/QuickData"]
+[node name="BatteryVoltage" type="Label" parent="QuickData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "Batt Voltage:
@@ -111,7 +130,7 @@ NoData"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SumCurrent" type="Label" parent="ReadabilityPanels/QuickData"]
+[node name="SumCurrent" type="Label" parent="QuickData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "Sum Current:
@@ -119,7 +138,7 @@ NoData"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="BlackMushroom" type="Label" parent="ReadabilityPanels/QuickData"]
+[node name="BlackMushroom" type="Label" parent="QuickData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "Black Mushroom:
@@ -127,15 +146,12 @@ NoData"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="HotswapGPIO" type="Label" parent="ReadabilityPanels/QuickData"]
+[node name="HotswapGPIO" type="Label" parent="QuickData"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "HotswapGPIO:
 NoData"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Timer" type="Timer" parent="."]
-wait_time = 5.0
 
 [connection signal="timeout" from="Timer" to="." method="NoVescDataHandler"]
