@@ -49,6 +49,7 @@ alignment = 1
 
 [node name="Batt1" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Separator1" type="Control" parent="BatBoxes"]
 custom_minimum_size = Vector2(4.81, 0)
@@ -56,6 +57,7 @@ layout_mode = 2
 
 [node name="Batt2" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Separator2" type="Control" parent="BatBoxes"]
 custom_minimum_size = Vector2(4.81, 0)
@@ -63,6 +65,7 @@ layout_mode = 2
 
 [node name="Batt3" parent="BatBoxes" instance=ExtResource("2_4ptu6")]
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Timer" type="Timer" parent="."]
 wait_time = 5.0
@@ -76,8 +79,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 0.132
 offset_top = -0.0390015
-offset_right = 3.05176e-05
-offset_bottom = 3.05176e-05
+offset_right = -1.0
 grow_horizontal = 2
 grow_vertical = 2
 alignment = 1
@@ -85,22 +87,27 @@ alignment = 1
 [node name="Panel" type="Panel" parent="VisiblilityPanel"]
 custom_minimum_size = Vector2(79.35, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Separator" type="Control" parent="VisiblilityPanel"]
 custom_minimum_size = Vector2(71.1, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Panel2" type="Panel" parent="VisiblilityPanel"]
 custom_minimum_size = Vector2(82.05, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Separator2" type="Control" parent="VisiblilityPanel"]
-custom_minimum_size = Vector2(96.84, 0)
+custom_minimum_size = Vector2(99.12, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="Panel3" type="Panel" parent="VisiblilityPanel"]
-custom_minimum_size = Vector2(88.875, 0)
+custom_minimum_size = Vector2(86.16, 0)
 layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="QuickData" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -116,6 +123,7 @@ alignment = 1
 
 [node name="VescVoltage" type="Label" parent="QuickData"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 text = "Vesc Voltage:
 NoData"
@@ -124,6 +132,7 @@ vertical_alignment = 1
 
 [node name="BatteryVoltage" type="Label" parent="QuickData"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 text = "Batt Voltage:
 NoData"
@@ -132,6 +141,7 @@ vertical_alignment = 1
 
 [node name="SumCurrent" type="Label" parent="QuickData"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 text = "Sum Current:
 NoData"
@@ -140,6 +150,7 @@ vertical_alignment = 1
 
 [node name="BlackMushroom" type="Label" parent="QuickData"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 text = "Black Mushroom:
 NoData"
@@ -148,6 +159,7 @@ vertical_alignment = 1
 
 [node name="HotswapGPIO" type="Label" parent="QuickData"]
 layout_mode = 2
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 12
 text = "HotswapGPIO:
 NoData"
