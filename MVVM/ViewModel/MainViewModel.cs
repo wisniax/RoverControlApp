@@ -98,6 +98,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			BatteryMonitor.OnBatteryDataChanged += HandleBatteryPercentageChangedHandler;
+			BatteryMonitor.SetMushroomState += GrzybUIDis.SetMushroom;
 
 			InputHelp_HandleControlModeChanged(PressedKeys.ControlMode);
 			Task.Run(async () => await _joyVibrato.ControlModeChangedSubscriber(PressedKeys!.ControlMode));
@@ -382,20 +383,22 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 		}
 
-		void HandleBatteryPercentageChangedHandler(int connectedBatts, int data, Color color)
+		void HandleBatteryPercentageChangedHandler(int connectedBatts, float data, Color color)
 		{
-			CallDeferred("HandleBatteryPercentageChanged", connectedBatts, data, color);
+			CallDeferred(nameof(HandleBatteryPercentageChanged), connectedBatts, data, color);
 		}
 
-		void HandleBatteryPercentageChanged(int connectedBatts, int data, Color color)
+		void HandleBatteryPercentageChanged(int connectedBatts, float data, Color color)
 		{
 			if (!LocalSettings.Singleton.Battery.AltMode && connectedBatts != 0)
 			{
 				ShowBatteryMonitor.SetText($"BATTERY {data}%:{connectedBatts}");
+				ShowBatteryMonitor.CustomMinimumSize = new Vector2(140, 0);
 			}
 			else
 			{
-				ShowBatteryMonitor.SetText($"BATTERY {(float)data / 10}V");
+				ShowBatteryMonitor.SetText($"BATTERY {data:F1}V");
+				ShowBatteryMonitor.CustomMinimumSize = new Vector2(125, 0);
 			}
 			ShowBatteryMonitor.SetModulate(color);
 			if (color != Colors.Red) return;
