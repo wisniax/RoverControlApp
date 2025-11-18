@@ -221,9 +221,6 @@ public class SamplerController : IRoverSamplerController
 			return samplerContainer.Position1;
 		if (deltaPos1 < deltaPos0 && deltaPos1 < deltaPos2)
 			return samplerContainer.Position2;
-		if (deltaPos2 < deltaPos0 && deltaPos2 < deltaPos1)
-			return samplerContainer.Position0;
-
 		else
 			return samplerContainer.Position0;
 	}
