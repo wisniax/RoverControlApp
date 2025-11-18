@@ -176,15 +176,15 @@ public class SamplerController : IRoverSamplerController
 		if (!changeState)
 			return lastState;
 
-		if (samplerContainer.Position0 == samplerContainer.Position1)
+		if (Mathf.IsEqualApprox(samplerContainer.Position0, samplerContainer.Position1, 0.01))
 		{
 			return Switch2(samplerContainer, lastState, samplerContainer.Position1, samplerContainer.Position2);
 		}
-		if (samplerContainer.Position1 == samplerContainer.Position2)
+		if (Mathf.IsEqualApprox(samplerContainer.Position1, samplerContainer.Position2, 0.01))
 		{
 			return Switch2(samplerContainer, lastState, samplerContainer.Position0, samplerContainer.Position1);
 		}
-		if (samplerContainer.Position0 == samplerContainer.Position2)
+		if (Mathf.IsEqualApprox(samplerContainer.Position0, samplerContainer.Position2, 0.01))
 		{
 			return Switch2(samplerContainer, lastState, samplerContainer.Position0, samplerContainer.Position1);
 		}
@@ -210,11 +210,11 @@ public class SamplerController : IRoverSamplerController
 		float deltaPos1 = Mathf.Abs(lastState - samplerContainer.Position1);
 		float deltaPos2 = Mathf.Abs(lastState - samplerContainer.Position2);
 
-		if (deltaPos0 == deltaPos1 && deltaPos0 < deltaPos2)
+		if (Mathf.IsEqualApprox(deltaPos0, deltaPos1, 0.01) && deltaPos0 < deltaPos2)
 			return samplerContainer.Position1;
-		if (deltaPos1 == deltaPos2 && deltaPos1 < deltaPos0)
+		if (Mathf.IsEqualApprox(deltaPos1, deltaPos2, 0.01) && deltaPos1 < deltaPos0)
 			return samplerContainer.Position2;
-		if (deltaPos0 == deltaPos2 && deltaPos0 < deltaPos1)
+		if (Mathf.IsEqualApprox(deltaPos0, deltaPos2, 0.01) && deltaPos0 < deltaPos1)
 			return samplerContainer.Position0;
 
 		if (deltaPos0 < deltaPos1 && deltaPos0 < deltaPos2)
