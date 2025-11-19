@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=27 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/MaxSizeContainer.cs" id="13_0svft"]
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
+[ext_resource type="PackedScene" uid="uid://cy5ttdro0cx11" path="res://MVVM/View/SpinningText.tscn" id="16_dkmer"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -50,6 +51,8 @@ keycode = 83
 
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
+
+[sub_resource type="Shortcut" id="Shortcut_5o6jd"]
 
 [node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
 layout_mode = 3
@@ -269,6 +272,12 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_gr50h")
 text = "SETTINGS"
 
+[node name="ShowSpinningText" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+toggle_mode = true
+shortcut = SubResource("Shortcut_5o6jd")
+text = "SHOW SPINNING"
+
 [node name="MissionControl" parent="." instance=ExtResource("4_wrhi8")]
 visible = false
 layout_mode = 0
@@ -321,9 +330,10 @@ layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = 36.0
-offset_bottom = -133.0
+offset_left = 3.0
+offset_top = 68.0
+offset_right = -7.0
+offset_bottom = -101.0
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("13_0svft")
@@ -349,6 +359,14 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
+[node name="SpinningTextPanel" parent="." instance=ExtResource("16_dkmer")]
+visible = false
+layout_mode = 0
+offset_left = 329.0
+offset_top = 207.0
+offset_right = 620.0
+offset_bottom = 408.0
+
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
@@ -359,6 +377,7 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSpinningText" to="SpinningTextPanel" method="set_visible"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]

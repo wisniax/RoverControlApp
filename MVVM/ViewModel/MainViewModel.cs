@@ -54,7 +54,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private MissionStatus_UIOverlay MissionStatusUIDis = null!;
 
 		[Export]
-		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!, ShowBatteryMonitor = null!;
+		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!, ShowBatteryMonitor = null!, ShowSpinningText = null!;
 		[Export]
 		private SettingsManager SettingsManagerNode = null!;
 		[Export]
@@ -70,6 +70,9 @@ namespace RoverControlApp.MVVM.ViewModel
 		private ZedMonitor ZedMonitor = null!;
 		[Export]
 		private BatteryMonitor BatteryMonitor = null!;
+
+		[Export]
+		private SpinningText SpinningText = null!;
 
 		[Export]
 		private InputHelpMaster InputHelpMaster = null!;
@@ -122,7 +125,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		public override void _ExitTree()
 		{
-			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
+			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = ShowSpinningText.ButtonPressed = false;
 
 			PressedKeys.OnControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.OnKinematicModeChanged -= DriveModeUIDis.KinematicModeChangedSubscriber;
