@@ -124,8 +124,8 @@ LabelNodePath = NodePath("RoverMode/Label")
 
 [node name="RoverMode" parent="GrzybUIDis" index="0"]
 custom_minimum_size = Vector2(170, 26)
-offset_left = 13.0
-offset_right = 183.0
+offset_left = -31.0
+offset_right = 188.0
 
 [node name="RoverModeUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
@@ -249,6 +249,7 @@ shortcut = SubResource("Shortcut_x20sx")
 text = "VEL MONITOR"
 
 [node name="ShowBatteryMonitor" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
@@ -282,7 +283,7 @@ anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = -652.0
-offset_top = -377.0
+offset_top = -396.0
 offset_right = -218.0
 offset_bottom = -45.0
 grow_horizontal = 0

@@ -62,12 +62,18 @@ namespace RoverControlApp.Core
 			Empty = 6
 		}
 
+		[Flags]
 		public enum HotswapStatus
 		{
-			OffMan = 0,
-			OnMan = 1,
-			OffAuto = 2,
-			OnAuto = 3
+			None = 0,
+			Hotswap1 = 1 << 0,
+			Hotswap2 = 1 << 1,
+			Hotswap3 = 1 << 2,
+			BlackMushroom = 1 << 3,
+			GPIO1 = 1 << 4,
+			GPIO2 = 1 << 5,
+			GPIO3 = 1 << 6,
+			GPIO4 = 1 << 7,
 		}
 
 		public enum BatterySet
@@ -76,6 +82,13 @@ namespace RoverControlApp.Core
 			On = 1,
 			Off = 2,
 			//RequestData = 3
+		}
+
+		public enum MushroomStatus
+		{
+			Unmolded = 0,
+			Molded = 1,
+			NotAvailable = 2
 		}
 
 		public class RoverStatus
@@ -177,16 +190,16 @@ namespace RoverControlApp.Core
 
 		public class BatteryInfo
 		{
-			public int Slot { get; set; }
-			public int ID { get; set; }
-			public float ChargePercent { get; set; }
-			public float Voltage { get; set; }
-
 			public BatteryStatus Status { get; set; }
 			public HotswapStatus HotswapStatus { get; set; }
+			public int ID { get; set; }
+			public int Slot { get; set; }
+			public float ChargePercent { get; set; }
 			public float Current { get; set; }
-			public int Temperature { get; set; }
-			public int Time { get; set; }
+			public float Temperature { get; set; }
+			public float Voltage { get; set; }
+
+			public long Timestamp { get; set; }
 		}
 
 		public class BatteryControl

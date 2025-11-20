@@ -17,7 +17,7 @@ public partial class SubBattery : VBoxContainer
 	[Export] private Label _statusLabel = new();
 	[Export] private Label _currentLabel = new();
 	[Export] private Label _temperatureLabel = new();
-	[Export] private Label _timeLabel = new();
+	[Export] private Label _delayLabel = new();
 
 	[Export] private Button _autoButton = new();
 	[Export] private Button _onButton = new();
@@ -28,7 +28,7 @@ public partial class SubBattery : VBoxContainer
 
 	private BatteryMonitor _batteryMonitor;
 
-	public volatile MqttClasses.BatteryInfo myData;
+	public volatile MqttClasses.BatteryInfo myData = new();
 
 	private volatile int _slot;
 
@@ -36,6 +36,9 @@ public partial class SubBattery : VBoxContainer
 	public event Func<int, MqttClasses.BatterySet, Task>? OnBatteryControl; //slot, command
 
 	public volatile bool UpToDate = false;
+	public volatile bool IsHotswapClosed = false;
+
+	private long LastTimestamp = 0;
 
 	public void SetSlotNumber(int slot)
 	{
@@ -51,7 +54,7 @@ public partial class SubBattery : VBoxContainer
 
 	public Task UpdateBattInfoHandler(string msg)
 	{
-		CallDeferred("UpdateBattInfo", msg);
+		CallDeferred(nameof(UpdateBattInfo), msg);
 		return Task.CompletedTask;
 	}
 
@@ -66,23 +69,27 @@ public partial class SubBattery : VBoxContainer
 
 		_vbatLabel.Text = "VBat: " + data.Voltage.ToString("F1") + "V";
 
-		if (data.Voltage < 6 * LocalSettings.Singleton.Battery.CriticalVoltage)
+		if (data.Voltage < LocalSettings.Singleton.Battery.CriticalVoltage)
 			_vbatLabel.SetModulate(Colors.Red);
-		else if (data.Voltage < 6 * LocalSettings.Singleton.Battery.WarningVoltage)
+		else if (data.Voltage < LocalSettings.Singleton.Battery.WarningVoltage)
 			_vbatLabel.SetModulate(Colors.Yellow);
 		else
 			_vbatLabel.SetModulate(Colors.White);
 
-		_hotswapLabel.Text = "Hotswap: " + data.HotswapStatus.ToString();
-		_statusLabel.Text = "Status: " + data.Status.ToString();
-		_currentLabel.Text = "Current: " + data.Current.ToString("F1") + "A";
+		_statusLabel.Text = "Status: " +
+			((LocalSettings.Singleton.Battery.BatteryStatusByBMS) ?
+				data.Status.ToString() :
+				((data.Current < 0) ? "Discharging" : "Charging"));
+		_currentLabel.Text = "Current: " + ((data.Current > 0) ? "+" : "") + (data.Current).ToString("F1") + "A";
 		_temperatureLabel.Text = "Temperature: " + data.Temperature.ToString("F1") + "C";
 		if (data.Temperature > LocalSettings.Singleton.Battery.WarningTemperature)
 			_temperatureLabel.SetModulate(Colors.Orange);
 		else
 			_temperatureLabel.SetModulate(Colors.White);
 
-		_timeLabel.Text = "Est. Time: " + data.Time.ToString("F0") + "min";
+
+		_delayLabel.Text = $"Delay: {(((data.Timestamp - LastTimestamp)<10000)?(data.Timestamp - LastTimestamp):"???")} ms";
+		LastTimestamp = data.Timestamp;
 
 		NewBatteryInfo.Invoke();
 		
@@ -107,5 +114,37 @@ public partial class SubBattery : VBoxContainer
 		UpToDate = detected;
 		_slotEmptyLabel.SetVisible(!detected);
 		_labels.SetVisible(detected);                //buttons stay visible so that we can force close the hotswap even if bms died or we use a non-bms battery
+		_batteryMonitor.SendToHUD();
+		if (!detected)
+		{
+			_batteryMonitor.ClearQuickDataHandler();
+		}
+	}
+
+	public void ShowHotswapNoDataHandler()
+	{
+		IsHotswapClosed = false;
+		CallDeferred(nameof(ShowHotswapNoData));
+	}
+
+	public void ShowHotswapNoData()
+	{
+		_hotswapLabel.Text = "Hotswap: NoData";
+	}
+
+	public void ShowHotswapStatusHandler(bool? closed)
+	{
+		if (closed == null)
+		{
+			ShowHotswapNoDataHandler();
+			return;
+		}
+		IsHotswapClosed = (bool)closed;
+		CallDeferred(nameof(ShowHotswapStatus), (bool)closed);
+	}
+
+	public void ShowHotswapStatus(bool closed)
+	{
+		_hotswapLabel.Text = (closed ? "Hotswap: Closed" : "Hotswap: Opened");
 	}
 }

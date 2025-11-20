@@ -11,21 +11,24 @@ public partial class Battery : SettingBase, ICloneable
 
 	public Battery()
 	{
-		_warningVoltage = 3.6f;
-		_criticalVoltage = 3.2f;
+		_warningVoltage = 21.6f;
+		_criticalVoltage = 20f;
 		_warningTemperature = 70f;
-		_expectedMessageInterval = 10;
-		_averageAll = false;
+		_expectedMessageInterval = 5;
+		_batteryStatusByBMS = false;
+
+		_averageAll = true;
 		_altMode = false;
 		_showOnLow = false;
 	}
 
-	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature, int expectedMessageInterval, bool averageAll, bool altMode, bool showOnLow)
+	public Battery(float warningVoltage, float criticalVoltage, float warningTemperature, int expectedMessageInterval, bool batteryStatusByBMS, bool averageAll, bool altMode, bool showOnLow)
 	{
 		_warningVoltage = warningVoltage;
 		_criticalVoltage = criticalVoltage;
 		_warningTemperature = warningTemperature;
 		_expectedMessageInterval = expectedMessageInterval;
+		_batteryStatusByBMS = batteryStatusByBMS;
 		_averageAll = averageAll;
 		_altMode = altMode;
 		_showOnLow = showOnLow;
@@ -39,29 +42,30 @@ public partial class Battery : SettingBase, ICloneable
 			CriticalVoltage = _criticalVoltage,
 			WarningTemperature = _warningTemperature,
 			ExpectedMessageInterval = _expectedMessageInterval,
+			BatteryStatusByBMS = _batteryStatusByBMS,
 			AverageAll = _averageAll,
 			AltMode = _altMode,
 			ShowOnLow = _showOnLow
 		};
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "3.2;4.3;0.1;f;f",
-		 customTooltip: "Warning per cell voltage 3.6*6=21.6 (below that point battery label goes yellow)")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "19;25.2;0.1;f;f",
+		 customTooltip: "Warning voltage (below that point battery label goes yellow)")]
 	public float WarningVoltage
 	{
 		get => _warningVoltage;
 		set => EmitSignal_SettingChanged(ref _warningVoltage, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "3.2;4.3;0.1;f;f",
-		 customTooltip: "Warning per cell voltage 3.2*6=19.2 (below that point battery label goes red)")]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "19;25.2;0.1;f;f",
+		 customTooltip: "Warning voltage (below that point battery label goes red)")]
 	public float CriticalVoltage
 	{
 		get => _criticalVoltage;
 		set => EmitSignal_SettingChanged(ref _criticalVoltage, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "30;120;5;f;f",
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "1;30;1;f;i",
 		 customTooltip: "Time interval the app would wait, before assuming that BMS communication died,\n"+
 						"and pulling voltage data from alt source (vesc)")]
 	public int ExpectedMessageInterval
@@ -75,6 +79,15 @@ public partial class Battery : SettingBase, ICloneable
 	{
 		get => _warningTemperature;
 		set => EmitSignal_SettingChanged(ref _warningTemperature, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check,
+		 customTooltip: "When enabled pulls battery status (full, charging, empty etc.) from BMS.\n" +
+						"When disabled generates battery status based on battery current sign (+/-).")]
+	public bool BatteryStatusByBMS
+	{
+		get => _batteryStatusByBMS;
+		set => EmitSignal_SettingChanged(ref _batteryStatusByBMS, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check,
@@ -109,6 +122,7 @@ public partial class Battery : SettingBase, ICloneable
 	float _criticalVoltage;
 	float _warningTemperature;
 	int _expectedMessageInterval;
+	bool _batteryStatusByBMS;
 	bool _averageAll;
 	bool _altMode;
 	bool _showOnLow;
