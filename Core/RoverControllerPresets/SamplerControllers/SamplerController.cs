@@ -27,6 +27,20 @@ public class SamplerController : IRoverSamplerController
 	];
 
 	public static int LastMovedContainer { get; set; } = -1;
+
+	public static float PreciseStep(int containerIndex)
+	{
+		return containerIndex switch
+		{
+			0 => LocalSettings.Singleton.Sampler.Container0.PreciseStep,
+			1 => LocalSettings.Singleton.Sampler.Container1.PreciseStep,
+			2 => LocalSettings.Singleton.Sampler.Container2.PreciseStep,
+			3 => LocalSettings.Singleton.Sampler.Container3.PreciseStep,
+			4 => LocalSettings.Singleton.Sampler.Container4.PreciseStep,
+			_ => 0f,
+		};
+	}
+
 	public SamplerControl CalculateMoveVector(in InputEvent inputEvent, in SamplerControl lastState)
 	{
 		float movement = Input.GetAxis("sampler_move_down", "sampler_move_up");
@@ -38,6 +52,7 @@ public class SamplerController : IRoverSamplerController
 		//	drillSpeed = 0f; //No deadzone for trigger
 
 		SamplerControl newSamplerControl;
+
 		if (Input.IsActionPressed("sampler_drilling_altmode"))
 		{
 			newSamplerControl = new()
@@ -117,55 +132,14 @@ public class SamplerController : IRoverSamplerController
 
 		if (inputEvent.IsActionPressed("sampler_container_precise_up", allowEcho: false, exactMatch: true))
 		{
-			switch (LastMovedContainer)
-			{
-				case 0:
-					newSamplerControl.ContainerDegrees0 += LocalSettings.Singleton.Sampler.Container0.PreciseStep;
-					if (newSamplerControl.ContainerDegrees0 > 1000000f) newSamplerControl.ContainerDegrees0 = 1000000f;
-					break;
-				case 1:
-					newSamplerControl.ContainerDegrees1 += LocalSettings.Singleton.Sampler.Container1.PreciseStep;
-					if (newSamplerControl.ContainerDegrees1 > 1000000f) newSamplerControl.ContainerDegrees1 = 1000000f;
-					break;
-				case 2:
-					newSamplerControl.ContainerDegrees2 += LocalSettings.Singleton.Sampler.Container2.PreciseStep;
-					if (newSamplerControl.ContainerDegrees2 > 1000000f) newSamplerControl.ContainerDegrees2 = 1000000f;
-					break;
-				case 3:
-					newSamplerControl.ContainerDegrees3 += LocalSettings.Singleton.Sampler.Container3.PreciseStep;
-					if (newSamplerControl.ContainerDegrees3 > 1000000f) newSamplerControl.ContainerDegrees3 = 1000000f;
-					break;
-				case 4:
-					newSamplerControl.ContainerDegrees4 += LocalSettings.Singleton.Sampler.Container4.PreciseStep;
-					if (newSamplerControl.ContainerDegrees4 > 1000000f) newSamplerControl.ContainerDegrees4 = 1000000f;
-					break;
-			}
+			newSamplerControl[LastMovedContainer] += PreciseStep(LastMovedContainer);
+			Mathf.Clamp(newSamplerControl[LastMovedContainer], -1f, 1000000f);
 		}
+
 		if (inputEvent.IsActionPressed("sampler_container_precise_down", allowEcho: false, exactMatch: true))
 		{
-			switch (LastMovedContainer)
-			{
-				case 0:
-					newSamplerControl.ContainerDegrees0 -= LocalSettings.Singleton.Sampler.Container0.PreciseStep;
-					if (newSamplerControl.ContainerDegrees0 < -1f) newSamplerControl.ContainerDegrees0 = -1f;
-					break;
-				case 1:
-					newSamplerControl.ContainerDegrees1 -= LocalSettings.Singleton.Sampler.Container1.PreciseStep;
-					if (newSamplerControl.ContainerDegrees1 < -1f) newSamplerControl.ContainerDegrees1 = -1f;
-					break;
-				case 2:
-					newSamplerControl.ContainerDegrees2 -= LocalSettings.Singleton.Sampler.Container2.PreciseStep;
-					if (newSamplerControl.ContainerDegrees2 < -1f) newSamplerControl.ContainerDegrees2 = -1f;
-					break;
-				case 3:
-					newSamplerControl.ContainerDegrees3 -= LocalSettings.Singleton.Sampler.Container3.PreciseStep;
-					if (newSamplerControl.ContainerDegrees3 < -1f) newSamplerControl.ContainerDegrees3 = -1f;
-					break;
-				case 4:
-					newSamplerControl.ContainerDegrees4 -= LocalSettings.Singleton.Sampler.Container4.PreciseStep;
-					if (newSamplerControl.ContainerDegrees4 < -1f) newSamplerControl.ContainerDegrees4 = -1f;
-					break;
-			}
+			newSamplerControl[LastMovedContainer] -= PreciseStep(LastMovedContainer);
+			Mathf.Clamp(newSamplerControl[LastMovedContainer], -1f, 1000000f);
 		}
 
 		return newSamplerControl;

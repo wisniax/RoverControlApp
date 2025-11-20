@@ -137,6 +137,42 @@ namespace RoverControlApp.Core
 			public float ContainerDegrees4 { get; set; } = 0f;
 
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+			public float this [int index]
+			{
+				get => index switch
+				{
+					0 => ContainerDegrees0,
+					1 => ContainerDegrees1,
+					2 => ContainerDegrees2,
+					3 => ContainerDegrees3,
+					4 => ContainerDegrees4,
+					_ => throw new IndexOutOfRangeException("Container index out of range")
+				};
+				set
+				{
+					switch(index)
+					{
+						case 0:
+							ContainerDegrees0 = value;
+							break;
+						case 1:
+							ContainerDegrees1 = value;
+							break;
+						case 2:
+							ContainerDegrees2 = value;
+							break;
+						case 3:
+							ContainerDegrees3 = value;
+							break;
+						case 4:
+							ContainerDegrees4 = value;
+							break;
+						default:
+							throw new IndexOutOfRangeException("Container index out of range");
+					}
+				}
+			}
 		}
 
 		public class BatteryInfo
