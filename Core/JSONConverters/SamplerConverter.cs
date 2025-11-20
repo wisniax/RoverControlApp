@@ -17,6 +17,8 @@ public class SamplerConverter : JsonConverter<Sampler>
 		SamplerContainer? container0 = null;
 		SamplerContainer? container1 = null;
 		SamplerContainer? container2 = null;
+		SamplerContainer? container3 = null;
+		SamplerContainer? container4 = null;
 
 		while (reader.Read())
 		{
@@ -40,7 +42,12 @@ public class SamplerConverter : JsonConverter<Sampler>
 				case nameof(Sampler.Container2):
 					container2 = JsonSerializer.Deserialize<SamplerContainer>(ref reader, options);
 					break;
-				
+				case nameof(Sampler.Container3):
+					container3 = JsonSerializer.Deserialize<SamplerContainer>(ref reader, options);
+					break;
+				case nameof(Sampler.Container4):
+					container4 = JsonSerializer.Deserialize<SamplerContainer>(ref reader, options);
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -51,7 +58,9 @@ public class SamplerConverter : JsonConverter<Sampler>
 		(
 			container0 ?? Default.Container0,
 			container1 ?? Default.Container1,
-			container2 ?? Default.Container2
+			container2 ?? Default.Container2,
+			container3 ?? Default.Container3,
+			container4 ?? Default.Container4
 		);
 	}
 
@@ -64,6 +73,11 @@ public class SamplerConverter : JsonConverter<Sampler>
 		JsonSerializer.Serialize(writer, value.Container1, options);
 		writer.WritePropertyName(nameof(Sampler.Container2));
 		JsonSerializer.Serialize(writer, value.Container2, options);
+		writer.WritePropertyName(nameof(Sampler.Container3));
+		JsonSerializer.Serialize(writer, value.Container3, options);
+		writer.WritePropertyName(nameof(Sampler.Container4));
+		JsonSerializer.Serialize(writer, value.Container4, options);
+		
 		writer.WriteEndObject();
 	}
 }

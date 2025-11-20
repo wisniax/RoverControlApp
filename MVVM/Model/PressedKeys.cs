@@ -184,6 +184,7 @@ public class PressedKeys : IDisposable
 		{
 			ControlMode = ControlMode.EStop;
 			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by Auto-EStop).");
+			StopAll();
 		}
 
 		if (_roverModeControllerPreset.EstopReq())
@@ -191,6 +192,7 @@ public class PressedKeys : IDisposable
 			_autoEstop_lastInput = Time.GetTicksMsec(); //or else will not vibrate when already in Auto E-Stop
 			ControlMode = ControlMode.EStop;
 			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by InputController).");
+			StopAll();
 		}
 	}
 
@@ -214,25 +216,6 @@ public class PressedKeys : IDisposable
 			if(isInputHandled)
 				EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "PedanticEstop is enabled. Input rejected.");
 			return false;
-		}
-
-		// camera control
-		switch (this.ControlMode)
-		{
-			case ControlMode.EStop:
-			case ControlMode.Rover:
-			case ControlMode.Manipulator: // was disabled originally
-			case ControlMode.Sampler:
-			case ControlMode.Autonomy:
-			default:
-				if (_roverCameraControllerPreset.HandleInput(inputEvent, _cameraMoveVector, out _cameraMoveVector))
-				{
-					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
-					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as Camera");
-					return true;
-				}
-				break;
 		}
 
 		// rover control
@@ -263,6 +246,25 @@ public class PressedKeys : IDisposable
 					OnSamplerMovement?.Invoke(_samplerControl);
 					OnAcceptedInput(inputEvent);
 					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as RoverSampler");
+					return true;
+				}
+				break;
+		}
+
+		// camera control
+		switch (this.ControlMode)
+		{
+			case ControlMode.EStop:
+			case ControlMode.Rover:
+			case ControlMode.Manipulator: // was disabled originally
+			case ControlMode.Sampler:
+			case ControlMode.Autonomy:
+			default:
+				if (_roverCameraControllerPreset.HandleInput(inputEvent, _cameraMoveVector, out _cameraMoveVector))
+				{
+					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as Camera");
 					return true;
 				}
 				break;
