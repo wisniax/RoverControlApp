@@ -3,6 +3,7 @@ using System.Linq;
 using Godot;
 
 using RoverControlApp.Core;
+using RoverControlApp.Core.RoverControllerPresets;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
@@ -19,13 +20,15 @@ public partial class Startup : Node
 
 		//for dual seat
 		var actions = InputMap.GetActions().SkipWhile((m) => m.ToString().StartsWith("ui"));
-		foreach (var item in actions)
+		foreach (var eventName in actions)
 		{
-			var events = InputMap.ActionGetEvents(item);
-			var deadzone = InputMap.ActionGetDeadzone(item);
+			var events = InputMap.ActionGetEvents(eventName);
+			var deadzone = InputMap.ActionGetDeadzone(eventName);
 
-			InputMap.AddAction(item + "_0", deadzone);
-			InputMap.AddAction(item + "_1", deadzone);
+			InputMap.AddAction(eventName + "_0", deadzone);
+			InputMap.AddAction(eventName + "_1", deadzone);
+
+			DualSeatEventName.GenerateStrings(eventName);
 
 			foreach (var ev in events)
 			{
@@ -33,31 +36,31 @@ public partial class Startup : Node
 				{
 					var kev0 = kev.DeepCopy();
 					kev0.Device = 0;
-					InputMap.ActionAddEvent(item + "_0", kev0);
+					InputMap.ActionAddEvent(eventName + "_0", kev0);
 
 					var kev1 = kev.DeepCopy();
 					kev1.Device = 1;
-					InputMap.ActionAddEvent(item + "_1", kev1);
+					InputMap.ActionAddEvent(eventName + "_1", kev1);
 				}
 				else if (ev is InputEventJoypadButton jbev)
 				{
 					var jbev0 = jbev.DeepCopy();
 					jbev0.Device = 0;
-					InputMap.ActionAddEvent(item + "_0", jbev0);
+					InputMap.ActionAddEvent(eventName + "_0", jbev0);
 
 					var jbev1 = jbev.DeepCopy();
 					jbev1.Device = 1;
-					InputMap.ActionAddEvent(item + "_1", jbev1);
+					InputMap.ActionAddEvent(eventName + "_1", jbev1);
 				}
 				else if (ev is InputEventJoypadMotion jmev)
 				{
 					var jmev0 = jmev.DeepCopy();
 					jmev0.Device = 0;
-					InputMap.ActionAddEvent(item + "_0", jmev0);
+					InputMap.ActionAddEvent(eventName + "_0", jmev0);
 
 					var jmev1 = jmev.DeepCopy();
 					jmev1.Device = 1;
-					InputMap.ActionAddEvent(item + "_1", jmev1);
+					InputMap.ActionAddEvent(eventName + "_1", jmev1);
 				}
 			}
 		}
