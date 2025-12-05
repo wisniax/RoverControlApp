@@ -28,7 +28,7 @@ public partial class Startup : Node
 			InputMap.AddAction(eventName + "_0", deadzone);
 			InputMap.AddAction(eventName + "_1", deadzone);
 
-			DualSeatEventName.GenerateStrings(eventName);
+			DualSeatEvent.GenerateStrings(eventName);
 
 			foreach (var ev in events)
 			{

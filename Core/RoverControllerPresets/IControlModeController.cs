@@ -16,15 +16,22 @@ public interface IControlModeController : IActionAwareController
 	/// <summary>
 	/// Checks InputEvent and returns ControlMode
 	/// </summary>
-	public ControlMode GetControlMode(in string actionSurffix, in InputEvent inputEvent, in ControlMode lastState);
+	public ControlMode GetControlMode(
+		in InputEvent inputEvent,
+		DualSeatEvent.InputDevice targetInputDevice,
+		in ControlMode lastState);
 
 	/// <summary>
 	/// Processes input
 	/// </summary>
 	/// <returns>True when input causes state change</returns>
-	public bool HandleInput(in string actionSurffix, in InputEvent inputEvent, ControlMode lastState, out ControlMode newState)
+	public bool HandleInput(
+		in InputEvent inputEvent,
+		DualSeatEvent.InputDevice targetInputDevice,
+		ControlMode lastState,
+		out ControlMode newState)
 	{
-		newState = GetControlMode(actionSurffix, inputEvent, lastState);
+		newState = GetControlMode(inputEvent, targetInputDevice, lastState);
 		return IsMoveVectorChanged(newState, lastState);
 	}
 

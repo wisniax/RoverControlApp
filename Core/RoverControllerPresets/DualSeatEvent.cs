@@ -5,7 +5,7 @@ using Godot;
 
 namespace RoverControlApp.Core.RoverControllerPresets;
 
-public static class DualSeatEventName
+public static class DualSeatEvent
 {
 	public enum InputDevice : int
 	{
@@ -16,7 +16,7 @@ public static class DualSeatEventName
 
 	private static Dictionary<StringName, StringName[]> _nameMemory = [];
 
-	public static StringName Get(StringName eventName, InputDevice inputDevice = InputDevice.Universal)
+	public static StringName GetName(StringName eventName, InputDevice inputDevice = InputDevice.Universal)
 	{
 		if (!_nameMemory.ContainsKey(eventName))
 			return new StringName();

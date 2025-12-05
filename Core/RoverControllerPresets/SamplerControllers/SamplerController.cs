@@ -9,21 +9,23 @@ namespace RoverControlApp.Core.RoverControllerPresets.SamplerControllers;
 
 public class SamplerController : IRoverSamplerController
 {
-	private readonly string[] _usedActions =
+	private readonly StringName[] _usedActions =
 	[
-		"sampler_move_down", "sampler_move_up",
-		"sampler_drill_down", "sampler_drill_up",
-		"sampler_drill_movement",
-		"sampler_platform_movement",
-		"sampler_drill_enable",
-		"sampler_drilling_altmode",
-		"sampler_container_0",
-		"sampler_container_1",
-		"sampler_container_2",
-		"sampler_container_3",
-		"sampler_container_4",
-		"sampler_container_precise_up",
-		"sampler_container_precise_down",
+		RcaInEvName.SamplerMoveDown,
+		RcaInEvName.SamplerMoveUp,
+		RcaInEvName.SamplerDrillDown,
+		RcaInEvName.SamplerDrillUp,
+		RcaInEvName.SamplerDrillMovement,
+		RcaInEvName.SamplerPlatformMovement,
+		RcaInEvName.SamplerDrillEnable,
+		RcaInEvName.SamplerDrillingAltmode,
+		RcaInEvName.SamplerContainer0,
+		RcaInEvName.SamplerContainer1,
+		RcaInEvName.SamplerContainer2,
+		RcaInEvName.SamplerContainer3,
+		RcaInEvName.SamplerContainer4,
+		RcaInEvName.SamplerContainerPreciseUp,
+		RcaInEvName.SamplerContainerPreciseDown,
 	];
 
 	public static int LastMovedContainer { get; set; } = -1;
@@ -41,19 +43,19 @@ public class SamplerController : IRoverSamplerController
 		};
 	}
 
-	public SamplerControl CalculateMoveVector(in string actionSurffix, in InputEvent inputEvent, in SamplerControl lastState)
+	public SamplerControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in SamplerControl lastState)
 	{
-		float movement = Input.GetAxis("sampler_move_down" + actionSurffix, "sampler_move_up" + actionSurffix);
+		float movement = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.SamplerMoveDown, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.SamplerMoveUp, targetInputDevice));
 		if (Mathf.Abs(movement) < LocalSettings.Singleton.Joystick.MinimalInput)
 			movement = 0f;
 
-		float drillSpeed = Input.GetAxis("sampler_drill_down" + actionSurffix, "sampler_drill_up" + actionSurffix);
+		float drillSpeed = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.SamplerDrillDown, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.SamplerDrillUp, targetInputDevice));
 		//if (Mathf.Abs(drillSpeed) < LocalSettings.Singleton.Joystick.MinimalInput)
 		//	drillSpeed = 0f; //No deadzone for trigger
 
 		SamplerControl newSamplerControl;
 
-		if (Input.IsActionPressed("sampler_drilling_altmode" + actionSurffix))
+		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerDrillingAltmode, targetInputDevice)))
 		{
 			newSamplerControl = new()
 			{
@@ -72,9 +74,9 @@ public class SamplerController : IRoverSamplerController
 		{
 			newSamplerControl = new()
 			{
-				DrillMovement = Input.IsActionPressed("sampler_drill_movement" + actionSurffix) ? movement : 0f,
-				PlatformMovement = Input.IsActionPressed("sampler_platform_movement" + actionSurffix) ? movement : 0f,
-				DrillAction = Input.IsActionPressed("sampler_drill_enable" + actionSurffix) ? drillSpeed : 0f,
+				DrillMovement = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerDrillMovement, targetInputDevice)) ? movement : 0f,
+				PlatformMovement = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerPlatformMovement, targetInputDevice)) ? movement : 0f,
+				DrillAction = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerDrillEnable, targetInputDevice)) ? drillSpeed : 0f,
 				ContainerDegrees0 = lastState.ContainerDegrees0,
 				ContainerDegrees1 = lastState.ContainerDegrees1,
 				ContainerDegrees2 = lastState.ContainerDegrees2,
@@ -84,7 +86,7 @@ public class SamplerController : IRoverSamplerController
 			};
 		};
 
-		if (inputEvent.IsActionPressed("sampler_container_0" + actionSurffix, allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainer0, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 0;
 			newSamplerControl.ContainerDegrees0 = OperateContainer(
@@ -93,7 +95,7 @@ public class SamplerController : IRoverSamplerController
 				newSamplerControl.ContainerDegrees0
 			);
 		}
-		if (inputEvent.IsActionPressed("sampler_container_1" + actionSurffix, allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainer1, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 1;
 			newSamplerControl.ContainerDegrees1 = OperateContainer(
@@ -102,7 +104,7 @@ public class SamplerController : IRoverSamplerController
 				newSamplerControl.ContainerDegrees1
 			);
 		}
-		if (inputEvent.IsActionPressed("sampler_container_2" + actionSurffix, allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainer2, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 2;
 			newSamplerControl.ContainerDegrees2 = OperateContainer(
@@ -111,7 +113,7 @@ public class SamplerController : IRoverSamplerController
 				newSamplerControl.ContainerDegrees2
 			);
 		}
-		if (inputEvent.IsActionPressed("sampler_container_3" + actionSurffix, allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainer3, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 3;
 			newSamplerControl.ContainerDegrees3 = OperateContainer(
@@ -120,7 +122,7 @@ public class SamplerController : IRoverSamplerController
 				newSamplerControl.ContainerDegrees3
 			);
 		}
-		if (inputEvent.IsActionPressed("sampler_container_4" + actionSurffix, allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainer4, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 4;
 			newSamplerControl.ContainerDegrees4 = OperateContainer(
@@ -130,13 +132,13 @@ public class SamplerController : IRoverSamplerController
 			);
 		}
 
-		if (inputEvent.IsActionPressed("sampler_container_precise_up" + actionSurffix, allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainerPreciseUp, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			newSamplerControl[LastMovedContainer] += PreciseStep(LastMovedContainer);
 			Mathf.Clamp(newSamplerControl[LastMovedContainer], -1f, 1000000f);
 		}
 
-		if (inputEvent.IsActionPressed("sampler_container_precise_down" + actionSurffix, allowEcho: false, exactMatch: true))
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainerPreciseDown, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			newSamplerControl[LastMovedContainer] -= PreciseStep(LastMovedContainer);
 			Mathf.Clamp(newSamplerControl[LastMovedContainer], -1f, 1000000f);
@@ -199,7 +201,7 @@ public class SamplerController : IRoverSamplerController
 			return samplerContainer.Position0;
 	}
 
-	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
+	public Dictionary<StringName, Godot.Collections.Array<InputEvent>> GetInputActions() =>
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>

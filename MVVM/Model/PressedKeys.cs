@@ -181,10 +181,10 @@ public partial class PressedKeys : Node
 		if (@event is not (InputEventKey or InputEventJoypadButton or InputEventJoypadMotion))
 			return;
 
-		if (HandleInputEvent(@event))
+		if (HandleInputEventAsMaster(@event))
 			GetViewport().SetInputAsHandled();
 
-		if (HandleSlaveInputEvent(@event))
+		if (HandleInputEventAsSlave(@event))
 			GetViewport().SetInputAsHandled();
 	}
 
@@ -252,7 +252,7 @@ public partial class PressedKeys : Node
 		}
 	}
 
-	public bool HandleInputEvent(InputEvent inputEvent)
+	public bool HandleInputEventAsMaster(InputEvent inputEvent)
 	{
 		//GD.Print($"IsKB:{IsInputFromKeyboard(inputEvent)} IsMasterJoy:{_masterJoyConnected && IsInputFromController(inputEvent, _masterJoy)}");
 
@@ -262,7 +262,7 @@ public partial class PressedKeys : Node
 		}
 
 
-		if (_roverModeControllerPreset.HandleInput("_0", inputEvent, _controlMode, out _controlMode))
+		if (_roverModeControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _controlMode, out _controlMode))
 		{
 			OnControlModeChanged?.Invoke(_controlMode);
 			StopAll();
@@ -275,7 +275,7 @@ public partial class PressedKeys : Node
 		{
 			//print only if some controller is happy to take input
 			bool isInputHandled =
-				_roverCameraControllerPreset.HandleInput("_0", inputEvent, _cameraMoveVector, out _);
+				_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _cameraMoveVector, out _);
 
 			if (isInputHandled)
 				EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "PedanticEstop is enabled. Input rejected.");
@@ -286,7 +286,7 @@ public partial class PressedKeys : Node
 		switch (this.ControlMode)
 		{
 			case ControlMode.Rover:
-				if (_roverDriveControllerPreset.HandleInput("_0", inputEvent, _roverMovement, out _roverMovement))
+				if (_roverDriveControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _roverMovement, out _roverMovement))
 				{
 					OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
 					OnRoverMovementVector?.Invoke(_roverMovement);
@@ -296,7 +296,7 @@ public partial class PressedKeys : Node
 				}
 				break;
 			case ControlMode.Manipulator:
-				if (_roverManipulatorControllerPreset.HandleInput("_0", inputEvent, _manipulatorMovement, out _manipulatorMovement))
+				if (_roverManipulatorControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _manipulatorMovement, out _manipulatorMovement))
 				{
 					OnManipulatorMovement?.Invoke(_manipulatorMovement);
 					OnAcceptedInput(inputEvent);
@@ -305,7 +305,7 @@ public partial class PressedKeys : Node
 				}
 				break;
 			case ControlMode.Sampler:
-				if (_roverSamplerControllerPreset.HandleInput("_0", inputEvent, _samplerControl, out _samplerControl))
+				if (_roverSamplerControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _samplerControl, out _samplerControl))
 				{
 					OnSamplerMovement?.Invoke(_samplerControl);
 					OnAcceptedInput(inputEvent);
@@ -324,7 +324,7 @@ public partial class PressedKeys : Node
 			case ControlMode.Sampler:
 			case ControlMode.Autonomy:
 			default:
-				if (_roverCameraControllerPreset.HandleInput("_0", inputEvent, _cameraMoveVector, out _cameraMoveVector))
+				if (_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _cameraMoveVector, out _cameraMoveVector))
 				{
 					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
 					OnAcceptedInput(inputEvent);
@@ -337,7 +337,7 @@ public partial class PressedKeys : Node
 		return false;
 	}
 
-	public bool HandleSlaveInputEvent(InputEvent inputEvent)
+	public bool HandleInputEventAsSlave(InputEvent inputEvent)
 	{
 		if (!IsInputFromController(inputEvent, 1))
 		{
@@ -349,7 +349,7 @@ public partial class PressedKeys : Node
 			return false;
 		}
 
-		if (_roverModeControllerPreset.HandleInput("_1", inputEvent, _slaveControlMode, out _slaveControlMode))
+		if (_roverModeControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _slaveControlMode, out _slaveControlMode))
 		{
 			OnSlaveControlModeChanged?.Invoke(_slaveControlMode);
 			OnAcceptedInput(inputEvent);
@@ -361,7 +361,7 @@ public partial class PressedKeys : Node
 		{
 			//print only if some controller is happy to take input
 			bool isInputHandled =
-				_roverCameraControllerPreset.HandleInput("_1", inputEvent, _cameraMoveVector, out _);
+				_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _cameraMoveVector, out _);
 
 			if (isInputHandled)
 				EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "PedanticEstop is enabled. Input rejected.");
@@ -378,7 +378,7 @@ public partial class PressedKeys : Node
 		switch (_slaveControlMode)
 		{
 			case ControlMode.Rover:
-				if (_roverDriveControllerPreset.HandleInput("_1", inputEvent, _roverMovement, out _roverMovement))
+				if (_roverDriveControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _roverMovement, out _roverMovement))
 				{
 					OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
 					OnRoverMovementVector?.Invoke(_roverMovement);
@@ -388,7 +388,7 @@ public partial class PressedKeys : Node
 				}
 				break;
 			case ControlMode.Manipulator:
-				if (_roverManipulatorControllerPreset.HandleInput("_1", inputEvent, _manipulatorMovement, out _manipulatorMovement))
+				if (_roverManipulatorControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _manipulatorMovement, out _manipulatorMovement))
 				{
 					OnManipulatorMovement?.Invoke(_manipulatorMovement);
 					OnAcceptedInput(inputEvent);
@@ -397,7 +397,7 @@ public partial class PressedKeys : Node
 				}
 				break;
 			case ControlMode.Sampler:
-				if (_roverSamplerControllerPreset.HandleInput("_1", inputEvent, _samplerControl, out _samplerControl))
+				if (_roverSamplerControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _samplerControl, out _samplerControl))
 				{
 					OnSamplerMovement?.Invoke(_samplerControl);
 					OnAcceptedInput(inputEvent);
@@ -416,7 +416,7 @@ public partial class PressedKeys : Node
 			case ControlMode.Sampler:
 			case ControlMode.Autonomy:
 			default:
-				if (_roverCameraControllerPreset.HandleInput("_1", inputEvent, _cameraMoveVector, out _cameraMoveVector))
+				if (_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _cameraMoveVector, out _cameraMoveVector))
 				{
 					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
 					OnAcceptedInput(inputEvent);

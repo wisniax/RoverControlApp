@@ -11,20 +11,20 @@ public interface IRoverDriveController : IActionAwareController
 	/// <summary>
 	/// Checks InputEvent and returns RoverControl
 	/// </summary>
-	public RoverControl CalculateMoveVector(in string actionSurffix, in InputEvent inputEvent, in RoverControl lastState);
+	public RoverControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in RoverControl lastState);
 
 	/// <summary>
 	/// Checks InputEvent and returns active KinematicMode
 	/// </summary>
-	public KinematicMode OperateKinematicMode(in string actionSurffix, in InputEvent inputEvent, in RoverControl lastState);
+	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in RoverControl lastState);
 
 	/// <summary>
 	/// Processes input
 	/// </summary>
 	/// <returns>True when input causes state change</returns>
-	public bool HandleInput(in string actionSurffix, in InputEvent inputEvent, RoverControl lastState, out RoverControl newState)
+	public bool HandleInput(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, RoverControl lastState, out RoverControl newState)
 	{
-		newState = CalculateMoveVector(actionSurffix, inputEvent, lastState);
+		newState = CalculateMoveVector(inputEvent, targetInputDevice, lastState);
 		bool changed = IsMoveVectorChanged(newState, lastState) || IsKinematicModeChanged(newState.Mode, lastState.Mode);
 		newState.Timestamp = changed ? DateTimeOffset.Now.ToUnixTimeMilliseconds() : lastState.Timestamp;
 		return changed;
