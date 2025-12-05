@@ -11,13 +11,10 @@ using RoverControlApp.Core;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class RoverCommunication : IDisposable
+	public partial class RoverCommunication : Node
 	{
 		public event Func<MqttClasses.RoverStatus?, Task>? OnRoverStatusChanged;
-		private MqttClasses.ControlMode ControlMode => _pressedKeys.ControlMode;
-
-		private readonly PressedKeys _pressedKeys;
-		private readonly MissionStatus _missionStatus;
+		private MqttClasses.ControlMode ControlMode => PressedKeys.Singleton.ControlMode;
 
 		private MqttClasses.RoverStatus? _roverStatus;
 		private bool _disposedValue = false;
@@ -32,39 +29,70 @@ namespace RoverControlApp.MVVM.Model
 			}
 		}
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+	public static RoverCommunication Singleton { get; private set; }
+#pragma warning restore CS8618
+
+        /*
+		*	Godot overrides
+		*/
+
+        public override void _Ready()
+        {
+            base._Ready();
+			PressedKeys.Singleton.OnControlModeChanged += PressedKeys_OnControlModeChanged;
+
+			PressedKeys.Singleton.OnPadConnectionChanged += OnPadConnectionChanged;
+			PressedKeys.Singleton.OnRoverMovementVector += RoverMovementVectorChanged;
+			PressedKeys.Singleton.OnManipulatorMovement += RoverManipulatorVectorChanged;
+			PressedKeys.Singleton.OnSamplerMovement += RoverSamplerVectorChanged;
+
+			MissionStatus.Singleton.OnRoverMissionStatusChanged += OnRoverMissionStatusChanged;
+
+			MqttNode.Singleton.Connect(MqttNode.SignalName.ConnectionChanged, Callable.From<CommunicationState>(OnMqttConnectionChanged));
+
+			Singleton ??= this;
+
+			if (MqttNode.Singleton.ConnectionState != CommunicationState.Opened)
+				return;
+
+			RoverCommunication_OnControlStatusChanged(GenerateRoverStatus()).Wait(250);
+        }
+
+		protected override void Dispose(bool disposing)
+		{
+			if (_disposedValue) return;
+
+			if (disposing)
+			{
+				PressedKeys.Singleton.OnControlModeChanged -= PressedKeys_OnControlModeChanged;
+
+				PressedKeys.Singleton.OnPadConnectionChanged -= OnPadConnectionChanged;
+				PressedKeys.Singleton.OnRoverMovementVector -= RoverMovementVectorChanged;
+				PressedKeys.Singleton.OnManipulatorMovement -= RoverManipulatorVectorChanged;
+
+				MissionStatus.Singleton.OnRoverMissionStatusChanged -= OnRoverMissionStatusChanged;
+				Singleton = null!;
+			}
+
+			_disposedValue = true;
+			base.Dispose(disposing);
+		}
+
+		/*
+		*	Godot overrides end
+		*/
+
 		private MqttClasses.RoverStatus GenerateRoverStatus(CommunicationState? connection = null, MqttClasses.ControlMode? controlMode = null, bool? padConnected = null)
 		{
 			var obj = new MqttClasses.RoverStatus
 			{
 				CommunicationState = connection ?? (RoverStatus is not null ? RoverStatus.CommunicationState : MqttNode.Singleton.ConnectionState),
 				ControlMode = controlMode ?? ControlMode,
-				PadConnected = padConnected ?? PressedKeys.PadConnected,
+				PadConnected = padConnected ?? PressedKeys.Singleton.PadConnected,
 			};
 			RoverStatus = obj;
 			return obj;
-		}
-
-
-		public RoverCommunication(PressedKeys pressedKeys, MissionStatus missionStatus)
-		{
-			_pressedKeys = pressedKeys;
-			_missionStatus = missionStatus;
-
-			pressedKeys.OnControlModeChanged += PressedKeys_OnControlModeChanged;
-
-			pressedKeys.OnPadConnectionChanged += OnPadConnectionChanged;
-			pressedKeys.OnRoverMovementVector += RoverMovementVectorChanged;
-			pressedKeys.OnManipulatorMovement += RoverManipulatorVectorChanged;
-			pressedKeys.OnSamplerMovement += RoverSamplerVectorChanged;
-
-			missionStatus.OnRoverMissionStatusChanged += OnRoverMissionStatusChanged;
-
-			MqttNode.Singleton.Connect(MqttNode.SignalName.ConnectionChanged, Callable.From<CommunicationState>(OnMqttConnectionChanged));
-
-			if (MqttNode.Singleton.ConnectionState != CommunicationState.Opened)
-				return;
-
-			RoverCommunication_OnControlStatusChanged(GenerateRoverStatus()).Wait(250);
 		}
 
 		private async void OnMqttConnectionChanged(CommunicationState arg)
@@ -79,8 +107,8 @@ namespace RoverControlApp.MVVM.Model
 				default:
 					return; // poker face
 			}
-			await RoverMovementVectorChanged(_pressedKeys.RoverMovement);
-			await RoverCommunication_OnControlStatusChanged(RoverStatus!);
+			await RoverMovementVectorChanged(PressedKeys.Singleton.RoverMovement);
+			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(connection: arg));
 		}
 
 		private async Task OnPadConnectionChanged(bool arg)
@@ -120,30 +148,6 @@ namespace RoverControlApp.MVVM.Model
 		{
 			await MqttNode.Singleton.EnqueueMessageAsync(LocalSettings.Singleton.Mqtt.TopicSamplerControl,
 				JsonSerializer.Serialize(samplerControl));
-		}
-
-		protected virtual void Dispose(bool disposing)
-		{
-			if (_disposedValue) return;
-
-			if (disposing)
-			{
-				_pressedKeys.OnControlModeChanged -= PressedKeys_OnControlModeChanged;
-
-				_pressedKeys.OnPadConnectionChanged -= OnPadConnectionChanged;
-				_pressedKeys.OnRoverMovementVector -= RoverMovementVectorChanged;
-				_pressedKeys.OnManipulatorMovement -= RoverManipulatorVectorChanged;
-
-				_missionStatus.OnRoverMissionStatusChanged -= OnRoverMissionStatusChanged;
-			}
-
-			_disposedValue = true;
-		}
-
-		public void Dispose()
-		{
-			Dispose(disposing: true);
-			GC.SuppressFinalize(this);
 		}
 	}
 }

@@ -73,6 +73,24 @@ public partial class LocalSettings : Node
 		Singleton ??= this;
 	}
 
+	private static Settings.Camera LoadSettings_CameraSafety(Settings.Camera camera)
+	{
+		if (OS.GetName() != "Windows")
+		{
+			if (camera.EnableRtspStream)
+			{
+				EventLogger.LogMessage(
+					nameof(LocalSettings),
+					EventLogger.LogLevel.Warning,
+					"Detected non Windows OS platform! RTSP will be loaded as disabled, enable it manually.");
+
+				camera.EnableRtspStream = false;
+			}
+		}
+
+		return camera;
+	}
+
 	/// <summary>
 	/// Load settings form file
 	/// </summary>
@@ -90,7 +108,7 @@ public partial class LocalSettings : Node
 
 			var packedSettings = JsonSerializer.Deserialize<PackedSettings>(serializedSettings, serializerOptions) ?? throw new DataException("unknown reason");
 
-			Camera = packedSettings.Camera ?? new();
+			Camera = LoadSettings_CameraSafety(packedSettings.Camera ?? new());
 			Mqtt = packedSettings.Mqtt ?? new();
 			Joystick = packedSettings.Joystick ?? new();
 			SpeedLimiter = packedSettings.SpeedLimiter ?? new();
@@ -151,7 +169,8 @@ public partial class LocalSettings : Node
 	public void ForceDefaultSettings()
 	{
 		EventLogger.LogMessage("LocalSettings", EventLogger.LogLevel.Info, "Loading default settings");
-		Camera = new();
+
+		Camera = LoadSettings_CameraSafety(new());
 		Mqtt = new();
 		Joystick = new();
 		SpeedLimiter = new();

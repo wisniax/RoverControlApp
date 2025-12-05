@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using Godot;
 
 using ActionEventArray = Godot.Collections.Array<Godot.InputEvent>;
-using ActionEventDict = System.Collections.Generic.Dictionary<string, Godot.Collections.Array<Godot.InputEvent>>;
+using ActionEventDict = System.Collections.Generic.Dictionary<Godot.StringName, Godot.Collections.Array<Godot.InputEvent>>;
 
 namespace RoverControlApp.Core.RoverControllerPresets;
 
 public interface IActionAwareController
 {
-    public static (string, ActionEventArray) FetchActionEvents(string actionName)
+    public static (StringName, ActionEventArray) FetchActionEvents(StringName actionName)
     {
         if (!InputMap.HasAction(actionName))
         {
-            EventLogger.LogMessage(nameof(IActionAwareController), EventLogger.LogLevel.Error, $"Action '{actionName}' is undefined!");
+            EventLogger.LogMessage(nameof(IActionAwareController), EventLogger.LogLevel.Error, $"Action '{actionName.ToString()}' is undefined!");
         }
         return new(actionName, InputMap.ActionGetEvents(actionName));
     }
 
-    public static ActionEventDict FetchAllActionEvents(IEnumerable<string> actions)
+    public static ActionEventDict FetchAllActionEvents(IEnumerable<StringName> actions)
     {
         ActionEventDict all = [];
 
