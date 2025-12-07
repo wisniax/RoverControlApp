@@ -32,7 +32,7 @@ namespace RoverControlApp.MVVM.Model
 			get
 			{
 				_newFrameSaved = false;
-				return _latestImage;
+				return _latestImage ?? Image.CreateEmpty(1, 1, false, Image.Format.Rgb8);
 			}
 			private set
 			{

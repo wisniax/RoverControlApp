@@ -41,10 +41,10 @@ public partial class SliderController : Godot.Range
 	Color _foregroundColor;
 	Color _backgroundColor;
 
-	StyleBoxTexture _localStyle;
+	StyleBoxTexture _localStyle = null!;
 	bool skipChange = false;
 	bool skipUpdate = false;
-	SliderGradient _sliderGradient;
+	SliderGradient _sliderGradient = null!;
 
 
 

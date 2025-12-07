@@ -9,23 +9,23 @@ namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
 public class DirectDriveController : IRoverDriveController
 {
-	private readonly string[] _usedActions =
+	private readonly StringName[] _usedActions =
 	[
-		"crab_mode",
-		"spinner_mode",
-		"ebrake_mode",
-		"ackermann_mode",
-		"rover_move_backward",
-		"rover_move_forward",
-		"rover_move_right",
-		"rover_move_left",
-		"rover_move_down",
-		"rover_move_up",
+		RcaInEvName.CrabMode,
+		RcaInEvName.SpinnerMode,
+		RcaInEvName.EbrakeMode,
+		RcaInEvName.AckermannMode,
+		RcaInEvName.RoverMoveBackward,
+		RcaInEvName.RoverMoveForward,
+		RcaInEvName.RoverMoveRight,
+		RcaInEvName.RoverMoveLeft,
+		RcaInEvName.RoverMoveDown,
+		RcaInEvName.RoverMoveUp,
 	];
 
 	public static float SpeedModifier => LocalSettings.Singleton.SpeedLimiter.Enabled ? LocalSettings.Singleton.SpeedLimiter.MaxSpeed : 1f;
 
-	public RoverControl CalculateMoveVector(in InputEvent inputEvent, in RoverControl lastState)
+	public RoverControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in RoverControl lastState)
 	{
 		//deadzone have to be non zero for IsEqualApprox
 		var joyDeadZone = Mathf.Max(
@@ -33,7 +33,7 @@ public class DirectDriveController : IRoverDriveController
 			Convert.ToSingle(LocalSettings.Singleton.Joystick.MinimalInput)
 		);
 
-		KinematicMode kinematicMode = OperateKinematicMode(inputEvent, lastState);
+		KinematicMode kinematicMode = OperateKinematicMode(inputEvent, targetInputDevice, lastState);
 
 		Vector3 vec;
 
@@ -41,20 +41,20 @@ public class DirectDriveController : IRoverDriveController
 		{
 			case KinematicMode.Ackermann:
 				vec = new(
-					Input.GetAxis("rover_move_backward", "rover_move_forward"),
-					Input.GetAxis("rover_move_right", "rover_move_left"),
+					Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.RoverMoveBackward, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.RoverMoveForward, targetInputDevice)),
+					Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.RoverMoveRight, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.RoverMoveLeft, targetInputDevice)),
 					0);
 				break;
 			case KinematicMode.Crab:
 				vec = new(
-					Input.GetAxis("rover_move_backward", "rover_move_forward"),
-					Input.GetAxis("rover_move_right", "rover_move_left"),
-					Input.GetAxis("rover_move_down", "rover_move_up")
+					Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.RoverMoveBackward, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.RoverMoveForward, targetInputDevice)),
+					Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.RoverMoveRight, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.RoverMoveLeft, targetInputDevice)),
+					Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.RoverMoveDown, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.RoverMoveUp, targetInputDevice))
 				);
 				break;
 			case KinematicMode.Spinner:
 				vec = new(
-					Input.GetAxis("rover_move_backward", "rover_move_forward"),
+					Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.RoverMoveBackward, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.RoverMoveForward, targetInputDevice)),
 					0f,
 					0f
 				);
@@ -79,34 +79,34 @@ public class DirectDriveController : IRoverDriveController
 		return ret;
 	}
 
-	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, in RoverControl lastState)
+	public KinematicMode OperateKinematicMode(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in RoverControl lastState)
 	{
 		switch (LocalSettings.Singleton.Joystick.ToggleableKinematics)
 		{
 			// Toggle
-			case true when inputEvent.IsActionPressed("crab_mode", allowEcho: false, exactMatch: true):
+			case true when inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.CrabMode, targetInputDevice), allowEcho: false, exactMatch: true):
 				return KinematicMode.Crab;
-			case true when inputEvent.IsActionPressed("spinner_mode", allowEcho: false, exactMatch: true):
+			case true when inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SpinnerMode, targetInputDevice), allowEcho: false, exactMatch: true):
 				return KinematicMode.Spinner;
-			case true when inputEvent.IsActionPressed("ebrake_mode", allowEcho: false, exactMatch: true):
+			case true when inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.EbrakeMode, targetInputDevice), allowEcho: false, exactMatch: true):
 				return KinematicMode.EBrake;
-			case true when inputEvent.IsActionPressed("ackermann_mode", allowEcho: false, exactMatch: true):
+			case true when inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.AckermannMode, targetInputDevice), allowEcho: false, exactMatch: true):
 				return KinematicMode.Ackermann;
 			case true: // Toggle with no action
 				return lastState.Mode;
 			// Hold
-			case false when Input.IsActionPressed("crab_mode", exactMatch: true):
+			case false when Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.CrabMode, targetInputDevice), exactMatch: true):
 				return KinematicMode.Crab;
-			case false when Input.IsActionPressed("spinner_mode", exactMatch: true):
+			case false when Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SpinnerMode, targetInputDevice), exactMatch: true):
 				return KinematicMode.Spinner;
-			case false when Input.IsActionPressed("ebrake_mode", exactMatch: true):
+			case false when Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.EbrakeMode, targetInputDevice), exactMatch: true):
 				return KinematicMode.EBrake;
 			case false: //default for hold
 				return KinematicMode.Ackermann;
 		}
 	}
 
-	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
+	public Dictionary<StringName, Godot.Collections.Array<InputEvent>> GetInputActions() =>
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>

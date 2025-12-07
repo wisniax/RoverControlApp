@@ -1,18 +1,21 @@
-﻿using Godot;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+
+using Godot;
+
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class SafeMode_UIOverlay : UIOverlay
 {
 	private int _inputMode;
+	private int _inputModeSlave;
 
 	private static float _speedLimit => LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
 
-	public override Dictionary<int, Setting> Presets { get; } = new() 
+	public override Dictionary<int, Setting> Presets { get; } = new()
 	{
 		{ 0, new(Colors.Blue, Colors.LightBlue, $"SpeedLimiter: ON {_speedLimit:P0}", "SpeedLimiter: ") },
 		{ 1, new(Colors.DarkRed, Colors.Orange, "SpeedLimiter: OFF", "SpeedLimiter: ") }
@@ -22,6 +25,13 @@ public partial class SafeMode_UIOverlay : UIOverlay
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
 	{
 		_inputMode = (int)newMode;
+		CallDeferred(MethodName.UpdateSafeModeIndicator);
+		return Task.CompletedTask;
+	}
+
+	public Task SlaveControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
+	{
+		_inputModeSlave = (int)newMode;
 		CallDeferred(MethodName.UpdateSafeModeIndicator);
 		return Task.CompletedTask;
 	}
@@ -50,14 +60,14 @@ public partial class SafeMode_UIOverlay : UIOverlay
 
 	void UpdateSafeModeIndicator()
 	{
-		if (_inputMode != (int)MqttClasses.ControlMode.Rover)
+		if (_inputMode != (int)MqttClasses.ControlMode.Rover && _inputModeSlave != (int)MqttClasses.ControlMode.Rover)
 		{
-			this.Visible = false; 
+			this.Visible = false;
 			return;
 		}
-		
+
 		this.Visible = true;
-		
+
 		ControlMode = LocalSettings.Singleton.SpeedLimiter.Enabled ? 0 : 1;
 	}
 
