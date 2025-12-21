@@ -10,6 +10,11 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class SafeMode_UIOverlay : UIOverlay
 {
+	//position under rovermode slave
+	const float POSITION_LEFT = -369.0f;
+	//position under rovermode master
+	const float POSITION_RIGHT = -181.0f;
+
 	private int _inputMode;
 	private int _inputModeSlave;
 
@@ -39,46 +44,63 @@ public partial class SafeMode_UIOverlay : UIOverlay
 	public override void _Ready()
 	{
 		base._Ready();
+
+		ControlMode = LocalSettings.Singleton.SpeedLimiter.Enabled ? 0 : 1;
+
+		Connect(SignalName.VisibilityChanged, Callable.From(OnVisibleChange));
+
 		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged,
 			Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
 		UpdateDictionary();
 	}
 
-	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
+	void OnSettingsPropertyChanged(StringName category, StringName name, Variant _, Variant newValue)
 	{
 		if (category != nameof(LocalSettings.SpeedLimiter))
 			return;
-		UpdateDictionary();
 
-		UpdateSafeModeIndicator();
+		if (name == nameof(LocalSettings.SpeedLimiter.Enabled))
+			ControlMode = ((bool)newValue) ? 0 : 1;
+		else if (name == nameof(LocalSettings.SpeedLimiter.MaxSpeed))
+			UpdateDictionary();
 	}
 
 	void UpdateDictionary()
 	{
 		Presets[0] = new(Colors.Blue, Colors.LightBlue, $"SpeedLimiter: ON {_speedLimit:P0}", "SpeedLimiter: ");
+		OnSetControlMode();
 	}
 
 	void UpdateSafeModeIndicator()
 	{
 		this.Visible = true;
 
-		switch((MqttClasses.ControlMode)_inputMode)
+		switch ((MqttClasses.ControlMode)_inputMode)
 		{
 			case MqttClasses.ControlMode.Rover:
-				OffsetRight = -181.0f; //position under rovermode master
+				//reanimate on position change
+				if(!Mathf.IsEqualApprox(OffsetRight, POSITION_RIGHT))
+					OnSetControlMode();
+				OffsetRight = POSITION_RIGHT;
 				break;
 
 			case not MqttClasses.ControlMode.Rover
 			when (MqttClasses.ControlMode)_inputModeSlave == MqttClasses.ControlMode.Rover:
-				OffsetRight = -369.0f; //position under rovermode slave
+				//reanimate on position change
+				if(!Mathf.IsEqualApprox(OffsetRight, POSITION_LEFT))
+					OnSetControlMode();
+				OffsetRight = POSITION_LEFT;
 				break;
 
 			default:
 				this.Visible = false;
 				break;
 		}
-
-		ControlMode = LocalSettings.Singleton.SpeedLimiter.Enabled ? 0 : 1;
 	}
+
+	void OnVisibleChange()
+    {
+		OnSetControlMode();
+    }
 
 }

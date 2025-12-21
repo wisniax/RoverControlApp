@@ -10,6 +10,11 @@ namespace RoverControlApp.MVVM.ViewModel;
 
 public partial class DriveMode_UIOverlay : UIOverlay
 {
+	//position under rovermode slave
+	const float POSITION_LEFT = -369.0f;
+	//position under rovermode master
+	const float POSITION_RIGHT = -181.0f;
+
 	[Export]
 	PanelContainer _panelContainer = null!;
 
@@ -27,6 +32,8 @@ public partial class DriveMode_UIOverlay : UIOverlay
 
 	public Task KinematicModeChangedSubscriber(MqttClasses.KinematicMode newMode)
 	{
+		if (ControlMode == (int)newMode)
+			return Task.CompletedTask;
 		ControlMode = (int)newMode;
 
 		return Task.CompletedTask;
@@ -51,6 +58,9 @@ public partial class DriveMode_UIOverlay : UIOverlay
 	public override void _Ready()
 	{
 		base._Ready();
+
+		Connect(SignalName.VisibilityChanged, Callable.From(OnVisibleChange));
+
 		ControlMode = (int)MqttClasses.KinematicMode.Ackermann;
 	}
 
@@ -58,15 +68,21 @@ public partial class DriveMode_UIOverlay : UIOverlay
 	{
 		this.Visible = true;
 
-		switch((MqttClasses.ControlMode)_inputMode)
+		switch ((MqttClasses.ControlMode)_inputMode)
 		{
 			case MqttClasses.ControlMode.Rover:
-				OffsetRight = -181.0f; //position under rovermode master
+				//reanimate on position change
+				if(!Mathf.IsEqualApprox(OffsetRight, POSITION_RIGHT))
+					OnSetControlMode();
+				OffsetRight = POSITION_RIGHT;
 				break;
 
 			case not MqttClasses.ControlMode.Rover
 			when (MqttClasses.ControlMode)_inputModeSlave == MqttClasses.ControlMode.Rover:
-				OffsetRight = -369.0f; //position under rovermode slave
+				//reanimate on position change
+				if(!Mathf.IsEqualApprox(OffsetRight, POSITION_LEFT))
+					OnSetControlMode();
+				OffsetRight = POSITION_LEFT;
 				break;
 
 			default:
@@ -74,4 +90,9 @@ public partial class DriveMode_UIOverlay : UIOverlay
 				break;
 		}
 	}
+
+	void OnVisibleChange()
+    {
+		OnSetControlMode();
+    }
 }
