@@ -196,10 +196,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -403.0
-offset_top = 5.0
-offset_right = -403.0
-offset_bottom = 5.0
+offset_left = -371.0
+offset_top = 4.0
+offset_right = -371.0
+offset_bottom = 4.0
 grow_horizontal = 0
 script = ExtResource("8_yrt6e")
 Animator = NodePath("RoverMode/AnimationPlayer")
@@ -207,10 +207,7 @@ BackgroundNodePath = NodePath("RoverMode/Background")
 LabelNodePath = NodePath("RoverMode/Label")
 
 [node name="RoverMode" parent="DualSeatSlaveUIDis" index="0"]
-offset_left = 31.0
-offset_top = -1.0
-offset_right = 211.0
-offset_bottom = 25.0
+offset_right = 180.0
 
 [node name="MissonStatusUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
