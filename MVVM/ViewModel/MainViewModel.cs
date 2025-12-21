@@ -107,6 +107,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			Task.Run(async () => await MissionStatusUIDis.StatusChangeSubscriber(MissionStatus.Singleton.Status));
 
 			RoverModeUIDis.ControlMode = (int)PressedKeys.Singleton.ControlMode;
+			DualSeatSlaveUIDis.ControlMode = (int)PressedKeys.Singleton.SlaveControlMode;
 
 			ManagePtzStatus();
 			ManageRtspStatus();
