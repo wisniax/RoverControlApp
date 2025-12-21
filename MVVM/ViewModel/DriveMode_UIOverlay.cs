@@ -56,12 +56,22 @@ public partial class DriveMode_UIOverlay : UIOverlay
 
 	void UpdateIndicatorVisibility()
 	{
-		if (_inputMode != (int)MqttClasses.ControlMode.Rover && _inputModeSlave != (int)MqttClasses.ControlMode.Rover)
-		{
-			this.Visible = false;
-			return;
-		}
-
 		this.Visible = true;
+
+		switch((MqttClasses.ControlMode)_inputMode)
+		{
+			case MqttClasses.ControlMode.Rover:
+				OffsetRight = -181.0f; //position under rovermode master
+				break;
+
+			case not MqttClasses.ControlMode.Rover
+			when (MqttClasses.ControlMode)_inputModeSlave == MqttClasses.ControlMode.Rover:
+				OffsetRight = -369.0f; //position under rovermode slave
+				break;
+
+			default:
+				this.Visible = false;
+				break;
+		}
 	}
 }

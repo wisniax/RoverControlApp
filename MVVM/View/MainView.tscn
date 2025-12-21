@@ -148,7 +148,7 @@ offset_right = 178.0
 [node name="DriveModeUIDis" parent="." node_paths=PackedStringArray("_panelContainer", "Animator") instance=ExtResource("3_mtbtk")]
 visible = false
 layout_mode = 1
-anchors_preset = 1
+anchors_preset = -1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -181.0
@@ -170,7 +170,7 @@ offset_right = 178.0
 [node name="SpeedLimiterUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 visible = false
 layout_mode = 1
-anchors_preset = 1
+anchors_preset = -1
 anchor_left = 1.0
 anchor_right = 1.0
 offset_left = -181.0
