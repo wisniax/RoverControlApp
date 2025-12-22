@@ -11,15 +11,15 @@ public interface IRoverManipulatorController : IActionAwareController
 	/// <summary>
 	/// Probes Godot.Input and returns ManipulatorControl
 	/// </summary>
-	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, in ManipulatorControl lastState);
+	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in ManipulatorControl lastState);
 
 	/// <summary>
 	/// Processes input
 	/// </summary>
 	/// <returns>True when input causes state change</returns>
-	public bool HandleInput(in InputEvent inputEvent, ManipulatorControl lastState, out ManipulatorControl newState)
+	public bool HandleInput(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, ManipulatorControl lastState, out ManipulatorControl newState)
 	{
-		newState = CalculateMoveVector(inputEvent, lastState);
+		newState = CalculateMoveVector(inputEvent, targetInputDevice, lastState);
 		bool changed = IsMoveVectorChanged(newState, lastState);
 		newState.Timestamp = changed ? DateTimeOffset.Now.ToUnixTimeMilliseconds() : lastState.Timestamp;
 		return changed;

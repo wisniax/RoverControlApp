@@ -3,6 +3,7 @@ using MQTTnet;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -42,8 +43,6 @@ public partial class ZedMonitor : Panel
 	bool error = false;
 	//time since last update
 	int timeSLU = 0;
-
-	public event Func<MqttClasses.ZedImuData?, Task>? GyroscopeChanged;
 
 	MqttClasses.ZedImuData? Gyroscope;
 
@@ -98,6 +97,8 @@ public partial class ZedMonitor : Panel
 		try
 		{
 			Gyroscope = JsonSerializer.Deserialize<MqttClasses.ZedImuData>(msg.ConvertPayloadToString());
+			if(Gyroscope is null) 
+				throw new InvalidDataException("Invalid ZedImuData payload.");
 			Quaternion Quat = new Quaternion((float)Gyroscope.orientation.x, (float)Gyroscope.orientation.y, (float)Gyroscope.orientation.z, (float)Gyroscope.orientation.w);
 			error = false;
 
