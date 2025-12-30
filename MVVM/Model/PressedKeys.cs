@@ -7,7 +7,6 @@ using RoverControlApp.Core;
 using RoverControlApp.Core.RoverControllerPresets;
 using RoverControlApp.Core.RoverControllerPresets.CameraControllers;
 using RoverControlApp.Core.RoverControllerPresets.ControlModeControllers;
-using RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 using RoverControlApp.Core.RoverControllerPresets.SamplerControllers;
 using RoverControlApp.MVVM.ViewModel;
 
@@ -160,9 +159,14 @@ public class PressedKeys : IDisposable
 	{
 		if (category != nameof(LocalSettings.Joystick)) return;
 
+		Console.WriteLine("ROVER MANIPULATOR MODE +++", _roverManipulatorControllerPreset);
+
 		switch (name)
 		{
 			case nameof(LocalSettings.Joystick.RoverDriveController):
+				SetupControllerPresets();
+				break;
+			case nameof(LocalSettings.Joystick.ManipulatorControlMultiMode):
 				SetupControllerPresets();
 				break;
 		}
@@ -284,7 +288,10 @@ public class PressedKeys : IDisposable
 			RoverDriveControllerSelector.GetController(
 				(RoverDriveControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverDriveController
 			);
-		_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
+		_roverManipulatorControllerPreset =
+			RoverManipulatorControllerSelector.GetController(
+				LocalSettings.Singleton.Joystick.ManipulatorControlMultiMode
+			);
 		_roverSamplerControllerPreset = new SamplerController();
 		_roverCameraControllerPreset = new OriginalCameraController();
 
