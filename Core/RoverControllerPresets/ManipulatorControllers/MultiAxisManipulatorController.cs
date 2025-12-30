@@ -38,7 +38,6 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 		{
 			manipulatorControl = new()
 			{
-
 				Axis1 = lx,
 				Axis2 = ly,
 				Axis3 = rx,

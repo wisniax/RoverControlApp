@@ -159,8 +159,6 @@ public class PressedKeys : IDisposable
 	{
 		if (category != nameof(LocalSettings.Joystick)) return;
 
-		Console.WriteLine("ROVER MANIPULATOR MODE +++", _roverManipulatorControllerPreset);
-
 		switch (name)
 		{
 			case nameof(LocalSettings.Joystick.RoverDriveController):
