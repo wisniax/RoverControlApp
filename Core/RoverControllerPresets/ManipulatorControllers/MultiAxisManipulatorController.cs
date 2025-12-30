@@ -9,15 +9,10 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 {
 	private readonly string[] _usedActions =
 	[
-		"manipulator_speed_backward",
-		"manipulator_speed_forward",
-		"manipulator_axis_1",
-		"manipulator_axis_2",
-		"manipulator_axis_3",
-		"manipulator_axis_4",
-		"manipulator_axis_5",
-		"manipulator_axis_6",
+		"manipulator_change_axes"
 	];
+
+	private bool _axesChanged = false;
 
 	public static float Deadzone(float value)
 	{
@@ -26,27 +21,38 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, in ManipulatorControl lastState)
 	{
-		//float velocity = Input.GetAxis("manipulator_speed_backward", "manipulator_speed_forward");
-		//if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.MinimalInput)
-		//	velocity = 0f;
 		int deviceId = 0;
 		float lx = Deadzone(Input.GetJoyAxis(deviceId, JoyAxis.LeftX));
 		float ly = Deadzone(Input.GetJoyAxis(deviceId, JoyAxis.LeftY));
 		float rx = Deadzone(Input.GetJoyAxis(deviceId, JoyAxis.RightX));
 		float ry = Deadzone(Input.GetJoyAxis(deviceId, JoyAxis.RightY));
 
-
-		ManipulatorControl manipulatorControl = new()
+		if (inputEvent.IsActionPressed("manipulator_change_axes", allowEcho: false))
 		{
+			_axesChanged = !_axesChanged;
+		}
 
-			Axis1 = lx,
-			Axis2 = ly,
-			Axis3 = rx,
-			Axis4 = ry
-			//Axis5 = Input.IsActionPressed("manipulator_axis_5") ? velocity : 0f,
-			//Axis6 = Input.IsActionPressed("manipulator_axis_6") ? velocity : 0f
-		};
+		ManipulatorControl manipulatorControl;
 
+		if (!_axesChanged)
+		{
+			manipulatorControl = new()
+			{
+
+				Axis1 = lx,
+				Axis2 = ly,
+				Axis3 = rx,
+				Axis4 = ry
+			};
+		} else
+		{
+			manipulatorControl = new()
+			{
+				Axis5 = lx,
+				Axis6 = ly,
+				Gripper = rx
+			};
+		}
 
 		return manipulatorControl;
 	}
@@ -54,6 +60,4 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
-	//public string GetInputActionsAdditionalNote() =>
-	//	"manipulator_axis_5 + manipulator_axis_6 = gripper";
 }
