@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Godot;
 
 using static RoverControlApp.Core.MqttClasses;
@@ -7,27 +8,30 @@ namespace RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 
 public class MultiAxisManipulatorController : IRoverManipulatorController
 {
-	private readonly string[] _usedActions =
+	private readonly StringName[] _usedActions =
 	[
-		"manipulator_change_axes"
+		RcaInEvName.ManipulatorMultiAxis1Backward,
+		RcaInEvName.ManipulatorMultiAxis2Backward,
+		RcaInEvName.ManipulatorMultiAxis3Backward,
+		RcaInEvName.ManipulatorMultiAxis4Backward,
+		RcaInEvName.ManipulatorMultiAxis5Backward,
+		RcaInEvName.ManipulatorMultiAxis6Backward,
+		RcaInEvName.ManipulatorMultiGripperBackward,
+		RcaInEvName.ManipulatorMultiAxis1Forward,
+		RcaInEvName.ManipulatorMultiAxis2Forward,
+		RcaInEvName.ManipulatorMultiAxis3Forward,
+		RcaInEvName.ManipulatorMultiAxis4Forward,
+		RcaInEvName.ManipulatorMultiAxis5Forward,
+		RcaInEvName.ManipulatorMultiAxis6Forward,
+		RcaInEvName.ManipulatorMultiGripperForward,
+		RcaInEvName.ManipulatorMultiChangeAxes
 	];
 
 	private bool _axesChanged = false;
 
-	public static float Deadzone(float value)
+	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in ManipulatorControl lastState)
 	{
-		return Mathf.Abs(value) < LocalSettings.Singleton.Joystick.MinimalInput ? 0f : value;
-	}
-
-	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, in ManipulatorControl lastState)
-	{
-		int deviceId = 0;
-		float lx = Deadzone(Input.GetJoyAxis(deviceId, JoyAxis.LeftX));
-		float ly = Deadzone(Input.GetJoyAxis(deviceId, JoyAxis.LeftY));
-		float rx = Deadzone(Input.GetJoyAxis(deviceId, JoyAxis.RightX));
-		float ry = Deadzone(Input.GetJoyAxis(deviceId, JoyAxis.RightY));
-
-		if (inputEvent.IsActionPressed("manipulator_change_axes", allowEcho: false))
+		if (inputEvent.IsActionPressed(RcaInEvName.ManipulatorMultiChangeAxes, allowEcho: false))
 		{
 			_axesChanged = !_axesChanged;
 		}
@@ -36,27 +40,39 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 		if (!_axesChanged)
 		{
+			float axis1 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Forward, tagetInputDevice));
+			float axis2 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Forward, tagetInputDevice));
+			float axis3 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Forward, tagetInputDevice));
+			float axis4 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis4Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis4Forward, tagetInputDevice));
+
 			manipulatorControl = new()
 			{
-				Axis1 = lx,
-				Axis2 = ly,
-				Axis3 = rx,
-				Axis4 = ry
+				Axis1 = (float)Math.Round(axis1, 2, MidpointRounding.AwayFromZero),
+				Axis2 = (float)Math.Round(axis2, 2, MidpointRounding.AwayFromZero),
+				Axis3 = (float)Math.Round(axis3, 2, MidpointRounding.AwayFromZero),
+				Axis4 = (float)Math.Round(axis4, 2, MidpointRounding.AwayFromZero),
 			};
 		} else
 		{
+			float axis5 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis5Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis5Forward, tagetInputDevice));
+			float axis6 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis6Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis6Forward, tagetInputDevice));
+			float gripper = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, tagetInputDevice));
+
 			manipulatorControl = new()
 			{
-				Axis5 = lx,
-				Axis6 = ly,
-				Gripper = rx
+				Axis5 = (float)Math.Round(axis5, 2, MidpointRounding.AwayFromZero),
+				Axis6 = (float)Math.Round(axis6, 2, MidpointRounding.AwayFromZero),
+				Gripper = (float)Math.Round(gripper, 2, MidpointRounding.AwayFromZero),
 			};
 		}
 
 		return manipulatorControl;
 	}
 
-	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
+	public Dictionary<StringName, Godot.Collections.Array<InputEvent>> GetInputActions() =>
 		IActionAwareController.FetchAllActionEvents(_usedActions);
+
+	public string GetInputActionsAdditionalNote() =>
+		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between axes 1-4 and axes 5-6 + gripper.";
 
 }

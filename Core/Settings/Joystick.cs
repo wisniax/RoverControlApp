@@ -18,17 +18,17 @@ public partial class Joystick : SettingBase, ICloneable
 		_minimalInput = 0f;
 		_vibrateOnModeChange = true;
 		_vibrateOnAutoEstop = true;
-		_manipulatorControlMultiMode = true;
+		_manipulatorController = 0;
 	}
 
-	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange, bool vibrateOnAutoEstop, bool manipulatorControlMultiMode)
+	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange, bool vibrateOnAutoEstop, int manipulatorController)
 	{
 		_roverDriveController = roverDriveController;
 		_toggleableKinematics = toggleableKinematics;
 		_minimalInput = minimalInput;
 		_vibrateOnModeChange = vibrateOnModeChange;
 		_vibrateOnAutoEstop = vibrateOnAutoEstop;
-		_manipulatorControlMultiMode = manipulatorControlMultiMode;
+		_manipulatorController = manipulatorController;
 	}
 
 	public object Clone()
@@ -40,7 +40,7 @@ public partial class Joystick : SettingBase, ICloneable
 			MinimalInput = _minimalInput,
 			VibrateOnModeChange = _vibrateOnModeChange,
 			VibrateOnAutoEstop = _vibrateOnAutoEstop,
-			ManipulatorControlMultiMode = _manipulatorControlMultiMode
+			ManipulatorController = _manipulatorController
 		};
 	}
 
@@ -86,11 +86,16 @@ public partial class Joystick : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _vibrateOnAutoEstop, value);
 	}
 
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-	public bool ManipulatorControlMultiMode
+	[SettingsManagerVisible(
+		cellMode: TreeItem.TreeCellMode.Range,
+		formatData: "0;1;1;f;i",
+		customTooltip: "0 - MultiAxis (Default)\n" +
+					   "1 - SingleAxis"
+	)]
+	public int ManipulatorController
 	{
-		get => _manipulatorControlMultiMode;
-		set => EmitSignal_SettingChanged(ref _manipulatorControlMultiMode, value);
+		get => _manipulatorController;
+		set => EmitSignal_SettingChanged(ref _manipulatorController, value);
 	}
 
 	int _roverDriveController;
@@ -98,7 +103,7 @@ public partial class Joystick : SettingBase, ICloneable
 	float _minimalInput;
 	bool _vibrateOnModeChange;
 	bool _vibrateOnAutoEstop;
-	bool _manipulatorControlMultiMode;
+	int _manipulatorController;
 }
 
 

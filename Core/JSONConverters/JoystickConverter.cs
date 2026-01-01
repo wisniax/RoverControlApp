@@ -20,7 +20,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 		float? minimalInput = null;
 		bool? vibrateOnModeChange = null;
 		bool? vibrateOnAutoEstop = null;
-		bool? manipulatorControlMultiMode = null;
+		int? manipulatorController = null;
 
 		while (reader.Read())
 		{
@@ -50,8 +50,8 @@ public class JoystickConverter : JsonConverter<Joystick>
 				case nameof(Joystick.VibrateOnAutoEstop):
 					vibrateOnAutoEstop = reader.GetBoolean();
 					break;
-				case nameof(Joystick.ManipulatorControlMultiMode):
-					manipulatorControlMultiMode = reader.GetBoolean();
+				case nameof(Joystick.ManipulatorController):
+					manipulatorController = reader.GetInt32();
 					break;
 				default:
 					reader.Skip();
@@ -66,7 +66,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 			minimalInput ?? Default.MinimalInput,
 			vibrateOnModeChange ?? Default.VibrateOnModeChange,
 			vibrateOnAutoEstop ?? Default.VibrateOnAutoEstop,
-			manipulatorControlMultiMode ?? Default.ManipulatorControlMultiMode
+			manipulatorController ?? Default.ManipulatorController
 		);
 	}
 
@@ -78,7 +78,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 		writer.WriteNumber(nameof(Joystick.MinimalInput), value.MinimalInput);
 		writer.WriteBoolean(nameof(Joystick.VibrateOnModeChange), value.VibrateOnModeChange);
 		writer.WriteBoolean(nameof(Joystick.VibrateOnAutoEstop), value.VibrateOnAutoEstop);
-		writer.WriteBoolean(nameof(Joystick.ManipulatorControlMultiMode), value.ManipulatorControlMultiMode);
+		writer.WriteNumber(nameof(Joystick.ManipulatorController), value.ManipulatorController);
 		writer.WriteEndObject();
 	}
 }
