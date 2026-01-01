@@ -1,21 +1,50 @@
 ﻿using MQTTnet;
 using RoverControlApp.Core;
+using Godot;
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace RoverControlApp.MVVM.Model
 {
-	public class MissionSetPoint
+	public partial class MissionSetPoint : Node
 	{
+		private bool _disposedValue = false;
+		
 		public event Func<MqttClasses.ActiveKmlObjects?, Task>? ActiveKmlObjectsUpdated;
 		public MqttClasses.ActiveKmlObjects? ActiveKmlObjects { get; private set; }
 
-		public MissionSetPoint()
-		{
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+	public static MissionSetPoint Singleton { get; private set; }
+#pragma warning restore CS8618
+
+		/*
+		*	Godot overrides
+		*/
+        public override void _Ready()
+        {
+            base._Ready();
 			MqttNode.Singleton.MessageReceivedAsync += OnMessageReceivedAsync;
 			UpdateActiveKmlObjects();
-		}
+			Singleton ??= this;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+			if(_disposedValue) return;
+
+			if(disposing)
+			{
+				MqttNode.Singleton.MessageReceivedAsync -= OnMessageReceivedAsync;
+			}
+
+			_disposedValue = true;
+            base.Dispose(disposing);
+        }
+
+		/*
+		*	Godot overrides end
+		*/
 
 		private Task OnMessageReceivedAsync(string subtopic, MqttApplicationMessage? content)
 		{

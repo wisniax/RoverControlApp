@@ -1,6 +1,7 @@
-using Godot;
 using System;
 using System.Collections.Generic;
+
+using Godot;
 
 namespace RoverControlApp.MVVM.Model;
 
@@ -9,7 +10,7 @@ public abstract partial class UIOverlay : Control
 
 	int _controlMode;
 
-	public abstract Dictionary<int, Setting> Presets { get; } 
+	public abstract Dictionary<int, Setting> Presets { get; }
 
 	[Export]
 	AnimationPlayer Animator = null!;
@@ -45,8 +46,8 @@ public abstract partial class UIOverlay : Control
 		anim.TrackSetPath(fontColorTrackIdx, FontColorAP);
 		anim.TrackSetInterpolationType(fontColorTrackIdx, Animation.InterpolationType.Linear);
 		anim.TrackInsertKey(fontColorTrackIdx, 0.0, Colors.White);
-		anim.TrackInsertKey(fontColorTrackIdx, 1.0, Colors.White);	
-		
+		anim.TrackInsertKey(fontColorTrackIdx, 1.0, Colors.White);
+
 		anim.TrackSetPath(textTrackIdx, TextAP);
 		anim.TrackSetInterpolationType(textTrackIdx, Animation.InterpolationType.Linear);
 		anim.TrackInsertKey(textTrackIdx, 0.0, "Val A");
@@ -96,15 +97,25 @@ public abstract partial class UIOverlay : Control
 		get => _controlMode;
 		set
 		{
-			CallDeferred(MethodName.OnSetControlMode, _controlMode, value);
+			CallDeferred(MethodName.OnSetControlMode, _controlMode, value, false);
 			_controlMode = value;
 		}
 	}
 
-	private void OnSetControlMode(int old, int @new)
+	/// <summary>
+	///	tldr redraw this control with(out) animation.
+	/// </summary>
+	/// <param name="old">int.MinValue means current mode</param>
+	/// <param name="new">int.MinValue means current mode</param>
+	protected void OnSetControlMode(int old = int.MinValue, int @new = int.MinValue, bool skipAnim = false)
 	{
+		if (old == int.MinValue)
+			old = _controlMode;
+		if (@new == int.MinValue)
+			@new = _controlMode;
+
 		SetupAnimSwap(old, @new);
-		if (Animator.IsPlaying() || DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - lastChangeTimestamp < 1000)
+		if (Animator.IsPlaying() || DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() - lastChangeTimestamp < 1000 || skipAnim)
 		{
 			Animator.Play("local/swap");
 			Animator.Seek(1);
@@ -113,7 +124,7 @@ public abstract partial class UIOverlay : Control
 			Animator.Play("local/swap");
 		lastChangeTimestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 	}
-		
+
 	public struct Setting
 	{
 

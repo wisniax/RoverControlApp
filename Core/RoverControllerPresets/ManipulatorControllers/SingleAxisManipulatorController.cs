@@ -8,26 +8,29 @@ namespace RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 
 public class SingleAxisManipulatorController : IRoverManipulatorController
 {
-	private readonly string[] _usedActions =
+	private readonly StringName[] _usedActions =
 	[
-		"manipulator_speed_backward",
-		"manipulator_speed_forward",
-		"manipulator_axis_1",
-		"manipulator_axis_2",
-		"manipulator_axis_3",
-		"manipulator_axis_4",
-		"manipulator_axis_5",
-		"manipulator_axis_6",
+		RcaInEvName.ManipulatorSpeedBackward,
+		RcaInEvName.ManipulatorSpeedForward,
+		RcaInEvName.ManipulatorAxis1,
+		RcaInEvName.ManipulatorAxis2,
+		RcaInEvName.ManipulatorAxis3,
+		RcaInEvName.ManipulatorAxis4,
+		RcaInEvName.ManipulatorAxis5,
+		RcaInEvName.ManipulatorAxis6,
 	];
 
-	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, in ManipulatorControl lastState)
+	public ManipulatorControl CalculateMoveVector(
+		in InputEvent inputEvent,
+		DualSeatEvent.InputDevice targetInputDevice,
+		in ManipulatorControl lastState)
 	{
-		float velocity = Input.GetAxis("manipulator_speed_backward", "manipulator_speed_forward");
+		float velocity = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSpeedBackward, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSpeedForward, targetInputDevice));
 		if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.MinimalInput)
 			velocity = 0f;
 
 		ManipulatorControl manipulatorControl;
-		if (Input.IsActionPressed("manipulator_axis_5") && Input.IsActionPressed("manipulator_axis_6"))
+		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis5, targetInputDevice)) && Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis6, targetInputDevice)))
 		{
 			manipulatorControl = new()
 			{
@@ -37,18 +40,18 @@ public class SingleAxisManipulatorController : IRoverManipulatorController
 		else
 			manipulatorControl = new()
 			{
-				Axis1 = Input.IsActionPressed("manipulator_axis_1") ? velocity : 0f,
-				Axis2 = Input.IsActionPressed("manipulator_axis_2") ? velocity : 0f,
-				Axis3 = Input.IsActionPressed("manipulator_axis_3") ? velocity : 0f,
-				Axis4 = Input.IsActionPressed("manipulator_axis_4") ? velocity : 0f,
-				Axis5 = Input.IsActionPressed("manipulator_axis_5") ? velocity : 0f,
-				Axis6 = Input.IsActionPressed("manipulator_axis_6") ? velocity : 0f
+				Axis1 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis1, targetInputDevice)) ? velocity : 0f,
+				Axis2 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis2, targetInputDevice)) ? velocity : 0f,
+				Axis3 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis3, targetInputDevice)) ? velocity : 0f,
+				Axis4 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis4, targetInputDevice)) ? velocity : 0f,
+				Axis5 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis5, targetInputDevice)) ? velocity : 0f,
+				Axis6 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis6, targetInputDevice)) ? velocity : 0f
 			};
 
 		return manipulatorControl;
 	}
 
-	public Dictionary<string, Godot.Collections.Array<InputEvent>> GetInputActions() =>
+	public Dictionary<StringName, Godot.Collections.Array<InputEvent>> GetInputActions() =>
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
