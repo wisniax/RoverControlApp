@@ -7,7 +7,6 @@ using RoverControlApp.Core;
 using RoverControlApp.Core.RoverControllerPresets;
 using RoverControlApp.Core.RoverControllerPresets.CameraControllers;
 using RoverControlApp.Core.RoverControllerPresets.ControlModeControllers;
-using RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 using RoverControlApp.Core.RoverControllerPresets.SamplerControllers;
 using RoverControlApp.MVVM.ViewModel;
 
@@ -218,6 +217,9 @@ public partial class PressedKeys : Node
 		switch (name)
 		{
 			case nameof(LocalSettings.Joystick.RoverDriveController):
+				SetupControllerPresets();
+				break;
+			case nameof(LocalSettings.Joystick.ManipulatorController):
 				SetupControllerPresets();
 				break;
 		}
@@ -461,7 +463,10 @@ public partial class PressedKeys : Node
 			RoverDriveControllerSelector.GetController(
 				(RoverDriveControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverDriveController
 			);
-		_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
+		_roverManipulatorControllerPreset =
+			RoverManipulatorControllerSelector.GetController(
+				(RoverManipulatorControllerSelector.Controller)LocalSettings.Singleton.Joystick.ManipulatorController
+			);
 		_roverSamplerControllerPreset = new SamplerController();
 		_roverCameraControllerPreset = new OriginalCameraController();
 

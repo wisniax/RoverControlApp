@@ -28,6 +28,22 @@ public static class RcaInEvName
 	public static readonly StringName ManipulatorAxis4 = new("manipulator_axis_4");
 	public static readonly StringName ManipulatorAxis5 = new("manipulator_axis_5");
 	public static readonly StringName ManipulatorAxis6 = new("manipulator_axis_6");
+	public static readonly StringName ManipulatorMultiAxis1Backward = new("manipulator_multi_axis_1_backward");
+	public static readonly StringName ManipulatorMultiAxis2Backward = new("manipulator_multi_axis_2_backward");
+	public static readonly StringName ManipulatorMultiAxis3Backward = new("manipulator_multi_axis_3_backward");
+	public static readonly StringName ManipulatorMultiAxis4Backward = new("manipulator_multi_axis_4_backward");
+	public static readonly StringName ManipulatorMultiAxis5Backward = new("manipulator_multi_axis_5_backward");
+	public static readonly StringName ManipulatorMultiAxis6Backward = new("manipulator_multi_axis_6_backward");
+	public static readonly StringName ManipulatorMultiGripperBackward = new("manipulator_multi_gripper_backward");
+	public static readonly StringName ManipulatorMultiAxis1Forward = new("manipulator_multi_axis_1_forward");
+	public static readonly StringName ManipulatorMultiAxis2Forward = new("manipulator_multi_axis_2_forward");
+	public static readonly StringName ManipulatorMultiAxis3Forward = new("manipulator_multi_axis_3_forward");
+	public static readonly StringName ManipulatorMultiAxis4Forward = new("manipulator_multi_axis_4_forward");
+	public static readonly StringName ManipulatorMultiAxis5Forward = new("manipulator_multi_axis_5_forward");
+	public static readonly StringName ManipulatorMultiAxis6Forward = new("manipulator_multi_axis_6_forward");
+	public static readonly StringName ManipulatorMultiGripperForward = new("manipulator_multi_gripper_forward");
+	public static readonly StringName ManipulatorMultiChangeAxes = new("manipulator_multi_change_axes");
+
 
 	public static readonly StringName SamplerMoveDown = new("sampler_move_down");
 	public static readonly StringName SamplerMoveUp = new("sampler_move_up");
