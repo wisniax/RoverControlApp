@@ -29,6 +29,13 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 	private bool _axesChanged = false;
 
+	private float ApplyDeadzoneAndRound(float velocity)
+	{
+		if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.MinimalInput)
+			return 0f;
+		return (float)Math.Round(velocity, 2, MidpointRounding.AwayFromZero);
+	}
+
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in ManipulatorControl lastState)
 	{
 		if (inputEvent.IsActionPressed(RcaInEvName.ManipulatorMultiChangeAxes, allowEcho: false))
@@ -47,10 +54,10 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 			manipulatorControl = new()
 			{
-				Axis1 = (float)Math.Round(axis1, 2, MidpointRounding.AwayFromZero),
-				Axis2 = (float)Math.Round(axis2, 2, MidpointRounding.AwayFromZero),
-				Axis3 = (float)Math.Round(axis3, 2, MidpointRounding.AwayFromZero),
-				Axis4 = (float)Math.Round(axis4, 2, MidpointRounding.AwayFromZero),
+				Axis1 = ApplyDeadzoneAndRound(axis1),
+				Axis2 = ApplyDeadzoneAndRound(axis2),
+				Axis3 = ApplyDeadzoneAndRound(axis3),
+				Axis4 = ApplyDeadzoneAndRound(axis4),
 			};
 		} else
 		{
@@ -60,9 +67,9 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 			manipulatorControl = new()
 			{
-				Axis5 = (float)Math.Round(axis5, 2, MidpointRounding.AwayFromZero),
-				Axis6 = (float)Math.Round(axis6, 2, MidpointRounding.AwayFromZero),
-				Gripper = (float)Math.Round(gripper, 2, MidpointRounding.AwayFromZero),
+				Axis5 = ApplyDeadzoneAndRound(axis5),
+				Axis6 = ApplyDeadzoneAndRound(axis6),
+				Gripper = ApplyDeadzoneAndRound(gripper),
 			};
 		}
 
