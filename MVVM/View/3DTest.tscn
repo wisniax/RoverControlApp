@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://dyaqipxvwblx7"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_3n854"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uotip"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_3lrd4"]
+
+[node name="Node3D" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.893334, 0.069182, -0.444035, 0.00894989, 0.985145, 0.171494, 0.449303, -0.157176, 0.879444, -1.98434, 0.994307, 3.26951)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(0.786935, -0.617036, -1.17673e-07, 0.415273, 0.529617, -0.739631, 0.456379, 0.582041, 0.673013, 0, 0, 0)
+physics_material_override = SubResource("PhysicsMaterial_3n854")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_uotip")
+disabled = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+transform = Transform3D(-0.584974, 0.717983, -0.377234, 0.126596, -0.378587, -0.916867, -0.801111, -0.5841, 0.13057, 0, 0, 0)
+mesh = SubResource("BoxMesh_3lrd4")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.984402, 0.175934, 0, -0.175934, 0.984402, 0, 0.986789, 3.26951)
