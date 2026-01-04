@@ -219,7 +219,7 @@ public partial class PressedKeys : Node
 			case nameof(LocalSettings.Joystick.RoverDriveController):
 				SetupControllerPresets();
 				break;
-			case nameof(LocalSettings.Joystick.ManipulatorController):
+			case nameof(LocalSettings.Joystick.RoverManipulatorController):
 				SetupControllerPresets();
 				break;
 		}
@@ -465,7 +465,7 @@ public partial class PressedKeys : Node
 			);
 		_roverManipulatorControllerPreset =
 			RoverManipulatorControllerSelector.GetController(
-				(RoverManipulatorControllerSelector.Controller)LocalSettings.Singleton.Joystick.ManipulatorController
+				(RoverManipulatorControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverManipulatorController
 			);
 		_roverSamplerControllerPreset = new SamplerController();
 		_roverCameraControllerPreset = new OriginalCameraController();

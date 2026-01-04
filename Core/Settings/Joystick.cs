@@ -18,7 +18,7 @@ public partial class Joystick : SettingBase, ICloneable
 		_minimalInput = 0f;
 		_vibrateOnModeChange = true;
 		_vibrateOnAutoEstop = true;
-		_manipulatorController = 0;
+		_roverManipulatorController = 0;
 	}
 
 	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange, bool vibrateOnAutoEstop, int manipulatorController)
@@ -28,7 +28,7 @@ public partial class Joystick : SettingBase, ICloneable
 		_minimalInput = minimalInput;
 		_vibrateOnModeChange = vibrateOnModeChange;
 		_vibrateOnAutoEstop = vibrateOnAutoEstop;
-		_manipulatorController = manipulatorController;
+		_roverManipulatorController = manipulatorController;
 	}
 
 	public object Clone()
@@ -40,7 +40,7 @@ public partial class Joystick : SettingBase, ICloneable
 			MinimalInput = _minimalInput,
 			VibrateOnModeChange = _vibrateOnModeChange,
 			VibrateOnAutoEstop = _vibrateOnAutoEstop,
-			ManipulatorController = _manipulatorController
+			RoverManipulatorController = _roverManipulatorController
 		};
 	}
 
@@ -92,10 +92,10 @@ public partial class Joystick : SettingBase, ICloneable
 		customTooltip: "0 - MultiAxis (Default)\n" +
 					   "1 - SingleAxis"
 	)]
-	public int ManipulatorController
+	public int RoverManipulatorController
 	{
-		get => _manipulatorController;
-		set => EmitSignal_SettingChanged(ref _manipulatorController, value);
+		get => _roverManipulatorController;
+		set => EmitSignal_SettingChanged(ref _roverManipulatorController, value);
 	}
 
 	int _roverDriveController;
@@ -103,7 +103,7 @@ public partial class Joystick : SettingBase, ICloneable
 	float _minimalInput;
 	bool _vibrateOnModeChange;
 	bool _vibrateOnAutoEstop;
-	int _manipulatorController;
+	int _roverManipulatorController;
 }
 
 
