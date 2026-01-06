@@ -44,7 +44,6 @@ public static class RcaInEvName
 	public static readonly StringName ManipulatorMultiGripperForward = new("manipulator_multi_gripper_forward");
 	public static readonly StringName ManipulatorMultiChangeAxes = new("manipulator_multi_change_axes");
 
-
 	public static readonly StringName SamplerMoveDown = new("sampler_move_down");
 	public static readonly StringName SamplerMoveUp = new("sampler_move_up");
 	public static readonly StringName SamplerDrillDown = new("sampler_drill_down");

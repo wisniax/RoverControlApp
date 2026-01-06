@@ -21,14 +21,14 @@ public partial class Joystick : SettingBase, ICloneable
 		_roverManipulatorController = 0;
 	}
 
-	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange, bool vibrateOnAutoEstop, int manipulatorController)
+	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange, bool vibrateOnAutoEstop, int roverManipulatorController)
 	{
 		_roverDriveController = roverDriveController;
 		_toggleableKinematics = toggleableKinematics;
 		_minimalInput = minimalInput;
 		_vibrateOnModeChange = vibrateOnModeChange;
 		_vibrateOnAutoEstop = vibrateOnAutoEstop;
-		_roverManipulatorController = manipulatorController;
+		_roverManipulatorController = roverManipulatorController;
 	}
 
 	public object Clone()

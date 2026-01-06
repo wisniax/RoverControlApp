@@ -7,6 +7,7 @@ using RoverControlApp.Core;
 using RoverControlApp.Core.RoverControllerPresets;
 using RoverControlApp.Core.RoverControllerPresets.CameraControllers;
 using RoverControlApp.Core.RoverControllerPresets.ControlModeControllers;
+using RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 using RoverControlApp.Core.RoverControllerPresets.SamplerControllers;
 using RoverControlApp.MVVM.ViewModel;
 
