@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-
 using Godot;
 
 using static RoverControlApp.Core.MqttClasses;
@@ -56,4 +55,33 @@ public class SingleAxisManipulatorController : IRoverManipulatorController
 
 	public string GetInputActionsAdditionalNote() =>
 		"manipulator_axis_5 + manipulator_axis_6 = gripper";
+
+	public string[] GetControlledAxes()
+	{
+		var activeAxes = new List<string>();
+
+		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis5)) && Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis6)))
+		{
+			activeAxes.Add("Gripper");
+			return activeAxes.ToArray();
+		}
+
+		var axisMap = new (StringName action, string axis)[]
+		{
+			(RcaInEvName.ManipulatorAxis1, "Axis1"),
+			(RcaInEvName.ManipulatorAxis2, "Axis2"),
+			(RcaInEvName.ManipulatorAxis3, "Axis3"),
+			(RcaInEvName.ManipulatorAxis4, "Axis4"),
+			(RcaInEvName.ManipulatorAxis5, "Axis5"),
+			(RcaInEvName.ManipulatorAxis6, "Axis6")
+		};
+
+		foreach (var (action, axisName) in axisMap)
+		{
+			if (Input.IsActionPressed(DualSeatEvent.GetName(action)))
+				activeAxes.Add(axisName);
+		}
+
+		return activeAxes.ToArray();
+	}
 }

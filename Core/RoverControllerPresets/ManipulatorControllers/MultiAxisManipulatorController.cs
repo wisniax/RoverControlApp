@@ -29,11 +29,11 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 	private bool _axesChanged = false;
 
-	private float ApplyDeadzoneAndRound(float velocity)
+	private float ApplyDeadzone(float velocity)
 	{
 		if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.MinimalInput)
 			return 0f;
-		return (float)Math.Round(velocity, 2, MidpointRounding.AwayFromZero);
+		return velocity;
 	}
 
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in ManipulatorControl lastState)
@@ -54,10 +54,10 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 			manipulatorControl = new()
 			{
-				Axis1 = ApplyDeadzoneAndRound(axis1),
-				Axis2 = ApplyDeadzoneAndRound(axis2),
-				Axis3 = ApplyDeadzoneAndRound(axis3),
-				Axis4 = ApplyDeadzoneAndRound(axis4),
+				Axis1 = ApplyDeadzone(axis1),
+				Axis2 = ApplyDeadzone(axis2),
+				Axis3 = ApplyDeadzone(axis3),
+				Axis4 = ApplyDeadzone(axis4),
 			};
 		} else
 		{
@@ -67,9 +67,9 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 			manipulatorControl = new()
 			{
-				Axis5 = ApplyDeadzoneAndRound(axis5),
-				Axis6 = ApplyDeadzoneAndRound(axis6),
-				Gripper = ApplyDeadzoneAndRound(gripper),
+				Axis5 = ApplyDeadzone(axis5),
+				Axis6 = ApplyDeadzone(axis6),
+				Gripper = ApplyDeadzone(gripper),
 			};
 		}
 
@@ -81,5 +81,10 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 	public string GetInputActionsAdditionalNote() =>
 		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between axes 1-4 and axes 5-6 + gripper.";
+
+	public string[] GetControlledAxes()
+	{
+		return _axesChanged ? new string[] { "Axis5", "Axis6", "Gripper" } : new string[] { "Axis1", "Axis2", "Axis3", "Axis4" };
+	}
 
 }
