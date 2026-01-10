@@ -29,16 +29,9 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 	private bool _axesChanged = false;
 
-	private float ApplyDeadzone(float velocity)
-	{
-		if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.MinimalInput)
-			return 0f;
-		return velocity;
-	}
-
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in ManipulatorControl lastState)
 	{
-		if (inputEvent.IsActionPressed(RcaInEvName.ManipulatorMultiChangeAxes, allowEcho: false))
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, tagetInputDevice), allowEcho: false))
 		{
 			_axesChanged = !_axesChanged;
 		}
@@ -54,10 +47,10 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 			manipulatorControl = new()
 			{
-				Axis1 = ApplyDeadzone(axis1),
-				Axis2 = ApplyDeadzone(axis2),
-				Axis3 = ApplyDeadzone(axis3),
-				Axis4 = ApplyDeadzone(axis4),
+				Axis1 = axis1,
+				Axis2 = axis2,
+				Axis3 = axis3,
+				Axis4 = axis4
 			};
 		} else
 		{
@@ -67,9 +60,9 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 			manipulatorControl = new()
 			{
-				Axis5 = ApplyDeadzone(axis5),
-				Axis6 = ApplyDeadzone(axis6),
-				Gripper = ApplyDeadzone(gripper),
+				Axis5 = axis5,
+				Axis6 = axis6,
+				Gripper = gripper
 			};
 		}
 
