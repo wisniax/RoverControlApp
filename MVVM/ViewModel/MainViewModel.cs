@@ -311,7 +311,7 @@ namespace RoverControlApp.MVVM.ViewModel
 						  $"{(RoverCommunication.Singleton.RoverStatus?.ControlMode == MqttClasses.ControlMode.Rover ? $"Kinematics change: {(LocalSettings.Singleton.Joystick.ToggleableKinematics ? "Toggle" : "Hold")}, " : "")}" +
 						  $"Connection: [color={mqttStatusColor.ToHtml(false)}]{RoverCommunication.Singleton.RoverStatus?.CommunicationState}[/color], " +
 						  $"Pad connected: {RoverCommunication.Singleton.RoverStatus?.PadConnected}\n");
-			switch (RoverCommunication.Singleton.RoverStatus?.ControlMode)
+			switch (PressedKeys.Singleton.SlaveControlMode)
 			{
 				case MqttClasses.ControlMode.Rover:
 					var vecc = new Vector3((float)PressedKeys.Singleton.RoverMovement.Vel, (float)PressedKeys.Singleton.RoverMovement.XAxis,
