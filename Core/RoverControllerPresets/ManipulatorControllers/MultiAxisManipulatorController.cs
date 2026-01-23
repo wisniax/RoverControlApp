@@ -76,7 +76,7 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between axes 1-4 and axes 5-6 + gripper.";
+		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between axes 1-3 and axes 4-6. Gripper is controlled with triggers.";
 
 	public string[] GetControlledAxes()
 	{
