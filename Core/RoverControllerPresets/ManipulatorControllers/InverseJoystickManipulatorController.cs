@@ -6,7 +6,7 @@ using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 
-public class MultiAxisManipulatorController : IRoverManipulatorController
+public class InverseJoystickManipulatorController : IRoverManipulatorController
 {
 	private readonly StringName[] _usedActions =
 	[
@@ -37,9 +37,8 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 		}
 
 		RoboticArmControl manipulatorControl = new();
-
-		manipulatorControl.ActionType = ActionType.ForwardKin;
-		manipulatorControl.ForwardKin = new();
+		manipulatorControl.ActionType = ActionType.InvKinJoystick;
+		manipulatorControl.InvJoystick = new();
 
 		float gripper = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, tagetInputDevice));
 
@@ -48,6 +47,8 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 			float axis1 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Forward, tagetInputDevice));
 			float axis2 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Forward, tagetInputDevice));
 			float axis3 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Forward, tagetInputDevice));
+
+			manipulatorControl = new();
 
 			manipulatorControl.ForwardKin.Axis1 = axis1;
 			manipulatorControl.ForwardKin.Axis2 = axis2;
@@ -61,6 +62,9 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 			float axis4 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis4Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis4Forward, tagetInputDevice));
 			float axis5 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis5Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis5Forward, tagetInputDevice));
 			float axis6 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis6Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis6Forward, tagetInputDevice));
+
+
+			manipulatorControl = new();
 
 			manipulatorControl.ForwardKin.Axis1 = 0;
 			manipulatorControl.ForwardKin.Axis2 = 0;

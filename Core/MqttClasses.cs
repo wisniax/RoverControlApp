@@ -108,34 +108,45 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
-		public class ManipulatorControl
+		public class RoboticArmControl
 		{
-			public float Axis1 { get; set; } = 0f;
-			public float Axis2 { get; set; } = 0f;
-			public float Axis3 { get; set; } = 0f;
-			public float Axis4 { get; set; } = 0f;
-			public float Axis5 { get; set; } = 0f;
-			public float Axis6 { get; set; } = 0f;
-			public float Gripper { get; set; } = 0f;
+			public ActionType ActionType { get; set; } = ActionType.Stop;
+			public string? Reference { get; set; } = "base_link";
+			public ForwardKinMode? ForwardKin { get; set; }
+			public InverseJoystickMode? InvJoystick { get; set; } // Joystick Control is a "ROS" name for it
+			public InversePositionMode? InvPosition { get; set; }
+			public bool ForceCartesian { get; set; }
+			public bool ForceMovement { get; set; }
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-			public override bool Equals(object? obj)
-			{
-				if (obj is not ManipulatorControl manipObj) return false;
-				bool isEqual = true;
-				isEqual &= Mathf.IsEqualApprox(Axis1, manipObj.Axis1, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Axis2, manipObj.Axis2, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Axis3, manipObj.Axis3, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Axis4, manipObj.Axis4, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Axis5, manipObj.Axis5, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Axis6, manipObj.Axis6, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Gripper, manipObj.Gripper, 0.005f);
-				return isEqual;
-			}
-
-			public override int GetHashCode()
-			{
-				return HashCode.Combine(Axis1, Axis2, Axis3, Axis4, Axis5, Axis6, Gripper);
-			}
+		}
+		public enum ActionType
+		{
+			Stop = 0,
+			ForwardKin = 1,
+			InvKinJoystick = 2,
+			InvKinPosition = 3,
+			InvKinOffset = 4,
+			GoToReference = 5 // with Reference e.g. "inverse_home_pose"
+							  // ... predefined positions (Driving position, sampler, etc)? Later.
+		}
+		public class ForwardKinMode
+		{
+			public float Axis1 { get; set; } = 0;
+			public float Axis2 { get; set; } = 0;
+			public float Axis3 { get; set; } = 0;
+			public float Axis4 { get; set; } = 0;
+			public float Axis5 { get; set; } = 0;
+			public float Axis6 { get; set; } = 0;
+		}
+		public class InverseJoystickMode
+		{
+			public Vector3 LinearSpeed { get; set; }
+			public Vector3 RotationSpeed { get; set; }
+		}
+		public class InversePositionMode
+		{
+			public Vector3 Position { get; set; }
+			public Quaternion Rotation { get; set; }
 		}
 
 		public class SamplerControl

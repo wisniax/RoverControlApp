@@ -22,7 +22,7 @@ public partial class PressedKeys : Node
 	private ControlMode _slaveControlMode;
 	private Vector4 _cameraMoveVector;
 	private RoverControl _roverMovement;
-	private ManipulatorControl _manipulatorMovement;
+	private RoboticArmControl _manipulatorMovement;
 	private SamplerControl _samplerControl = null!;
 	private IControlModeController _roverModeControllerPreset = null!;
 	private IRoverDriveController _roverDriveControllerPreset = null!;
@@ -40,7 +40,7 @@ public partial class PressedKeys : Node
 
 	public event Action<Vector4>? CameraMoveVectorChanged;
 	public event Func<RoverControl, Task>? OnRoverMovementVector;
-	public event Func<ManipulatorControl, Task>? OnManipulatorMovement;
+	public event Func<RoboticArmControl, Task>? OnManipulatorMovement;
 	public event Func<SamplerControl, Task>? OnSamplerMovement;
 	public event Func<bool, Task>? OnPadConnectionChanged;
 	public event Func<ControlMode, Task>? OnControlModeChanged;
@@ -103,7 +103,7 @@ public partial class PressedKeys : Node
 		}
 	}
 
-	public ManipulatorControl ManipulatorMovement
+	public RoboticArmControl ManipulatorMovement
 	{
 		get => _manipulatorMovement;
 		private set
@@ -501,7 +501,7 @@ public partial class PressedKeys : Node
 	{
 		EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Verbose, "Stopping all movement");
 		RoverMovement = new RoverControl() { Vel = 0, XAxis = 0, YAxis = 0, Mode = KinematicMode.Ackermann };
-		ManipulatorMovement = new ManipulatorControl();
+		ManipulatorMovement = new RoboticArmControl();
 		SamplerMovement = new SamplerControl();
 
 		CameraMoveVector = Vector4.Zero;

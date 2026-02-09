@@ -11,13 +11,13 @@ public interface IRoverManipulatorController : IActionAwareController
 	/// <summary>
 	/// Probes Godot.Input and returns ManipulatorControl
 	/// </summary>
-	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in ManipulatorControl lastState);
+	public RoboticArmControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in RoboticArmControl lastState);
 
 	/// <summary>
 	/// Processes input
 	/// </summary>
 	/// <returns>True when input causes state change</returns>
-	public bool HandleInput(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, ManipulatorControl lastState, out ManipulatorControl newState)
+	public bool HandleInput(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, RoboticArmControl lastState, out RoboticArmControl newState)
 	{
 		newState = CalculateMoveVector(inputEvent, targetInputDevice, lastState);
 		bool changed = IsMoveVectorChanged(newState, lastState);
@@ -29,7 +29,7 @@ public interface IRoverManipulatorController : IActionAwareController
 	/// Compares two ManipulatorControl states and determines if change is big enough, to be considered
 	/// </summary>
 	/// <returns>true if changed</returns>
-	public bool IsMoveVectorChanged(in ManipulatorControl currentState, in ManipulatorControl lastState) =>
+	public bool IsMoveVectorChanged(in RoboticArmControl currentState, in RoboticArmControl lastState) =>
 		!currentState.Equals(lastState);
 
 	/// <summary>

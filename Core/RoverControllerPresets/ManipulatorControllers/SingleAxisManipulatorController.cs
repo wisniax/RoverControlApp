@@ -20,33 +20,39 @@ public class SingleAxisManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorAxis6,
 	];
 
-	public ManipulatorControl CalculateMoveVector(
+	public RoboticArmControl CalculateMoveVector(
 		in InputEvent inputEvent,
 		DualSeatEvent.InputDevice targetInputDevice,
-		in ManipulatorControl lastState)
+		in RoboticArmControl lastState)
 	{
 		float velocity = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSpeedBackward, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSpeedForward, targetInputDevice));
 		if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.MinimalInput)
 			velocity = 0f;
 
-		ManipulatorControl manipulatorControl;
+		RoboticArmControl manipulatorControl = new();
+
+		manipulatorControl.ActionType = ActionType.ForwardKin;
+		manipulatorControl.ForwardKin = new();
+
 		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis5, targetInputDevice)) && Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis6, targetInputDevice)))
 		{
-			manipulatorControl = new()
-			{
-				Gripper = velocity
-			};
+			// No gripper control yet
+
+			//manipulatorControl = new()
+			//{
+			//	Gripper = velocity
+			//};
 		}
 		else
-			manipulatorControl = new()
-			{
-				Axis1 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis1, targetInputDevice)) ? velocity : 0f,
-				Axis2 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis2, targetInputDevice)) ? velocity : 0f,
-				Axis3 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis3, targetInputDevice)) ? velocity : 0f,
-				Axis4 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis4, targetInputDevice)) ? velocity : 0f,
-				Axis5 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis5, targetInputDevice)) ? velocity : 0f,
-				Axis6 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis6, targetInputDevice)) ? velocity : 0f
-			};
+		{
+			manipulatorControl.ForwardKin.Axis1 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis1, targetInputDevice)) ? velocity : 0f;
+			manipulatorControl.ForwardKin.Axis2 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis2, targetInputDevice)) ? velocity : 0f;
+			manipulatorControl.ForwardKin.Axis3 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis3, targetInputDevice)) ? velocity : 0f;
+			manipulatorControl.ForwardKin.Axis4 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis4, targetInputDevice)) ? velocity : 0f;
+			manipulatorControl.ForwardKin.Axis5 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis5, targetInputDevice)) ? velocity : 0f;
+			manipulatorControl.ForwardKin.Axis6 = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis6, targetInputDevice)) ? velocity : 0f;
+		}
+		
 
 		return manipulatorControl;
 	}
