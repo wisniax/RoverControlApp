@@ -43,6 +43,19 @@ public static class RcaInEvName
 	public static readonly StringName ManipulatorMultiAxis6Forward = new("manipulator_multi_axis_6_forward");
 	public static readonly StringName ManipulatorMultiGripperForward = new("manipulator_multi_gripper_forward");
 	public static readonly StringName ManipulatorMultiChangeAxes = new("manipulator_multi_change_axes");
+	public static readonly StringName ManipulatorInvJoystickPosXPlus = new("manipulator_inv_joy_pos_x+");
+	public static readonly StringName ManipulatorInvJoystickPosXMinus = new("manipulator_inv_joy_pos_x-");
+	public static readonly StringName ManipulatorInvJoystickPosYPlus = new("manipulator_inv_joy_pos_y+");
+	public static readonly StringName ManipulatorInvJoystickPosYMinus = new("manipulator_inv_joy_pos_y-");
+	public static readonly StringName ManipulatorInvJoystickPosZPlus = new("manipulator_inv_joy_pos_z+");
+	public static readonly StringName ManipulatorInvJoystickPosZMinus = new("manipulator_inv_joy_pos_z-");
+	public static readonly StringName ManipulatorInvJoystickRotXPlus = new("manipulator_inv_joy_rot_x+");
+	public static readonly StringName ManipulatorInvJoystickRotXMinus = new("manipulator_inv_joy_rot_x-");
+	public static readonly StringName ManipulatorInvJoystickRotYPlus = new("manipulator_inv_joy_rot_y+");
+	public static readonly StringName ManipulatorInvJoystickRotYMinus = new("manipulator_inv_joy_rot_y-");
+	public static readonly StringName ManipulatorInvJoystickRotZPlus = new("manipulator_inv_joy_rot_z+");
+	public static readonly StringName ManipulatorInvJoystickRotZMinus = new("manipulator_inv_joy_rot_z-");
+	public static readonly StringName ManipulatorModeChange = new("manipulator_mode_change");
 
 	public static readonly StringName SamplerMoveDown = new("sampler_move_down");
 	public static readonly StringName SamplerMoveUp = new("sampler_move_up");

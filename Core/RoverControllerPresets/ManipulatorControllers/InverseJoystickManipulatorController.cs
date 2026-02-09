@@ -10,24 +10,22 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 {
 	private readonly StringName[] _usedActions =
 	[
-		RcaInEvName.ManipulatorMultiAxis1Backward,
-		RcaInEvName.ManipulatorMultiAxis2Backward,
-		RcaInEvName.ManipulatorMultiAxis3Backward,
-		RcaInEvName.ManipulatorMultiAxis4Backward,
-		RcaInEvName.ManipulatorMultiAxis5Backward,
-		RcaInEvName.ManipulatorMultiAxis6Backward,
-		RcaInEvName.ManipulatorMultiGripperBackward,
-		RcaInEvName.ManipulatorMultiAxis1Forward,
-		RcaInEvName.ManipulatorMultiAxis2Forward,
-		RcaInEvName.ManipulatorMultiAxis3Forward,
-		RcaInEvName.ManipulatorMultiAxis4Forward,
-		RcaInEvName.ManipulatorMultiAxis5Forward,
-		RcaInEvName.ManipulatorMultiAxis6Forward,
-		RcaInEvName.ManipulatorMultiGripperForward,
-		RcaInEvName.ManipulatorMultiChangeAxes
+		RcaInEvName.ManipulatorInvJoystickPosXPlus,
+		RcaInEvName.ManipulatorInvJoystickPosXMinus,
+		RcaInEvName.ManipulatorInvJoystickPosYPlus,
+		RcaInEvName.ManipulatorInvJoystickPosYMinus,
+		RcaInEvName.ManipulatorInvJoystickPosZPlus,
+		RcaInEvName.ManipulatorInvJoystickPosZMinus,
+		RcaInEvName.ManipulatorInvJoystickRotXPlus,
+		RcaInEvName.ManipulatorInvJoystickRotXMinus,
+		RcaInEvName.ManipulatorInvJoystickRotYPlus,
+		RcaInEvName.ManipulatorInvJoystickRotYMinus,
+		RcaInEvName.ManipulatorInvJoystickRotZPlus,
+		RcaInEvName.ManipulatorInvJoystickRotZMinus,
+		RcaInEvName.ManipulatorMultiChangeAxes,
 	];
 
-	private bool _axesChanged = false;
+	private bool _axesChanged = true;
 
 	public RoboticArmControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in RoboticArmControl lastState)
 	{
@@ -40,39 +38,24 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		manipulatorControl.ActionType = ActionType.InvKinJoystick;
 		manipulatorControl.InvJoystick = new();
 
-		float gripper = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, tagetInputDevice));
+		Vec3 linearSpeed = new();
+		Vec3 angularSpeed = new();
 
-		if (!_axesChanged)
+		if (_axesChanged)
 		{
-			float axis1 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Forward, tagetInputDevice));
-			float axis2 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Forward, tagetInputDevice));
-			float axis3 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Forward, tagetInputDevice));
-
-			manipulatorControl = new();
-
-			manipulatorControl.ForwardKin.Axis1 = axis1;
-			manipulatorControl.ForwardKin.Axis2 = axis2;
-			manipulatorControl.ForwardKin.Axis3 = axis3;
-			manipulatorControl.ForwardKin.Axis4 = 0;
-			manipulatorControl.ForwardKin.Axis5 = 0;
-			manipulatorControl.ForwardKin.Axis6 = 0;
+			linearSpeed.X = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosXMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosXPlus, tagetInputDevice));
+			linearSpeed.Y = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosYMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosYPlus, tagetInputDevice));
+			linearSpeed.Z = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosZMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosZPlus, tagetInputDevice));
 		}
 		else
 		{
-			float axis4 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis4Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis4Forward, tagetInputDevice));
-			float axis5 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis5Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis5Forward, tagetInputDevice));
-			float axis6 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis6Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis6Forward, tagetInputDevice));
-
-
-			manipulatorControl = new();
-
-			manipulatorControl.ForwardKin.Axis1 = 0;
-			manipulatorControl.ForwardKin.Axis2 = 0;
-			manipulatorControl.ForwardKin.Axis3 = 0;
-			manipulatorControl.ForwardKin.Axis4 = axis4;
-			manipulatorControl.ForwardKin.Axis5 = axis5;
-			manipulatorControl.ForwardKin.Axis6 = axis6;
+			angularSpeed.X = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotXMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotXPlus, tagetInputDevice));
+			angularSpeed.Y = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotYMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotYPlus, tagetInputDevice));
+			angularSpeed.Z = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotZMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotZPlus, tagetInputDevice));
 		}
+
+		manipulatorControl.InvJoystick.LinearSpeed = linearSpeed;
+		manipulatorControl.InvJoystick.RotationSpeed = angularSpeed;
 
 		return manipulatorControl;
 	}
@@ -81,11 +64,11 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between axes 1-3 and axes 4-6. Gripper is controlled with triggers.";
+		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between position and rotation. Gripper is not controlled with triggers.";
 
 	public string[] GetControlledAxes()
 	{
-		return _axesChanged ? new string[] { "Axis4", "Axis5", "Axis6", "Gripper" } : new string[] { "Axis1", "Axis2", "Axis3", "Gripper" };
+		return _axesChanged ? new string[] { "PosX", "PosY", "PosZ" } : new string[] { "RotX", "RotY", "RotZ" };
 	}
 
 }

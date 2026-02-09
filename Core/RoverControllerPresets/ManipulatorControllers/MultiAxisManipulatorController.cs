@@ -49,6 +49,7 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 			float axis2 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Forward, tagetInputDevice));
 			float axis3 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Forward, tagetInputDevice));
 
+
 			manipulatorControl.ForwardKin.Axis1 = axis1;
 			manipulatorControl.ForwardKin.Axis2 = axis2;
 			manipulatorControl.ForwardKin.Axis3 = axis3;

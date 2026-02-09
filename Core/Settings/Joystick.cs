@@ -88,9 +88,11 @@ public partial class Joystick : SettingBase, ICloneable
 
 	[SettingsManagerVisible(
 		cellMode: TreeItem.TreeCellMode.Range,
-		formatData: "0;1;1;f;i",
+		formatData: "0;3;1;f;i",
 		customTooltip: "0 - MultiAxis (Default)\n" +
-					   "1 - SingleAxis"
+					   "1 - SingleAxis\n" +
+					   "2 - Inverse Joystick\n" +
+					   "3 - MultiMode"
 	)]
 	public int RoverManipulatorController
 	{

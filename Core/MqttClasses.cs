@@ -140,13 +140,21 @@ namespace RoverControlApp.Core
 		}
 		public class InverseJoystickMode
 		{
-			public Vector3 LinearSpeed { get; set; }
-			public Vector3 RotationSpeed { get; set; }
+			public Vec3 LinearSpeed { get; set; }
+			public Vec3 RotationSpeed { get; set; }
 		}
+
 		public class InversePositionMode
 		{
-			public Vector3 Position { get; set; }
+			public Vec3 Position { get; set; }
 			public Quaternion Rotation { get; set; }
+		}
+
+		public class Vec3
+		{
+			public float X { get; set; }
+			public float Y { get; set; }
+			public float Z { get; set; }
 		}
 
 		public class SamplerControl
