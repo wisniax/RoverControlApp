@@ -56,6 +56,7 @@ public static class RcaInEvName
 	public static readonly StringName ManipulatorInvJoystickRotZPlus = new("manipulator_inv_joy_rot_z+");
 	public static readonly StringName ManipulatorInvJoystickRotZMinus = new("manipulator_inv_joy_rot_z-");
 	public static readonly StringName ManipulatorModeChange = new("manipulator_mode_change");
+	public static readonly StringName ManipulatorInvChangeRef = new("manipulator_inv_change_ref");
 
 	public static readonly StringName SamplerMoveDown = new("sampler_move_down");
 	public static readonly StringName SamplerMoveUp = new("sampler_move_up");

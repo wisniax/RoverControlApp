@@ -23,6 +23,8 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorInvJoystickRotZPlus,
 		RcaInEvName.ManipulatorInvJoystickRotZMinus,
 		RcaInEvName.ManipulatorMultiChangeAxes,
+		RcaInEvName.ManipulatorModeChange,
+		RcaInEvName.ManipulatorInvChangeRef
 	];
 
 	private bool _axesChanged = true;
@@ -37,6 +39,11 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		RoboticArmControl manipulatorControl = new();
 		manipulatorControl.ActionType = ActionType.InvKinJoystick;
 		manipulatorControl.InvJoystick = new();
+
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvChangeRef, tagetInputDevice), allowEcho: false))
+		{
+			manipulatorControl.Reference = "tool";
+		}
 
 		Vec3 linearSpeed = new();
 		Vec3 angularSpeed = new();
@@ -64,7 +71,7 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between position and rotation. Gripper is not controlled with triggers.";
+		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between position and rotation. Hold Y (xbox) to change reference to 'tool' Gripper is not controlled with triggers.";
 
 	public string[] GetControlledAxes()
 	{
