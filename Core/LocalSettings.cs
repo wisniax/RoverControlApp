@@ -1,9 +1,9 @@
-﻿using Godot;
-using RoverControlApp.Core.Settings;
-using System;
+﻿using System;
 using System.Data;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+
+using Godot;
 
 namespace RoverControlApp.Core;
 
