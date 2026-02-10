@@ -27,40 +27,69 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorMultiChangeAxes
 	];
 
-	private bool _axesChanged = false;
+	private bool _useSecondaryAxes = false;
 
-	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in ManipulatorControl lastState)
+	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in ManipulatorControl lastState)
 	{
-		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, tagetInputDevice), allowEcho: false))
+		float gripper = Input.GetAxis(
+			DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, targetInputDevice),
+			DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, targetInputDevice)
+		);
+
+		bool holdToChangeAxes = LocalSettings.Singleton.Joystick.HoldToChangeManipulatorAxes;
+		bool changeAxesHeld = Input.IsActionPressed(
+			DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, targetInputDevice)
+		);
+
+		if (holdToChangeAxes)
 		{
-			_axesChanged = !_axesChanged;
+			_useSecondaryAxes = changeAxesHeld;
+		}
+		else
+		{
+			if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, targetInputDevice)))
+				_useSecondaryAxes = !_useSecondaryAxes;
 		}
 
-		ManipulatorControl manipulatorControl;
-
-		float gripper = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, tagetInputDevice));
-
-		if (!_axesChanged)
+		if (!_useSecondaryAxes)
 		{
-			float axis1 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Forward, tagetInputDevice));
-			float axis2 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Forward, tagetInputDevice));
-			float axis3 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Forward, tagetInputDevice));
+			float axis1 = Input.GetAxis(
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Backward, targetInputDevice),
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Forward, targetInputDevice)
+			);
+			float axis2 = Input.GetAxis(
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Backward, targetInputDevice),
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Forward, targetInputDevice)
+			);
+			float axis3 = Input.GetAxis(
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Backward, targetInputDevice),
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis3Forward, targetInputDevice)
+			);
 
-			manipulatorControl = new()
+			return new ManipulatorControl
 			{
 				Axis1 = axis1,
 				Axis2 = axis2,
 				Axis3 = axis3,
 				Gripper = gripper
 			};
-		} else
+		}
+		else
 		{
-			float axis4 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis4Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis4Forward, tagetInputDevice));
-			float axis5 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis5Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis5Forward, tagetInputDevice));
-			float axis6 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis6Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis6Forward, tagetInputDevice));
+			float axis4 = Input.GetAxis(
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis4Backward, targetInputDevice),
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis4Forward, targetInputDevice)
+			);
+			float axis5 = Input.GetAxis(
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis5Backward, targetInputDevice),
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis5Forward, targetInputDevice)
+			);
+			float axis6 = Input.GetAxis(
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis6Backward, targetInputDevice),
+				DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis6Forward, targetInputDevice)
+			);
 
-
-			manipulatorControl = new()
+			return new ManipulatorControl
 			{
 				Axis4 = axis4,
 				Axis5 = axis5,
@@ -68,8 +97,6 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 				Gripper = gripper
 			};
 		}
-
-		return manipulatorControl;
 	}
 
 	public Dictionary<StringName, Godot.Collections.Array<InputEvent>> GetInputActions() =>
@@ -80,7 +107,7 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 	public string[] GetControlledAxes()
 	{
-		return _axesChanged ? new string[] { "Axis4", "Axis5", "Axis6", "Gripper" } : new string[] { "Axis1", "Axis2", "Axis3", "Gripper" };
+		return _useSecondaryAxes ? new string[] { "Axis4", "Axis5", "Axis6", "Gripper" } : new string[] { "Axis1", "Axis2", "Axis3", "Gripper" };
 	}
 
 }

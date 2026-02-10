@@ -19,9 +19,10 @@ public partial class Joystick : SettingBase, ICloneable
 		_vibrateOnModeChange = true;
 		_vibrateOnAutoEstop = true;
 		_roverManipulatorController = 0;
+		_holdToChangeManipulatorAxes = false;
 	}
 
-	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange, bool vibrateOnAutoEstop, int roverManipulatorController)
+	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange, bool vibrateOnAutoEstop, int roverManipulatorController, bool holdToChangeManipulatorAxes)
 	{
 		_roverDriveController = roverDriveController;
 		_toggleableKinematics = toggleableKinematics;
@@ -29,6 +30,7 @@ public partial class Joystick : SettingBase, ICloneable
 		_vibrateOnModeChange = vibrateOnModeChange;
 		_vibrateOnAutoEstop = vibrateOnAutoEstop;
 		_roverManipulatorController = roverManipulatorController;
+		_holdToChangeManipulatorAxes = holdToChangeManipulatorAxes;
 	}
 
 	public object Clone()
@@ -40,7 +42,8 @@ public partial class Joystick : SettingBase, ICloneable
 			MinimalInput = _minimalInput,
 			VibrateOnModeChange = _vibrateOnModeChange,
 			VibrateOnAutoEstop = _vibrateOnAutoEstop,
-			RoverManipulatorController = _roverManipulatorController
+			RoverManipulatorController = _roverManipulatorController,
+			HoldToChangeManipulatorAxes = _holdToChangeManipulatorAxes
 		};
 	}
 
@@ -98,12 +101,20 @@ public partial class Joystick : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _roverManipulatorController, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
+	public bool HoldToChangeManipulatorAxes
+	{
+		get => _holdToChangeManipulatorAxes;
+		set => EmitSignal_SettingChanged(ref _holdToChangeManipulatorAxes, value);
+	}
+
 	int _roverDriveController;
 	private bool _toggleableKinematics;
 	float _minimalInput;
 	bool _vibrateOnModeChange;
 	bool _vibrateOnAutoEstop;
 	int _roverManipulatorController;
+	bool _holdToChangeManipulatorAxes;
 }
 
 
