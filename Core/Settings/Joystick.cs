@@ -18,19 +18,15 @@ public partial class Joystick : SettingBase, ICloneable
 		_minimalInput = 0f;
 		_vibrateOnModeChange = true;
 		_vibrateOnAutoEstop = true;
-		_roverManipulatorController = 0;
-		_holdToChangeManipulatorAxes = false;
 	}
 
-	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange, bool vibrateOnAutoEstop, int roverManipulatorController, bool holdToChangeManipulatorAxes)
+	public Joystick(int roverDriveController, bool toggleableKinematics, float minimalInput, bool vibrateOnModeChange, bool vibrateOnAutoEstop)
 	{
 		_roverDriveController = roverDriveController;
 		_toggleableKinematics = toggleableKinematics;
 		_minimalInput = minimalInput;
 		_vibrateOnModeChange = vibrateOnModeChange;
 		_vibrateOnAutoEstop = vibrateOnAutoEstop;
-		_roverManipulatorController = roverManipulatorController;
-		_holdToChangeManipulatorAxes = holdToChangeManipulatorAxes;
 	}
 
 	public object Clone()
@@ -41,9 +37,7 @@ public partial class Joystick : SettingBase, ICloneable
 			ToggleableKinematics = _toggleableKinematics,
 			MinimalInput = _minimalInput,
 			VibrateOnModeChange = _vibrateOnModeChange,
-			VibrateOnAutoEstop = _vibrateOnAutoEstop,
-			RoverManipulatorController = _roverManipulatorController,
-			HoldToChangeManipulatorAxes = _holdToChangeManipulatorAxes
+			VibrateOnAutoEstop = _vibrateOnAutoEstop
 		};
 	}
 
@@ -89,32 +83,11 @@ public partial class Joystick : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _vibrateOnAutoEstop, value);
 	}
 
-	[SettingsManagerVisible(
-		cellMode: TreeItem.TreeCellMode.Range,
-		formatData: "0;1;1;f;i",
-		customTooltip: "0 - MultiAxis (Default)\n" +
-					   "1 - SingleAxis"
-	)]
-	public int RoverManipulatorController
-	{
-		get => _roverManipulatorController;
-		set => EmitSignal_SettingChanged(ref _roverManipulatorController, value);
-	}
-
-	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check)]
-	public bool HoldToChangeManipulatorAxes
-	{
-		get => _holdToChangeManipulatorAxes;
-		set => EmitSignal_SettingChanged(ref _holdToChangeManipulatorAxes, value);
-	}
-
 	int _roverDriveController;
 	private bool _toggleableKinematics;
 	float _minimalInput;
 	bool _vibrateOnModeChange;
 	bool _vibrateOnAutoEstop;
-	int _roverManipulatorController;
-	bool _holdToChangeManipulatorAxes;
 }
 
 

@@ -36,7 +36,7 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 			DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, targetInputDevice)
 		);
 
-		bool holdToChangeAxes = LocalSettings.Singleton.Joystick.HoldToChangeManipulatorAxes;
+		bool holdToChangeAxes = LocalSettings.Singleton.Manipulator.HoldToChangeManipulatorAxes;
 		bool changeAxesHeld = Input.IsActionPressed(
 			DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, targetInputDevice)
 		);

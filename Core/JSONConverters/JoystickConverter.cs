@@ -20,8 +20,6 @@ public class JoystickConverter : JsonConverter<Joystick>
 		float? minimalInput = null;
 		bool? vibrateOnModeChange = null;
 		bool? vibrateOnAutoEstop = null;
-		int? roverManipulatorController = null;
-		bool? holdToChangeManipulatorAxes = null;
 
 		while (reader.Read())
 		{
@@ -51,12 +49,6 @@ public class JoystickConverter : JsonConverter<Joystick>
 				case nameof(Joystick.VibrateOnAutoEstop):
 					vibrateOnAutoEstop = reader.GetBoolean();
 					break;
-				case nameof(Joystick.RoverManipulatorController):
-					roverManipulatorController = reader.GetInt32();
-					break;
-				case nameof(Joystick.HoldToChangeManipulatorAxes):
-					holdToChangeManipulatorAxes = reader.GetBoolean();
-					break;
 				default:
 					reader.Skip();
 					break;
@@ -69,9 +61,7 @@ public class JoystickConverter : JsonConverter<Joystick>
 			toggleableKinematics ?? Default.ToggleableKinematics,
 			minimalInput ?? Default.MinimalInput,
 			vibrateOnModeChange ?? Default.VibrateOnModeChange,
-			vibrateOnAutoEstop ?? Default.VibrateOnAutoEstop,
-			roverManipulatorController ?? Default.RoverManipulatorController,
-			holdToChangeManipulatorAxes ?? Default.HoldToChangeManipulatorAxes
+			vibrateOnAutoEstop ?? Default.VibrateOnAutoEstop
 		);
 	}
 
@@ -83,8 +73,6 @@ public class JoystickConverter : JsonConverter<Joystick>
 		writer.WriteNumber(nameof(Joystick.MinimalInput), value.MinimalInput);
 		writer.WriteBoolean(nameof(Joystick.VibrateOnModeChange), value.VibrateOnModeChange);
 		writer.WriteBoolean(nameof(Joystick.VibrateOnAutoEstop), value.VibrateOnAutoEstop);
-		writer.WriteNumber(nameof(Joystick.RoverManipulatorController), value.RoverManipulatorController);
-		writer.WriteBoolean(nameof(Joystick.HoldToChangeManipulatorAxes), value.HoldToChangeManipulatorAxes);
 		writer.WriteEndObject();
 	}
 }
