@@ -32,4 +32,8 @@ public interface IRoverManipulatorController : IActionAwareController
 	public bool IsMoveVectorChanged(in ManipulatorControl currentState, in ManipulatorControl lastState) =>
 		!currentState.Equals(lastState);
 
+	/// <summary>
+	/// Returns currently controlled axes
+	/// </summary>
+	public string[] GetControlledAxes();
 }

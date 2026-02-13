@@ -206,18 +206,21 @@ public partial class PressedKeys : Node
 
 	void OnSettingsCategoryChanged(StringName property)
 	{
-		if (property != nameof(LocalSettings.Joystick)) return;
+		if (property != nameof(LocalSettings.Joystick) && property != nameof(LocalSettings.Manipulator)) return;
 
 		SetupControllerPresets();
 	}
 
 	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 	{
-		if (category != nameof(LocalSettings.Joystick)) return;
+		if (category != nameof(LocalSettings.Joystick) && category != nameof(LocalSettings.Manipulator)) return;
 
 		switch (name)
 		{
 			case nameof(LocalSettings.Joystick.RoverDriveController):
+				SetupControllerPresets();
+				break;
+			case nameof(LocalSettings.Manipulator.RoverManipulatorController):
 				SetupControllerPresets();
 				break;
 		}
@@ -461,7 +464,10 @@ public partial class PressedKeys : Node
 			RoverDriveControllerSelector.GetController(
 				(RoverDriveControllerSelector.Controller)LocalSettings.Singleton.Joystick.RoverDriveController
 			);
-		_roverManipulatorControllerPreset = new SingleAxisManipulatorController();
+		_roverManipulatorControllerPreset =
+			RoverManipulatorControllerSelector.GetController(
+				(RoverManipulatorControllerSelector.Controller)LocalSettings.Singleton.Manipulator.RoverManipulatorController
+			);
 		_roverSamplerControllerPreset = new SamplerController();
 		_roverCameraControllerPreset = new OriginalCameraController();
 

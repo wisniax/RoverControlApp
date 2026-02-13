@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.ServiceModel;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -320,7 +321,57 @@ namespace RoverControlApp.MVVM.ViewModel
 
 					break;
 				case MqttClasses.ControlMode.Manipulator:
-					FancyDebugViewRLab.AppendText($"PressedKeys.Singleton: Manipulator Mov: {JsonSerializer.Serialize(PressedKeys.Singleton.ManipulatorMovement)}\n");
+					string[] controlledAxes = PressedKeys.Singleton.RoverManipulatorControllerPreset.GetControlledAxes();
+					FancyDebugViewRLab.AppendText("PressedKeys.Singleton: Manipulator Mov: {" +
+						$"{(controlledAxes.Contains("Axis1") ? "[b]Axis1:[/b] " : "Axis1: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis1, 2)}, " +
+						$"{(controlledAxes.Contains("Axis2") ? "[b]Axis2:[/b] " : "Axis2: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis2, 2)}, " +
+						$"{(controlledAxes.Contains("Axis3") ? "[b]Axis3:[/b] " : "Axis3: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis3, 2)}, " +
+						$"{(controlledAxes.Contains("Axis4") ? "[b]Axis4:[/b] " : "Axis4: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis4, 2)}, " +
+						$"{(controlledAxes.Contains("Axis5") ? "[b]Axis5:[/b] " : "Axis5: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis5, 2)}, " +
+						$"{(controlledAxes.Contains("Axis6") ? "[b]Axis6:[/b] " : "Axis6: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis6, 2)}, " +
+						$"{(controlledAxes.Contains("Gripper") ? "[b]Gripper:[/b] " : "Gripper: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Gripper, 2)}, " +
+						$"Timestamp: {PressedKeys.Singleton.ManipulatorMovement.Timestamp}}}\n"
+					 );
+					break;
+				case MqttClasses.ControlMode.Sampler:
+					FancyDebugViewRLab.AppendText($"PressedKeys.Singleton: Sampler DrillAction: {PressedKeys.Singleton.SamplerMovement.DrillAction:F2}, " +
+												  $"DrillMov: {PressedKeys.Singleton.SamplerMovement.DrillMovement:F2}, " +
+												  $"PlatformMov: {PressedKeys.Singleton.SamplerMovement.PlatformMovement:F2}, \n" +
+												  $"{(LocalSettings.Singleton.Sampler.Container0.CustomName == "-" ? "Container0" : LocalSettings.Singleton.Sampler.Container0.CustomName)}" +
+																$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees0:F1}, " +
+												  $"{(LocalSettings.Singleton.Sampler.Container1.CustomName == "-" ? "Container1" : LocalSettings.Singleton.Sampler.Container1.CustomName)}" +
+																$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees1:F1}, " +
+												  $"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "Container2" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
+																$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees2:F1}, " +
+												  $"{(LocalSettings.Singleton.Sampler.Container3.CustomName == "-" ? "Container3" : LocalSettings.Singleton.Sampler.Container3.CustomName)}" +
+																$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees3:F1}, " +
+												  $"{(LocalSettings.Singleton.Sampler.Container4.CustomName == "-" ? "Container4" : LocalSettings.Singleton.Sampler.Container4.CustomName)}" +
+																$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees4:F1}\n");
+
+					break;
+			}
+
+			switch (PressedKeys.Singleton.SlaveControlMode)
+			{
+				case MqttClasses.ControlMode.Rover:
+					var vecc = new Vector3((float)PressedKeys.Singleton.RoverMovement.Vel, (float)PressedKeys.Singleton.RoverMovement.XAxis,
+						(float)PressedKeys.Singleton.RoverMovement.YAxis);
+
+					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {vecc.X:F2}, XAxis: {vecc.Y:F2}, YAxis: {vecc.Z:F2}, Mode: {PressedKeys.Singleton.RoverMovement.Mode}\n");
+
+					break;
+				case MqttClasses.ControlMode.Manipulator:
+					string[] controlledAxes = PressedKeys.Singleton.RoverManipulatorControllerPreset.GetControlledAxes();
+					FancyDebugViewRLab.AppendText("PressedKeys.Singleton: Manipulator Mov: {" +
+						$"{(controlledAxes.Contains("Axis1") ? "[b]Axis1:[/b] " : "Axis1: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis1, 2)}, " +
+						$"{(controlledAxes.Contains("Axis2") ? "[b]Axis2:[/b] " : "Axis2: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis2, 2)}, " +
+						$"{(controlledAxes.Contains("Axis3") ? "[b]Axis3:[/b] " : "Axis3: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis3, 2)}, " +
+						$"{(controlledAxes.Contains("Axis4") ? "[b]Axis4:[/b] " : "Axis4: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis4, 2)}, " +
+						$"{(controlledAxes.Contains("Axis5") ? "[b]Axis5:[/b] " : "Axis5: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis5, 2)}, " +
+						$"{(controlledAxes.Contains("Axis6") ? "[b]Axis6:[/b] " : "Axis6: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis6, 2)}, " +
+						$"{(controlledAxes.Contains("Gripper") ? "[b]Gripper:[/b] " : "Gripper: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Gripper, 2)}, " +
+						$"Timestamp: {PressedKeys.Singleton.ManipulatorMovement.Timestamp}}}\n"
+					 );
 					break;
 				case MqttClasses.ControlMode.Sampler:
 					FancyDebugViewRLab.AppendText($"PressedKeys.Singleton: Sampler DrillAction: {PressedKeys.Singleton.SamplerMovement.DrillAction:F2}, " +
