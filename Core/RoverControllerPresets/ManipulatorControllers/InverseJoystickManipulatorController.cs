@@ -52,15 +52,15 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 
 		if (_useSecondaryAxes)
 		{
-			linearSpeed.X = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosXMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosXPlus, tagetInputDevice));
-			linearSpeed.Y = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosYMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosYPlus, tagetInputDevice));
-			linearSpeed.Z = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosZMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosZPlus, tagetInputDevice));
+			linearSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosXMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosXPlus, tagetInputDevice));
+			linearSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosYMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosYPlus, tagetInputDevice));
+			linearSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosZMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosZPlus, tagetInputDevice));
 		}
 		else
 		{
-			angularSpeed.X = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotXMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotXPlus, tagetInputDevice));
-			angularSpeed.Y = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotYMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotYPlus, tagetInputDevice));
-			angularSpeed.Z = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotZMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotZPlus, tagetInputDevice));
+			angularSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotXMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotXPlus, tagetInputDevice));
+			angularSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotYMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotYPlus, tagetInputDevice));
+			angularSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotZMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickRotZPlus, tagetInputDevice));
 		}
 
 		manipulatorControl.InvJoystick.LinearSpeed = linearSpeed;

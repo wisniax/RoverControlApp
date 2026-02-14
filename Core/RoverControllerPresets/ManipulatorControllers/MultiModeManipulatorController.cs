@@ -26,7 +26,7 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 	];
 
 	private bool _axesChanged = true;
-	private ActionType _currentActionType = ActionType.ForwardKin;
+	private ActionType _currentActionType = ActionType.InvKinJoystick;
 
 	InverseJoystickManipulatorController inverseJoystickManipulatorController = new();
 	MultiAxisManipulatorController multiAxisManipulatorController = new();
