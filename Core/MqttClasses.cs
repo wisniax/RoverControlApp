@@ -115,6 +115,7 @@ namespace RoverControlApp.Core
 			public ForwardKinMode? ForwardKin { get; set; }
 			public InverseJoystickMode? InvJoystick { get; set; } // Joystick Control is a "ROS" name for it
 			public InversePositionMode? InvPosition { get; set; }
+			//public float Gripper { get; set; }
 			public bool ForceCartesian { get; set; }
 			public bool ForceMovement { get; set; }
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
