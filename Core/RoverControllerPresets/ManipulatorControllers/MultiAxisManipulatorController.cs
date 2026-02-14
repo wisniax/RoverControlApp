@@ -33,7 +33,7 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 	{
 		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, tagetInputDevice), allowEcho: false))
 		{
-			_axesChanged = !_axesChanged;
+			_useSecondaryAxes = !_useSecondaryAxes;
 		}
 
 		RoboticArmControl manipulatorControl = new();
@@ -43,7 +43,7 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 		float gripper = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, tagetInputDevice));
 
-		if (!_axesChanged)
+		if (!_useSecondaryAxes)
 		{
 			float axis1 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis1Forward, tagetInputDevice));
 			float axis2 = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Backward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiAxis2Forward, tagetInputDevice));

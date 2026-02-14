@@ -29,13 +29,13 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorInvChangeRef
 	];
 
-	private bool _axesChanged = true;
+	private bool _useSecondaryAxes = true;
 
 	public RoboticArmControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in RoboticArmControl lastState)
 	{
 		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, tagetInputDevice), allowEcho: true))
 		{
-			_axesChanged = !_axesChanged;
+			_useSecondaryAxes = !_useSecondaryAxes;
 		}
 
 		RoboticArmControl manipulatorControl = new();
@@ -50,7 +50,7 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		Vec3 linearSpeed = new();
 		Vec3 angularSpeed = new();
 
-		if (_axesChanged)
+		if (_useSecondaryAxes)
 		{
 			linearSpeed.X = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosXMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosXPlus, tagetInputDevice));
 			linearSpeed.Y = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosYMinus, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorInvJoystickPosYPlus, tagetInputDevice));
@@ -79,7 +79,7 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 
 	public string[] GetControlledAxes()
 	{
-		return _axesChanged ? new string[] { "PosX", "PosY", "PosZ" } : new string[] { "RotX", "RotY", "RotZ" };
+		return _useSecondaryAxes ? new string[] { "PosX", "PosY", "PosZ" } : new string[] { "RotX", "RotY", "RotZ" };
 	}
 
 }
