@@ -22,6 +22,8 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorInvJoystickRotYMinus,
 		RcaInEvName.ManipulatorInvJoystickRotZPlus,
 		RcaInEvName.ManipulatorInvJoystickRotZMinus,
+		RcaInEvName.ManipulatorMultiGripperForward,
+		RcaInEvName.ManipulatorMultiGripperBackward,
 		RcaInEvName.ManipulatorMultiChangeAxes,
 		RcaInEvName.ManipulatorModeChange,
 		RcaInEvName.ManipulatorInvChangeRef
@@ -31,7 +33,7 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 
 	public RoboticArmControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in RoboticArmControl lastState)
 	{
-		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, tagetInputDevice), allowEcho: false))
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, tagetInputDevice), allowEcho: true))
 		{
 			_axesChanged = !_axesChanged;
 		}
@@ -40,7 +42,7 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		manipulatorControl.ActionType = ActionType.InvKinJoystick;
 		manipulatorControl.InvJoystick = new();
 
-		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvChangeRef, tagetInputDevice), allowEcho: false))
+		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvChangeRef, tagetInputDevice), exactMatch: true))
 		{
 			manipulatorControl.Reference = "tool";
 		}
@@ -64,6 +66,8 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		manipulatorControl.InvJoystick.LinearSpeed = linearSpeed;
 		manipulatorControl.InvJoystick.RotationSpeed = angularSpeed;
 
+		manipulatorControl.Gripper = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, tagetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, tagetInputDevice));
+
 		return manipulatorControl;
 	}
 
@@ -71,7 +75,7 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between position and rotation. Hold Y (xbox) to change reference to 'tool' Gripper is not controlled with triggers.";
+		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between position and rotation. Hold Y (xbox) to change reference to 'tool' Gripper is controlled with triggers.";
 
 	public string[] GetControlledAxes()
 	{

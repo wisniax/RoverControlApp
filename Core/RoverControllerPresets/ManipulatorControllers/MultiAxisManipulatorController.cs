@@ -24,7 +24,7 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorMultiAxis5Forward,
 		RcaInEvName.ManipulatorMultiAxis6Forward,
 		RcaInEvName.ManipulatorMultiGripperForward,
-		RcaInEvName.ManipulatorMultiChangeAxes
+		RcaInEvName.ManipulatorMultiChangeAxes,
 	];
 
 	private bool _axesChanged = false;
@@ -70,6 +70,8 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 			manipulatorControl.ForwardKin.Axis5 = axis5;
 			manipulatorControl.ForwardKin.Axis6 = axis6;
 		}
+
+		manipulatorControl.Gripper = gripper;
 
 		return manipulatorControl;
 	}

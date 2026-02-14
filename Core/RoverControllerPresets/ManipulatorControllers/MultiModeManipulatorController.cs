@@ -26,7 +26,7 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 	];
 
 	private bool _axesChanged = true;
-	private ActionType _currentActionType = ActionType.Stop;
+	private ActionType _currentActionType = ActionType.ForwardKin;
 
 	InverseJoystickManipulatorController inverseJoystickManipulatorController = new();
 	MultiAxisManipulatorController multiAxisManipulatorController = new();
@@ -39,12 +39,6 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 		}
 		switch (_currentActionType)
 		{
-			case ActionType.Stop:
-				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorModeChange, tagetInputDevice), allowEcho: false))
-				{
-					_currentActionType = ActionType.ForwardKin;
-				}
-				break;
 			case ActionType.ForwardKin:
 				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorModeChange, tagetInputDevice), allowEcho: false))
 				{
@@ -54,24 +48,22 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 			case ActionType.InvKinJoystick:
 				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorModeChange, tagetInputDevice), allowEcho: false))
 				{
-					_currentActionType = ActionType.Stop;
+					_currentActionType = ActionType.ForwardKin;
 				}
 				break;
 			default:
-				_currentActionType = ActionType.Stop;
+				_currentActionType = ActionType.ForwardKin;
 				break;
 		}
 
 		switch(_currentActionType)
 		{
-			case ActionType.Stop:
-				return new RoboticArmControl() { ActionType = ActionType.Stop };
 			case ActionType.ForwardKin:
 				return multiAxisManipulatorController.CalculateMoveVector(inputEvent, tagetInputDevice, lastState);
 			case ActionType.InvKinJoystick:
 				return inverseJoystickManipulatorController.CalculateMoveVector(inputEvent, tagetInputDevice, lastState);
 			default:
-				return new RoboticArmControl() { ActionType = ActionType.Stop };
+				return new RoboticArmControl() { ActionType = ActionType.ForwardKin };
 		}
 	}
 
@@ -85,8 +77,6 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 	{
 		switch (_currentActionType)
 		{
-			case ActionType.Stop:
-				break;
 			case ActionType.ForwardKin:
 				return multiAxisManipulatorController.GetControlledAxes();
 				break;

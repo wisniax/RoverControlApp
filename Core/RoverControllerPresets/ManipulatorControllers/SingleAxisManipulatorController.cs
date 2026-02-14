@@ -36,12 +36,10 @@ public class SingleAxisManipulatorController : IRoverManipulatorController
 
 		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis5, targetInputDevice)) && Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorAxis6, targetInputDevice)))
 		{
-			// No gripper control yet
-
-			//manipulatorControl = new()
-			//{
-			//	Gripper = velocity
-			//};
+			manipulatorControl = new()
+			{
+				Gripper = velocity
+			};
 		}
 		else
 		{
