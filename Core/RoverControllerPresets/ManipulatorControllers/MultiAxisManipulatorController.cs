@@ -27,7 +27,7 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorMultiChangeAxes,
 	];
 
-	private bool _axesChanged = false;
+	private bool _useSecondaryAxes = false;
 
 	public RoboticArmControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in RoboticArmControl lastState)
 	{
@@ -74,6 +74,8 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 		manipulatorControl.Gripper = gripper;
 
 		return manipulatorControl;
+
+		return manipulatorControl;
 	}
 
 	public Dictionary<StringName, Godot.Collections.Array<InputEvent>> GetInputActions() =>
@@ -84,7 +86,7 @@ public class MultiAxisManipulatorController : IRoverManipulatorController
 
 	public string[] GetControlledAxes()
 	{
-		return _axesChanged ? new string[] { "Axis4", "Axis5", "Axis6", "Gripper" } : new string[] { "Axis1", "Axis2", "Axis3", "Gripper" };
+		return _useSecondaryAxes ? new string[] { "Axis4", "Axis5", "Axis6", "Gripper" } : new string[] { "Axis1", "Axis2", "Axis3", "Gripper" };
 	}
 
 }

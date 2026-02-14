@@ -17,6 +17,7 @@ public partial class LocalSettings : Node
 		public Settings.Camera? Camera { get; set; } = null;
 		public Settings.Mqtt? Mqtt { get; set; } = null;
 		public Settings.Joystick? Joystick { get; set; } = null;
+		public Settings.Manipulator? Manipulator { get; set; } = null;
 		public Settings.SpeedLimiter? SpeedLimiter { get; set; } = null;
 		public Settings.General? General { get; set; } = null;
 		public Settings.Sampler? Sampler { get; set; } = null;
@@ -55,6 +56,7 @@ public partial class LocalSettings : Node
 		_camera = new();
 		_mqtt = new();
 		_joystick = new();
+		_manipulator = new();
 		_speedLimiter = new();
 		_general = new();
 		_sampler = new();
@@ -111,6 +113,7 @@ public partial class LocalSettings : Node
 			Camera = LoadSettings_CameraSafety(packedSettings.Camera ?? new());
 			Mqtt = packedSettings.Mqtt ?? new();
 			Joystick = packedSettings.Joystick ?? new();
+			Manipulator = packedSettings.Manipulator ?? new();
 			SpeedLimiter = packedSettings.SpeedLimiter ?? new();
 			General = packedSettings.General ?? new();
 			Sampler = packedSettings.Sampler ?? new();
@@ -144,6 +147,7 @@ public partial class LocalSettings : Node
 				Camera = Camera,
 				Mqtt = Mqtt,
 				Joystick = Joystick,
+				Manipulator = Manipulator,
 				SpeedLimiter = SpeedLimiter,
 				General = General,
 				Sampler = Sampler,
@@ -173,6 +177,7 @@ public partial class LocalSettings : Node
 		Camera = LoadSettings_CameraSafety(new());
 		Mqtt = new();
 		Joystick = new();
+		Manipulator = new();
 		SpeedLimiter = new();
 		General = new();
 		Sampler = new();
@@ -270,6 +275,27 @@ public partial class LocalSettings : Node
 			);
 
 			EmitSignalCategoryChanged(nameof(Joystick));
+		}
+	}
+
+	[SettingsManagerVisible(customName: "Manipulator Settings")]
+	public Settings.Manipulator Manipulator
+	{
+		get => _manipulator;
+		set
+		{
+			_manipulator = value;
+
+			_manipulator.Connect(
+				Settings.Manipulator.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
+			);
+			_manipulator.Connect(
+				Settings.Manipulator.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(Manipulator));
 		}
 	}
 
@@ -381,6 +407,7 @@ public partial class LocalSettings : Node
 	Settings.Camera _camera;
 	Settings.Mqtt _mqtt;
 	Settings.Joystick _joystick;
+	Settings.Manipulator _manipulator;
 	Settings.SpeedLimiter _speedLimiter;
 	Settings.General _general;
 	Settings.Sampler _sampler;
