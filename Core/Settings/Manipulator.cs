@@ -15,12 +15,14 @@ public partial class Manipulator : SettingBase, ICloneable
 	{
 		_roverManipulatorController = 3;
 		_holdToChangeManipulatorAxes = false;
+		_invKinScaler = new();
 	}
 
-	public Manipulator(int roverManipulatorController, bool holdToChangeManipulatorAxes)
+	public Manipulator(int roverManipulatorController, bool holdToChangeManipulatorAxes, InvKinScaler invKinScaler)
 	{
 		_roverManipulatorController = roverManipulatorController;
 		_holdToChangeManipulatorAxes = holdToChangeManipulatorAxes;
+		_invKinScaler = invKinScaler;
 	}
 
 	public object Clone()
@@ -54,8 +56,17 @@ public partial class Manipulator : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _holdToChangeManipulatorAxes, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
+	public Settings.InvKinScaler? InvKinScaler
+	{
+		get => _invKinScaler;
+		set => EmitSignal_SectionChanged(ref _invKinScaler, value);
+	}
+
+
 	int _roverManipulatorController;
 	bool _holdToChangeManipulatorAxes;
+	Settings.InvKinScaler? _invKinScaler;
 }
 
 
