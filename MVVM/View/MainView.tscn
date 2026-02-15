@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=27 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/SafeMode_UIOverlay.cs" id="7_ssyiv"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/DualSeatSlave_UIOverlay.cs" id="8_yrt6e"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
+[ext_resource type="PackedScene" uid="uid://qvoak3uoov1n" path="res://MVVM/View/CalibrateControl.tscn" id="11_7kg0v"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MaxSizeContainer.cs" id="13_0svft"]
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
@@ -52,7 +53,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "CalibrateControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "InputHelpMaster")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -73,10 +74,10 @@ ShowMissionControlBrn = NodePath("HBoxContainer/ShowMissionControl")
 ShowBatteryMonitor = NodePath("HBoxContainer/ShowBatteryMonitor")
 SettingsManagerNode = NodePath("SettingsManager")
 MissionControlNode = NodePath("MissionControl")
+CalibrateControlNode = NodePath("CalibrateControl")
 FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
-BatteryMonitor = NodePath("BatteryMonitor")
 InputHelpMaster = NodePath("MaxSizeContainer/InputHelpMaster")
 
 [node name="CameraView" type="TextureRect" parent="."]
@@ -95,9 +96,9 @@ anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 10.0
-offset_top = -102.0
+offset_top = -140.0
 offset_right = 454.0
-offset_bottom = -10.0
+offset_bottom = -48.0
 grow_vertical = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_w78xs")
 bbcode_enabled = true
@@ -257,6 +258,13 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_psw5f")
 text = "MISSION CONTROL"
 
+[node name="ShowCalibrateMonitor" type="Button" parent="HBoxContainer"]
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+shortcut = SubResource("Shortcut_x20sx")
+text = "CALIBRATE CONTROL"
+
 [node name="ShowVelMonitor" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
@@ -290,6 +298,30 @@ text = "SETTINGS"
 visible = false
 layout_mode = 0
 
+[node name="CalibrateControl" parent="." instance=ExtResource("11_7kg0v")]
+visible = false
+layout_mode = 1
+anchors_preset = 6
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_top = -225.0
+offset_bottom = 225.0
+grow_vertical = 2
+
+[node name="VelMonitor" parent="." instance=ExtResource("6_wqihy")]
+visible = false
+custom_minimum_size = Vector2(430, 430)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -340.0
+offset_top = -100.0
+offset_bottom = 100.0
+grow_horizontal = 0
+
 [node name="BatteryMonitor" parent="." instance=ExtResource("13_gec13")]
 visible = false
 layout_mode = 1
@@ -298,25 +330,12 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -652.0
-offset_top = -396.0
-offset_right = -218.0
-offset_bottom = -45.0
+offset_left = -213.41
+offset_top = -204.38
+offset_right = -5.40991
+offset_bottom = -45.38
 grow_horizontal = 0
 grow_vertical = 0
-
-[node name="VelMonitor" parent="." instance=ExtResource("6_wqihy")]
-visible = false
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = -440.0
-offset_top = -208.0
-offset_right = -9.0
-offset_bottom = 213.0
-grow_horizontal = 0
 
 [node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
 visible = false
@@ -370,12 +389,13 @@ offset_bottom = -40.0
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowCalibrateMonitor" to="CalibrateControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]

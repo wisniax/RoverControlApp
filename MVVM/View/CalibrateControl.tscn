@@ -1,0 +1,352 @@
+[gd_scene load_steps=4 format=3 uid="uid://qvoak3uoov1n"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/CalibrateControl.cs" id="1_mll3j"]
+[ext_resource type="Texture2D" uid="uid://cra73rn2ne7aj" path="res://Resources/rover_wheel.png" id="2_wwmes"]
+[ext_resource type="Texture2D" uid="uid://cluv3fvjs73t2" path="res://Resources/rover_no_wheels.png" id="3_mj3jb"]
+
+[node name="CalibrateControl" type="Panel" node_paths=PackedStringArray("AxisModels", "AxisButtons", "AxisOptions", "OffsetBox", "OffestButtons", "OffsetScroll", "VelocityBox", "VelocityButtons", "VelocityScroll", "OffsetButton", "VelocityButton", "ConfirmButton", "CancelButton", "StopButton", "ReturnToOriginButton", "PanelCover")]
+custom_minimum_size = Vector2(500, 450)
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -470.0
+offset_bottom = 450.0
+grow_horizontal = 0
+script = ExtResource("1_mll3j")
+AxisModels = [NodePath("Control/WheelFrontLeft"), NodePath("Control/WheelFrontRight"), NodePath("Control/WheelBackLeft"), NodePath("Control/WheelBackRight")]
+AxisButtons = [NodePath("Control2/FrontLeftAxis"), NodePath("Control2/FrontRightAxis"), NodePath("Control2/BackLeftAxis"), NodePath("Control2/BackRightAxis")]
+AxisOptions = NodePath("VBoxContainer/AxisOptions")
+OffsetBox = NodePath("VBoxContainer/OffsetContainer/MoreButtons/OffEdit")
+OffestButtons = [NodePath("VBoxContainer/OffsetContainer/MoreButtons/Minus5"), NodePath("VBoxContainer/OffsetContainer/MoreButtons/Minus2"), NodePath("VBoxContainer/OffsetContainer/MoreButtons/Minus1"), NodePath("VBoxContainer/OffsetContainer/MoreButtons/Plus1"), NodePath("VBoxContainer/OffsetContainer/MoreButtons/Plus2"), NodePath("VBoxContainer/OffsetContainer/MoreButtons/Plus5")]
+OffsetScroll = NodePath("VBoxContainer/OffsetContainer/OffsetScroll")
+VelocityBox = NodePath("VBoxContainer/VelocityContainer/MoreButtons/VelEdit")
+VelocityButtons = [NodePath("VBoxContainer/VelocityContainer/MoreButtons/Minus5"), NodePath("VBoxContainer/VelocityContainer/MoreButtons/Minus2"), NodePath("VBoxContainer/VelocityContainer/MoreButtons/Minus1"), NodePath("VBoxContainer/VelocityContainer/MoreButtons/Plus1"), NodePath("VBoxContainer/VelocityContainer/MoreButtons/Plus2"), NodePath("VBoxContainer/VelocityContainer/MoreButtons/Plus5")]
+VelocityScroll = NodePath("VBoxContainer/VelocityContainer/VelocityScroll")
+OffsetButton = NodePath("VBoxContainer/OffsetContainer/OffsetButton")
+VelocityButton = NodePath("VBoxContainer/VelocityContainer/VelocityButton")
+ConfirmButton = NodePath("VBoxContainer/ActionsContainer/HFlowContainer/Confirm")
+CancelButton = NodePath("VBoxContainer/ActionsContainer/HFlowContainer/Cancel")
+StopButton = NodePath("VBoxContainer/ActionsContainer/HFlowContainer/Stop")
+ReturnToOriginButton = NodePath("VBoxContainer/ActionsContainer/Return To Origin")
+PanelCover = NodePath("PanelContainer")
+
+[node name="CalibrateLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -91.0
+offset_right = 91.0
+offset_bottom = 46.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 22
+text = "CalibrateControl"
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 12.0
+offset_top = 52.0
+offset_right = 327.0
+offset_bottom = 441.0
+
+[node name="AxisLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Choose Axis"
+
+[node name="AxisOptions" type="OptionButton" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+focus_mode = 0
+alignment = 1
+item_count = 4
+popup/item_0/text = "Front Left"
+popup/item_1/text = "Front Right"
+popup/item_1/id = 1
+popup/item_2/text = "Rear Left"
+popup/item_2/id = 2
+popup/item_3/text = "Rear Right"
+popup/item_3/id = 3
+
+[node name="OffsetContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Offset" type="Label" parent="VBoxContainer/OffsetContainer"]
+layout_mode = 2
+text = "Offset Value"
+
+[node name="MoreButtons" type="HBoxContainer" parent="VBoxContainer/OffsetContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Minus5" type="Button" parent="VBoxContainer/OffsetContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "-5"
+
+[node name="Minus2" type="Button" parent="VBoxContainer/OffsetContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "-2"
+
+[node name="Minus1" type="Button" parent="VBoxContainer/OffsetContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "-1"
+
+[node name="OffEdit" type="LineEdit" parent="VBoxContainer/OffsetContainer/MoreButtons"]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+focus_mode = 0
+text = "1"
+alignment = 1
+max_length = 4
+
+[node name="Plus1" type="Button" parent="VBoxContainer/OffsetContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "+1"
+
+[node name="Plus2" type="Button" parent="VBoxContainer/OffsetContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "+2"
+
+[node name="Plus5" type="Button" parent="VBoxContainer/OffsetContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "+5"
+
+[node name="OffsetScroll" type="HScrollBar" parent="VBoxContainer/OffsetContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+min_value = -30.0
+max_value = 30.0
+step = 0.1
+value = 1.0
+
+[node name="OffsetButton" type="Button" parent="VBoxContainer/OffsetContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "Set Offset"
+
+[node name="VelocityContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Velociy" type="Label" parent="VBoxContainer/VelocityContainer"]
+layout_mode = 2
+text = "Velocity:
+"
+
+[node name="MoreButtons" type="HBoxContainer" parent="VBoxContainer/VelocityContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Minus5" type="Button" parent="VBoxContainer/VelocityContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "-5"
+
+[node name="Minus2" type="Button" parent="VBoxContainer/VelocityContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "-2"
+
+[node name="Minus1" type="Button" parent="VBoxContainer/VelocityContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "-1"
+
+[node name="VelEdit" type="LineEdit" parent="VBoxContainer/VelocityContainer/MoreButtons"]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+focus_mode = 0
+text = "1"
+alignment = 1
+max_length = 4
+
+[node name="Plus1" type="Button" parent="VBoxContainer/VelocityContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "+1"
+
+[node name="Plus2" type="Button" parent="VBoxContainer/VelocityContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "+2"
+
+[node name="Plus5" type="Button" parent="VBoxContainer/VelocityContainer/MoreButtons"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+focus_mode = 0
+text = "+5"
+
+[node name="VelocityScroll" type="HScrollBar" parent="VBoxContainer/VelocityContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+min_value = -10.0
+max_value = 10.0
+step = 0.1
+value = 1.0
+
+[node name="VelocityButton" type="Button" parent="VBoxContainer/VelocityContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "Set Velocity"
+
+[node name="ActionsLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Actions"
+
+[node name="ActionsContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="HFlowContainer" type="HFlowContainer" parent="VBoxContainer/ActionsContainer"]
+layout_mode = 2
+alignment = 1
+last_wrap_alignment = 3
+
+[node name="Confirm" type="Button" parent="VBoxContainer/ActionsContainer/HFlowContainer"]
+modulate = Color(0, 1, 0, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Confirm"
+
+[node name="Cancel" type="Button" parent="VBoxContainer/ActionsContainer/HFlowContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Cancel"
+
+[node name="Stop" type="Button" parent="VBoxContainer/ActionsContainer/HFlowContainer"]
+modulate = Color(1, 0, 0, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Stop"
+
+[node name="Return To Origin" type="Button" parent="VBoxContainer/ActionsContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "Return To Origin"
+
+[node name="Control" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 400.0
+offset_top = 420.0
+offset_right = 400.0
+offset_bottom = 420.0
+scale = Vector2(1.1, 1.1)
+
+[node name="WheelFrontLeft" type="Sprite2D" parent="Control"]
+modulate = Color(0.314316, 0.314316, 0.314316, 1)
+position = Vector2(-36.7407, -174.829)
+rotation = 1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_wwmes")
+offset = Vector2(-105.4, -17.8)
+
+[node name="WheelFrontRight" type="Sprite2D" parent="Control"]
+position = Vector2(54.4592, -174.829)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_wwmes")
+offset = Vector2(-105.4, -17.8)
+
+[node name="WheelBackLeft" type="Sprite2D" parent="Control"]
+position = Vector2(-36.7405, -28.8291)
+rotation = 1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_wwmes")
+offset = Vector2(-105.4, -17.8)
+
+[node name="WheelBackRight" type="Sprite2D" parent="Control"]
+position = Vector2(54.4597, -28.8291)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_wwmes")
+offset = Vector2(-105.4, -17.8)
+
+[node name="RoverBody" type="Sprite2D" parent="Control"]
+position = Vector2(9.25934, -148.829)
+rotation = 1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("3_mj3jb")
+
+[node name="Control2" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 339.0
+offset_top = 200.0
+offset_right = 481.0
+offset_bottom = 418.0
+
+[node name="FrontLeftAxis" type="Button" parent="Control2"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 46.0
+offset_bottom = 56.0
+
+[node name="FrontRightAxis" type="Button" parent="Control2"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -46.0
+offset_bottom = 56.0
+grow_horizontal = 0
+
+[node name="BackLeftAxis" type="Button" parent="Control2"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -56.0
+offset_right = 46.0
+grow_vertical = 0
+
+[node name="BackRightAxis" type="Button" parent="Control2"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -46.0
+offset_top = -56.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="PanelContainer" type="Panel" parent="."]
+visible = false
+self_modulate = Color(0, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PanelContainer"]
+self_modulate = Color(1, 0.529412, 0, 1)
+layout_mode = 2
+offset_top = 213.0
+offset_right = 470.0
+offset_bottom = 236.0
+text = "Available only in the EStop Mode"
+horizontal_alignment = 1
