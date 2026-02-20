@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dugqdg2bjure7"]
+[gd_scene load_steps=5 format=3 uid="uid://dugqdg2bjure7"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/VelMonitor.cs" id="1_3iyhe"]
 [ext_resource type="Texture2D" uid="uid://cra73rn2ne7aj" path="res://Resources/rover_wheel.png" id="2_lfwv6"]
 [ext_resource type="Texture2D" uid="uid://cluv3fvjs73t2" path="res://Resources/rover_no_wheels.png" id="3_haasr"]
+[ext_resource type="PackedScene" uid="uid://c0s64advyk2p4" path="res://Controls/DraggablePanel.tscn" id="4_xqdad"]
 
 [node name="VelMonitor" type="Panel" node_paths=PackedStringArray("_flLabel", "_frLabel", "_brLabel", "_blLabel", "_driveLabel", "_rotationLabel", "_delayLabel", "_wheelSprites", "_wheelSlider", "_ghostSprites")]
 custom_minimum_size = Vector2(340, 200)
@@ -10,7 +11,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 724.0
-offset_bottom = -218.0
+offset_bottom = -222.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_3iyhe")
@@ -25,24 +26,12 @@ _wheelSprites = [NodePath("Control/WheelFrontLeft"), NodePath("Control/WheelFron
 _wheelSlider = [NodePath("Control/WheelFrontLeft/VSlider"), NodePath("Control/WheelFrontRight/VSlider"), NodePath("Control/WheelBackRight/VSlider"), NodePath("Control/WheelBackLeft/VSlider")]
 _ghostSprites = [NodePath("Control/GhostFrontLeft"), NodePath("Control/GhostFrontRight"), NodePath("Control/GhostBackRight"), NodePath("Control/GhostBackLeft")]
 
-[node name="Label" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -20.0
-offset_right = 20.0
-offset_bottom = 23.0
-grow_horizontal = 2
-theme_override_font_sizes/font_size = 22
-text = "VelMonitor"
-
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 0
 offset_left = 3.0
-offset_top = 27.0
+offset_top = 32.0
 offset_right = 428.0
-offset_bottom = 395.0
+offset_bottom = 420.0
 
 [node name="VBoxContainer1" type="VBoxContainer" parent="HBoxContainer"]
 custom_minimum_size = Vector2(145, 0)
@@ -213,7 +202,7 @@ offset_bottom = 409.0
 scale = Vector2(1.1, 1.1)
 
 [node name="WheelFrontLeft" type="Sprite2D" parent="Control"]
-position = Vector2(-58.559, -173.92)
+position = Vector2(-58.559, -168.92)
 rotation = 1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
@@ -232,7 +221,7 @@ scrollable = false
 metadata/_edit_use_anchors_ = true
 
 [node name="WheelBackLeft" type="Sprite2D" parent="Control"]
-position = Vector2(-58.559, -27.92)
+position = Vector2(-58.559, -22.92)
 rotation = 1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
@@ -251,7 +240,7 @@ scrollable = false
 metadata/_edit_use_anchors_ = true
 
 [node name="WheelFrontRight" type="Sprite2D" parent="Control"]
-position = Vector2(32.641, -173.92)
+position = Vector2(32.641, -168.92)
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
@@ -270,7 +259,7 @@ scrollable = false
 metadata/_edit_use_anchors_ = true
 
 [node name="WheelBackRight" type="Sprite2D" parent="Control"]
-position = Vector2(32.641, -27.92)
+position = Vector2(32.641, -22.92)
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
@@ -289,7 +278,7 @@ scrollable = false
 
 [node name="GhostFrontLeft" type="Sprite2D" parent="Control"]
 modulate = Color(1, 1, 1, 0.439216)
-position = Vector2(-58.559, -173.92)
+position = Vector2(-58.559, -168.92)
 rotation = 1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
@@ -297,7 +286,7 @@ offset = Vector2(-105.4, -17.8)
 
 [node name="GhostBackLeft" type="Sprite2D" parent="Control"]
 modulate = Color(1, 1, 1, 0.439216)
-position = Vector2(-58.559, -27.92)
+position = Vector2(-58.559, -22.92)
 rotation = 1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
@@ -305,7 +294,7 @@ offset = Vector2(-105.4, -17.8)
 
 [node name="GhostFrontRight" type="Sprite2D" parent="Control"]
 modulate = Color(1, 1, 1, 0.439216)
-position = Vector2(32.641, -173.92)
+position = Vector2(32.641, -168.92)
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
@@ -313,14 +302,14 @@ offset = Vector2(-105.4, -17.8)
 
 [node name="GhostBackRight" type="Sprite2D" parent="Control"]
 modulate = Color(1, 1, 1, 0.439216)
-position = Vector2(32.641, -27.92)
+position = Vector2(32.641, -22.92)
 rotation = -1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("2_lfwv6")
 offset = Vector2(-105.4, -17.8)
 
 [node name="RoverBody" type="Sprite2D" parent="Control"]
-position = Vector2(-12.559, -147.92)
+position = Vector2(-12.559, -142.92)
 rotation = 1.5708
 scale = Vector2(0.2, 0.2)
 texture = ExtResource("3_haasr")
@@ -328,9 +317,9 @@ texture = ExtResource("3_haasr")
 [node name="FLData" type="Label" parent="Control"]
 layout_mode = 0
 offset_left = -71.0
-offset_top = -240.0
+offset_top = -235.0
 offset_right = -27.0
-offset_bottom = -201.0
+offset_bottom = -196.0
 theme_override_font_sizes/font_size = 13
 text = "D: 0x??
 R: 0x??"
@@ -338,9 +327,9 @@ R: 0x??"
 [node name="FRData" type="Label" parent="Control"]
 layout_mode = 0
 offset_left = 1.0
-offset_top = -241.0
+offset_top = -235.0
 offset_right = 46.0
-offset_bottom = -202.0
+offset_bottom = -196.0
 theme_override_font_sizes/font_size = 13
 text = "D: 0x??
 R: 0x??"
@@ -349,18 +338,27 @@ horizontal_alignment = 2
 [node name="BLData" type="Label" parent="Control"]
 layout_mode = 0
 offset_left = -72.0
-offset_top = 1.0
+offset_top = 6.0
 offset_right = -28.0
-offset_bottom = 40.0
+offset_bottom = 45.0
 theme_override_font_sizes/font_size = 13
 text = "D: 0x??
 R: 0x??"
 
 [node name="BRData" type="Label" parent="Control"]
 layout_mode = 0
+offset_top = 6.0
 offset_right = 45.0
-offset_bottom = 39.0
+offset_bottom = 45.0
 theme_override_font_sizes/font_size = 13
 text = "D: 0x??
 R: 0x??"
 horizontal_alignment = 2
+
+[node name="DraggablePanel" parent="." instance=ExtResource("4_xqdad")]
+layout_mode = 1
+offset_bottom = 0.0
+WindowTitle = "VelMonitor"
+ShowTheCloseButton = false
+
+[connection signal="PanelVisibilityChanged" from="DraggablePanel" to="." method="set_visible"]

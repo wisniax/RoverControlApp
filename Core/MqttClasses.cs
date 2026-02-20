@@ -91,6 +91,16 @@ namespace RoverControlApp.Core
 			NotAvailable = 2
 		}
 
+		public enum CalibrateAxisAction
+		{
+			Stop = 0,
+			ReturnToOrigin = 1,
+			Confirm = 2,
+			Cancel = 3,
+			Offset = 4,
+			SetVelocity = 5
+		}
+
 		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
@@ -290,6 +300,14 @@ namespace RoverControlApp.Core
 			public LinearAcceleration linear_acceleration { get; set; } = new();
 			public Orientation orientation { get; set; } = new();
 			public long Timestamp { get; set; }
+		}
+
+		public class CalibrateAxis
+		{
+			public CalibrateAxisAction ActionType { get; set; } = CalibrateAxisAction.Stop;
+			public byte VescID { get; set; } = 0;
+			public float Value { get; set; } = 0.0f;
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
 	}

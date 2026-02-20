@@ -18,7 +18,7 @@ public partial class General : SettingBase, ICloneable
 		_missionControlSize = "480;360";
 		_backCaptureLength = 15000;
 		_noInputSecondsToEstop = 120;
-		_pedanticEstop = true;
+		_pedanticEstop = false;
 	}
 
 	public General(bool verboseDebug, string missionControlPosition, string missionControlSize, long backCaptureLength, int noInputSecondsToEstop, bool pedanticEstop)

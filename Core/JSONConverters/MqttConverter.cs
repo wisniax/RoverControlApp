@@ -29,6 +29,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 		string? topicSampler = null;
 		string? topicBatteryInfo = null;
 		string? topicBatteryControl = null;
+		string? topicCalibrateControl = null;
 
 		while (reader.Read())
 		{
@@ -85,6 +86,9 @@ public class MqttConverter : JsonConverter<Mqtt>
 				case nameof(Mqtt.TopicBatteryControl):
 					topicBatteryControl = reader.GetString();
 					break;
+				case nameof(Mqtt.TopicCalibrateControl):
+					topicCalibrateControl = reader.GetString();
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -106,7 +110,8 @@ public class MqttConverter : JsonConverter<Mqtt>
 			topicKmlListOfActiveObj ?? Default.TopicKmlListOfActiveObj,
 			topicSampler ?? Default.TopicSamplerControl,
 			topicBatteryInfo ?? Default.TopicBatteryInfo,
-			topicBatteryControl ?? Default.TopicBatteryControl
+			topicBatteryControl ?? Default.TopicBatteryControl,
+			topicCalibrateControl ?? Default.TopicCalibrateControl
 		);
 	}
 
@@ -128,6 +133,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 		writer.WriteString(nameof(Mqtt.TopicSamplerControl), value.TopicSamplerControl);
 		writer.WriteString(nameof(Mqtt.TopicBatteryInfo), value.TopicBatteryInfo);
 		writer.WriteString(nameof(Mqtt.TopicBatteryControl), value.TopicBatteryControl);
+		writer.WriteString(nameof(Mqtt.TopicCalibrateControl), value.TopicCalibrateControl);
 		writer.WriteEndObject();
 	}
 }
