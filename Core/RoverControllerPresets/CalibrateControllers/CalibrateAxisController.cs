@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 namespace RoverControlApp.Core.RoverControllerPresets.DriveControllers;
 
+// Zmiana velocity podczas trzymania velocity na padzie
+
 public class CalibrateAxisController : IRoverCalibrateController
 {
 	// For Joystick Options

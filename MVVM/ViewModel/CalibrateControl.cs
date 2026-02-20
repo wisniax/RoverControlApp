@@ -15,14 +15,10 @@ public partial class CalibrateControl : Panel
 	[Export] private OptionButton AxisOptions = new OptionButton();
 
 	[ExportGroup("Offset")]
-	[Export] private LineEdit OffsetBox = new LineEdit();
-	[Export] private Button[] OffestButtons = new Button[6];
-	[Export] private HScrollBar OffsetScroll = new HScrollBar();
+	[Export] private Knob OffsetKnob = new Knob();
 
 	[ExportGroup("Velocity")]
-	[Export] private LineEdit VelocityBox = new LineEdit();
-	[Export] private Button[] VelocityButtons = new Button[6];
-	[Export] private HScrollBar VelocityScroll = new HScrollBar();
+	[Export] private Knob VelocityKnob = new Knob();
 
 	[ExportGroup("Actions Button")]
 	[Export] private Button OffsetButton = new Button();
@@ -36,10 +32,6 @@ public partial class CalibrateControl : Panel
 	[Export] private Panel PanelCover = new Panel();
 
 	private Action?[] _AxisBtnHandlers = Array.Empty<Action?>();
-	private Action?[] _OffsetBtnHandlers = Array.Empty<Action?>();
-	private Action?[] _VelocityBtnHandlers = Array.Empty<Action?>();
-
-	private int[] _valueDeltas = new int[] { -5, -2, -1, 1, 2, 5 };
 
 	private bool _calibrateEnabled = true;
 	private int _wheelValue = -1; // -1 -> none, 0 to 3 - FL, FR, BL, BR
@@ -148,15 +140,8 @@ public partial class CalibrateControl : Panel
 		HookButtons(AxisButtons, ref _AxisBtnHandlers, HookAction.Enter, ChooseAxis);
 
 		// Handlers for LineEdit and Sliders
-		OffsetBox.TextChanged += newValue => ValueChanged<string>(newValue, v => OffsetValue = v, OffsetBox, OffsetScroll);
-		OffsetScroll.ValueChanged += newValue => ValueChanged<double>(newValue, v => OffsetValue = v, OffsetBox, OffsetScroll);
-
-		VelocityBox.TextChanged += newValue => ValueChanged<string>(newValue, v => VelocityValue = v, VelocityBox, VelocityScroll);
-		VelocityScroll.ValueChanged += newValue => ValueChanged<double>(newValue, v => VelocityValue = v, VelocityBox, VelocityScroll);
-
-		// Handlers for incerments buttons
-		HookDeltaButtons(OffestButtons, ref _OffsetBtnHandlers, HookAction.Enter, (deltaIndex) => ValueChanged<double>(_offsetValue + (_valueDeltas[deltaIndex]), v => OffsetValue = v, OffsetBox, OffsetScroll));
-		HookDeltaButtons(VelocityButtons, ref _VelocityBtnHandlers, HookAction.Enter, (deltaIndex) => ValueChanged<double>(_velocityValue + (_valueDeltas[deltaIndex]), v => VelocityValue = v, VelocityBox, VelocityScroll));
+		OffsetKnob.ValueChanged += newValue => ValueChanged(newValue, v => OffsetValue = v);
+		VelocityKnob.ValueChanged += newValue => ValueChanged(newValue, v => VelocityValue = v);
 
 		// Handlers for functional buttons
 		OffsetButton.Pressed += OffsetClicked;
@@ -176,8 +161,8 @@ public partial class CalibrateControl : Panel
 		{
 			AxisModels[i].Modulate = Color.FromHtml("#505050");
 		}
-		OffsetValue = Convert.ToSingle(OffsetScroll.Value);
-		VelocityValue = Convert.ToSingle(VelocityScroll.Value);
+		OffsetValue = Convert.ToSingle(OffsetKnob.Value);
+		VelocityValue = Convert.ToSingle(VelocityKnob.Value);
 		CalibrateEnabled = PanelCover.Visible;
 
 		LocalSettingsMemory.Singleton.Connect(LocalSettingsMemory.SignalName.PropagatedPropertyChanged,
@@ -192,15 +177,8 @@ public partial class CalibrateControl : Panel
 		HookButtons(AxisButtons, ref _AxisBtnHandlers, HookAction.Exit, ChooseAxis);
 
 		// Handlers for LineEdit and Sliders
-		OffsetBox.TextChanged -= newValue => ValueChanged<string>(newValue, v => OffsetValue = v, OffsetBox, OffsetScroll);
-		OffsetScroll.ValueChanged -= newValue => ValueChanged<double>(newValue, v => OffsetValue = v, OffsetBox, OffsetScroll);
-
-		VelocityBox.TextChanged -= newValue => ValueChanged<string>(newValue, v => VelocityValue = v, VelocityBox, VelocityScroll);
-		VelocityScroll.ValueChanged -= newValue => ValueChanged<double>(newValue, v => VelocityValue = v, VelocityBox, VelocityScroll);
-
-		// Handlers for incerments buttons
-		HookDeltaButtons(OffestButtons, ref _OffsetBtnHandlers, HookAction.Exit, null);
-		HookDeltaButtons(VelocityButtons, ref _VelocityBtnHandlers, HookAction.Exit, null);
+		OffsetKnob.ValueChanged -= newValue => ValueChanged(newValue, v => OffsetValue = v);
+		VelocityKnob.ValueChanged -= newValue => ValueChanged(newValue, v => VelocityValue = v);
 
 		// Handlers for functional buttons
 		OffsetButton.Pressed -= OffsetClicked;
@@ -222,8 +200,7 @@ public partial class CalibrateControl : Panel
 	{
 		if (category != nameof(LocalSettingsMemory.Singleton.CalibrateAxis)) return;
 
-		if (name == nameof(LocalSettingsMemory.CalibrateAxis.ChoosenWheel))
-		{
+		if (name == nameof(LocalSettingsMemory.CalibrateAxis.ChoosenWheel)) {
 			ChooseAxis(LocalSettingsMemory.Singleton.CalibrateAxis.ChoosenWheel);
 		}
 	}
@@ -289,18 +266,11 @@ public partial class CalibrateControl : Panel
 	}
 
 	// Managing control on value via ui elements TextEdit and Slider
-	void ValueChanged<T>(T newValue, Action<float> setter, LineEdit line, HScrollBar slider)
+	void ValueChanged(float newValue, Action<float> setter)
 	{
 		try
 		{
-			float parsed = Convert.ToSingle(newValue);
-			float clamped = Mathf.Clamp(parsed, (float)slider.MinValue, (float)slider.MaxValue);
-
-			setter(clamped);
-
-			line.Text = clamped.ToString();
-			slider.Value = clamped;
-
+			setter(newValue);
 		}
 		catch (Exception)
 		{
@@ -383,53 +353,6 @@ public partial class CalibrateControl : Panel
 				if (handler is null)
 					continue;
 				btn.Pressed -= handler;
-				actions[i] = null;
-			}
-		}
-	}
-
-	// Hook for Increment Buttons
-	void HookDeltaButtons(Button[] buttons, ref Action?[] actions, HookAction actionType, Action<int>? callback)
-	{
-		if (buttons is null)
-			return;
-
-		if (actions.Length != buttons.Length)
-			actions = new Action?[buttons.Length];
-
-		for (int i = 0; i < buttons.Length; i++)
-		{
-			var btn = buttons[i];
-			if (btn is null)
-				continue;
-
-			if (actionType == HookAction.Enter)
-			{
-				int idx = i;
-				Action handler = () =>
-				{
-					try
-					{
-						callback?.Invoke(idx);
-					}
-					catch (Exception ex)
-					{
-						EventLogger.LogMessage(nameof(CalibrateControl), EventLogger.LogLevel.Error, $"Delta button handler exception: {ex}");
-					}
-				};
-				actions[i] = handler;
-				btn.Pressed += handler;
-			}
-			else
-			{
-				var handler = actions[i];
-				if (handler is null)
-					continue;
-				try
-				{
-					btn.Pressed -= handler;
-				}
-				catch { }
 				actions[i] = null;
 			}
 		}

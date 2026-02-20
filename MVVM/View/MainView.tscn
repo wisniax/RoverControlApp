@@ -13,10 +13,10 @@
 [ext_resource type="Script" path="res://MVVM/ViewModel/SafeMode_UIOverlay.cs" id="7_ssyiv"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/DualSeatSlave_UIOverlay.cs" id="8_yrt6e"]
 [ext_resource type="PackedScene" uid="uid://dfsueqraoksun" path="res://MVVM/View/ZedMonitor.tscn" id="10_ypnjt"]
-[ext_resource type="PackedScene" uid="uid://qvoak3uoov1n" path="res://MVVM/View/CalibrateControl.tscn" id="11_7kg0v"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/MaxSizeContainer.cs" id="13_0svft"]
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
+[ext_resource type="PackedScene" uid="uid://c0hwgkpf8yne4" path="res://MVVM/View/CalibrateControl.tscn" id="18_ae78s"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -53,7 +53,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "CalibrateControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "InputHelpMaster")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "CalibrateControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -78,6 +78,7 @@ CalibrateControlNode = NodePath("CalibrateControl")
 FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
 VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
+BatteryMonitor = NodePath("BatteryMonitor")
 InputHelpMaster = NodePath("MaxSizeContainer/InputHelpMaster")
 
 [node name="CameraView" type="TextureRect" parent="."]
@@ -298,15 +299,14 @@ text = "SETTINGS"
 visible = false
 layout_mode = 0
 
-[node name="CalibrateControl" parent="." instance=ExtResource("11_7kg0v")]
+[node name="CalibrateControl" parent="." instance=ExtResource("18_ae78s")]
 visible = false
 layout_mode = 1
 anchors_preset = 6
 anchor_top = 0.5
 anchor_bottom = 0.5
-offset_left = -500.0
 offset_top = -225.0
-offset_bottom = 225.0
+offset_bottom = 175.0
 grow_vertical = 2
 
 [node name="VelMonitor" parent="." instance=ExtResource("6_wqihy")]
@@ -353,6 +353,7 @@ grow_horizontal = 0
 grow_vertical = 0
 
 [node name="MaxSizeContainer" type="Container" parent="."]
+visibility_layer = 262145
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
