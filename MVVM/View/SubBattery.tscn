@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cdbeb0yegexne"]
 
-[ext_resource type="Script" path="res://MVVM/ViewModel/SubBattery.cs" id="1_d5uhs"]
+[ext_resource type="Script" uid="uid://b0qomfwa8mm2r" path="res://MVVM/ViewModel/SubBattery.cs" id="1_d5uhs"]
 
 [node name="SubBattery" type="VBoxContainer" node_paths=PackedStringArray("_slotLabel", "_slotEmptyLabel", "_idLabel", "_percLabel", "_vbatLabel", "_hotswapLabel", "_statusLabel", "_currentLabel", "_temperatureLabel", "_delayLabel", "_autoButton", "_onButton", "_offButton", "_timer", "_labels")]
 script = ExtResource("1_d5uhs")

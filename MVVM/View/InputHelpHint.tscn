@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://o5ejabbb2yio"]
 
 [ext_resource type="Theme" uid="uid://b5383qtpq03ca" path="res://Resources/InputHelpMaster.theme" id="1_8dfn2"]
-[ext_resource type="Script" path="res://MVVM/ViewModel/InputHelpHint.cs" id="1_l4op8"]
+[ext_resource type="Script" uid="uid://dofbxu8yce21q" path="res://MVVM/ViewModel/InputHelpHint.cs" id="1_l4op8"]
 
 [node name="InputHelpHint" type="Control" node_paths=PackedStringArray("_kbHelp", "_joyHelp", "_kbHelpEventLabel", "_joyHelpEventLabel", "_kbHelpActionLabel", "_joyHelpActionLabel")]
 visible = false
