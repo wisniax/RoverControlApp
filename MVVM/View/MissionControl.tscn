@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://crakb6uxv2yt8"]
 
-[ext_resource type="Script" path="res://MVVM/ViewModel/MissionControl.cs" id="1_j63bh"]
+[ext_resource type="Script" uid="uid://fv5yannslkk4" path="res://MVVM/ViewModel/MissionControl.cs" id="1_j63bh"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iok1d"]
 bg_color = Color(0.205117, 0.205117, 0.205117, 0.501961)
