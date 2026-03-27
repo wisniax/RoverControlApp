@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://c78k3jqowm3q0"]
+[gd_scene load_steps=4 format=3 uid="uid://c78k3jqowm3q0"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/BatteryMonitor.cs" id="1_ktc3a"]
 [ext_resource type="PackedScene" uid="uid://cdbeb0yegexne" path="res://MVVM/View/SubBattery.tscn" id="2_4ptu6"]
+[ext_resource type="PackedScene" uid="uid://c0s64advyk2p4" path="res://MVVM/View/DraggablePanel.tscn" id="3_d354j"]
 
 [node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("battery", "_vescVoltageLabel", "_battVoltageLabel", "_sumCurrentLabel", "_blackMushroomLabel", "_hotswapGPIO", "_vescUpdateTimer")]
 custom_minimum_size = Vector2(434, 351)
@@ -15,25 +16,6 @@ _sumCurrentLabel = NodePath("QuickData/SumCurrent")
 _blackMushroomLabel = NodePath("QuickData/BlackMushroom")
 _hotswapGPIO = NodePath("QuickData/HotswapGPIO")
 _vescUpdateTimer = NodePath("Timer")
-
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 0.111
-offset_right = 3.05176e-05
-offset_bottom = 0.0389709
-grow_horizontal = 2
-grow_vertical = 2
-alignment = 1
-
-[node name="Label" type="Label" parent="HBoxContainer"]
-custom_minimum_size = Vector2(261.465, 0)
-layout_mode = 2
-theme_override_font_sizes/font_size = 25
-text = "Battery menu"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="BatBoxes" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -165,5 +147,11 @@ text = "HotswapGPIO:
 NoData"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="DraggablePanel" parent="." instance=ExtResource("3_d354j")]
+layout_mode = 1
+offset_bottom = 0.0
+WindowTitle = "Battery menu"
+ShowTheCloseButton = false
 
 [connection signal="timeout" from="Timer" to="." method="NoVescDataHandler"]

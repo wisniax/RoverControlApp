@@ -72,4 +72,17 @@ public static class RcaInEvName
 	public static readonly StringName RoverMoveUp = new("rover_move_up");
 	public static readonly StringName RoverRotateRight = new("rover_move_up");
 	public static readonly StringName RoverRotateLeft = new("rover_move_up");
+
+	public static readonly StringName CalibrateMode = new("calibrate_mode");
+	public static readonly StringName CalibrateRotateLeft = new("calibrate_rotate_left");
+	public static readonly StringName CalibrateRotateLeftOnce = new("calibrate_rotate_left_once");
+	public static readonly StringName CalibrateRotateRight = new("calibrate_rotate_right");
+	public static readonly StringName CalibrateRotateRightOnce = new("calibrate_rotate_right_once");
+	public static readonly StringName CalibrateAxisNext = new("calibrate_axis_next");
+	public static readonly StringName CalibrateAxisBack = new("calibrate_axis_back");
+
+	public static readonly StringName CalibrateActionTop = new("calibrate_action_top");
+	public static readonly StringName CalibrateActionBottom = new("calibrate_action_bottom");
+	public static readonly StringName CalibrateActionLeft = new("calibrate_action_left");
+	public static readonly StringName CalibrateActionRight = new("calibrate_action_right");
 }

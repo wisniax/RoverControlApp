@@ -58,6 +58,8 @@ namespace RoverControlApp.MVVM.ViewModel
 		private SettingsManager SettingsManagerNode = null!;
 		[Export]
 		private MissionControl MissionControlNode = null!;
+		[Export]
+		private CalibrateControl CalibrateControlNode = null!;
 
 		[Export]
 		private RichTextLabel FancyDebugViewRLab = null!;
@@ -90,6 +92,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.Singleton.OnControlModeChanged += InputHelp_HandleControlModeChanged;
 			PressedKeys.Singleton.ControllerPresetChanged += InputHelp_HandleInputPresetChanged;
 			PressedKeys.Singleton.OnPadConnectionChanged += OnPadConnectionChanged;
+			PressedKeys.Singleton.OnControlModeChanged += CalibrateControlNode.ControlModeChangedControl;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionControlNode.MissionStatusUpdatedSubscriber;
 
@@ -135,6 +138,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			PressedKeys.Singleton.OnControlModeChanged -= InputHelp_HandleControlModeChanged;
 			PressedKeys.Singleton.ControllerPresetChanged -= InputHelp_HandleInputPresetChanged;
 			PressedKeys.Singleton.OnPadConnectionChanged -= OnPadConnectionChanged;
+			PressedKeys.Singleton.OnControlModeChanged -= CalibrateControlNode.ControlModeChangedControl;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
@@ -484,6 +488,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			switch (controlMode)
 			{
 				case MqttClasses.ControlMode.EStop:
+					wipList.Add(PressedKeys.Singleton.RoverCalibrateController);
 					break; //empty
 				case MqttClasses.ControlMode.Rover:
 					wipList.Add(PressedKeys.Singleton.RoverDriveControllerPreset);

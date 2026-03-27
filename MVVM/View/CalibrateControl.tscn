@@ -1,0 +1,396 @@
+[gd_scene load_steps=20 format=3 uid="uid://c0hwgkpf8yne4"]
+
+[ext_resource type="PackedScene" uid="uid://btgw883t4vf4r" path="res://MVVM/View/Knob.tscn" id="1_6alxa"]
+[ext_resource type="Script" path="res://MVVM/ViewModel/CalibrateControl.cs" id="1_mll3j"]
+[ext_resource type="Texture2D" uid="uid://cra73rn2ne7aj" path="res://Resources/rover_wheel.png" id="2_aea48"]
+[ext_resource type="Texture2D" uid="uid://nuar221fy4o4" path="res://Resources/icons/l_bumper.svg" id="2_b7jbk"]
+[ext_resource type="Texture2D" uid="uid://bokd12lllwxla" path="res://Resources/icons/r_bumper.svg" id="3_7hbci"]
+[ext_resource type="Texture2D" uid="uid://cluv3fvjs73t2" path="res://Resources/rover_no_wheels.png" id="3_kbtpq"]
+[ext_resource type="PackedScene" uid="uid://c0s64advyk2p4" path="res://MVVM/View/DraggablePanel.tscn" id="3_rdl01"]
+[ext_resource type="Texture2D" uid="uid://p8kyxsfw3740" path="res://Resources/icons/l_trigger.svg" id="4_2vlcu"]
+[ext_resource type="Texture2D" uid="uid://cn71ybyc4geks" path="res://Resources/icons/r_trigger.svg" id="5_o30fd"]
+[ext_resource type="Texture2D" uid="uid://ccvi6ypwvt8ik" path="res://Resources/icons/r_stick.svg" id="6_6noaj"]
+[ext_resource type="Texture2D" uid="uid://du6qpiaufy74c" path="res://Resources/icons/hold.svg" id="8_0d60h"]
+[ext_resource type="Texture2D" uid="uid://l4vilujgcjuq" path="res://Resources/icons/click.svg" id="9_1sqvu"]
+[ext_resource type="Texture2D" uid="uid://bkls0e3v3rxme" path="res://Resources/icons/dpad_down.svg" id="9_wvrhe"]
+[ext_resource type="Texture2D" uid="uid://ggstcob3aorh" path="res://Resources/icons/action_down.svg" id="10_jihaj"]
+[ext_resource type="Texture2D" uid="uid://b4ud0lhlh5n4s" path="res://Resources/icons/action_right.svg" id="11_3coav"]
+[ext_resource type="Texture2D" uid="uid://b0anlk5erwc3f" path="res://Resources/icons/action_left.svg" id="12_b5n2c"]
+[ext_resource type="Texture2D" uid="uid://ybdt7hnis5dl" path="res://Resources/icons/action_up.svg" id="13_u1nci"]
+[ext_resource type="Texture2D" uid="uid://54wth3ocgjai" path="res://Resources/icons/gamepad.svg" id="17_a8ejf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f1pqq"]
+bg_color = Color(0.4, 0.4, 0.4, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0)
+
+[node name="CalibrateControl" type="Panel" node_paths=PackedStringArray("AxisModels", "AxisButtons", "AxisOptions", "OffsetKnob", "VelocityKnob", "OffsetButton", "VelocityButton", "ConfirmButton", "CancelButton", "StopButton", "ReturnToOriginButton", "PanelCover", "LedLamp")]
+custom_minimum_size = Vector2(540, 420)
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -540.0
+offset_bottom = 410.0
+grow_horizontal = 0
+script = ExtResource("1_mll3j")
+AxisModels = [NodePath("Wheel2D/WheelFrontLeft"), NodePath("Wheel2D/WheelFrontRight"), NodePath("Wheel2D/WheelBackLeft"), NodePath("Wheel2D/WheelBackRight")]
+AxisButtons = [NodePath("WheelButtons/FrontLeftAxis"), NodePath("WheelButtons/FrontRightAxis"), NodePath("WheelButtons/BackLeftAxis"), NodePath("WheelButtons/BackRightAxis")]
+AxisOptions = NodePath("MainContainer/AxisOptions")
+OffsetKnob = NodePath("MainContainer/HBoxContainer/OffsetContainer/OffsetKnob")
+VelocityKnob = NodePath("MainContainer/HBoxContainer/VelocityContainer/VelocityKnob")
+OffsetButton = NodePath("MainContainer/HBoxContainer/OffsetContainer/OffsetButton")
+VelocityButton = NodePath("MainContainer/HBoxContainer/VelocityContainer/VelocityButton")
+ConfirmButton = NodePath("MainContainer/ActionsContainer/HFlowContainer/Confirm")
+CancelButton = NodePath("MainContainer/ActionsContainer/HFlowContainer/Cancel")
+StopButton = NodePath("MainContainer/ActionsContainer/HFlowContainer/Stop")
+ReturnToOriginButton = NodePath("MainContainer/ActionsContainer/Return To Origin")
+PanelCover = NodePath("PanelContainer")
+LedLamp = NodePath("HelpLabel/LedLamp")
+
+[node name="VelocityIcons" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 1
+anchors_preset = -1
+offset_left = 22.0
+offset_top = 230.0
+offset_right = 170.0
+offset_bottom = 103.0
+
+[node name="TextureRect" type="TextureRect" parent="VelocityIcons"]
+layout_mode = 2
+size_flags_horizontal = 0
+texture = ExtResource("4_2vlcu")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="TextureRect2" type="TextureRect" parent="VelocityIcons"]
+layout_mode = 2
+size_flags_horizontal = 10
+texture = ExtResource("5_o30fd")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="OffsetIcons" type="HBoxContainer" parent="."]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 1
+anchors_preset = -1
+offset_left = 194.0
+offset_top = 230.0
+offset_right = 342.0
+offset_bottom = 250.0
+
+[node name="TextureRect" type="TextureRect" parent="OffsetIcons"]
+layout_mode = 2
+size_flags_horizontal = 0
+texture = ExtResource("2_b7jbk")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="TextureRect2" type="TextureRect" parent="OffsetIcons"]
+layout_mode = 2
+size_flags_horizontal = 10
+texture = ExtResource("3_7hbci")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+offset_left = 12.0
+offset_top = 40.0
+offset_right = 353.0
+offset_bottom = 381.0
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="AxisLabel" type="Label" parent="MainContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Choose or Pick Axis"
+
+[node name="TextureRect" type="TextureRect" parent="MainContainer/HBoxContainer2"]
+layout_mode = 2
+texture = ExtResource("6_6noaj")
+expand_mode = 3
+stretch_mode = 4
+
+[node name="AxisOptions" type="OptionButton" parent="MainContainer"]
+layout_mode = 2
+size_flags_vertical = 0
+focus_mode = 0
+alignment = 1
+item_count = 4
+popup/item_0/text = "Front Left"
+popup/item_1/text = "Front Right"
+popup/item_1/id = 1
+popup/item_2/text = "Rear Left"
+popup/item_2/id = 2
+popup/item_3/text = "Rear Right"
+popup/item_3/id = 3
+
+[node name="Label" type="Label" parent="MainContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="VelocityContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VelocityKnob" parent="MainContainer/HBoxContainer/VelocityContainer" instance=ExtResource("1_6alxa")]
+layout_mode = 2
+Min = 2000.0
+Max = 10000.0
+Step = 100.0
+Value = 4500.0
+TitleText = "Velocity"
+UseBipolar = true
+IncludeZeroCenter = false
+SimulationWidth = 18
+
+[node name="VelocityButton" type="Button" parent="MainContainer/HBoxContainer/VelocityContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "Set Velocity"
+icon = ExtResource("8_0d60h")
+expand_icon = true
+
+[node name="OffsetContainer" type="VBoxContainer" parent="MainContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OffsetKnob" parent="MainContainer/HBoxContainer/OffsetContainer" instance=ExtResource("1_6alxa")]
+layout_mode = 2
+Min = 0.5
+Max = 30.0
+Step = 0.5
+Value = 12.5
+TitleText = "Offset"
+UseBipolar = true
+IncludeZeroCenter = false
+SimulationDuration = 0.4
+
+[node name="OffsetButton" type="Button" parent="MainContainer/HBoxContainer/OffsetContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "Move by Offset"
+icon = ExtResource("9_1sqvu")
+expand_icon = true
+
+[node name="ActionsLabel" type="Label" parent="MainContainer"]
+layout_mode = 2
+text = "Actions"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ActionsContainer" type="VBoxContainer" parent="MainContainer"]
+layout_mode = 2
+
+[node name="HFlowContainer" type="HFlowContainer" parent="MainContainer/ActionsContainer"]
+layout_mode = 2
+alignment = 1
+last_wrap_alignment = 3
+
+[node name="Confirm" type="Button" parent="MainContainer/ActionsContainer/HFlowContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+text = "Confirm"
+icon = ExtResource("10_jihaj")
+expand_icon = true
+
+[node name="Cancel" type="Button" parent="MainContainer/ActionsContainer/HFlowContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+text = "Cancel"
+icon = ExtResource("11_3coav")
+expand_icon = true
+
+[node name="Stop" type="Button" parent="MainContainer/ActionsContainer/HFlowContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+text = "Stop"
+icon = ExtResource("12_b5n2c")
+expand_icon = true
+
+[node name="Return To Origin" type="Button" parent="MainContainer/ActionsContainer"]
+layout_mode = 2
+focus_mode = 0
+text = "Return To Origin"
+icon = ExtResource("13_u1nci")
+expand_icon = true
+
+[node name="Wheel2D" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 437.0
+offset_top = 383.0
+offset_right = 437.0
+offset_bottom = 383.0
+scale = Vector2(1.1, 1.1)
+
+[node name="WheelFrontLeft" type="Sprite2D" parent="Wheel2D"]
+modulate = Color(0.314316, 0.314316, 0.314316, 1)
+position = Vector2(-36.7407, -174.829)
+rotation = 1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_aea48")
+offset = Vector2(-105.4, -17.8)
+
+[node name="WheelFrontRight" type="Sprite2D" parent="Wheel2D"]
+position = Vector2(54.4592, -174.829)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_aea48")
+offset = Vector2(-105.4, -17.8)
+
+[node name="WheelBackLeft" type="Sprite2D" parent="Wheel2D"]
+position = Vector2(-36.7405, -28.8291)
+rotation = 1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_aea48")
+offset = Vector2(-105.4, -17.8)
+
+[node name="WheelBackRight" type="Sprite2D" parent="Wheel2D"]
+position = Vector2(54.4597, -28.8291)
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_aea48")
+offset = Vector2(-105.4, -17.8)
+
+[node name="RoverBody" type="Sprite2D" parent="Wheel2D"]
+position = Vector2(9.25934, -148.829)
+rotation = 1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("3_kbtpq")
+
+[node name="WheelButtons" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 376.0
+offset_top = 163.0
+offset_right = 518.0
+offset_bottom = 381.0
+
+[node name="FrontLeftAxis" type="Button" parent="WheelButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 46.0
+offset_bottom = 56.0
+
+[node name="FrontRightAxis" type="Button" parent="WheelButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -46.0
+offset_bottom = 56.0
+grow_horizontal = 0
+
+[node name="BackLeftAxis" type="Button" parent="WheelButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -56.0
+offset_right = 46.0
+grow_vertical = 0
+
+[node name="BackRightAxis" type="Button" parent="WheelButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -46.0
+offset_top = -56.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="HelpLabel" type="HBoxContainer" parent="."]
+modulate = Color(1, 1, 1, 0.8)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -206.0
+offset_top = -36.0
+offset_right = 246.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(0.9, 0.9)
+pivot_offset = Vector2(206, 32)
+alignment = 1
+
+[node name="LedLamp" type="PanelContainer" parent="HelpLabel"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_f1pqq")
+
+[node name="Label" type="Label" parent="HelpLabel"]
+layout_mode = 2
+text = "Hold"
+
+[node name="TextureRect" type="TextureRect" parent="HelpLabel"]
+layout_mode = 2
+texture = ExtResource("9_wvrhe")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="Label2" type="Label" parent="HelpLabel"]
+layout_mode = 2
+text = "and keep this window open to control via"
+
+[node name="TextureRect2" type="TextureRect" parent="HelpLabel"]
+layout_mode = 2
+texture = ExtResource("17_a8ejf")
+expand_mode = 2
+stretch_mode = 5
+
+[node name="PanelContainer" type="Panel" parent="."]
+visible = false
+self_modulate = Color(0, 0, 0, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="PanelContainer"]
+self_modulate = Color(1, 0.529412, 0, 1)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -126.0
+offset_top = -11.5
+offset_right = 126.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "Available only in the EStop Mode"
+horizontal_alignment = 1
+
+[node name="DraggablePanel" parent="." instance=ExtResource("3_rdl01")]
+layout_mode = 1
+WindowTitle = "CalibrateControl"
+ShowTheCloseButton = false

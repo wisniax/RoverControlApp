@@ -1,11 +1,12 @@
-[gd_scene load_steps=3 format=3 uid="uid://dfsueqraoksun"]
+[gd_scene load_steps=4 format=3 uid="uid://dfsueqraoksun"]
 
 [ext_resource type="Texture2D" uid="uid://ubenmvj4p5x2" path="res://Resources/icon.svg" id="1_esmsg"]
 [ext_resource type="Script" path="res://MVVM/ViewModel/ZedMonitor.cs" id="1_uhht3"]
+[ext_resource type="PackedScene" uid="uid://c0s64advyk2p4" path="res://MVVM/View/DraggablePanel.tscn" id="3_0ogm8"]
 
 [node name="ZedMonitor" type="Panel" node_paths=PackedStringArray("pitchVisualisation", "rollVisualisation", "pitchDisplay", "rollDisplay", "errorDisplay", "timer", "timerDisplay")]
 offset_right = 209.0
-offset_bottom = 153.0
+offset_bottom = 176.0
 script = ExtResource("1_uhht3")
 pitchVisualisation = NodePath("DataSection/DataVisualisation/DVPitchContainer/PitchIcon")
 rollVisualisation = NodePath("DataSection/DataVisualisation/DVRollContainer/RollIcon")
@@ -21,8 +22,9 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_left = 3.0
-offset_top = 18.0
+offset_top = 32.0
 offset_right = 152.0
+offset_bottom = 14.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -90,12 +92,26 @@ offset_bottom = 23.0
 text = "GYRO MONITOR"
 horizontal_alignment = 1
 
+[node name="Timer" type="Timer" parent="."]
+wait_time = 1.267
+
+[node name="TimePassed" type="Label" parent="."]
+layout_mode = 0
+offset_top = 146.0
+offset_right = 209.0
+offset_bottom = 169.0
+text = "Data is <N/A seconds old."
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="ErrorDisplay" type="Panel" parent="."]
 visible = false
-layout_mode = 0
-offset_top = -104.0
-offset_right = 209.0
-offset_bottom = -1.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="ErrorWarning" type="Label" parent="ErrorDisplay"]
 self_modulate = Color(1, 0, 0, 1)
@@ -107,16 +123,9 @@ text = "ERROR: GYRO INFO MAY BE OUTDATED AND MISSLEADING. LAST KNOWN ORIENTATION
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="Timer" type="Timer" parent="."]
-wait_time = 1.267
-
-[node name="TimePassed" type="Label" parent="."]
-layout_mode = 0
-offset_top = 128.0
-offset_right = 209.0
-offset_bottom = 151.0
-text = "Data is <N/A seconds old."
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="DraggablePanel" parent="." instance=ExtResource("3_0ogm8")]
+layout_mode = 1
+WindowTitle = "GYRO MONITOR"
+ShowTheCloseButton = false
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

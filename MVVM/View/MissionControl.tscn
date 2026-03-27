@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://crakb6uxv2yt8"]
+[gd_scene load_steps=4 format=3 uid="uid://crakb6uxv2yt8"]
 
 [ext_resource type="Script" path="res://MVVM/ViewModel/MissionControl.cs" id="1_j63bh"]
+[ext_resource type="PackedScene" uid="uid://c0s64advyk2p4" path="res://MVVM/View/DraggablePanel.tscn" id="2_pf7su"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iok1d"]
 bg_color = Color(0.205117, 0.205117, 0.205117, 0.501961)
@@ -30,8 +31,9 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_left = 10.0
+offset_top = 36.0
 offset_right = -10.0
-offset_bottom = 95.0
+offset_bottom = 269.0
 grow_horizontal = 2
 theme_override_constants/separation = 12
 
@@ -53,7 +55,6 @@ text = "Type:"
 layout_mode = 2
 item_count = 4
 popup/item_0/text = "Landmark"
-popup/item_0/id = 0
 popup/item_1/text = "Obstacle"
 popup/item_1/id = 1
 popup/item_2/text = "Poly"
@@ -76,7 +77,6 @@ text = "Photo:"
 layout_mode = 2
 item_count = 3
 popup/item_0/text = "None"
-popup/item_0/id = 0
 popup/item_1/text = "Generic"
 popup/item_1/id = 1
 popup/item_2/text = "Spheric"
@@ -109,8 +109,8 @@ text = "Type:"
 
 [node name="PointTypeOpBtn" type="OptionButton" parent="POIController/SectionRemovePoint/HBC"]
 layout_mode = 2
-item_count = 2
 selected = 0
+item_count = 2
 popup/item_0/text = "Point"
 popup/item_0/id = 2
 popup/item_1/text = "Poly"
@@ -123,10 +123,9 @@ text = "Target:"
 [node name="TargetOpBtn" type="OptionButton" parent="POIController/SectionRemovePoint/HBC"]
 layout_mode = 2
 size_flags_horizontal = 3
-item_count = 2
 selected = 0
+item_count = 2
 popup/item_0/text = "POI JD"
-popup/item_0/id = 0
 popup/item_1/text = "POI JPII"
 popup/item_1/id = 1
 
@@ -135,6 +134,7 @@ layout_mode = 2
 text = "CONFIRM REMOVE"
 
 [node name="SectionMissionControl" type="VBoxContainer" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -148,7 +148,6 @@ grow_horizontal = 2
 grow_vertical = 0
 
 [node name="SectionPOIStatus" type="HBoxContainer" parent="SectionMissionControl"]
-visible = false
 layout_mode = 2
 
 [node name="TimestampLab" type="Label" parent="SectionMissionControl/SectionPOIStatus"]
@@ -176,6 +175,11 @@ text = "StartBtn_Temp"
 [node name="StopBtn" type="Button" parent="SectionMissionControl/SectionMissionControls"]
 layout_mode = 2
 text = "StopBtn_Temp"
+
+[node name="DraggablePanel" parent="." instance=ExtResource("2_pf7su")]
+layout_mode = 1
+WindowTitle = "MissionControl"
+ShowTheCloseButton = false
 
 [connection signal="item_selected" from="POIController/SectionAddPoint/HBC/PointTypeOpBtn" to="." method="OnSPoiAddChanged" unbinds=1]
 [connection signal="text_changed" from="POIController/SectionAddPoint/HBC/TargetLEdit" to="." method="OnSPoiAddChanged" unbinds=1]

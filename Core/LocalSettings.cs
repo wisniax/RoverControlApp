@@ -23,6 +23,7 @@ public partial class LocalSettings : Node
 		public Settings.Sampler? Sampler { get; set; } = null;
 		public Settings.Battery? Battery { get; set; } = null;
 		public Settings.WheelData? WheelData { get; set; } = null;
+		public Settings.Calibration? Calibration { get; set; } = null;
 	}
 
 	private JsonSerializerOptions serializerOptions = new() { WriteIndented = true };
@@ -62,6 +63,7 @@ public partial class LocalSettings : Node
 		_sampler = new();
 		_battery = new();
 		_wheelData = new();
+		_calibration = new();
 
 		if (LoadSettings()) return;
 
@@ -119,6 +121,7 @@ public partial class LocalSettings : Node
 			Sampler = packedSettings.Sampler ?? new();
 			Battery = packedSettings.Battery ?? new();
 			WheelData = packedSettings.WheelData ?? new();
+			Calibration = packedSettings.Calibration ?? new();
 		}
 		catch (Exception e)
 		{
@@ -152,7 +155,8 @@ public partial class LocalSettings : Node
 				General = General,
 				Sampler = Sampler,
 				Battery = Battery,
-				WheelData = WheelData
+				WheelData = WheelData,
+				Calibration = Calibration,
 			};
 
 			settingsFileAccess.StoreString(JsonSerializer.Serialize(packedSettings, serializerOptions));
@@ -183,6 +187,7 @@ public partial class LocalSettings : Node
 		Sampler = new();
 		Battery = new();
 		WheelData = new();
+		Calibration = new();
 	}
 
 	private void EmitSignalCategoryChanged(string sectionName)
@@ -404,6 +409,27 @@ public partial class LocalSettings : Node
 		}
 	}
 
+	[SettingsManagerVisible(customName: "Calibration Settings")]
+	public Settings.Calibration Calibration
+	{
+		get => _calibration;
+		set
+		{
+			_calibration = value;
+
+			_calibration.Connect(
+				Settings.Calibration.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
+			);
+			_calibration.Connect(
+				Settings.Calibration.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(Calibration));
+		}
+	}
+
 	Settings.Camera _camera;
 	Settings.Mqtt _mqtt;
 	Settings.Joystick _joystick;
@@ -413,6 +439,7 @@ public partial class LocalSettings : Node
 	Settings.Sampler _sampler;
 	Settings.Battery _battery;
 	Settings.WheelData _wheelData;
+	Settings.Calibration _calibration;
 }
 
 

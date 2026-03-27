@@ -1,16 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
-
-using Godot;
-
+﻿using Godot;
 using RoverControlApp.Core;
 using RoverControlApp.Core.RoverControllerPresets;
 using RoverControlApp.Core.RoverControllerPresets.CameraControllers;
 using RoverControlApp.Core.RoverControllerPresets.ControlModeControllers;
 using RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
+using RoverControlApp.Core.RoverControllerPresets.CalibrateAxisController;
 using RoverControlApp.Core.RoverControllerPresets.SamplerControllers;
 using RoverControlApp.MVVM.ViewModel;
-
+using System;
+using System.Threading.Tasks;
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.MVVM.Model;
@@ -28,6 +26,7 @@ public partial class PressedKeys : Node
 	private IRoverDriveController _roverDriveControllerPreset = null!;
 	private IRoverManipulatorController _roverManipulatorControllerPreset = null!;
 	private IRoverSamplerController _roverSamplerControllerPreset = null!;
+	private IRoverCalibrateController _roverCalibrateControllerPreset = null!;
 	private ICameraController _roverCameraControllerPreset = null!;
 	private ulong _autoEstop_lastInput = 0;
 
@@ -128,6 +127,8 @@ public partial class PressedKeys : Node
 	public IRoverManipulatorController RoverManipulatorControllerPreset => _roverManipulatorControllerPreset;
 	public IRoverSamplerController RoverSamplerControllerPreset => _roverSamplerControllerPreset;
 	public ICameraController RoverCameraControllerPreset => _roverCameraControllerPreset;
+
+	public IRoverCalibrateController RoverCalibrateController => _roverCalibrateControllerPreset;
 
 	/// <summary>
 	/// Time left to Auto-EStop.
@@ -280,14 +281,27 @@ public partial class PressedKeys : Node
 			bool isInputHandled =
 				_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _cameraMoveVector, out _);
 
-			if (isInputHandled)
-				EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "PedanticEstop is enabled. Input rejected.");
-			return false;
+			bool isCalibrateActive =
+				_roverCalibrateControllerPreset.OperateMode(inputEvent, DualSeatEvent.InputDevice.Master);
+
+			if(!isCalibrateActive) {
+				if (isInputHandled)
+					EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "PedanticEstop is enabled. Input rejected.");
+				return false;
+			}
 		}
 
 		// rover control
 		switch (this.ControlMode)
 		{
+			case ControlMode.EStop:
+				if (_roverCalibrateControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master))
+				{
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) RoverEstop");
+					return true;
+				}
+				break;
 			case ControlMode.Rover:
 				if (_roverDriveControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _roverMovement, out _roverMovement))
 				{
@@ -366,9 +380,14 @@ public partial class PressedKeys : Node
 			bool isInputHandled =
 				_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _cameraMoveVector, out _);
 
-			if (isInputHandled)
-				EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "PedanticEstop is enabled. Input rejected.");
-			return false;
+			bool isCalibrateActive =
+				_roverCalibrateControllerPreset.OperateMode(inputEvent, DualSeatEvent.InputDevice.Slave);
+
+			if (!isCalibrateActive) {
+				if (isInputHandled)
+					EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "PedanticEstop is enabled. Input rejected.");
+				return false;
+			}
 		}
 
 		// rover control
@@ -380,6 +399,14 @@ public partial class PressedKeys : Node
 
 		switch (_slaveControlMode)
 		{
+			case ControlMode.EStop:
+				if (_roverCalibrateControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave))
+				{
+					OnAcceptedInput(inputEvent);
+					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) RoverEstop");
+					return true;
+				}
+				break;
 			case ControlMode.Rover:
 				if (_roverDriveControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _roverMovement, out _roverMovement))
 				{
@@ -470,6 +497,7 @@ public partial class PressedKeys : Node
 			);
 		_roverSamplerControllerPreset = new SamplerController();
 		_roverCameraControllerPreset = new OriginalCameraController();
+		_roverCalibrateControllerPreset = new CalibrateAxisController();
 
 		ControllerPresetChanged?.Invoke();
 	}

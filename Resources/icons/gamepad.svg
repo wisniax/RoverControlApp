@@ -1,0 +1,12 @@
+<svg id="gamepad" xmlns="http://www.w3.org/2000/svg" viewBox="-1.125 -1.125 36 36" height="36" width="36">
+  <defs></defs>
+  <path d="M25.790625 5.9203125A6.8343750000000005 6.8343750000000005 0 0 0 19.6875 8.634375h-5.625a6.8343750000000005 6.8343750000000005 0 0 0 -6.1031249999999995 -2.7140625 7.03125 7.03125 0 0 0 -6.2015625000000005 7.1296875v9.84375A4.921875 4.921875 0 0 0 11.25 24.764062499999998c0.590625 -1.4765625 1.321875 -3.3328125 1.996875 -5.1468750000000005h7.2562500000000005c0.6749999999999999 1.8140625000000001 1.40625 3.6703124999999996 1.996875 5.1468750000000005a4.921875 4.921875 0 0 0 9.4921875 -1.8140625000000001v-9.84375a7.03125 7.03125 0 0 0 -6.2015625000000005 -7.1859375000000005Z" fill="none" stroke="#FFF" stroke-miterlimit="10" stroke-width="2.25"></path>
+  <path d="M26.49375 16.875Z" fill="none" stroke="#FFF" stroke-miterlimit="10" stroke-width="2.25"></path>
+  <path d="M26.49375 11.3765625Z" fill="none" stroke="#FFF" stroke-miterlimit="10" stroke-width="2.25"></path>
+  <path d="M29.2359375 14.132812500000002Z" fill="none" stroke="#FFF" stroke-miterlimit="10" stroke-width="2.25"></path>
+  <path d="M23.751562500000002 14.132812500000002Z" fill="none" stroke="#FFF" stroke-miterlimit="10" stroke-width="2.25"></path>
+  <path d="M9.9984375 16.875Z" fill="none" stroke="#FFF" stroke-miterlimit="10" stroke-width="2.25"></path>
+  <path d="M9.9984375 11.3765625Z" fill="none" stroke="#FFF" stroke-miterlimit="10" stroke-width="2.25"></path>
+  <path d="M12.754687500000001 14.132812500000002Z" fill="none" stroke="#FFF" stroke-miterlimit="10" stroke-width="2.25"></path>
+  <path d="M7.2562500000000005 14.132812500000002Z" fill="none" stroke="#FFF" stroke-miterlimit="10" stroke-width="2.25"></path>
+</svg>
