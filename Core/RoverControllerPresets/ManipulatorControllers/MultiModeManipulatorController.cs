@@ -71,7 +71,7 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"Use joysticks to control the axes of the manipulator. Left bumper changes modes forward/inverse_joystick/stop. More info in MultiAxis and InverseJoy F1 hints";
+		"Use joysticks to control the axes of the manipulator. Left bumper changes modes forward/inverse_joystick. More info in MultiAxis and InverseJoy F1 hints";
 
 	public string[] GetControlledAxes()
 	{
