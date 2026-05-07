@@ -13,7 +13,7 @@ public partial class Manipulator : SettingBase, ICloneable
 
 	public Manipulator()
 	{
-		_roverManipulatorController = 3;
+		_roverManipulatorController = 0;
 		_holdToChangeManipulatorAxes = false;
 		_invKinScaler = new();
 	}
