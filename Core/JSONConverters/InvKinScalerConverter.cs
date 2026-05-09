@@ -52,9 +52,7 @@ public class InvKinScalerConverter : JsonConverter<InvKinScaler>
 	public override void Write(Utf8JsonWriter writer, InvKinScaler value, JsonSerializerOptions options)
 	{
 		writer.WriteStartObject();
-		writer.WritePropertyName(nameof(InvKinScaler.MaxLinearSpeed));
 		writer.WriteNumber(nameof(InvKinScaler.MaxLinearSpeed), value.MaxLinearSpeed);
-		writer.WritePropertyName(nameof(InvKinScaler.MaxAngularSpeed));
 		writer.WriteNumber(nameof(InvKinScaler.MaxAngularSpeed), value.MaxAngularSpeed);
 		
 		writer.WriteEndObject();
