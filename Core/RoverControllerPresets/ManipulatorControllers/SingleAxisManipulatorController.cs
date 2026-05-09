@@ -20,16 +20,16 @@ public class SingleAxisManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorAxis6,
 	];
 
-	public RoboticArmControl CalculateMoveVector(
+	public ManipulatorControl CalculateMoveVector(
 		in InputEvent inputEvent,
 		DualSeatEvent.InputDevice targetInputDevice,
-		in RoboticArmControl lastState)
+		in ManipulatorControl lastState)
 	{
 		float velocity = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSpeedBackward, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSpeedForward, targetInputDevice));
 		if (Mathf.Abs(velocity) < LocalSettings.Singleton.Joystick.MinimalInput)
 			velocity = 0f;
 
-		RoboticArmControl manipulatorControl = new();
+		ManipulatorControl manipulatorControl = new();
 
 		manipulatorControl.ActionType = ActionType.ForwardKin;
 		manipulatorControl.ForwardKin = new();

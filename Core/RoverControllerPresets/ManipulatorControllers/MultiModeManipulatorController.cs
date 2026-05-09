@@ -31,7 +31,7 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 	InverseJoystickManipulatorController inverseJoystickManipulatorController = new();
 	MultiAxisManipulatorController multiAxisManipulatorController = new();
 
-	public RoboticArmControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in RoboticArmControl lastState)
+	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in ManipulatorControl lastState)
 	{
 		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, tagetInputDevice), allowEcho: false))
 		{
@@ -63,7 +63,7 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 			case ActionType.InvKinJoystick:
 				return inverseJoystickManipulatorController.CalculateMoveVector(inputEvent, tagetInputDevice, lastState);
 			default:
-				return new RoboticArmControl() { ActionType = ActionType.ForwardKin };
+				return new ManipulatorControl() { ActionType = ActionType.ForwardKin };
 		}
 	}
 

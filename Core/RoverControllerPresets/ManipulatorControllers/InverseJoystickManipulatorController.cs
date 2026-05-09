@@ -31,14 +31,14 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 
 	private bool _useSecondaryAxes = true;
 
-	public RoboticArmControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in RoboticArmControl lastState)
+	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in ManipulatorControl lastState)
 	{
 		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, tagetInputDevice), allowEcho: true))
 		{
 			_useSecondaryAxes = !_useSecondaryAxes;
 		}
 
-		RoboticArmControl manipulatorControl = new();
+		ManipulatorControl manipulatorControl = new();
 		manipulatorControl.ActionType = ActionType.InvKinJoystick;
 		manipulatorControl.InvJoystick = new();
 

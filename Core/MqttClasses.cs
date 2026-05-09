@@ -108,7 +108,7 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
-		public class RoboticArmControl
+		public class ManipulatorControl
 		{
 			public ActionType ActionType { get; set; } = ActionType.Stop;
 			public string? Reference { get; set; } = "base_link";

@@ -403,7 +403,7 @@ public partial class MqttNode : Node
 		await _managedMqttClient.EnqueueAsync
 		(
 			TopicFull(LocalSettings.Singleton.Mqtt.TopicManipulatorControl),
-			JsonSerializer.Serialize(new MqttClasses.RoboticArmControl())
+			JsonSerializer.Serialize(new MqttClasses.ManipulatorControl())
 		);
 
 		await _managedMqttClient.EnqueueAsync
