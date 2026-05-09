@@ -17,6 +17,7 @@ public class ManipulatorConverter : JsonConverter<Manipulator>
 
 		int? roverManipulatorController = null;
 		bool? holdToChangeManipulatorAxes = null;
+		bool? useLegacyFrames = null;
 		InvKinScaler? invKinScaler = null;
 
 		while (reader.Read())
@@ -51,6 +52,7 @@ public class ManipulatorConverter : JsonConverter<Manipulator>
 		(
 			roverManipulatorController ?? Default.RoverManipulatorController,
 			holdToChangeManipulatorAxes ?? Default.HoldToChangeManipulatorAxes,
+			useLegacyFrames ?? Default.UseLegacyFrames,
 			invKinScaler ?? Default.InvKinScaler
 		);
 	}
@@ -60,6 +62,7 @@ public class ManipulatorConverter : JsonConverter<Manipulator>
 		writer.WriteStartObject();
 		writer.WriteNumber(nameof(Manipulator.RoverManipulatorController), value.RoverManipulatorController);
 		writer.WriteBoolean(nameof(Manipulator.HoldToChangeManipulatorAxes), value.HoldToChangeManipulatorAxes);
+		writer.WriteBoolean(nameof(Manipulator.UseLegacyFrames), value.UseLegacyFrames);
 		writer.WritePropertyName(nameof(Manipulator.InvKinScaler));
 		JsonSerializer.Serialize(writer, value.InvKinScaler, options);
 		writer.WriteEndObject();

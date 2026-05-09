@@ -15,13 +15,15 @@ public partial class Manipulator : SettingBase, ICloneable
 	{
 		_roverManipulatorController = 0;
 		_holdToChangeManipulatorAxes = false;
+		_useLegacyFrames = true;
 		_invKinScaler = new();
 	}
 
-	public Manipulator(int roverManipulatorController, bool holdToChangeManipulatorAxes, InvKinScaler invKinScaler)
+	public Manipulator(int roverManipulatorController, bool holdToChangeManipulatorAxes, bool useLegacyFrames, InvKinScaler invKinScaler)
 	{
 		_roverManipulatorController = roverManipulatorController;
 		_holdToChangeManipulatorAxes = holdToChangeManipulatorAxes;
+		_useLegacyFrames = useLegacyFrames;
 		_invKinScaler = invKinScaler;
 	}
 
@@ -41,7 +43,8 @@ public partial class Manipulator : SettingBase, ICloneable
 		customTooltip: "0 - MultiAxis\n" +
 					   "1 - SingleAxis\n" +
 					   "2 - InvKinJoystick\n" +
-					   "3 - MultiMode (Default)"
+					   "3 - MultiMode (Default)\n" +
+					   "Inverse kinematics modes require legacy frames to be disabled."
 	)]
 	public int RoverManipulatorController
 	{
@@ -56,6 +59,13 @@ public partial class Manipulator : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _holdToChangeManipulatorAxes, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Check, customTooltip: "When enabled, the manipulator will use legacy frames.")]
+	public bool UseLegacyFrames
+	{
+		get => _useLegacyFrames;
+		set => EmitSignal_SettingChanged(ref _useLegacyFrames, value);
+	}
+
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
 	public Settings.InvKinScaler? InvKinScaler
 	{
@@ -66,6 +76,7 @@ public partial class Manipulator : SettingBase, ICloneable
 
 	int _roverManipulatorController;
 	bool _holdToChangeManipulatorAxes;
+	bool _useLegacyFrames;
 	Settings.InvKinScaler? _invKinScaler;
 }
 
