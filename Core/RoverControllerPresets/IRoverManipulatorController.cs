@@ -20,11 +20,8 @@ public interface IRoverManipulatorController : IActionAwareController
 	public bool HandleInput(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, ManipulatorControl lastState, out ManipulatorControl newState)
 	{
 		newState = CalculateMoveVector(inputEvent, targetInputDevice, lastState);
-		bool changed = false;
-		try
-		{
-			changed = IsMoveVectorChanged(newState, lastState);
-		} catch (Exception ex) {}
+		bool changed = IsMoveVectorChanged(newState, lastState);
+		
 		newState.Timestamp = changed ? DateTimeOffset.Now.ToUnixTimeMilliseconds() : lastState.Timestamp;
 		return changed;
 	}

@@ -25,7 +25,6 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorMultiChangeAxes
 	];
 
-	private bool _axesChanged = true;
 	private ActionType _currentActionType = ActionType.InvKinJoystick;
 
 	InverseJoystickManipulatorController inverseJoystickManipulatorController = new();
@@ -33,10 +32,6 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in ManipulatorControl lastState)
 	{
-		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, tagetInputDevice), allowEcho: false))
-		{
-			_axesChanged = !_axesChanged;
-		}
 		switch (_currentActionType)
 		{
 			case ActionType.ForwardKin:
