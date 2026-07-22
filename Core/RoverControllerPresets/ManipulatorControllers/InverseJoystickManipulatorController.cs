@@ -39,7 +39,7 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 
 		if (LocalSettings.Singleton.Manipulator.HoldToChangeManipulatorAxes == true)
 		{
-			_useSecondaryAxes = !Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, targetInputDevice));
+			_useSecondaryAxes = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiChangeAxes, targetInputDevice));
 		}
 		else
 		{
