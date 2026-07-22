@@ -57,7 +57,7 @@ public partial class Manipulator : SettingBase, ICloneable
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
-	public Settings.InvKinScaler? InvKinScaler
+	public Settings.InvKinScaler InvKinScaler
 	{
 		get => _invKinScaler;
 		set => EmitSignal_SectionChanged(ref _invKinScaler, value);
@@ -66,7 +66,7 @@ public partial class Manipulator : SettingBase, ICloneable
 
 	int _roverManipulatorController;
 	bool _holdToChangeManipulatorAxes;
-	Settings.InvKinScaler? _invKinScaler;
+	Settings.InvKinScaler _invKinScaler;
 }
 
 
