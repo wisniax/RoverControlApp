@@ -74,14 +74,11 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 		{
 			case ActionType.ForwardKin:
 				return multiAxisManipulatorController.GetControlledAxes();
-				break;
 			case ActionType.InvKinJoystick:
 				return inverseJoystickManipulatorController.GetControlledAxes();
-				break;
 			default:
-				break;
+				return Array.Empty<string>();
 		}
-		return Array.Empty<string>();
 	}
 
 }
