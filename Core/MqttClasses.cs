@@ -119,7 +119,51 @@ namespace RoverControlApp.Core
 			public bool ForceCartesian { get; set; }
 			public bool ForceMovement { get; set; }
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+			public override bool Equals(object? obj)
+			{
+				if (obj is not ManipulatorControl other) return false;
+
+				if (this.ActionType != other.ActionType) return true;
+
+				if (!Mathf.IsEqualApprox(this.Gripper, other.Gripper, 0.001f)) return true;
+
+				switch (this.ActionType)
+				{
+					case ActionType.ForwardKin:
+						return !Mathf.IsEqualApprox(this.ForwardKin.Axis1, other.ForwardKin.Axis1, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.ForwardKin.Axis2, other.ForwardKin.Axis2, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.ForwardKin.Axis3, other.ForwardKin.Axis3, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.ForwardKin.Axis4, other.ForwardKin.Axis4, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.ForwardKin.Axis5, other.ForwardKin.Axis5, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.ForwardKin.Axis6, other.ForwardKin.Axis6, 0.001f);
+					case ActionType.InvKinJoystick:
+						return !Mathf.IsEqualApprox(this.InvJoystick.LinearSpeed.X, other.InvJoystick.LinearSpeed.X, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.InvJoystick.LinearSpeed.Y, other.InvJoystick.LinearSpeed.Y, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.InvJoystick.LinearSpeed.Z, other.InvJoystick.LinearSpeed.Z, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.InvJoystick.RotationSpeed.X, other.InvJoystick.RotationSpeed.X, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.InvJoystick.RotationSpeed.Y, other.InvJoystick.RotationSpeed.Y, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.InvJoystick.RotationSpeed.Z, other.InvJoystick.RotationSpeed.Z, 0.001f);
+					case ActionType.InvKinPosition:
+						return !Mathf.IsEqualApprox(this.InvPosition.Position.X, other.InvPosition.Position.X, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.InvPosition.Position.Y, other.InvPosition.Position.Y, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.InvPosition.Position.Z, other.InvPosition.Position.Z, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.InvPosition.Rotation.X, other.InvPosition.Rotation.X, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.InvPosition.Rotation.Y, other.InvPosition.Rotation.Y, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.InvPosition.Rotation.Z, other.InvPosition.Rotation.Z, 0.001f) ||
+							   !Mathf.IsEqualApprox(this.InvPosition.Rotation.W, other.InvPosition.Rotation.W, 0.001f);
+					case ActionType.InvKinOffset:
+						// No mode for it
+						break;
+					case ActionType.GoToReference:
+						// No mode for it
+						break;
+				}
+
+				return false;
+			}
 		}
+		
 		public enum ActionType
 		{
 			Stop = 0,
