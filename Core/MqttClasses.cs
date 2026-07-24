@@ -131,6 +131,7 @@ namespace RoverControlApp.Core
 				switch (this.ActionType)
 				{
 					case ActionType.ForwardKin:
+						if (this.ForwardKin == null || other.ForwardKin == null) return true;
 						return !Mathf.IsEqualApprox(this.ForwardKin.Axis1, other.ForwardKin.Axis1, 0.001f) ||
 							   !Mathf.IsEqualApprox(this.ForwardKin.Axis2, other.ForwardKin.Axis2, 0.001f) ||
 							   !Mathf.IsEqualApprox(this.ForwardKin.Axis3, other.ForwardKin.Axis3, 0.001f) ||
@@ -138,6 +139,7 @@ namespace RoverControlApp.Core
 							   !Mathf.IsEqualApprox(this.ForwardKin.Axis5, other.ForwardKin.Axis5, 0.001f) ||
 							   !Mathf.IsEqualApprox(this.ForwardKin.Axis6, other.ForwardKin.Axis6, 0.001f);
 					case ActionType.InvKinJoystick:
+						if (this.InvJoystick == null || other.InvJoystick == null) return true;
 						return !Mathf.IsEqualApprox(this.InvJoystick.LinearSpeed.X, other.InvJoystick.LinearSpeed.X, 0.001f) ||
 							   !Mathf.IsEqualApprox(this.InvJoystick.LinearSpeed.Y, other.InvJoystick.LinearSpeed.Y, 0.001f) ||
 							   !Mathf.IsEqualApprox(this.InvJoystick.LinearSpeed.Z, other.InvJoystick.LinearSpeed.Z, 0.001f) ||
@@ -145,6 +147,7 @@ namespace RoverControlApp.Core
 							   !Mathf.IsEqualApprox(this.InvJoystick.RotationSpeed.Y, other.InvJoystick.RotationSpeed.Y, 0.001f) ||
 							   !Mathf.IsEqualApprox(this.InvJoystick.RotationSpeed.Z, other.InvJoystick.RotationSpeed.Z, 0.001f);
 					case ActionType.InvKinPosition:
+						if (this.InvPosition == null || other.InvPosition == null) return true;
 						return !Mathf.IsEqualApprox(this.InvPosition.Position.X, other.InvPosition.Position.X, 0.001f) ||
 							   !Mathf.IsEqualApprox(this.InvPosition.Position.Y, other.InvPosition.Position.Y, 0.001f) ||
 							   !Mathf.IsEqualApprox(this.InvPosition.Position.Z, other.InvPosition.Position.Z, 0.001f) ||
@@ -161,6 +164,16 @@ namespace RoverControlApp.Core
 				}
 
 				return false;
+			}
+
+			public override int GetHashCode()
+			{
+				int temp1 = HashCode.Combine(ForwardKin?.Axis1, ForwardKin?.Axis2, ForwardKin?.Axis3, ForwardKin?.Axis4, ForwardKin?.Axis5, ForwardKin?.Axis6, Gripper); ;
+				int temp2 = HashCode.Combine(InvJoystick?.LinearSpeed.X, InvJoystick?.LinearSpeed.Y, InvJoystick?.LinearSpeed.Z, InvJoystick?.RotationSpeed.X, InvJoystick?.RotationSpeed.Y, InvJoystick?.RotationSpeed.Z);
+				int temp3 = HashCode.Combine(InvPosition?.Position.X, InvPosition?.Position.Y, InvPosition?.Position.Z, InvPosition?.Rotation.X, InvPosition?.Rotation.Y, InvPosition?.Rotation.Z);
+				int temp4 = HashCode.Combine(ActionType, Reference, ForceCartesian, ForceMovement);
+
+				return HashCode.Combine(temp1, temp2, temp3, temp4);
 			}
 		}
 		
@@ -185,14 +198,14 @@ namespace RoverControlApp.Core
 		}
 		public class InverseJoystickMode
 		{
-			public Vec3 LinearSpeed { get; set; }
-			public Vec3 RotationSpeed { get; set; }
+			public Vec3 LinearSpeed { get; set; } = new Vec3();
+			public Vec3 RotationSpeed { get; set; } = new Vec3();
 		}
 
 		public class InversePositionMode
 		{
-			public Vec3 Position { get; set; }
-			public Quaternion Rotation { get; set; }
+			public Vec3 Position { get; set; } = new Vec3();
+			public Quaternion Rotation { get; set; } = new Quaternion();
 		}
 
 		public class Vec3
