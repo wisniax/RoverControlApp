@@ -412,7 +412,7 @@ namespace RoverControlApp.MVVM.ViewModel
 								$"{(controlledAxes.Contains("Axis4") ? "[b]Axis4:[/b] " : "Axis4: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis4, 2)}, " +
 								$"{(controlledAxes.Contains("Axis5") ? "[b]Axis5:[/b] " : "Axis5: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis5, 2)}, " +
 								$"{(controlledAxes.Contains("Axis6") ? "[b]Axis6:[/b] " : "Axis6: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis6, 2)}, " +
-								//$"{(controlledAxes.Contains("Gripper") ? "[b]Gripper:[/b] " : "Gripper: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Gripper, 2)}, " +
+								$"{(controlledAxes.Contains("Gripper") ? "[b]Gripper:[/b] " : "Gripper: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Gripper, 2)}, " +
 								$"Timestamp: {PressedKeys.Singleton.ManipulatorMovement.Timestamp}}}\n"
 							 );
 							break;
