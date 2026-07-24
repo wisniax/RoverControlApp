@@ -30,7 +30,8 @@ public partial class Manipulator : SettingBase, ICloneable
 		return new Manipulator()
 		{
 			RoverManipulatorController = _roverManipulatorController,
-			HoldToChangeManipulatorAxes = _holdToChangeManipulatorAxes
+			HoldToChangeManipulatorAxes = _holdToChangeManipulatorAxes,
+			InvKinScaler = _invKinScaler
 		};
 	}
 
