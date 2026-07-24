@@ -8,7 +8,7 @@ namespace RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 
 public class MultiAxisManipulatorController : IRoverManipulatorController
 {
-	private readonly StringName[] _usedActions =
+	private static readonly StringName[] _usedActions =
 	[
 		RcaInEvName.ManipulatorMultiAxis1Backward,
 		RcaInEvName.ManipulatorMultiAxis2Backward,

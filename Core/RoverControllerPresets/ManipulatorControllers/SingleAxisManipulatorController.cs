@@ -8,7 +8,7 @@ namespace RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 
 public class SingleAxisManipulatorController : IRoverManipulatorController
 {
-	private readonly StringName[] _usedActions =
+	private static readonly StringName[] _usedActions =
 	[
 		RcaInEvName.ManipulatorSpeedBackward,
 		RcaInEvName.ManipulatorSpeedForward,

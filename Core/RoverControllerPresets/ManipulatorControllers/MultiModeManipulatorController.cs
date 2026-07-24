@@ -8,8 +8,9 @@ namespace RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
 
 public class MultiModeManipulatorController : IRoverManipulatorController
 {
-	private readonly StringName[] _usedActions =
+	private static readonly StringName[] _usedActions =
 	[
+		RcaInEvName.ManipulatorModeChange,
 		RcaInEvName.ManipulatorInvJoystickPosXPlus,
 		RcaInEvName.ManipulatorInvJoystickPosXMinus,
 		RcaInEvName.ManipulatorInvJoystickPosYPlus,
@@ -22,6 +23,20 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorInvJoystickRotYMinus,
 		RcaInEvName.ManipulatorInvJoystickRotZPlus,
 		RcaInEvName.ManipulatorInvJoystickRotZMinus,
+		RcaInEvName.ManipulatorMultiAxis1Backward,
+		RcaInEvName.ManipulatorMultiAxis2Backward,
+		RcaInEvName.ManipulatorMultiAxis3Backward,
+		RcaInEvName.ManipulatorMultiAxis4Backward,
+		RcaInEvName.ManipulatorMultiAxis5Backward,
+		RcaInEvName.ManipulatorMultiAxis6Backward,
+		RcaInEvName.ManipulatorMultiGripperBackward,
+		RcaInEvName.ManipulatorMultiAxis1Forward,
+		RcaInEvName.ManipulatorMultiAxis2Forward,
+		RcaInEvName.ManipulatorMultiAxis3Forward,
+		RcaInEvName.ManipulatorMultiAxis4Forward,
+		RcaInEvName.ManipulatorMultiAxis5Forward,
+		RcaInEvName.ManipulatorMultiAxis6Forward,
+		RcaInEvName.ManipulatorMultiGripperForward,
 		RcaInEvName.ManipulatorMultiChangeAxes
 	];
 
@@ -66,7 +81,9 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"Use joysticks to control the axes of the manipulator. Left bumper changes modes forward/inverse_joystick. More info in MultiAxis and InverseJoy F1 hints";
+		"MULTIMODE: Left bumper changes modes forward/inverse_joystick. \n\n" +
+		"INVERSE_KIN:" + inverseJoystickManipulatorController.GetInputActionsAdditionalNote() + "\n\n" +
+		"FORWARD_KIN:" + multiAxisManipulatorController.GetInputActionsAdditionalNote();
 
 	public string[] GetControlledAxes()
 	{
