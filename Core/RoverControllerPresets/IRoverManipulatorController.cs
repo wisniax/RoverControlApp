@@ -32,7 +32,7 @@ public interface IRoverManipulatorController : IActionAwareController
 	/// <returns>true if changed</returns>
 	public bool IsMoveVectorChanged(in ManipulatorControl currentState, in ManipulatorControl lastState)
 	{
-		return currentState.Equals(lastState);
+		return !currentState.Equals(lastState);
 	}
 
 
