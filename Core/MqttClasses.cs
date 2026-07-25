@@ -168,7 +168,7 @@ namespace RoverControlApp.Core
 
 			public override int GetHashCode()
 			{
-				int temp1 = HashCode.Combine(ForwardKin?.Axis1, ForwardKin?.Axis2, ForwardKin?.Axis3, ForwardKin?.Axis4, ForwardKin?.Axis5, ForwardKin?.Axis6, Gripper); ;
+				int temp1 = HashCode.Combine(ForwardKin?.Axis1, ForwardKin?.Axis2, ForwardKin?.Axis3, ForwardKin?.Axis4, ForwardKin?.Axis5, ForwardKin?.Axis6, Gripper);
 				int temp2 = HashCode.Combine(InvJoystick?.LinearSpeed.X, InvJoystick?.LinearSpeed.Y, InvJoystick?.LinearSpeed.Z, InvJoystick?.RotationSpeed.X, InvJoystick?.RotationSpeed.Y, InvJoystick?.RotationSpeed.Z);
 				int temp3 = HashCode.Combine(InvPosition?.Position.X, InvPosition?.Position.Y, InvPosition?.Position.Z, InvPosition?.Rotation.X, InvPosition?.Rotation.Y, InvPosition?.Rotation.Z, InvPosition?.Rotation.W);
 				int temp4 = HashCode.Combine(ActionType, Reference, ForceCartesian, ForceMovement);
