@@ -2,5 +2,8 @@
     "[csharp]": 
     {
         "editor.codeActionsOnSave": [ "source.organizeImports" ] 
+    },
+    "files.exclude": {
+        "**/*.uid": true
     }
 }

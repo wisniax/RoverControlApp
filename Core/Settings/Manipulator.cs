@@ -15,12 +15,14 @@ public partial class Manipulator : SettingBase, ICloneable
 	{
 		_roverManipulatorController = 0;
 		_holdToChangeManipulatorAxes = false;
+		_invKinScaler = new();
 	}
 
-	public Manipulator(int roverManipulatorController, bool holdToChangeManipulatorAxes)
+	public Manipulator(int roverManipulatorController, bool holdToChangeManipulatorAxes, InvKinScaler invKinScaler)
 	{
 		_roverManipulatorController = roverManipulatorController;
 		_holdToChangeManipulatorAxes = holdToChangeManipulatorAxes;
+		_invKinScaler = invKinScaler;
 	}
 
 	public object Clone()
@@ -28,16 +30,19 @@ public partial class Manipulator : SettingBase, ICloneable
 		return new Manipulator()
 		{
 			RoverManipulatorController = _roverManipulatorController,
-			HoldToChangeManipulatorAxes = _holdToChangeManipulatorAxes
+			HoldToChangeManipulatorAxes = _holdToChangeManipulatorAxes,
+			InvKinScaler = _invKinScaler
 		};
 	}
 
 
 	[SettingsManagerVisible(
 		cellMode: TreeItem.TreeCellMode.Range,
-		formatData: "0;1;1;f;i",
+		formatData: "0;3;1;f;i",
 		customTooltip: "0 - MultiAxis (Default)\n" +
-					   "1 - SingleAxis"
+					   "1 - SingleAxis\n" +
+					   "2 - InvKinJoystick\n" +
+					   "3 - MultiMode (0+2)"
 	)]
 	public int RoverManipulatorController
 	{
@@ -52,8 +57,17 @@ public partial class Manipulator : SettingBase, ICloneable
 		set => EmitSignal_SettingChanged(ref _holdToChangeManipulatorAxes, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Custom, immutableSection: true)]
+	public Settings.InvKinScaler InvKinScaler
+	{
+		get => _invKinScaler;
+		set => EmitSignal_SectionChanged(ref _invKinScaler, value);
+	}
+
+
 	int _roverManipulatorController;
 	bool _holdToChangeManipulatorAxes;
+	Settings.InvKinScaler _invKinScaler;
 }
 
 

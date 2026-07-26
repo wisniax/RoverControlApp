@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c78k3jqowm3q0"]
 
-[ext_resource type="Script" path="res://MVVM/ViewModel/BatteryMonitor.cs" id="1_ktc3a"]
+[ext_resource type="Script" uid="uid://b7f1y7icth3mv" path="res://MVVM/ViewModel/BatteryMonitor.cs" id="1_ktc3a"]
 [ext_resource type="PackedScene" uid="uid://cdbeb0yegexne" path="res://MVVM/View/SubBattery.tscn" id="2_4ptu6"]
 
 [node name="BatteryMonitor" type="Panel" node_paths=PackedStringArray("battery", "_vescVoltageLabel", "_battVoltageLabel", "_sumCurrentLabel", "_blackMushroomLabel", "_hotswapGPIO", "_vescUpdateTimer")]
