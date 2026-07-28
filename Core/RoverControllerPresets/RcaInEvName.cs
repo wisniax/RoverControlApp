@@ -58,6 +58,20 @@ public static class RcaInEvName
 	public static readonly StringName ManipulatorModeChange = new("manipulator_mode_change");
 	public static readonly StringName ManipulatorInvChangeRef = new("manipulator_inv_change_ref");
 
+	public static readonly StringName ManipulatorSimInvJoystickPosXPlus = new("manipulator_sim_inv_joy_pos_x+");
+	public static readonly StringName ManipulatorSimInvJoystickPosXMinus = new("manipulator_sim_inv_joy_pos_x-");
+	public static readonly StringName ManipulatorSimInvJoystickPosYPlus = new("manipulator_sim_inv_joy_pos_y+");
+	public static readonly StringName ManipulatorSimInvJoystickPosYMinus = new("manipulator_sim_inv_joy_pos_y-");
+	public static readonly StringName ManipulatorSimInvJoystickPosZPlus = new("manipulator_sim_inv_joy_pos_z+");
+	public static readonly StringName ManipulatorSimInvJoystickPosZMinus = new("manipulator_sim_inv_joy_pos_z-");
+	public static readonly StringName ManipulatorSimInvJoystickRotXPlus = new("manipulator_sim_inv_joy_rot_x+");
+	public static readonly StringName ManipulatorSimInvJoystickRotXMinus = new("manipulator_sim_inv_joy_rot_x-");
+	public static readonly StringName ManipulatorSimInvJoystickRotYPlus = new("manipulator_sim_inv_joy_rot_y+");
+	public static readonly StringName ManipulatorSimInvJoystickRotYMinus = new("manipulator_sim_inv_joy_rot_y-");
+	public static readonly StringName ManipulatorSimInvJoystickRotZPlus = new("manipulator_sim_inv_joy_rot_z+");
+	public static readonly StringName ManipulatorSimInvJoystickRotZMinus = new("manipulator_sim_inv_joy_rot_z-");
+	public static readonly StringName ManipulatorSimInvChangeRef = new("manipulator_sim_inv_change_ref");
+
 	public static readonly StringName SamplerMoveDown = new("sampler_move_down");
 	public static readonly StringName SamplerMoveUp = new("sampler_move_up");
 	public static readonly StringName SamplerDrillDown = new("sampler_drill_down");
