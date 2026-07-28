@@ -25,13 +25,20 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 		RcaInEvName.ManipulatorSimInvChangeRef
 	];
 
+	private bool _useToolReference = false;
+
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in ManipulatorControl lastState)
 	{
 		ManipulatorControl manipulatorControl = new();
 		manipulatorControl.ActionType = ActionType.InvKinJoystick;
 		manipulatorControl.InvJoystick = new();
 
-		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorInvChangeRef, targetInputDevice), exactMatch: true))
+		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvChangeRef, targetInputDevice), exactMatch: true))
+		{
+			_useToolReference = !_useToolReference;
+		}
+
+		if (_useToolReference)
 		{
 			manipulatorControl.Reference = "tool";
 		}
@@ -61,7 +68,7 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between position and rotation. Hold Y (xbox) to change reference to 'tool' Gripper is controlled with triggers.";
+		"Use joysticks to control manipulator movement. Hold the right and left bumper to roll the effector. Use the ABXY buttons to control pitch and yaw. Gripper is controlled with triggers.";
 
 	public string[] GetControlledAxes()
 	{

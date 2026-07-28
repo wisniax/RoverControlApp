@@ -42,7 +42,7 @@ public partial class Manipulator : SettingBase, ICloneable
 		customTooltip: "0 - MultiAxis (Default)\n" +
 					   "1 - SingleAxis\n" +
 					   "2 - InvKinJoystick\n" +
-					   "3 - MultiMode (0+2)\n" +
+					   "3 - MultiMode (0+4)\n" +
 					   "4 - SimplerInverseJoystick"
 	)]
 	public int RoverManipulatorController
