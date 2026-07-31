@@ -65,7 +65,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster", "RosoutLogs", "RosoutDot")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "ShowRosoutLogs", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster", "RosoutLogs", "RosoutDot")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -84,6 +84,7 @@ ShowSettingsBtn = NodePath("HBoxContainer/ShowSettingsBtn")
 ShowVelMonitor = NodePath("HBoxContainer/ShowVelMonitor")
 ShowMissionControlBrn = NodePath("HBoxContainer/ShowMissionControl")
 ShowBatteryMonitor = NodePath("HBoxContainer/ShowBatteryMonitor")
+ShowRosoutLogs = NodePath("HBoxContainer/ShowRosoutLogs")
 SettingsManagerNode = NodePath("SettingsManager")
 MissionControlNode = NodePath("MissionControl")
 FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
@@ -393,8 +394,8 @@ visible = false
 layout_mode = 1
 offset_left = 8.692
 offset_top = 148.704
-offset_right = 606.692
-offset_bottom = 493.704
+offset_right = 612.692
+offset_bottom = 518.704
 
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false

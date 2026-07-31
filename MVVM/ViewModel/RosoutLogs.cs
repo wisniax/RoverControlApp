@@ -78,7 +78,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			_selectNode.Select(0);
 		}
 
-		public Task OnRosoutInfo(string subtopic, MqttApplicationMessage? msg)
+		private Task OnRosoutInfo(string subtopic, MqttApplicationMessage? msg)
 		{
 			if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicRosoutLogs))
 				return Task.CompletedTask;
@@ -159,7 +159,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			_logDisplay.Text = sb.ToString();
 		}
 
-		public void ToggleFilter(bool isPressed, int level)
+		private void ToggleFilter(bool isPressed, int level)
 		{
 			if (_activeFilters.ContainsKey(level))
 			{
@@ -168,14 +168,14 @@ namespace RoverControlApp.MVVM.ViewModel
 			}
 		}
 
-		public void OnNodeFilterItemSelected(int index)
+		private void OnNodeFilterItemSelected(int index)
 		{
 			_selectedNodeFilter = _selectNode.GetItemText(index);
 
 			Callable.From(RebuildLogUI).CallDeferred();
 		}
 
-		public string LevelIntToString(int? level)
+		private string LevelIntToString(int? level)
 		{
 			string val = "DEBUG";
 
