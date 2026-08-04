@@ -78,16 +78,16 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			SettingsManagerNode.Target = LocalSettings.Singleton;
 
-			PressedKeys.Singleton.OnControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnMasterControlModeChanged += RoverModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnSlaveControlModeChanged += DualSeatSlaveUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnKinematicModeChanged += DriveModeUIDis.KinematicModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnMasterControlModeChanged += DriveModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnSlaveControlModeChanged += DriveModeUIDis.SlaveControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnMasterControlModeChanged += SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnSlaveControlModeChanged += SafeModeUIDis.SlaveControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged += _joyVibratoMaster.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnMasterControlModeChanged += _joyVibratoMaster.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnSlaveControlModeChanged += _joyVibratoSlave.ControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged += InputHelp_HandleControlModeChanged;
+			PressedKeys.Singleton.OnMasterControlModeChanged += InputHelp_HandleControlModeChanged;
 			PressedKeys.Singleton.ControllerPresetChanged += InputHelp_HandleInputPresetChanged;
 			PressedKeys.Singleton.OnPadConnectionChanged += OnPadConnectionChanged;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged += MissionStatusUIDis.StatusChangeSubscriber;
@@ -96,7 +96,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			BatteryMonitor.OnBatteryDataChanged += HandleBatteryPercentageChangedHandler;
 			BatteryMonitor.SetMushroomState += GrzybUIDis.SetMushroom;
 
-			InputHelp_HandleControlModeChanged(PressedKeys.Singleton.ControlMode);
+			InputHelp_HandleControlModeChanged(PressedKeys.Singleton.MasterControlMode);
 			OnPadConnectionChanged(false);
 		}
 
@@ -107,7 +107,7 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionControlNode.SMissionControlVisualUpdate();
 			Task.Run(async () => await MissionStatusUIDis.StatusChangeSubscriber(MissionStatus.Singleton.Status));
 
-			RoverModeUIDis.ControlMode = (int)PressedKeys.Singleton.ControlMode;
+			RoverModeUIDis.ControlMode = (int)PressedKeys.Singleton.MasterControlMode;
 			DualSeatSlaveUIDis.ControlMode = (int)PressedKeys.Singleton.SlaveControlMode;
 
 			ManagePtzStatus();
@@ -123,16 +123,16 @@ namespace RoverControlApp.MVVM.ViewModel
 		{
 			ShowSettingsBtn.ButtonPressed = ShowMissionControlBrn.ButtonPressed = ShowVelMonitor.ButtonPressed = false;
 
-			PressedKeys.Singleton.OnControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnMasterControlModeChanged -= RoverModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnSlaveControlModeChanged -= DualSeatSlaveUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnKinematicModeChanged -= DriveModeUIDis.KinematicModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged -= DriveModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnMasterControlModeChanged -= DriveModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnSlaveControlModeChanged -= DriveModeUIDis.SlaveControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnMasterControlModeChanged -= SafeModeUIDis.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnSlaveControlModeChanged -= SafeModeUIDis.SlaveControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged -= _joyVibratoMaster.ControlModeChangedSubscriber;
+			PressedKeys.Singleton.OnMasterControlModeChanged -= _joyVibratoMaster.ControlModeChangedSubscriber;
 			PressedKeys.Singleton.OnSlaveControlModeChanged -= _joyVibratoSlave.ControlModeChangedSubscriber;
-			PressedKeys.Singleton.OnControlModeChanged -= InputHelp_HandleControlModeChanged;
+			PressedKeys.Singleton.OnMasterControlModeChanged -= InputHelp_HandleControlModeChanged;
 			PressedKeys.Singleton.ControllerPresetChanged -= InputHelp_HandleInputPresetChanged;
 			PressedKeys.Singleton.OnPadConnectionChanged -= OnPadConnectionChanged;
 			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionStatusUIDis.StatusChangeSubscriber;
@@ -530,7 +530,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		private void InputHelp_HandleInputPresetChanged()
 		{
-			InputHelp_HandleControlModeChanged(PressedKeys.Singleton.ControlMode);
+			InputHelp_HandleControlModeChanged(PressedKeys.Singleton.MasterControlMode);
 		}
 
 		private Task InputHelp_HandleControlModeChanged(MqttClasses.ControlMode controlMode)
@@ -584,7 +584,7 @@ namespace RoverControlApp.MVVM.ViewModel
 
 				InputHelpMaster.ShowAdditionalNotes = _inputHelpHintMode < InputHelpHintMode.SkipCameraAndNotes;
 				InputHelpMaster.Visible = _inputHelpHintMode != InputHelpHintMode.Hidden;
-				InputHelp_HandleControlModeChanged(PressedKeys.Singleton.ControlMode);
+				InputHelp_HandleControlModeChanged(PressedKeys.Singleton.MasterControlMode);
 				return true;
 			}
 			return false;

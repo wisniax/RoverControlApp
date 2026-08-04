@@ -14,7 +14,7 @@ namespace RoverControlApp.MVVM.Model
 	public partial class RoverCommunication : Node
 	{
 		public event Func<MqttClasses.RoverStatus?, Task>? OnRoverStatusChanged;
-		private MqttClasses.ControlMode ControlMode => PressedKeys.Singleton.ControlMode;
+		private MqttClasses.ControlModeFlags ControlMode => PressedKeys.Singleton.ControlMode;
 
 		private MqttClasses.RoverStatus? _roverStatus;
 		private bool _disposedValue = false;
@@ -65,7 +65,7 @@ namespace RoverControlApp.MVVM.Model
 
 			if (disposing)
 			{
-				PressedKeys.Singleton.OnControlModeChanged -= PressedKeys_OnControlModeChanged;
+				PressedKeys.Singleton.OnMasterControlModeChanged -= PressedKeys_OnControlModeChanged;
 
 				PressedKeys.Singleton.OnPadConnectionChanged -= OnPadConnectionChanged;
 				PressedKeys.Singleton.OnRoverMovementVector -= RoverMovementVectorChanged;
@@ -123,7 +123,7 @@ namespace RoverControlApp.MVVM.Model
 				JsonSerializer.Serialize(arg), MqttQualityOfServiceLevel.ExactlyOnce, true);
 		}
 
-		private async Task PressedKeys_OnControlModeChanged(MqttClasses.ControlMode arg)
+		private async Task PressedKeys_OnMasterControlModeChanged(MqttClasses.ControlMode arg)
 		{
 			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(controlMode: arg));
 		}

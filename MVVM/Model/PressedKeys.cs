@@ -18,8 +18,8 @@ namespace RoverControlApp.MVVM.Model;
 public partial class PressedKeys : Node
 {
 	#region Fields
-	public ControlModeFlags CombinedControlMode => _controlMode | _slaveControlMode;
 	private ControlModeFlags _controlMode;
+	private ControlModeFlags _masterControlMode;
 	private ControlModeFlags _slaveControlMode;
 	private Vector4 _cameraMoveVector;
 	private RoverControl _roverMovement;
@@ -48,8 +48,9 @@ public partial class PressedKeys : Node
 	public event ControllerPresetChangedEventHandler? ControllerPresetChanged;
 	public event LastAcceptedInputEventHandler? LastAcceptedInput;
 
-	public event Func<ControlModeFlags, ControlModeFlags, Task>? OnControlModeChanged;
-	public event Func<ControlModeFlags, ControlModeFlags, Task>? OnSlaveControlModeChanged;
+	public event Func<ControlModeFlags, Task>? OnMasterControlModeChanged;
+	public event Func<ControlModeFlags, Task>? OnSlaveControlModeChanged;
+	public event Func<ControlModeFlags, Task>? OnControlModeChanged;
 
 	#endregion Events
 
@@ -62,24 +63,34 @@ public partial class PressedKeys : Node
 	public ControlModeFlags ControlMode
 	{
 		get => _controlMode;
+		set
+		{
+			_controlMode = value;
+			OnControlModeChanged?.Invoke(value);
+		}
+	} 
+
+	public ControlModeFlags MasterControlMode
+	{
+		get => _masterControlMode;
 		private set
 		{
-			var oldValue = _controlMode;
-			_controlMode = value;
+			_masterControlMode = value;
+			ControlMode = (_masterControlMode | _slaveControlMode);
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Master Control Mode changed {value}");
-			OnControlModeChanged?.Invoke(oldValue, value);
+			OnMasterControlModeChanged?.Invoke(value);
 		}
 	}
 
 	public ControlModeFlags SlaveControlMode
 	{
 		get => _slaveControlMode;
-		private set
+		private set			
 		{
-			var oldValue = _slaveControlMode;
 			_slaveControlMode = value;
+			ControlMode = CombineFlags(_masterControlMode, _slaveControlMode);
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Slave Control Mode changed {value}");
-			OnSlaveControlModeChanged?.Invoke(oldValue, value);
+			OnSlaveControlModeChanged?.Invoke(value);
 		}
 	}
 
@@ -240,10 +251,10 @@ public partial class PressedKeys : Node
 		if (
 			LocalSettings.Singleton.General.NoInputSecondsToEstop > 0 && // Must be enabled
 			lastInput > LocalSettings.Singleton.General.NoInputMsecToEstop && // Last input longer than expected
-			!ControlMode.HasFlag(ControlModeFlags.EStop) // Not in EStop already
+			!MasterControlMode.HasFlag(ControlModeFlags.EStop) // Not in EStop already
 		)
 		{
-			ControlMode = ControlModeFlags.EStop;
+			MasterControlMode = ControlModeFlags.EStop;
 			SlaveControlMode = ControlModeFlags.EStop;
 			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by Auto-EStop).");
 			StopAll();
@@ -252,7 +263,7 @@ public partial class PressedKeys : Node
 		if (_roverModeControllerPreset.EstopReq())
 		{
 			_autoEstop_lastInput = Time.GetTicksMsec(); //or else will not vibrate when already in Auto E-Stop
-			ControlMode = ControlModeFlags.EStop;
+			MasterControlMode = ControlModeFlags.EStop;
 			SlaveControlMode = ControlModeFlags.EStop;
 			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by InputController).");
 			StopAll();
@@ -269,16 +280,16 @@ public partial class PressedKeys : Node
 		}
 
 
-		if (_roverModeControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _controlMode, out _controlMode))
+		if (_roverModeControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _masterControlMode, out _masterControlMode))
 		{
-			OnControlModeChanged?.Invoke(_controlMode);
+			OnMasterControlModeChanged?.Invoke(_masterControlMode);
 			StopAll();
 			OnAcceptedInput(inputEvent);
 			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) ControlMode");
 			return true;
 		}
 
-		if (LocalSettings.Singleton.General.PedanticEstop && ControlMode == ControlMode.EStop)
+		if (LocalSettings.Singleton.General.PedanticEstop && MasterControlMode.HasFlag(ControlModeFlags.EStop))
 		{
 			//print only if some controller is happy to take input
 			bool isInputHandled =
@@ -290,9 +301,9 @@ public partial class PressedKeys : Node
 		}
 
 		// rover control
-		switch (this.ControlMode)
+		switch (this.MasterControlMode)
 		{
-			case ControlMode.Rover:
+			case MasterControlMode.Rover:
 				if (_roverDriveControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _roverMovement, out _roverMovement))
 				{
 					OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
@@ -302,7 +313,7 @@ public partial class PressedKeys : Node
 					return true;
 				}
 				break;
-			case ControlMode.Manipulator:
+			case MasterControlMode.Manipulator:
 				if (_roverManipulatorControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _manipulatorMovement, out _manipulatorMovement))
 				{
 					OnManipulatorMovement?.Invoke(_manipulatorMovement);
@@ -311,7 +322,7 @@ public partial class PressedKeys : Node
 					return true;
 				}
 				break;
-			case ControlMode.Sampler:
+			case MasterControlMode.Sampler:
 				if (_roverSamplerControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _samplerControl, out _samplerControl))
 				{
 					OnSamplerMovement?.Invoke(_samplerControl);
@@ -323,13 +334,13 @@ public partial class PressedKeys : Node
 		}
 
 		// camera control
-		switch (this.ControlMode)
+		switch (this.MasterControlMode)
 		{
-			case ControlMode.EStop:
-			case ControlMode.Rover:
-			case ControlMode.Manipulator: // was disabled originally
-			case ControlMode.Sampler:
-			case ControlMode.Autonomy:
+			case MasterControlMode.EStop:
+			case MasterControlMode.Rover:
+			case MasterControlMode.Manipulator: // was disabled originally
+			case MasterControlMode.Sampler:
+			case MasterControlMode.Autonomy:
 			default:
 				if (_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _cameraMoveVector, out _cameraMoveVector))
 				{
@@ -351,7 +362,7 @@ public partial class PressedKeys : Node
 			return false;
 		}
 
-		if (_controlMode == ControlMode.EStop)
+		if (_masterControlMode == MasterControlMode.EStop)
 		{
 			return false;
 		}
@@ -364,7 +375,7 @@ public partial class PressedKeys : Node
 			return true;
 		}
 
-		if (LocalSettings.Singleton.General.PedanticEstop && _slaveControlMode == ControlMode.EStop)
+		if (LocalSettings.Singleton.General.PedanticEstop && _slaveControlMode == MasterControlMode.EStop)
 		{
 			//print only if some controller is happy to take input
 			bool isInputHandled =
@@ -376,7 +387,7 @@ public partial class PressedKeys : Node
 		}
 
 		// rover control
-		if (_controlMode == _slaveControlMode)
+		if (_masterControlMode == _slaveControlMode)
 		{
 			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input rejected (Slave). Master is in same mode.");
 			return false;
@@ -384,7 +395,7 @@ public partial class PressedKeys : Node
 
 		switch (_slaveControlMode)
 		{
-			case ControlMode.Rover:
+			case MasterControlMode.Rover:
 				if (_roverDriveControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _roverMovement, out _roverMovement))
 				{
 					OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
@@ -394,7 +405,7 @@ public partial class PressedKeys : Node
 					return true;
 				}
 				break;
-			case ControlMode.Manipulator:
+			case MasterControlMode.Manipulator:
 				if (_roverManipulatorControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _manipulatorMovement, out _manipulatorMovement))
 				{
 					OnManipulatorMovement?.Invoke(_manipulatorMovement);
@@ -403,7 +414,7 @@ public partial class PressedKeys : Node
 					return true;
 				}
 				break;
-			case ControlMode.Sampler:
+			case MasterControlMode.Sampler:
 				if (_roverSamplerControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _samplerControl, out _samplerControl))
 				{
 					OnSamplerMovement?.Invoke(_samplerControl);
@@ -417,11 +428,11 @@ public partial class PressedKeys : Node
 		// camera control
 		switch (_slaveControlMode)
 		{
-			case ControlMode.EStop:
-			case ControlMode.Rover:
-			case ControlMode.Manipulator: // was disabled originally
-			case ControlMode.Sampler:
-			case ControlMode.Autonomy:
+			case MasterControlMode.EStop:
+			case MasterControlMode.Rover:
+			case MasterControlMode.Manipulator: // was disabled originally
+			case MasterControlMode.Sampler:
+			case MasterControlMode.Autonomy:
 			default:
 				if (_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _cameraMoveVector, out _cameraMoveVector))
 				{
@@ -520,5 +531,13 @@ public partial class PressedKeys : Node
 	{
 		return oldFlags &= ~flag;
 	}
+
+	public ControlModeFlags CombineFlags(ControlModeFlags masterControlMode, ControlModeFlags slaveControlMode)
+	{
+		var temp = masterControlMode | slaveControlMode;
+		return temp;
+	}
+
+
 	#endregion Methods
 }
