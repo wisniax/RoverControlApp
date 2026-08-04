@@ -18,6 +18,7 @@ namespace RoverControlApp.MVVM.Model;
 public partial class PressedKeys : Node
 {
 	#region Fields
+	public ControlModeFlags CombinedControlMode => _controlMode | _slaveControlMode;
 	private ControlModeFlags _controlMode;
 	private ControlModeFlags _slaveControlMode;
 	private Vector4 _cameraMoveVector;
@@ -242,7 +243,8 @@ public partial class PressedKeys : Node
 			!ControlMode.HasFlag(ControlModeFlags.EStop) // Not in EStop already
 		)
 		{
-			ControlMode.Set;
+			ControlMode = ControlModeFlags.EStop;
+			SlaveControlMode = ControlModeFlags.EStop;
 			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by Auto-EStop).");
 			StopAll();
 		}
@@ -250,8 +252,8 @@ public partial class PressedKeys : Node
 		if (_roverModeControllerPreset.EstopReq())
 		{
 			_autoEstop_lastInput = Time.GetTicksMsec(); //or else will not vibrate when already in Auto E-Stop
-			ControlMode = ControlMode.EStop;
-			SlaveControlMode = ControlMode.EStop;
+			ControlMode = ControlModeFlags.EStop;
+			SlaveControlMode = ControlModeFlags.EStop;
 			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by InputController).");
 			StopAll();
 		}
@@ -509,5 +511,14 @@ public partial class PressedKeys : Node
 		LastAcceptedInput?.Invoke(inputIsJoystick ? InputHelpHint.HintVisibility.Joy : InputHelpHint.HintVisibility.Kb);
 	}
 
+	public ControlModeFlags SetFlag(ControlModeFlags oldFlags, ControlModeFlags flag)
+	{
+		return oldFlags |= flag;
+	}
+
+	public ControlModeFlags ResetFlag(ControlModeFlags oldFlags, ControlModeFlags flag)
+	{
+		return oldFlags &= ~flag;
+	}
 	#endregion Methods
 }
