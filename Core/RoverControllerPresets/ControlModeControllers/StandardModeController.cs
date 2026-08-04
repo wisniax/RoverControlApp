@@ -39,10 +39,10 @@ public class StandardModeController : IControlModeController
 	}
 
 
-	public ControlMode GetControlMode(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice,
-		in ControlMode lastState)
+	public ControlModeFlags GetControlMode(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice,
+		in ControlModeFlags lastState)
 	{
-		ControlMode newState = lastState;
+		ControlModeFlags newState = lastState;
 
 		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeEstop, targetInputDevice)))
 		{

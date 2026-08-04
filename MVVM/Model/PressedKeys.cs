@@ -18,8 +18,8 @@ namespace RoverControlApp.MVVM.Model;
 public partial class PressedKeys : Node
 {
 	#region Fields
-	private ControlMode _controlMode;
-	private ControlMode _slaveControlMode;
+	private ControlModeFlags _controlMode;
+	private ControlModeFlags _slaveControlMode;
 	private Vector4 _cameraMoveVector;
 	private RoverControl _roverMovement;
 	private ManipulatorControl _manipulatorMovement;
@@ -43,12 +43,12 @@ public partial class PressedKeys : Node
 	public event Func<ManipulatorControl, Task>? OnManipulatorMovement;
 	public event Func<SamplerControl, Task>? OnSamplerMovement;
 	public event Func<bool, Task>? OnPadConnectionChanged;
-	public event Func<ControlMode, Task>? OnControlModeChanged;
 	public event Func<KinematicMode, Task>? OnKinematicModeChanged;
 	public event ControllerPresetChangedEventHandler? ControllerPresetChanged;
 	public event LastAcceptedInputEventHandler? LastAcceptedInput;
 
-	public event Func<ControlMode, Task>? OnSlaveControlModeChanged;
+	public event Func<ControlModeFlags, ControlModeFlags, Task>? OnControlModeChanged;
+	public event Func<ControlModeFlags, ControlModeFlags, Task>? OnSlaveControlModeChanged;
 
 	#endregion Events
 
@@ -58,25 +58,27 @@ public partial class PressedKeys : Node
 	public static PressedKeys Singleton { get; private set; }
 #pragma warning restore CS8618
 
-	public ControlMode ControlMode
+	public ControlModeFlags ControlMode
 	{
 		get => _controlMode;
 		private set
 		{
+			var oldValue = _controlMode;
 			_controlMode = value;
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Master Control Mode changed {value}");
-			OnControlModeChanged?.Invoke(value);
+			OnControlModeChanged?.Invoke(oldValue, value);
 		}
 	}
 
-	public ControlMode SlaveControlMode
+	public ControlModeFlags SlaveControlMode
 	{
 		get => _slaveControlMode;
 		private set
 		{
+			var oldValue = _slaveControlMode;
 			_slaveControlMode = value;
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Slave Control Mode changed {value}");
-			OnSlaveControlModeChanged?.Invoke(value);
+			OnSlaveControlModeChanged?.Invoke(oldValue, value);
 		}
 	}
 
@@ -237,10 +239,10 @@ public partial class PressedKeys : Node
 		if (
 			LocalSettings.Singleton.General.NoInputSecondsToEstop > 0 && // Must be enabled
 			lastInput > LocalSettings.Singleton.General.NoInputMsecToEstop && // Last input longer than expected
-			ControlMode != ControlMode.EStop // Not in EStop already
+			!ControlMode.HasFlag(ControlModeFlags.EStop) // Not in EStop already
 		)
 		{
-			ControlMode = ControlMode.EStop;
+			ControlMode.Set;
 			EventLogger.LogMessage(nameof(PressedKeys), EventLogger.LogLevel.Info, "Entered EStop (by Auto-EStop).");
 			StopAll();
 		}
