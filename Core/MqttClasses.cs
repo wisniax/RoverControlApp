@@ -109,6 +109,7 @@ namespace RoverControlApp.Core
 			public ControlModeFlags ControlMode { get; set; } = ControlModeFlags.EStop;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
+			public RoverStatus() { }
 			public RoverStatus(ControlModeFlags flag, CommunicationState state)
 			{
 				ControlMode = flag;

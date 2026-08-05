@@ -17,9 +17,14 @@ public partial class RoverMode_UIOverlay : UIOverlay
 		{ 4, new(Colors.DarkBlue, Colors.LightBlue, "Rover: Autonomy","Rover: ") }
 	};
 
-	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
+	public Task ControlModeChangedSubscriber(MqttClasses.ControlModeFlags newMode)
 	{
-		ControlMode = (int)newMode;
+		if (newMode.HasFlag(MqttClasses.ControlModeFlags.Drive)) ControlMode = 1;
+		else if (newMode.HasFlag(MqttClasses.ControlModeFlags.RoboticArm)) ControlMode = 2;
+		else if (newMode.HasFlag(MqttClasses.ControlModeFlags.DeepSampler) ||
+				 newMode.HasFlag(MqttClasses.ControlModeFlags.SurfaceSampler)) ControlMode = 3;
+		else ControlMode = 0;
+
 		return Task.CompletedTask;
 	}
 }
