@@ -301,57 +301,49 @@ public partial class PressedKeys : Node
 		}
 
 		// rover control
-		switch (this.MasterControlMode)
+		if(this.MasterControlMode.HasFlag(ControlModeFlags.Drive))
 		{
-			case MasterControlMode.Rover:
-				if (_roverDriveControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _roverMovement, out _roverMovement))
-				{
-					OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
-					OnRoverMovementVector?.Invoke(_roverMovement);
-					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) RoverDrive");
-					return true;
-				}
-				break;
-			case MasterControlMode.Manipulator:
-				if (_roverManipulatorControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _manipulatorMovement, out _manipulatorMovement))
-				{
-					OnManipulatorMovement?.Invoke(_manipulatorMovement);
-					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) RoverManipulator");
-					return true;
-				}
-				break;
-			case MasterControlMode.Sampler:
-				if (_roverSamplerControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _samplerControl, out _samplerControl))
-				{
-					OnSamplerMovement?.Invoke(_samplerControl);
-					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) RoverSampler");
-					return true;
-				}
-				break;
+			if (_roverDriveControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _roverMovement, out _roverMovement))
+			{
+				OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
+				OnRoverMovementVector?.Invoke(_roverMovement);
+				OnAcceptedInput(inputEvent);
+				EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) RoverDrive");
+				return true;
+			}
+		}
+
+		if (this.MasterControlMode.HasFlag(ControlModeFlags.RoboticArm))
+		{
+			if (_roverManipulatorControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _manipulatorMovement, out _manipulatorMovement))
+			{
+				OnManipulatorMovement?.Invoke(_manipulatorMovement);
+				OnAcceptedInput(inputEvent);
+				EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) RoverManipulator");
+				return true;
+			}
+		}
+
+		if (this.MasterControlMode.HasFlag(ControlModeFlags.DeepSampler) || this.MasterControlMode.HasFlag(ControlModeFlags.SurfaceSampler))
+		{
+			if (_roverSamplerControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _samplerControl, out _samplerControl))
+			{
+				OnSamplerMovement?.Invoke(_samplerControl);
+				OnAcceptedInput(inputEvent);
+				EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) RoverSampler");
+				return true;
+			}
 		}
 
 		// camera control
-		switch (this.MasterControlMode)
+		if (_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _cameraMoveVector, out _cameraMoveVector))
 		{
-			case MasterControlMode.EStop:
-			case MasterControlMode.Rover:
-			case MasterControlMode.Manipulator: // was disabled originally
-			case MasterControlMode.Sampler:
-			case MasterControlMode.Autonomy:
-			default:
-				if (_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _cameraMoveVector, out _cameraMoveVector))
-				{
-					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
-					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) Camera");
-					return true;
-				}
-				break;
+			CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
+			OnAcceptedInput(inputEvent);
+			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) Camera");
+			return true;
 		}
-
+		
 		return false;
 	}
 
@@ -362,7 +354,7 @@ public partial class PressedKeys : Node
 			return false;
 		}
 
-		if (_masterControlMode == MasterControlMode.EStop)
+		if (_masterControlMode.HasFlag(ControlModeFlags.EStop))
 		{
 			return false;
 		}
@@ -375,7 +367,7 @@ public partial class PressedKeys : Node
 			return true;
 		}
 
-		if (LocalSettings.Singleton.General.PedanticEstop && _slaveControlMode == MasterControlMode.EStop)
+		if (LocalSettings.Singleton.General.PedanticEstop && _slaveControlMode.HasFlag(ControlModeFlags.EStop))
 		{
 			//print only if some controller is happy to take input
 			bool isInputHandled =
@@ -393,57 +385,49 @@ public partial class PressedKeys : Node
 			return false;
 		}
 
-		switch (_slaveControlMode)
+		if (_slaveControlMode.HasFlag(ControlModeFlags.Drive))
 		{
-			case MasterControlMode.Rover:
-				if (_roverDriveControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _roverMovement, out _roverMovement))
-				{
-					OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
-					OnRoverMovementVector?.Invoke(_roverMovement);
-					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) RoverDrive");
-					return true;
-				}
-				break;
-			case MasterControlMode.Manipulator:
-				if (_roverManipulatorControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _manipulatorMovement, out _manipulatorMovement))
-				{
-					OnManipulatorMovement?.Invoke(_manipulatorMovement);
-					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) RoverManipulator");
-					return true;
-				}
-				break;
-			case MasterControlMode.Sampler:
-				if (_roverSamplerControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _samplerControl, out _samplerControl))
-				{
-					OnSamplerMovement?.Invoke(_samplerControl);
-					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) RoverSampler");
-					return true;
-				}
-				break;
+			if (_roverDriveControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _roverMovement, out _roverMovement))
+			{
+				OnKinematicModeChanged?.Invoke(_roverMovement.Mode);
+				OnRoverMovementVector?.Invoke(_roverMovement);
+				OnAcceptedInput(inputEvent);
+				EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) RoverDrive");
+				return true;
+			}
+		}
+
+		if (_slaveControlMode.HasFlag(ControlModeFlags.RoboticArm))
+		{
+			if (_roverManipulatorControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _manipulatorMovement, out _manipulatorMovement))
+			{
+				OnManipulatorMovement?.Invoke(_manipulatorMovement);
+				OnAcceptedInput(inputEvent);
+				EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) RoverManipulator");
+				return true;
+			}
+		}
+
+		if (_slaveControlMode.HasFlag(ControlModeFlags.DeepSampler) || _slaveControlMode.HasFlag(ControlModeFlags.SurfaceSampler))
+		{
+			if (_roverSamplerControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _samplerControl, out _samplerControl))
+			{
+				OnSamplerMovement?.Invoke(_samplerControl);
+				OnAcceptedInput(inputEvent);
+				EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) RoverSampler");
+				return true;
+			}
 		}
 
 		// camera control
-		switch (_slaveControlMode)
+		if (_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _cameraMoveVector, out _cameraMoveVector))
 		{
-			case MasterControlMode.EStop:
-			case MasterControlMode.Rover:
-			case MasterControlMode.Manipulator: // was disabled originally
-			case MasterControlMode.Sampler:
-			case MasterControlMode.Autonomy:
-			default:
-				if (_roverCameraControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _cameraMoveVector, out _cameraMoveVector))
-				{
-					CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
-					OnAcceptedInput(inputEvent);
-					EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) Camera");
-					return true;
-				}
-				break;
+			CameraMoveVectorChanged?.Invoke(_cameraMoveVector);
+			OnAcceptedInput(inputEvent);
+			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) Camera");
+			return true;
 		}
-
+		
 		return false;
 	}
 

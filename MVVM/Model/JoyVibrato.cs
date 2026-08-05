@@ -11,10 +11,10 @@ namespace RoverControlApp.MVVM.Model;
 
 public class JoyVibrato : IDisposable
 {
-	private readonly Dictionary<MqttClasses.ControlMode, VibrationSequence[]> Presets = new()
+	private readonly Dictionary<MqttClasses.ControlModeFlags, VibrationSequence[]> Presets = new()
 	{
 		{
-			MqttClasses.ControlMode.EStop,
+			MqttClasses.ControlModeFlags.EStop,
 			new VibrationSequence[]
 			{
 				new VibrationSequence(0.1f, 1.0f, 0.0f),
@@ -23,7 +23,7 @@ public class JoyVibrato : IDisposable
 			}
 		},
 		{
-			MqttClasses.ControlMode.Rover,
+			MqttClasses.ControlModeFlags.Drive,
 			new VibrationSequence[]
 			{
 				new VibrationSequence(0.1f, 1.0f, 0.0f),
@@ -32,7 +32,7 @@ public class JoyVibrato : IDisposable
 			}
 		},
 		{
-			MqttClasses.ControlMode.Manipulator,
+			MqttClasses.ControlModeFlags.RoboticArm,
 			new VibrationSequence[]
 			{
 				new VibrationSequence(0.1f, 1.0f, 0.0f),
@@ -43,7 +43,7 @@ public class JoyVibrato : IDisposable
 			}
 		},
 		{
-			MqttClasses.ControlMode.Sampler,
+			MqttClasses.ControlModeFlags.DeepSampler,
 			new VibrationSequence[]
 			{
 				new VibrationSequence(0.1f, 1.0f, 0.0f),
@@ -56,7 +56,7 @@ public class JoyVibrato : IDisposable
 			}
 		},
 		{
-			MqttClasses.ControlMode.Autonomy,
+			MqttClasses.ControlModeFlags.SurfaceSampler,
 			new VibrationSequence[]
 			{
 				new VibrationSequence(0.1f, 1.0f, 0.0f),
@@ -65,11 +65,9 @@ public class JoyVibrato : IDisposable
 				new VibrationSequence(0.2f, 0.0f, 0.0f),
 				new VibrationSequence(0.2f, 0.0f, 1.0f),
 				new VibrationSequence(0.2f, 0.0f, 0.0f),
-				new VibrationSequence(0.2f, 0.0f, 1.0f),
-				new VibrationSequence(0.2f, 0.0f, 0.0f),
 				new VibrationSequence(0.2f, 0.0f, 1.0f)
 			}
-		}
+		},
 	};
 
 	private Task? _taskVibrato;
@@ -86,7 +84,7 @@ public class JoyVibrato : IDisposable
 		_isMasterVibrato = master;
 	}
 
-	public async Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
+	public async Task ControlModeChangedSubscriber(MqttClasses.ControlModeFlags newMode)
 	{
 		if (_taskVibrato?.IsCompleted == false)
 		{
@@ -97,25 +95,21 @@ public class JoyVibrato : IDisposable
 			_ctToken = _ctSource.Token;
 		}
 
-		switch (newMode)
+		if (newMode.HasFlag(MqttClasses.ControlModeFlags.EStop) &&
+			LocalSettings.Singleton.General.NoInputSecondsToEstop > 0 &&
+			!LocalSettings.Singleton.Joystick.VibrateOnAutoEstop &&
+			PressedKeys.Singleton.TimeToAutoEStopMsec <= 0)
 		{
-			case var _ when !LocalSettings.Singleton.Joystick.VibrateOnModeChange:
-				// no vibrato
-				break;
-			case MqttClasses.ControlMode.EStop
-				when LocalSettings.Singleton.General.NoInputSecondsToEstop > 0
-				&& !LocalSettings.Singleton.Joystick.VibrateOnAutoEstop
-				&& PressedKeys.Singleton.TimeToAutoEStopMsec <= 0:
-				// no vibrato on Auto E-Stop
-				break;
-			default:
-				_taskVibrato = Task.Run(async () => await Vibrate(newMode), _ctToken);
-				break;
-
+			// no vibrato on Auto E-Stop
+			return;
+		}
+		else
+		{
+			_taskVibrato = Task.Run(async () => await Vibrate(newMode), _ctToken);
 		}
 	}
 
-	private async Task Vibrate(MqttClasses.ControlMode controlMode)
+	private async Task Vibrate(MqttClasses.ControlModeFlags controlMode)
 	{
 		await Task.Delay(300, _ctToken);
 

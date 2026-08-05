@@ -109,33 +109,10 @@ namespace RoverControlApp.Core
 			public ControlModeFlags ControlMode { get; set; } = ControlModeFlags.EStop;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-			public RoverStatus(ControlModeFlags flag1)
+			public RoverStatus(ControlModeFlags flag, CommunicationState state)
 			{
-				SetFlag(flag1);
-			}
-
-			public RoverStatus(ControlModeFlags flag1, ControlModeFlags flag2)
-			{
-				SetFlag(flag1);
-				SetFlag(flag2);
-			}
-
-			public RoverStatus(ControlModeFlags flag1, ControlModeFlags flag2, ControlModeFlags flag3)
-			{
-				SetFlag(flag1);
-				SetFlag(flag2);
-				SetFlag(flag3);
-			}
-
-			public void SetFlag(ControlModeFlags flag)
-			{
-				ControlMode |= flag;
-				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-			}
-
-			public void ResetFlag(ControlModeFlags flag)
-			{
-				ControlMode &= ~flag;
+				ControlMode = flag;
+				CommunicationState = state;
 				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 			}
 		}
