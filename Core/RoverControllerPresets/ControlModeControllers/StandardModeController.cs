@@ -49,33 +49,47 @@ public class StandardModeController : IControlModeController
 			if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeDrive, targetInputDevice), exactMatch: true))
 			{
 				estopStart = null;
-				newState = ControlMode.Rover;
+				newState = ControlModeFlags.Drive;
 			}
 			else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeManipulator, targetInputDevice), exactMatch: true))
 			{
 				estopStart = null;
-				newState = ControlMode.Manipulator;
+				newState = ControlModeFlags.RoboticArm;
 			}
 			else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeSampler, targetInputDevice), exactMatch: true))
 			{
 				estopStart = null;
-				newState = ControlMode.Sampler;
+				newState = ControlModeFlags.DeepSampler | ControlModeFlags.SurfaceSampler;
 			}
 			else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeAutonomy, targetInputDevice), exactMatch: true))
 			{
 				estopStart = null;
-				newState = ControlMode.Autonomy;
+				/// Toggle autonomy for the current mode
 			}
 		}
 		else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeChange, targetInputDevice), exactMatch: true))
 		{
-			if ((int)lastState + 1 >= Enum.GetNames<ControlMode>().Length)
-				newState = ControlMode.Rover;
+			if (IsDriveGroup(lastState))
+				newState = ControlModeFlags.RoboticArm;
+			else if (IsRoboticArmGroup(lastState))
+				newState = ControlModeFlags.DeepSampler | ControlModeFlags.SurfaceSampler;
+			else if (IsSamplerGroup(lastState))
+				newState = ControlModeFlags.Drive;
 			else
-				newState++;
+				newState = ControlModeFlags.Drive;
 		}
 		return newState;
 	}
+
+	private static bool IsDriveGroup(ControlModeFlags mode) =>
+		(mode & (ControlModeFlags.Drive | ControlModeFlags.DriveAutonomy)) != 0;
+
+	private static bool IsRoboticArmGroup(ControlModeFlags mode) =>
+		(mode & (ControlModeFlags.RoboticArm | ControlModeFlags.RoboticArmAutonomy)) != 0;
+
+	private static bool IsSamplerGroup(ControlModeFlags mode) =>
+		(mode & (ControlModeFlags.DeepSampler | ControlModeFlags.DeepSamplerAutonomy
+			| ControlModeFlags.SurfaceSampler | ControlModeFlags.SurfaceSamplerAutonomy)) != 0;
 
 	public System.Collections.Generic.Dictionary<StringName, Array<InputEvent>> GetInputActions() =>
 		IActionAwareController.FetchAllActionEvents(_usedActions);
@@ -84,5 +98,7 @@ public class StandardModeController : IControlModeController
 	"""
 	To quick select control mode on the controller:
 	 HOLD 'controlmode_estop' and PRESS desired mode.
+	 Use 'controlmode_change' to cycle: Drive -> RoboticArm -> Sampler.
+	 Autonomy is toggled per-mode by the active controller or UI.
 	""";
 }
