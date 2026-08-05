@@ -76,7 +76,7 @@ public partial class PressedKeys : Node
 		private set
 		{
 			_masterControlMode = value;
-			ControlMode = (_masterControlMode | _slaveControlMode);
+			ControlMode = CombineFlags(_masterControlMode, _slaveControlMode);
 			EventLogger.LogMessage("PressedKeys", EventLogger.LogLevel.Info, $"Master Control Mode changed {value}");
 			OnMasterControlModeChanged?.Invoke(value);
 		}
@@ -280,9 +280,9 @@ public partial class PressedKeys : Node
 		}
 
 
-		if (_roverModeControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _masterControlMode, out _masterControlMode))
+		if (_roverModeControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Master, _masterControlMode, out var newMasterMode))
 		{
-			OnMasterControlModeChanged?.Invoke(_masterControlMode);
+			MasterControlMode = newMasterMode;
 			StopAll();
 			OnAcceptedInput(inputEvent);
 			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Master) ControlMode");
@@ -359,9 +359,9 @@ public partial class PressedKeys : Node
 			return false;
 		}
 
-		if (_roverModeControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _slaveControlMode, out _slaveControlMode))
+		if (_roverModeControllerPreset.HandleInput(inputEvent, DualSeatEvent.InputDevice.Slave, _slaveControlMode, out var newSlaveMode))
 		{
-			OnSlaveControlModeChanged?.Invoke(_slaveControlMode);
+			SlaveControlMode = newSlaveMode;
 			OnAcceptedInput(inputEvent);
 			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, "Input handled as (Slave) ControlMode");
 			return true;
@@ -518,6 +518,8 @@ public partial class PressedKeys : Node
 
 	public ControlModeFlags CombineFlags(ControlModeFlags masterControlMode, ControlModeFlags slaveControlMode)
 	{
+		slaveControlMode &= ~ControlModeFlags.EStop; // Slave cannot override Master EStop
+
 		var temp = masterControlMode | slaveControlMode;
 		return temp;
 	}
