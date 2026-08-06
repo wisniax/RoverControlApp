@@ -64,7 +64,15 @@ public class StandardModeController : IControlModeController
 			else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeAutonomy, targetInputDevice), exactMatch: true))
 			{
 				estopStart = null;
-				/// Toggle autonomy for the current mode
+
+				if (IsDriveGroup(lastState))
+					newState = ControlModeFlags.DriveAutonomy;
+				else if (IsRoboticArmGroup(lastState))
+					newState = ControlModeFlags.RoboticArmAutonomy;
+				else if (IsSamplerGroup(lastState))
+					newState = ControlModeFlags.DeepSamplerAutonomy | ControlModeFlags.SurfaceSamplerAutonomy;
+				else
+					newState = lastState;
 			}
 		}
 		else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeChange, targetInputDevice), exactMatch: true))
