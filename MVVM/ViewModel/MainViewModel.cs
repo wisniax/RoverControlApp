@@ -400,17 +400,20 @@ namespace RoverControlApp.MVVM.ViewModel
 						(float)PressedKeys.Singleton.RoverMovement.YAxis);
 
 					FancyDebugViewRLab.AppendText($"PressedKeys: Rover Mov: Vel: {vecc.X:F2}, XAxis: {vecc.Y:F2}, YAxis: {vecc.Z:F2}, Mode: {PressedKeys.Singleton.RoverMovement.Mode}\n");
-
 					break;
+
 				case MqttClasses.ControlMode.Manipulator:
+					string[] controlledAxes;
+					FancyDebugViewRLab.AppendText($"ManipulatorMode: {PressedKeys.Singleton.ManipulatorMovement.ActionType.ToString()}\n");
 					switch (PressedKeys.Singleton.ManipulatorMovement.ActionType)
 					{
 						case MqttClasses.ActionType.Stop:
+							FancyDebugViewRLab.AppendText($"Reference: {PressedKeys.Singleton.ManipulatorMovement.Reference}\n");
 							FancyDebugViewRLab.AppendText("Robotic Arm stopped\n");
 							break;
 						case MqttClasses.ActionType.ForwardKin:
 							if (PressedKeys.Singleton.ManipulatorMovement.ForwardKin == null) break;
-							string[] controlledAxes = PressedKeys.Singleton.RoverManipulatorControllerPreset.GetControlledAxes();
+							controlledAxes = PressedKeys.Singleton.RoverManipulatorControllerPreset.GetControlledAxes();
 							FancyDebugViewRLab.AppendText("PressedKeys.Singleton: Manipulator Mov: {" +
 								$"{(controlledAxes.Contains("Axis1") ? "[b]Axis1:[/b] " : "Axis1: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis1, 2)}, " +
 								$"{(controlledAxes.Contains("Axis2") ? "[b]Axis2:[/b] " : "Axis2: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis2, 2)}, " +
@@ -443,6 +446,11 @@ namespace RoverControlApp.MVVM.ViewModel
 						case MqttClasses.ActionType.InvKinOffset:
 							break;
 						case MqttClasses.ActionType.GoToReference:
+							FancyDebugViewRLab.AppendText($"Reference: {PressedKeys.Singleton.ManipulatorMovement.Reference}\n");
+							FancyDebugViewRLab.AppendText("Robotic Arm going to reference\n");
+							break;
+						case MqttClasses.ActionType.UseMoveITPlanning:
+							FancyDebugViewRLab.AppendText("Robotic Arm controlled by MoveIT\n");
 							break;
 						default:
 							break;
