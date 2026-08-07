@@ -184,8 +184,9 @@ namespace RoverControlApp.Core
 			InvKinJoystick = 2,
 			InvKinPosition = 3,
 			InvKinOffset = 4,
-			GoToReference = 5 // with Reference e.g. "inverse_home_pose"
+			GoToReference = 5, // with Reference e.g. "inverse_home_pose"
 							  // ... predefined positions (Driving position, sampler, etc)? Later.
+			UseMoveITPlanning = 6, // give control away to moveit
 		}
 		public class ForwardKinMode
 		{
