@@ -326,6 +326,7 @@ namespace RoverControlApp.MVVM.ViewModel
 					switch (PressedKeys.Singleton.ManipulatorMovement.ActionType)
 					{
 						case MqttClasses.ActionType.Stop:
+							FancyDebugViewRLab.AppendText($"Reference: {PressedKeys.Singleton.ManipulatorMovement.Reference}");
 							FancyDebugViewRLab.AppendText("Robotic Arm stopped\n");
 							break;
 						case MqttClasses.ActionType.ForwardKin:
@@ -363,6 +364,11 @@ namespace RoverControlApp.MVVM.ViewModel
 						case MqttClasses.ActionType.InvKinOffset:
 							break;
 						case MqttClasses.ActionType.GoToReference:
+							FancyDebugViewRLab.AppendText($"Reference: {PressedKeys.Singleton.ManipulatorMovement.Reference}\n");
+							FancyDebugViewRLab.AppendText("Robotic Arm going to reference\n");
+							break;
+						case MqttClasses.ActionType.UseMoveITPlanning:
+							FancyDebugViewRLab.AppendText("Robotic Arm controlled by MoveIT\n");
 							break;
 						default:
 							break;

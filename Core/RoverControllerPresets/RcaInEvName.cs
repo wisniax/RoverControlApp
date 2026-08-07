@@ -85,6 +85,8 @@ public static class RcaInEvName
 	public static readonly StringName ManipulatorCherryInvJoystickRotZPlus = new("manipulator_cherry_inv_joy_rot_z+");
 	public static readonly StringName ManipulatorCherryInvJoystickRotZMinus = new("manipulator_cherry_inv_joy_rot_z-");
 	public static readonly StringName ManipulatorCherryInvChangeRef = new("manipulator_cherry_inv_change_ref");
+	public static readonly StringName ManipulatorCherryInvDpadUp = new("manipulator_cherry_inv_dpad_up");
+	public static readonly StringName ManipulatorCherryInvDpadDown = new("manipulator_cherry_inv_dpad_down");
 
 	public static readonly StringName SamplerMoveDown = new("sampler_move_down");
 	public static readonly StringName SamplerMoveUp = new("sampler_move_up");
