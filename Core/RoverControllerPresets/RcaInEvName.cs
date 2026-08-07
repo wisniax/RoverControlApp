@@ -72,6 +72,20 @@ public static class RcaInEvName
 	public static readonly StringName ManipulatorSimInvJoystickRotZMinus = new("manipulator_sim_inv_joy_rot_z-");
 	public static readonly StringName ManipulatorSimInvChangeRef = new("manipulator_sim_inv_change_ref");
 
+	public static readonly StringName ManipulatorCherryInvJoystickPosXPlus = new("manipulator_cherry_inv_joy_pos_x+");
+	public static readonly StringName ManipulatorCherryInvJoystickPosXMinus = new("manipulator_cherry_inv_joy_pos_x-");
+	public static readonly StringName ManipulatorCherryInvJoystickPosYPlus = new("manipulator_cherry_inv_joy_pos_y+");
+	public static readonly StringName ManipulatorCherryInvJoystickPosYMinus = new("manipulator_cherry_inv_joy_pos_y-");
+	public static readonly StringName ManipulatorCherryInvJoystickPosZPlus = new("manipulator_cherry_inv_joy_pos_z+");
+	public static readonly StringName ManipulatorCherryInvJoystickPosZMinus = new("manipulator_cherry_inv_joy_pos_z-");
+	public static readonly StringName ManipulatorCherryInvJoystickRotXPlus = new("manipulator_cherry_inv_joy_rot_x+");
+	public static readonly StringName ManipulatorCherryInvJoystickRotXMinus = new("manipulator_cherry_inv_joy_rot_x-");
+	public static readonly StringName ManipulatorCherryInvJoystickRotYPlus = new("manipulator_cherry_inv_joy_rot_y+");
+	public static readonly StringName ManipulatorCherryInvJoystickRotYMinus = new("manipulator_cherry_inv_joy_rot_y-");
+	public static readonly StringName ManipulatorCherryInvJoystickRotZPlus = new("manipulator_cherry_inv_joy_rot_z+");
+	public static readonly StringName ManipulatorCherryInvJoystickRotZMinus = new("manipulator_cherry_inv_joy_rot_z-");
+	public static readonly StringName ManipulatorCherryInvChangeRef = new("manipulator_cherry_inv_change_ref");
+
 	public static readonly StringName SamplerMoveDown = new("sampler_move_down");
 	public static readonly StringName SamplerMoveUp = new("sampler_move_up");
 	public static readonly StringName SamplerDrillDown = new("sampler_drill_down");

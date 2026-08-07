@@ -10,19 +10,19 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 {
 	private readonly StringName[] _usedActions =
 	[
-		RcaInEvName.ManipulatorSimInvJoystickPosXPlus,
-		RcaInEvName.ManipulatorSimInvJoystickPosXMinus,
-		RcaInEvName.ManipulatorSimInvJoystickPosYPlus,
-		RcaInEvName.ManipulatorSimInvJoystickPosYMinus,
-		RcaInEvName.ManipulatorSimInvJoystickPosZPlus,
-		RcaInEvName.ManipulatorSimInvJoystickPosZMinus,
-		RcaInEvName.ManipulatorSimInvJoystickRotXPlus,
-		RcaInEvName.ManipulatorSimInvJoystickRotXMinus,
-		RcaInEvName.ManipulatorSimInvJoystickRotYPlus,
-		RcaInEvName.ManipulatorSimInvJoystickRotYMinus,
-		RcaInEvName.ManipulatorSimInvJoystickRotZPlus,
-		RcaInEvName.ManipulatorSimInvJoystickRotZMinus,
-		RcaInEvName.ManipulatorSimInvChangeRef
+		RcaInEvName.ManipulatorCherryInvJoystickPosXPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickPosXMinus,
+		RcaInEvName.ManipulatorCherryInvJoystickPosYPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickPosYMinus,
+		RcaInEvName.ManipulatorCherryInvJoystickPosZPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickPosZMinus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotXPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotXMinus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotYPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotYMinus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotZPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotZMinus,
+		RcaInEvName.ManipulatorCherryInvChangeRef
 	];
 
 	private bool _useToolReference = false;
@@ -33,7 +33,7 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 		manipulatorControl.ActionType = ActionType.InvKinJoystick;
 		manipulatorControl.InvJoystick = new();
 
-		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvChangeRef, targetInputDevice), exactMatch: true))
+		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvChangeRef, targetInputDevice), exactMatch: true))
 		{
 			_useToolReference = !_useToolReference;
 		}
@@ -47,13 +47,13 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 		Vec3 angularSpeed = new();
 
 		
-		linearSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosXMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosXPlus, targetInputDevice));
-		linearSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosYMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosYPlus, targetInputDevice));
-		linearSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosZMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosZPlus, targetInputDevice));
+		linearSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosXMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosXPlus, targetInputDevice));
+		linearSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosYMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosYPlus, targetInputDevice));
+		linearSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosZMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosZPlus, targetInputDevice));
 		
-		angularSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotXMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotXPlus, targetInputDevice));
-		angularSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotYMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotYPlus, targetInputDevice));
-		angularSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotZMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotZPlus, targetInputDevice));
+		angularSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotXMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotXPlus, targetInputDevice));
+		angularSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotYMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotYPlus, targetInputDevice));
+		angularSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotZMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotZPlus, targetInputDevice));
 		
 
 		manipulatorControl.InvJoystick.LinearSpeed = linearSpeed;
@@ -68,7 +68,7 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"Use joysticks to control manipulator movement. Hold the right and left bumper to roll the effector. Use the ABXY buttons to control pitch and yaw. Gripper is controlled with triggers.";
+		"Use left joystick, Y and A buttons to control manipulator movement. Use right joystick, X and B buttons to control manipulator rotation. Gripper is controlled with triggers.";
 
 	public string[] GetControlledAxes()
 	{

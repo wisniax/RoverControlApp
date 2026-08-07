@@ -12,6 +12,7 @@ public static class RoverManipulatorControllerSelector
 		InverseJoystick = 2,
 		MultiMode = 3,
 		SimplerInverseJoystick = 4,
+		CherryInverseJoystick = 5,
 	}
 
 	public const Controller DEFAULT = Controller.MultiAxis;
@@ -28,6 +29,8 @@ public static class RoverManipulatorControllerSelector
 				return new InverseJoystickManipulatorController();
 			case Controller.SimplerInverseJoystick:
 				return new SimplerInverseJoystickManipulatorController();
+			case Controller.CherryInverseJoystick:
+				return new CherryInverseJoystickManipulatorController();
 			case Controller.MultiMode:
 				return new MultiModeManipulatorController();
 			default:

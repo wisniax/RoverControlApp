@@ -38,12 +38,13 @@ public partial class Manipulator : SettingBase, ICloneable
 
 	[SettingsManagerVisible(
 		cellMode: TreeItem.TreeCellMode.Range,
-		formatData: "0;4;1;f;i",
+		formatData: "0;5;1;f;i",
 		customTooltip: "0 - MultiAxis (Default)\n" +
 					   "1 - SingleAxis\n" +
 					   "2 - InvKinJoystick\n" +
 					   "3 - MultiMode (0+4)\n" +
-					   "4 - SimplerInverseJoystick"
+					   "4 - SimplerInverseJoystick\n" +
+					   "5 - CherryInverseJoystick"
 	)]
 	public int RoverManipulatorController
 	{
