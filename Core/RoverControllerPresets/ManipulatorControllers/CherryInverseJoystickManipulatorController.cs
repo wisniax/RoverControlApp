@@ -108,7 +108,14 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 				{
 					manipulatorControl.ActionType = ActionType.GoToReference;
 				}
-				else manipulatorControl.ActionType = ActionType.Stop;
+				else if (Input.IsActionJustReleased(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvDpadDown, targetInputDevice), exactMatch: true))
+				{
+					manipulatorControl.ActionType = ActionType.GoToReference;
+				}
+				else
+				{
+					manipulatorControl.ActionType = ActionType.Stop;	
+				}
 				
 				return manipulatorControl;	
 			}
