@@ -125,7 +125,11 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"Use left joystick, Y and A buttons to control manipulator movement. Use right joystick, X and B buttons to control manipulator rotation. Gripper is controlled with triggers.";
+		"D-pad UP: cycle modes (InvKinJoystick → GoToReference → UseMoveITPlanning).\n" +
+		"D-pad DOWN: in GoToReference mode, sends the GoToReference command.\n\n" +
+		"InvKinJoystick: Left stick = posX/posY, Y/A = posZ±, Right stick = rotY/rotZ, B/X = rotX±, Triggers = gripper. ChangeRef toggles 'tool' reference.\n\n" +
+		"GoToReference: ChangeRef cycles Ref0–Ref4, D-pad DOWN sends GoToReference, otherwise sends Stop.\n\n" +
+		"MoveITPlanning: Hands off — sends control to MoveIT.";
 
 	public string[] GetControlledAxes()
 	{
