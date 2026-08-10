@@ -521,7 +521,87 @@ public partial class PressedKeys : Node
 		slaveControlMode &= ~ControlModeFlags.EStop; // Slave cannot override Master EStop
 
 		var temp = masterControlMode | slaveControlMode;
+
+		if (!ValidateRoverStatusControlMode(temp))
+		{
+			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, $"ControlMode validation failed, falling back to master: {masterControlMode}");
+			return masterControlMode;
+		}
+
 		return temp;
+	}
+
+	private static bool ValidateRoverStatusControlMode(ControlModeFlags controlMode)
+	{
+		static int HasIllegalCombination(ControlModeFlags mode, ControlModeFlags illegalMask, ControlModeFlags value)
+		{
+			return (int)(value & mode) != 0 ? (int)(value & illegalMask) : 0;
+		}
+
+		if (HasIllegalCombination(ControlModeFlags.EStop,
+				ControlModeFlags.Stop |
+				ControlModeFlags.Config |
+				ControlModeFlags.Drive |
+				ControlModeFlags.RoboticArm |
+				ControlModeFlags.DeepSampler |
+				ControlModeFlags.SurfaceSampler |
+				ControlModeFlags.DriveAutonomy |
+				ControlModeFlags.RoboticArmAutonomy |
+				ControlModeFlags.DeepSamplerAutonomy |
+				ControlModeFlags.SurfaceSamplerAutonomy, controlMode) != 0)
+			return false;
+
+		if (HasIllegalCombination(ControlModeFlags.Stop,
+				ControlModeFlags.Config |
+				ControlModeFlags.Drive |
+				ControlModeFlags.DeepSampler |
+				ControlModeFlags.SurfaceSampler |
+				ControlModeFlags.DriveAutonomy |
+				ControlModeFlags.DeepSamplerAutonomy |
+				ControlModeFlags.SurfaceSamplerAutonomy, controlMode) != 0)
+			return false;
+
+		if (HasIllegalCombination(ControlModeFlags.Config,
+				ControlModeFlags.Drive |
+				ControlModeFlags.RoboticArm |
+				ControlModeFlags.DeepSampler |
+				ControlModeFlags.SurfaceSampler |
+				ControlModeFlags.DriveAutonomy |
+				ControlModeFlags.RoboticArmAutonomy |
+				ControlModeFlags.DeepSamplerAutonomy |
+				ControlModeFlags.SurfaceSamplerAutonomy, controlMode) != 0)
+			return false;
+
+		if (HasIllegalCombination(ControlModeFlags.Drive,
+				ControlModeFlags.DeepSampler |
+				ControlModeFlags.SurfaceSampler |
+				ControlModeFlags.DriveAutonomy |
+				ControlModeFlags.DeepSamplerAutonomy |
+				ControlModeFlags.SurfaceSamplerAutonomy, controlMode) != 0)
+			return false;
+
+		if (HasIllegalCombination(ControlModeFlags.RoboticArm,
+				ControlModeFlags.RoboticArmAutonomy, controlMode) != 0)
+			return false;
+
+		if (HasIllegalCombination(ControlModeFlags.DeepSampler,
+				ControlModeFlags.DriveAutonomy |
+				ControlModeFlags.DeepSamplerAutonomy |
+				ControlModeFlags.SurfaceSamplerAutonomy, controlMode) != 0)
+			return false;
+
+		if (HasIllegalCombination(ControlModeFlags.SurfaceSampler,
+				ControlModeFlags.DriveAutonomy |
+				ControlModeFlags.DeepSamplerAutonomy |
+				ControlModeFlags.SurfaceSamplerAutonomy, controlMode) != 0)
+			return false;
+
+		if (HasIllegalCombination(ControlModeFlags.DriveAutonomy,
+				ControlModeFlags.DeepSamplerAutonomy |
+				ControlModeFlags.SurfaceSamplerAutonomy, controlMode) != 0)
+			return false;
+
+		return true;
 	}
 
 
