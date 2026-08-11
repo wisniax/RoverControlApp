@@ -115,10 +115,21 @@ public class JoyVibrato : IDisposable
 
 		_ctToken.ThrowIfCancellationRequested();
 
-		VibrationSequence[] sequence = Presets[controlMode];
-		long offset;
-
 		int joyId = _isMasterVibrato ? 0 : 1;
+
+		foreach (var (flag, sequence) in Presets)
+		{
+			if (controlMode.HasFlag(flag))
+			{
+				await PlaySequence(sequence, joyId);
+				break;
+			}
+		}
+	}
+
+	private async Task PlaySequence(VibrationSequence[] sequence, int joyId)
+	{
+		long offset;
 
 		foreach (var vibration in sequence)
 		{
@@ -132,7 +143,7 @@ public class JoyVibrato : IDisposable
 
 			Input.StartJoyVibration(joyId, vibration.WeakMotor, vibration.StrongMotor, vibration.Duration);
 
-			await Task.Delay(Math.Max(0, Convert.ToInt32(Convert.ToInt64(vibration.Duration * 1000f) - (DateTimeOffset.Now.ToUnixTimeMilliseconds() - offset))));
+			await Task.Delay(Math.Max(0, Convert.ToInt32(Convert.ToInt64(vibration.Duration * 1000f) - (DateTimeOffset.Now.ToUnixTimeMilliseconds() - offset))), _ctToken);
 		}
 	}
 	public async Task VibrateMaster()
@@ -141,29 +152,11 @@ public class JoyVibrato : IDisposable
 
 		_ctToken.ThrowIfCancellationRequested();
 
-		VibrationSequence[] sequence =
+		await PlaySequence(
 		[
 			new VibrationSequence(0.5f, 0.0f, 0.0f),
 			new VibrationSequence(0.5f, 0.0f, 1.0f),
-		];
-		long offset;
-
-		int joyId = 0;
-
-		foreach (var vibration in sequence)
-		{
-			if (_ctToken.IsCancellationRequested)
-			{
-				Input.StopJoyVibration(joyId);
-				_ctToken.ThrowIfCancellationRequested();
-			}
-
-			offset = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
-			Input.StartJoyVibration(joyId, vibration.WeakMotor, vibration.StrongMotor, vibration.Duration);
-
-			await Task.Delay(Math.Max(0, Convert.ToInt32(Convert.ToInt64(vibration.Duration * 1000f) - (DateTimeOffset.Now.ToUnixTimeMilliseconds() - offset))));
-		}
+		], 0);
 	}
 
 	public async Task VibrateSlave()
@@ -172,31 +165,13 @@ public class JoyVibrato : IDisposable
 
 		_ctToken.ThrowIfCancellationRequested();
 
-		VibrationSequence[] sequence =
+		await PlaySequence(
 		[
 			new VibrationSequence(0.5f, 0.0f, 0.0f),
 			new VibrationSequence(0.5f, 0.0f, 1.0f),
 			new VibrationSequence(0.2f, 0.0f, 0.0f),
 			new VibrationSequence(0.5f, 0.0f, 1.0f),
-		];
-		long offset;
-
-		int joyId = 1;
-
-		foreach (var vibration in sequence)
-		{
-			if (_ctToken.IsCancellationRequested)
-			{
-				Input.StopJoyVibration(joyId);
-				_ctToken.ThrowIfCancellationRequested();
-			}
-
-			offset = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
-			Input.StartJoyVibration(joyId, vibration.WeakMotor, vibration.StrongMotor, vibration.Duration);
-
-			await Task.Delay(Math.Max(0, Convert.ToInt32(Convert.ToInt64(vibration.Duration * 1000f) - (DateTimeOffset.Now.ToUnixTimeMilliseconds() - offset))));
-		}
+		], 1);
 	}
 
 	protected virtual void Dispose(bool disposing)
