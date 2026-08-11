@@ -522,13 +522,27 @@ public partial class PressedKeys : Node
 
 		var temp = masterControlMode | slaveControlMode;
 
-		if (!ValidateRoverStatusControlMode(temp))
+		if (ValidateRoverStatusControlMode(temp))
 		{
-			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, $"ControlMode validation failed, falling back to master: {masterControlMode}");
+			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, $"ControlMode validation passed, master + slave: {temp}");
+			return temp;
+		}
+
+		if (ValidateRoverStatusControlMode(masterControlMode)) // Slave may have goofed, but master can still be valid
+		{
+			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, $"ControlMode validation passed, master only: {masterControlMode}");
 			return masterControlMode;
 		}
 
-		return temp;
+		masterControlMode &= ~ControlModeFlags.Stop; // Master may have goofed
+
+		if (ValidateRoverStatusControlMode(masterControlMode))
+		{
+			EventLogger.LogMessageDebug(nameof(PressedKeys), EventLogger.LogLevel.Verbose, $"ControlMode validation passed, master only (Stop cleared): {masterControlMode}");
+			return masterControlMode;
+		}
+
+		return ControlModeFlags.EStop; // If the developer has goofed, not much can be done. Shut it all down.
 	}
 
 	private static bool ValidateRoverStatusControlMode(ControlModeFlags controlMode)

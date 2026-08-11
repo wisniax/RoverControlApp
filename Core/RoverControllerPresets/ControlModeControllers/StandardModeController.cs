@@ -2,7 +2,7 @@ using System;
 
 using Godot;
 using Godot.Collections;
-
+using RoverControlApp.MVVM.Model;
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets.ControlModeControllers;
@@ -17,6 +17,8 @@ public class StandardModeController : IControlModeController
 		RcaInEvName.ControlModeManipulator,
 		RcaInEvName.ControlModeSampler,
 		RcaInEvName.ControlModeAutonomy,
+		RcaInEvName.JoystickLeftPress,
+		RcaInEvName.JoystickRightPress,
 	];
 
 	TimeSpan? estopStart;
@@ -86,6 +88,18 @@ public class StandardModeController : IControlModeController
 			else
 				newState = ControlModeFlags.Drive;
 		}
+
+		if ((Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.JoystickLeftPress, targetInputDevice), exactMatch: true) &&
+			(Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.JoystickRightPress, targetInputDevice), exactMatch: true))) &&
+			(inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.JoystickLeftPress, targetInputDevice), exactMatch: true) ||
+			(inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.JoystickRightPress, targetInputDevice), exactMatch: true))))
+		{
+			if (newState.HasFlag(ControlModeFlags.Stop))
+				newState &= ~ControlModeFlags.Stop;
+			else
+				newState |= ControlModeFlags.Stop;
+		}
+
 		return newState;
 	}
 
