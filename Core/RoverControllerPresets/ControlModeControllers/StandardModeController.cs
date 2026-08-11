@@ -66,15 +66,7 @@ public class StandardModeController : IControlModeController
 			else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeAutonomy, targetInputDevice), exactMatch: true))
 			{
 				estopStart = null;
-
-				if (IsDriveGroup(lastState))
-					newState = ControlModeFlags.DriveAutonomy;
-				else if (IsRoboticArmGroup(lastState))
-					newState = ControlModeFlags.RoboticArmAutonomy;
-				else if (IsSamplerGroup(lastState))
-					newState = ControlModeFlags.DeepSamplerAutonomy | ControlModeFlags.SurfaceSamplerAutonomy;
-				else
-					newState = lastState;
+				newState = ToggleAutonomy(lastState);
 			}
 		}
 		else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeChange, targetInputDevice), exactMatch: true))
@@ -112,6 +104,27 @@ public class StandardModeController : IControlModeController
 	private static bool IsSamplerGroup(ControlModeFlags mode) =>
 		(mode & (ControlModeFlags.DeepSampler | ControlModeFlags.DeepSamplerAutonomy
 			| ControlModeFlags.SurfaceSampler | ControlModeFlags.SurfaceSamplerAutonomy)) != 0;
+
+	private static readonly (ControlModeFlags Manual, ControlModeFlags Autonomy)[] _autonomyPairs =
+	[
+		(ControlModeFlags.Drive, ControlModeFlags.DriveAutonomy),
+		(ControlModeFlags.RoboticArm, ControlModeFlags.RoboticArmAutonomy),
+		(ControlModeFlags.DeepSampler, ControlModeFlags.DeepSamplerAutonomy),
+		(ControlModeFlags.SurfaceSampler, ControlModeFlags.SurfaceSamplerAutonomy),
+	];
+
+	private static ControlModeFlags ToggleAutonomy(ControlModeFlags state)
+	{
+		ControlModeFlags result = state;
+		foreach (var (manual, autonomy) in _autonomyPairs)
+		{
+			if (state.HasFlag(manual))
+				result = (result & ~manual) | autonomy;
+			else if (state.HasFlag(autonomy))
+				result = (result & ~autonomy) | manual;
+		}
+		return result;
+	}
 
 	public System.Collections.Generic.Dictionary<StringName, Array<InputEvent>> GetInputActions() =>
 		IActionAwareController.FetchAllActionEvents(_usedActions);
