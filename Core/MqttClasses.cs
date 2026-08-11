@@ -11,14 +11,26 @@ namespace RoverControlApp.Core
 {
 	public abstract class MqttClasses
 	{
-		public enum ControlMode
+		/// <summary>
+		/// Odwzorowanie control_mode flags (bitmask)
+		/// </summary>
+		[Flags]
+		public enum ControlModeFlags : int
 		{
-			EStop = 0,
-			Rover = 1,
-			Manipulator = 2,
-			Sampler = 3,
-			Autonomy = 4
+			None = 0,
+			EStop = 1 << 0,                       // 1
+			Stop = 1 << 1,                        // 2
+			Config = 1 << 2,                      // 4
+			Drive = 1 << 3,                       // 8
+			RoboticArm = 1 << 4,                  // 16
+			DeepSampler = 1 << 5,                 // 32
+			SurfaceSampler = 1 << 6,              // 64
+			DriveAutonomy = 1 << 7,               // 128
+			RoboticArmAutonomy = 1 << 8,          // 256
+			DeepSamplerAutonomy = 1 << 9,         // 512
+			SurfaceSamplerAutonomy = 1 << 10      // 1024
 		}
+
 		public enum KinematicMode
 		{
 			Compatibility = 0,
@@ -94,9 +106,16 @@ namespace RoverControlApp.Core
 		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
-			public bool PadConnected { get; set; }
-			public ControlMode ControlMode { get; set; } = ControlMode.EStop;
+			public ControlModeFlags ControlMode { get; set; } = ControlModeFlags.EStop;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
+			public RoverStatus() { }
+			public RoverStatus(ControlModeFlags flag, CommunicationState state)
+			{
+				ControlMode = flag;
+				CommunicationState = state;
+				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+			}
 		}
 
 		public class RoverControl

@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
 using Godot;
-
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
 
@@ -16,12 +14,23 @@ public partial class DualSeatSlave_UIOverlay : UIOverlay
 		{ 1, new(Colors.DarkGreen, Colors.LightGreen, "Slave: Driving","Slave: ") },
 		{ 2, new(Colors.DarkOliveGreen, Colors.LightGreen, "Slave: Manipulator","Slave: ") },
 		{ 3, new (Colors.LightGreen, Colors.DarkGreen, "Slave: Sampler", "Slave: ")},
-		{ 4, new(Colors.DarkRed, Colors.Orange, "Slave: Off","Slave: ") }
+		{ 4, new(Colors.DarkBlue, Colors.LightBlue, "Slave: DriveAutonomy","Slave: ") },
+		{ 5, new(Colors.DarkBlue, Colors.LightBlue, "Slave: ManipulatorAuto","Slave: ") },
+		{ 6, new(Colors.DarkBlue, Colors.LightBlue, "Slave: SamplerAutonomy","Slave: ") }
 	};
 
-	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
+	public Task ControlModeChangedSubscriber(MqttClasses.ControlModeFlags newMode)
 	{
-		ControlMode = (int)newMode;
+		if (newMode.HasFlag(MqttClasses.ControlModeFlags.Drive)) ControlMode = 1;
+		else if (newMode.HasFlag(MqttClasses.ControlModeFlags.RoboticArm)) ControlMode = 2;
+		else if (newMode.HasFlag(MqttClasses.ControlModeFlags.DeepSampler) ||
+				 newMode.HasFlag(MqttClasses.ControlModeFlags.SurfaceSampler)) ControlMode = 3;
+		else if (newMode.HasFlag(MqttClasses.ControlModeFlags.DriveAutonomy)) ControlMode = 4;
+		else if (newMode.HasFlag(MqttClasses.ControlModeFlags.RoboticArmAutonomy)) ControlMode = 5;
+		else if (newMode.HasFlag(MqttClasses.ControlModeFlags.DeepSamplerAutonomy) ||
+				 newMode.HasFlag(MqttClasses.ControlModeFlags.SurfaceSamplerAutonomy)) ControlMode = 6;
+		else ControlMode = 0;
+
 		return Task.CompletedTask;
 	}
 }

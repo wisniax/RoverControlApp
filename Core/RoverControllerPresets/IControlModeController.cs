@@ -16,10 +16,10 @@ public interface IControlModeController : IActionAwareController
 	/// <summary>
 	/// Checks InputEvent and returns ControlMode
 	/// </summary>
-	public ControlMode GetControlMode(
+	public ControlModeFlags GetControlMode(
 		in InputEvent inputEvent,
 		DualSeatEvent.InputDevice targetInputDevice,
-		in ControlMode lastState);
+		in ControlModeFlags lastState);
 
 	/// <summary>
 	/// Processes input
@@ -28,8 +28,8 @@ public interface IControlModeController : IActionAwareController
 	public bool HandleInput(
 		in InputEvent inputEvent,
 		DualSeatEvent.InputDevice targetInputDevice,
-		ControlMode lastState,
-		out ControlMode newState)
+		ControlModeFlags lastState,
+		out ControlModeFlags newState)
 	{
 		newState = GetControlMode(inputEvent, targetInputDevice, lastState);
 		return IsMoveVectorChanged(newState, lastState);
@@ -39,6 +39,6 @@ public interface IControlModeController : IActionAwareController
 	/// Compares two ControlMode states and determines if change is big enough, to be considered
 	/// </summary>
 	/// <returns>true if changed</returns>
-	public bool IsMoveVectorChanged(in ControlMode currentState, in ControlMode lastState) =>
+	public bool IsMoveVectorChanged(in ControlModeFlags currentState, in ControlModeFlags lastState) =>
 		!currentState.Equals(lastState);
 }

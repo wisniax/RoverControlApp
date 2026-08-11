@@ -14,7 +14,7 @@ namespace RoverControlApp.MVVM.Model
 	public partial class RoverCommunication : Node
 	{
 		public event Func<MqttClasses.RoverStatus?, Task>? OnRoverStatusChanged;
-		private MqttClasses.ControlMode ControlMode => PressedKeys.Singleton.ControlMode;
+		private MqttClasses.ControlModeFlags ControlMode => PressedKeys.Singleton.ControlMode;
 
 		private MqttClasses.RoverStatus? _roverStatus;
 		private bool _disposedValue = false;
@@ -83,13 +83,12 @@ namespace RoverControlApp.MVVM.Model
 		*	Godot overrides end
 		*/
 
-		private MqttClasses.RoverStatus GenerateRoverStatus(CommunicationState? connection = null, MqttClasses.ControlMode? controlMode = null, bool? padConnected = null)
+		private MqttClasses.RoverStatus GenerateRoverStatus(CommunicationState? connection = null, MqttClasses.ControlModeFlags? controlMode = null, bool? padConnected = null)
 		{
 			var obj = new MqttClasses.RoverStatus
 			{
 				CommunicationState = connection ?? (RoverStatus is not null ? RoverStatus.CommunicationState : MqttNode.Singleton.ConnectionState),
 				ControlMode = controlMode ?? ControlMode,
-				PadConnected = padConnected ?? PressedKeys.Singleton.PadConnected,
 			};
 			RoverStatus = obj;
 			return obj;
@@ -123,7 +122,7 @@ namespace RoverControlApp.MVVM.Model
 				JsonSerializer.Serialize(arg), MqttQualityOfServiceLevel.ExactlyOnce, true);
 		}
 
-		private async Task PressedKeys_OnControlModeChanged(MqttClasses.ControlMode arg)
+		private async Task PressedKeys_OnControlModeChanged(MqttClasses.ControlModeFlags arg)
 		{
 			await RoverCommunication_OnControlStatusChanged(GenerateRoverStatus(controlMode: arg));
 		}
