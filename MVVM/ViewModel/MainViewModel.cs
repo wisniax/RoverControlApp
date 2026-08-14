@@ -332,17 +332,53 @@ namespace RoverControlApp.MVVM.ViewModel
 
 					break;
 				case MqttClasses.ControlMode.Manipulator:
-					string[] controlledAxes = PressedKeys.Singleton.RoverManipulatorControllerPreset.GetControlledAxes();
-					FancyDebugViewRLab.AppendText("PressedKeys.Singleton: Manipulator Mov: {" +
-						$"{(controlledAxes.Contains("Axis1") ? "[b]Axis1:[/b] " : "Axis1: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis1, 2)}, " +
-						$"{(controlledAxes.Contains("Axis2") ? "[b]Axis2:[/b] " : "Axis2: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis2, 2)}, " +
-						$"{(controlledAxes.Contains("Axis3") ? "[b]Axis3:[/b] " : "Axis3: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis3, 2)}, " +
-						$"{(controlledAxes.Contains("Axis4") ? "[b]Axis4:[/b] " : "Axis4: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis4, 2)}, " +
-						$"{(controlledAxes.Contains("Axis5") ? "[b]Axis5:[/b] " : "Axis5: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis5, 2)}, " +
-						$"{(controlledAxes.Contains("Axis6") ? "[b]Axis6:[/b] " : "Axis6: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis6, 2)}, " +
-						$"{(controlledAxes.Contains("Gripper") ? "[b]Gripper:[/b] " : "Gripper: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Gripper, 2)}, " +
-						$"Timestamp: {PressedKeys.Singleton.ManipulatorMovement.Timestamp}}}\n"
-					 );
+					string[] controlledAxes;
+					FancyDebugViewRLab.AppendText($"ManipulatorMode: {PressedKeys.Singleton.ManipulatorMovement.ActionType.ToString()}\n");
+					switch (PressedKeys.Singleton.ManipulatorMovement.ActionType)
+					{
+						case MqttClasses.ActionType.Stop:
+							FancyDebugViewRLab.AppendText("Robotic Arm stopped\n");
+							break;
+						case MqttClasses.ActionType.ForwardKin:
+							if (PressedKeys.Singleton.ManipulatorMovement.ForwardKin == null) break;
+							controlledAxes = PressedKeys.Singleton.RoverManipulatorControllerPreset.GetControlledAxes();
+							FancyDebugViewRLab.AppendText("PressedKeys.Singleton: Manipulator Mov: {" +
+								$"{(controlledAxes.Contains("Axis1") ? "[b]Axis1:[/b] " : "Axis1: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis1, 2)}, " +
+								$"{(controlledAxes.Contains("Axis2") ? "[b]Axis2:[/b] " : "Axis2: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis2, 2)}, " +
+								$"{(controlledAxes.Contains("Axis3") ? "[b]Axis3:[/b] " : "Axis3: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis3, 2)}, " +
+								$"{(controlledAxes.Contains("Axis4") ? "[b]Axis4:[/b] " : "Axis4: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis4, 2)}, " +
+								$"{(controlledAxes.Contains("Axis5") ? "[b]Axis5:[/b] " : "Axis5: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis5, 2)}, " +
+								$"{(controlledAxes.Contains("Axis6") ? "[b]Axis6:[/b] " : "Axis6: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis6, 2)}, " +
+								$"{(controlledAxes.Contains("Gripper") ? "[b]Gripper:[/b] " : "Gripper: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Gripper, 2)}, " +
+								$"Timestamp: {PressedKeys.Singleton.ManipulatorMovement.Timestamp}}}\n"
+							 );
+							break;
+						case MqttClasses.ActionType.InvKinJoystick:
+							if (PressedKeys.Singleton.ManipulatorMovement.InvJoystick == null) break;
+							controlledAxes = PressedKeys.Singleton.RoverManipulatorControllerPreset.GetControlledAxes();
+							FancyDebugViewRLab.AppendText("PressedKeys.Singleton: Manipulator \nPos: {" +
+								$"{(controlledAxes.Contains("PosX") ? "[b]X:[/b] " : "X: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.LinearSpeed.X * 100, 0)} cm/s, " +
+								$"{(controlledAxes.Contains("PosY") ? "[b]Y:[/b] " : "Y: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.LinearSpeed.Y * 100, 0)} cm/s, " +
+								$"{(controlledAxes.Contains("PosZ") ? "[b]Z:[/b] " : "Z: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.LinearSpeed.Z * 100, 0)} cm/s}}\n" +
+								$"Rot: {{" +
+								$"{(controlledAxes.Contains("RotX") ? "[b]X:[/b] " : "X: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.RotationSpeed.X, 2)} rad/s, " +
+								$"{(controlledAxes.Contains("RotY") ? "[b]Y:[/b] " : "Y: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.RotationSpeed.Y, 2)} rad/s, " +
+								$"{(controlledAxes.Contains("RotZ") ? "[b]Z:[/b] " : "Z: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.RotationSpeed.Z, 2)} rad/s}}\n" +
+								$"Reference: {PressedKeys.Singleton.ManipulatorMovement.Reference}, " +
+								$"{(controlledAxes.Contains("Gripper") ? "[b]Gripper:[/b] " : "Gripper: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Gripper, 2)}, " +
+								$"Timestamp: {PressedKeys.Singleton.ManipulatorMovement.Timestamp}\n"
+							 );
+							break;
+						case MqttClasses.ActionType.InvKinPosition:
+							break;
+						case MqttClasses.ActionType.InvKinOffset:
+							break;
+						case MqttClasses.ActionType.GoToReference:
+							break;
+						default:
+							break;
+					}
+
 					break;
 				case MqttClasses.ControlMode.Sampler:
 					FancyDebugViewRLab.AppendText($"PressedKeys.Singleton: Sampler DrillAction: {PressedKeys.Singleton.SamplerMovement.DrillAction:F2}, " +
@@ -372,17 +408,50 @@ namespace RoverControlApp.MVVM.ViewModel
 
 					break;
 				case MqttClasses.ControlMode.Manipulator:
-					string[] controlledAxes = PressedKeys.Singleton.RoverManipulatorControllerPreset.GetControlledAxes();
-					FancyDebugViewRLab.AppendText("PressedKeys.Singleton: Manipulator Mov: {" +
-						$"{(controlledAxes.Contains("Axis1") ? "[b]Axis1:[/b] " : "Axis1: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis1, 2)}, " +
-						$"{(controlledAxes.Contains("Axis2") ? "[b]Axis2:[/b] " : "Axis2: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis2, 2)}, " +
-						$"{(controlledAxes.Contains("Axis3") ? "[b]Axis3:[/b] " : "Axis3: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis3, 2)}, " +
-						$"{(controlledAxes.Contains("Axis4") ? "[b]Axis4:[/b] " : "Axis4: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis4, 2)}, " +
-						$"{(controlledAxes.Contains("Axis5") ? "[b]Axis5:[/b] " : "Axis5: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis5, 2)}, " +
-						$"{(controlledAxes.Contains("Axis6") ? "[b]Axis6:[/b] " : "Axis6: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Axis6, 2)}, " +
-						$"{(controlledAxes.Contains("Gripper") ? "[b]Gripper:[/b] " : "Gripper: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Gripper, 2)}, " +
-						$"Timestamp: {PressedKeys.Singleton.ManipulatorMovement.Timestamp}}}\n"
-					 );
+					switch (PressedKeys.Singleton.ManipulatorMovement.ActionType)
+					{
+						case MqttClasses.ActionType.Stop:
+							FancyDebugViewRLab.AppendText("Robotic Arm stopped\n");
+							break;
+						case MqttClasses.ActionType.ForwardKin:
+							if (PressedKeys.Singleton.ManipulatorMovement.ForwardKin == null) break;
+							string[] controlledAxes = PressedKeys.Singleton.RoverManipulatorControllerPreset.GetControlledAxes();
+							FancyDebugViewRLab.AppendText("PressedKeys.Singleton: Manipulator Mov: {" +
+								$"{(controlledAxes.Contains("Axis1") ? "[b]Axis1:[/b] " : "Axis1: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis1, 2)}, " +
+								$"{(controlledAxes.Contains("Axis2") ? "[b]Axis2:[/b] " : "Axis2: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis2, 2)}, " +
+								$"{(controlledAxes.Contains("Axis3") ? "[b]Axis3:[/b] " : "Axis3: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis3, 2)}, " +
+								$"{(controlledAxes.Contains("Axis4") ? "[b]Axis4:[/b] " : "Axis4: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis4, 2)}, " +
+								$"{(controlledAxes.Contains("Axis5") ? "[b]Axis5:[/b] " : "Axis5: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis5, 2)}, " +
+								$"{(controlledAxes.Contains("Axis6") ? "[b]Axis6:[/b] " : "Axis6: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.ForwardKin.Axis6, 2)}, " +
+								$"{(controlledAxes.Contains("Gripper") ? "[b]Gripper:[/b] " : "Gripper: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Gripper, 2)}, " +
+								$"Timestamp: {PressedKeys.Singleton.ManipulatorMovement.Timestamp}}}\n"
+							 );
+							break;
+						case MqttClasses.ActionType.InvKinJoystick:
+							if (PressedKeys.Singleton.ManipulatorMovement.InvJoystick == null) break;
+							controlledAxes = PressedKeys.Singleton.RoverManipulatorControllerPreset.GetControlledAxes();
+							FancyDebugViewRLab.AppendText("PressedKeys.Singleton: Manipulator \nPos: {" +
+								$"{(controlledAxes.Contains("PosX") ? "[b]X:[/b] " : "X: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.LinearSpeed.X * 100, 0)} cm/s, " +
+								$"{(controlledAxes.Contains("PosY") ? "[b]Y:[/b] " : "Y: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.LinearSpeed.Y * 100, 0)} cm/s, " +
+								$"{(controlledAxes.Contains("PosZ") ? "[b]Z:[/b] " : "Z: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.LinearSpeed.Z * 100, 0)} cm/s}}\n" +
+								$"Rot: {{" +
+								$"{(controlledAxes.Contains("RotX") ? "[b]X:[/b] " : "X: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.RotationSpeed.X, 2)} rad/s, " +
+								$"{(controlledAxes.Contains("RotY") ? "[b]Y:[/b] " : "Y: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.RotationSpeed.Y, 2)} rad/s, " +
+								$"{(controlledAxes.Contains("RotZ") ? "[b]Z:[/b] " : "Z: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.RotationSpeed.Z, 2)} rad/s}}\n" +
+								$"Reference: {PressedKeys.Singleton.ManipulatorMovement.Reference}, " +
+								$"{(controlledAxes.Contains("Gripper") ? "[b]Gripper:[/b] " : "Gripper: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Gripper, 2)}, " +
+								$"Timestamp: {PressedKeys.Singleton.ManipulatorMovement.Timestamp}\n"
+							 );
+							break;
+						case MqttClasses.ActionType.InvKinPosition:
+							break;
+						case MqttClasses.ActionType.InvKinOffset:
+							break;
+						case MqttClasses.ActionType.GoToReference:
+							break;
+						default:
+							break;
+					}
 					break;
 				case MqttClasses.ControlMode.Sampler:
 					FancyDebugViewRLab.AppendText($"PressedKeys.Singleton: Sampler DrillAction: {PressedKeys.Singleton.SamplerMovement.DrillAction:F2}, " +

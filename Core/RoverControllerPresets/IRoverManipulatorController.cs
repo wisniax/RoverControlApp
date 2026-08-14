@@ -21,6 +21,7 @@ public interface IRoverManipulatorController : IActionAwareController
 	{
 		newState = CalculateMoveVector(inputEvent, targetInputDevice, lastState);
 		bool changed = IsMoveVectorChanged(newState, lastState);
+		
 		newState.Timestamp = changed ? DateTimeOffset.Now.ToUnixTimeMilliseconds() : lastState.Timestamp;
 		return changed;
 	}
@@ -29,8 +30,11 @@ public interface IRoverManipulatorController : IActionAwareController
 	/// Compares two ManipulatorControl states and determines if change is big enough, to be considered
 	/// </summary>
 	/// <returns>true if changed</returns>
-	public bool IsMoveVectorChanged(in ManipulatorControl currentState, in ManipulatorControl lastState) =>
-		!currentState.Equals(lastState);
+	public bool IsMoveVectorChanged(in ManipulatorControl currentState, in ManipulatorControl lastState)
+	{
+		return !currentState.Equals(lastState);
+	}
+
 
 	/// <summary>
 	/// Returns currently controlled axes

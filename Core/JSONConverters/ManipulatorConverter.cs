@@ -17,6 +17,7 @@ public class ManipulatorConverter : JsonConverter<Manipulator>
 
 		int? roverManipulatorController = null;
 		bool? holdToChangeManipulatorAxes = null;
+		InvKinScaler? invKinScaler = null;
 
 		while (reader.Read())
 		{
@@ -37,6 +38,9 @@ public class ManipulatorConverter : JsonConverter<Manipulator>
 				case nameof(Manipulator.HoldToChangeManipulatorAxes):
 					holdToChangeManipulatorAxes = reader.GetBoolean();
 					break;
+				case nameof(Manipulator.InvKinScaler):
+					invKinScaler = JsonSerializer.Deserialize<InvKinScaler>(ref reader, options);
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -46,7 +50,8 @@ public class ManipulatorConverter : JsonConverter<Manipulator>
 		return new Manipulator
 		(
 			roverManipulatorController ?? Default.RoverManipulatorController,
-			holdToChangeManipulatorAxes ?? Default.HoldToChangeManipulatorAxes
+			holdToChangeManipulatorAxes ?? Default.HoldToChangeManipulatorAxes,
+			invKinScaler ?? Default.InvKinScaler
 		);
 	}
 
@@ -55,6 +60,8 @@ public class ManipulatorConverter : JsonConverter<Manipulator>
 		writer.WriteStartObject();
 		writer.WriteNumber(nameof(Manipulator.RoverManipulatorController), value.RoverManipulatorController);
 		writer.WriteBoolean(nameof(Manipulator.HoldToChangeManipulatorAxes), value.HoldToChangeManipulatorAxes);
+		writer.WritePropertyName(nameof(Manipulator.InvKinScaler));
+		JsonSerializer.Serialize(writer, value.InvKinScaler, options);
 		writer.WriteEndObject();
 	}
 }

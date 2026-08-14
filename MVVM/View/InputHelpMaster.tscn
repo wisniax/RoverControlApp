@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://cb4iwcuigx2m0"]
 
 [ext_resource type="Theme" uid="uid://b5383qtpq03ca" path="res://Resources/InputHelpMaster.theme" id="1_r456b"]
-[ext_resource type="Script" path="res://MVVM/ViewModel/InputHelpMaster.cs" id="1_raoys"]
+[ext_resource type="Script" uid="uid://cc1jgv4qg5crd" path="res://MVVM/ViewModel/InputHelpMaster.cs" id="1_raoys"]
 [ext_resource type="PackedScene" uid="uid://o5ejabbb2yio" path="res://MVVM/View/InputHelpHint.tscn" id="2_5ikwg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_agir7"]

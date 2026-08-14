@@ -434,7 +434,7 @@ public partial class PressedKeys : Node
 
 	public static bool IsInputFromController(InputEvent input, long device)
 	{
-		if (input is not InputEventJoypadButton && input is not InputEventJoypadMotion)
+		if (IsInputFromKeyboard(input))
 		{
 			return false;
 		}
@@ -442,15 +442,8 @@ public partial class PressedKeys : Node
 		return input.Device == device;
 	}
 
-	public static bool IsInputFromKeyboard(InputEvent input)
-	{
-		if (input is InputEventJoypadButton || input is InputEventJoypadMotion)
-		{
-			return false;
-		}
-
-		return input.Device == 0;
-	}
+	public static bool IsInputFromKeyboard(InputEvent input) 
+	=> input.Device == InputEvent.DeviceIdKeyboard;
 
 
 	#endregion Methods.HandleInput

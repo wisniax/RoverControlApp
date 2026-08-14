@@ -110,32 +110,109 @@ namespace RoverControlApp.Core
 
 		public class ManipulatorControl
 		{
-			public float Axis1 { get; set; } = 0f;
-			public float Axis2 { get; set; } = 0f;
-			public float Axis3 { get; set; } = 0f;
-			public float Axis4 { get; set; } = 0f;
-			public float Axis5 { get; set; } = 0f;
-			public float Axis6 { get; set; } = 0f;
-			public float Gripper { get; set; } = 0f;
+			public ActionType ActionType { get; set; } = ActionType.Stop;
+			public string? Reference { get; set; } = "base_link";
+			public ForwardKinMode? ForwardKin { get; set; }
+			public InverseJoystickMode? InvJoystick { get; set; } // Joystick Control is a "ROS" name for it
+			public InversePositionMode? InvPosition { get; set; }
+			public float Gripper { get; set; }
+			public bool ForceCartesian { get; set; }
+			public bool ForceMovement { get; set; }
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+
 			public override bool Equals(object? obj)
 			{
-				if (obj is not ManipulatorControl manipObj) return false;
-				bool isEqual = true;
-				isEqual &= Mathf.IsEqualApprox(Axis1, manipObj.Axis1, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Axis2, manipObj.Axis2, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Axis3, manipObj.Axis3, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Axis4, manipObj.Axis4, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Axis5, manipObj.Axis5, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Axis6, manipObj.Axis6, 0.005f);
-				isEqual &= Mathf.IsEqualApprox(Gripper, manipObj.Gripper, 0.005f);
-				return isEqual;
+				if (obj is not ManipulatorControl other) return false;
+
+				if (this.ActionType != other.ActionType) return false;
+
+				if (!Mathf.IsEqualApprox(this.Gripper, other.Gripper, 0.001f)) return false;
+
+				switch (this.ActionType)
+				{
+					case ActionType.ForwardKin:
+						if (this.ForwardKin == null || other.ForwardKin == null) return false;
+						return Mathf.IsEqualApprox(this.ForwardKin.Axis1, other.ForwardKin.Axis1, 0.001f) &&
+							   Mathf.IsEqualApprox(this.ForwardKin.Axis2, other.ForwardKin.Axis2, 0.001f) &&
+							   Mathf.IsEqualApprox(this.ForwardKin.Axis3, other.ForwardKin.Axis3, 0.001f) &&
+							   Mathf.IsEqualApprox(this.ForwardKin.Axis4, other.ForwardKin.Axis4, 0.001f) &&
+							   Mathf.IsEqualApprox(this.ForwardKin.Axis5, other.ForwardKin.Axis5, 0.001f) &&
+							   Mathf.IsEqualApprox(this.ForwardKin.Axis6, other.ForwardKin.Axis6, 0.001f);
+					case ActionType.InvKinJoystick:
+						if (this.InvJoystick == null || other.InvJoystick == null) return false;
+						return Mathf.IsEqualApprox(this.InvJoystick.LinearSpeed.X, other.InvJoystick.LinearSpeed.X, 0.001f) &&
+							   Mathf.IsEqualApprox(this.InvJoystick.LinearSpeed.Y, other.InvJoystick.LinearSpeed.Y, 0.001f) &&
+							   Mathf.IsEqualApprox(this.InvJoystick.LinearSpeed.Z, other.InvJoystick.LinearSpeed.Z, 0.001f) &&
+							   Mathf.IsEqualApprox(this.InvJoystick.RotationSpeed.X, other.InvJoystick.RotationSpeed.X, 0.001f) &&
+							   Mathf.IsEqualApprox(this.InvJoystick.RotationSpeed.Y, other.InvJoystick.RotationSpeed.Y, 0.001f) &&
+							   Mathf.IsEqualApprox(this.InvJoystick.RotationSpeed.Z, other.InvJoystick.RotationSpeed.Z, 0.001f);
+					case ActionType.InvKinPosition:
+						if (this.InvPosition == null || other.InvPosition == null) return false;
+						return Mathf.IsEqualApprox(this.InvPosition.Position.X, other.InvPosition.Position.X, 0.001f) &&
+							   Mathf.IsEqualApprox(this.InvPosition.Position.Y, other.InvPosition.Position.Y, 0.001f) &&
+							   Mathf.IsEqualApprox(this.InvPosition.Position.Z, other.InvPosition.Position.Z, 0.001f) &&
+							   Mathf.IsEqualApprox(this.InvPosition.Rotation.X, other.InvPosition.Rotation.X, 0.001f) &&
+							   Mathf.IsEqualApprox(this.InvPosition.Rotation.Y, other.InvPosition.Rotation.Y, 0.001f) &&
+							   Mathf.IsEqualApprox(this.InvPosition.Rotation.Z, other.InvPosition.Rotation.Z, 0.001f) &&
+							   Mathf.IsEqualApprox(this.InvPosition.Rotation.W, other.InvPosition.Rotation.W, 0.001f);
+					case ActionType.InvKinOffset:
+						// No mode for it
+						break;
+					case ActionType.GoToReference:
+						// No mode for it
+						break;
+				}
+
+				return true;
 			}
 
 			public override int GetHashCode()
 			{
-				return HashCode.Combine(Axis1, Axis2, Axis3, Axis4, Axis5, Axis6, Gripper);
+				int temp1 = HashCode.Combine(ForwardKin?.Axis1, ForwardKin?.Axis2, ForwardKin?.Axis3, ForwardKin?.Axis4, ForwardKin?.Axis5, ForwardKin?.Axis6, Gripper);
+				int temp2 = HashCode.Combine(InvJoystick?.LinearSpeed.X, InvJoystick?.LinearSpeed.Y, InvJoystick?.LinearSpeed.Z, InvJoystick?.RotationSpeed.X, InvJoystick?.RotationSpeed.Y, InvJoystick?.RotationSpeed.Z);
+				int temp3 = HashCode.Combine(InvPosition?.Position.X, InvPosition?.Position.Y, InvPosition?.Position.Z, InvPosition?.Rotation.X, InvPosition?.Rotation.Y, InvPosition?.Rotation.Z, InvPosition?.Rotation.W);
+				int temp4 = HashCode.Combine(ActionType, Reference, ForceCartesian, ForceMovement);
+
+				return HashCode.Combine(temp1, temp2, temp3, temp4);
 			}
+		}
+		
+		public enum ActionType
+		{
+			Stop = 0,
+			ForwardKin = 1,
+			InvKinJoystick = 2,
+			InvKinPosition = 3,
+			InvKinOffset = 4,
+			GoToReference = 5 // with Reference e.g. "inverse_home_pose"
+							  // ... predefined positions (Driving position, sampler, etc)? Later.
+		}
+		public class ForwardKinMode
+		{
+			public float Axis1 { get; set; } = 0;
+			public float Axis2 { get; set; } = 0;
+			public float Axis3 { get; set; } = 0;
+			public float Axis4 { get; set; } = 0;
+			public float Axis5 { get; set; } = 0;
+			public float Axis6 { get; set; } = 0;
+		}
+		public class InverseJoystickMode
+		{
+			public Vec3 LinearSpeed { get; set; } = new Vec3();
+			public Vec3 RotationSpeed { get; set; } = new Vec3();
+		}
+
+		public class InversePositionMode
+		{
+			public Vec3 Position { get; set; } = new Vec3();
+			public Quaternion Rotation { get; set; } = new Quaternion();
+		}
+
+		public class Vec3
+		{
+			public float X { get; set; }
+			public float Y { get; set; }
+			public float Z { get; set; }
 		}
 
 		public class SamplerControl
