@@ -23,6 +23,7 @@ modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_right = 369.0
 offset_bottom = 41.0
+focus_mode = 0
 
 [node name="Label" type="Label" parent="HiddenState" unique_id=1183509566]
 layout_mode = 0
@@ -42,6 +43,7 @@ modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_right = 369.0
 offset_bottom = 245.0
+focus_mode = 0
 
 [node name="Label2" type="Label" parent="ShownState" unique_id=2077917312]
 layout_mode = 0
