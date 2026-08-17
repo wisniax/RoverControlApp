@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://s5clmfanc4i"]
 
-[ext_resource type="Script" path="res://MVVM/ViewModel/StatusPanels/EStop.cs" id="1_nvk1p"]
+[ext_resource type="Script" uid="uid://cn60bklagxpbt" path="res://MVVM/ViewModel/StatusPanels/EStopPanel.cs" id="1_nvk1p"]
 
 [node name="EStopStatusPanel" type="Control" unique_id=2107319711]
 layout_mode = 3
