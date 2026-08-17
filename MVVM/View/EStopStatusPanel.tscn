@@ -1,0 +1,65 @@
+[gd_scene format=3 uid="uid://s5clmfanc4i"]
+
+[ext_resource type="Script" path="res://MVVM/ViewModel/StatusPanels/EStop.cs" id="1_nvk1p"]
+
+[node name="EStopStatusPanel" type="Control" unique_id=2107319711]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -785.0
+offset_bottom = -403.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nvk1p")
+
+[node name="HiddenState" type="Panel" parent="." unique_id=1100169613]
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 41.0
+
+[node name="ShowShown" type="Button" parent="HiddenState" unique_id=1433286214]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 41.0
+
+[node name="Label" type="Label" parent="HiddenState" unique_id=1183509566]
+layout_mode = 0
+offset_right = 368.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 27
+text = "EStop Status                         ▶"
+
+[node name="ShownState" type="Panel" parent="." unique_id=1681091173]
+visible = false
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 245.0
+
+[node name="ShowHidden" type="Button" parent="ShownState" unique_id=2056434553]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 245.0
+
+[node name="Label2" type="Label" parent="ShownState" unique_id=2077917312]
+layout_mode = 0
+offset_right = 368.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 27
+text = "EStop Status                         ▼"
+
+[node name="Label3" type="Label" parent="ShownState" unique_id=1309216063]
+layout_mode = 0
+offset_left = 112.0
+offset_top = 112.0
+offset_right = 234.0
+offset_bottom = 152.0
+theme_override_font_sizes/font_size = 27
+text = "empty lol"
+
+[connection signal="pressed" from="HiddenState/ShowShown" to="HiddenState" method="set_visible" binds= [false]]
+[connection signal="pressed" from="HiddenState/ShowShown" to="ShownState" method="set_visible" binds= [true]]
+[connection signal="pressed" from="ShownState/ShowHidden" to="HiddenState" method="set_visible" binds= [true]]
+[connection signal="pressed" from="ShownState/ShowHidden" to="ShownState" method="set_visible" binds= [false]]
