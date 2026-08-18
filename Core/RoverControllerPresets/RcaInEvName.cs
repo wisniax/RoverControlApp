@@ -86,4 +86,7 @@ public static class RcaInEvName
 	public static readonly StringName RoverMoveUp = new("rover_move_up");
 	public static readonly StringName RoverRotateRight = new("rover_move_up");
 	public static readonly StringName RoverRotateLeft = new("rover_move_up");
+
+	public static readonly StringName JoystickLeftPress = new("joystick_left_press");
+	public static readonly StringName JoystickRightPress = new("joystick_right_press");
 }

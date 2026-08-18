@@ -18,8 +18,8 @@ public partial class DriveMode_UIOverlay : UIOverlay
 	[Export]
 	PanelContainer _panelContainer = null!;
 
-	private int _inputMode;
-	private int _inputModeSlave;
+	private MqttClasses.ControlModeFlags _inputModeMaster;
+	private MqttClasses.ControlModeFlags _inputModeSlave;
 
 	public override Dictionary<int, Setting> Presets { get; } = new()
 	{
@@ -39,17 +39,17 @@ public partial class DriveMode_UIOverlay : UIOverlay
 		return Task.CompletedTask;
 	}
 
-	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
+	public Task ControlModeChangedSubscriber(MqttClasses.ControlModeFlags newMasterMode)
 	{
-		_inputMode = (int)newMode;
+		_inputModeMaster = newMasterMode;
 		UpdateIndicatorVisibility();
 
 		return Task.CompletedTask;
 	}
 
-	public Task SlaveControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
+	public Task SlaveControlModeChangedSubscriber(MqttClasses.ControlModeFlags newSlaveMode)
 	{
-		_inputModeSlave = (int)newMode;
+		_inputModeSlave = newSlaveMode;
 		UpdateIndicatorVisibility();
 
 		return Task.CompletedTask;
@@ -68,27 +68,27 @@ public partial class DriveMode_UIOverlay : UIOverlay
 	{
 		this.Visible = true;
 
-		switch ((MqttClasses.ControlMode)_inputMode)
+		if (_inputModeMaster.HasFlag(MqttClasses.ControlModeFlags.Drive))
 		{
-			case MqttClasses.ControlMode.Rover:
-				//reanimate on position change
-				if(!Mathf.IsEqualApprox(OffsetRight, POSITION_RIGHT))
-					OnSetControlMode();
-				OffsetRight = POSITION_RIGHT;
-				break;
+			//reanimate on position change
+			if (!Mathf.IsEqualApprox(OffsetRight, POSITION_RIGHT))
+				OnSetControlMode();
+			OffsetRight = POSITION_RIGHT;
 
-			case not MqttClasses.ControlMode.Rover
-			when (MqttClasses.ControlMode)_inputModeSlave == MqttClasses.ControlMode.Rover:
-				//reanimate on position change
-				if(!Mathf.IsEqualApprox(OffsetRight, POSITION_LEFT))
-					OnSetControlMode();
-				OffsetRight = POSITION_LEFT;
-				break;
-
-			default:
-				this.Visible = false;
-				break;
+			return;
 		}
+
+		//reanimate on position change
+		if (_inputModeSlave.HasFlag(MqttClasses.ControlModeFlags.Drive))
+		{
+			if (!Mathf.IsEqualApprox(OffsetRight, POSITION_LEFT))
+				OnSetControlMode();
+			OffsetRight = POSITION_LEFT;
+			return;
+		}
+
+		this.Visible = false;
+		return;
 	}
 
 	void OnVisibleChange()

@@ -2,7 +2,7 @@ using System;
 
 using Godot;
 using Godot.Collections;
-
+using RoverControlApp.MVVM.Model;
 using static RoverControlApp.Core.MqttClasses;
 
 namespace RoverControlApp.Core.RoverControllerPresets.ControlModeControllers;
@@ -17,6 +17,8 @@ public class StandardModeController : IControlModeController
 		RcaInEvName.ControlModeManipulator,
 		RcaInEvName.ControlModeSampler,
 		RcaInEvName.ControlModeAutonomy,
+		RcaInEvName.JoystickLeftPress,
+		RcaInEvName.JoystickRightPress,
 	];
 
 	TimeSpan? estopStart;
@@ -39,42 +41,89 @@ public class StandardModeController : IControlModeController
 	}
 
 
-	public ControlMode GetControlMode(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice,
-		in ControlMode lastState)
+	public ControlModeFlags GetControlMode(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice,
+		in ControlModeFlags lastState)
 	{
-		ControlMode newState = lastState;
+		ControlModeFlags newState = lastState;
 
 		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeEstop, targetInputDevice)))
 		{
 			if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeDrive, targetInputDevice), exactMatch: true))
 			{
 				estopStart = null;
-				newState = ControlMode.Rover;
+				newState = ControlModeFlags.Drive;
 			}
 			else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeManipulator, targetInputDevice), exactMatch: true))
 			{
 				estopStart = null;
-				newState = ControlMode.Manipulator;
+				newState = ControlModeFlags.RoboticArm;
 			}
 			else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeSampler, targetInputDevice), exactMatch: true))
 			{
 				estopStart = null;
-				newState = ControlMode.Sampler;
+				newState = ControlModeFlags.DeepSampler | ControlModeFlags.SurfaceSampler;
 			}
 			else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeAutonomy, targetInputDevice), exactMatch: true))
 			{
 				estopStart = null;
-				newState = ControlMode.Autonomy;
+				newState = ToggleAutonomy(lastState);
 			}
 		}
 		else if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ControlModeChange, targetInputDevice), exactMatch: true))
 		{
-			if ((int)lastState + 1 >= Enum.GetNames<ControlMode>().Length)
-				newState = ControlMode.Rover;
+			if (IsDriveGroup(lastState))
+				newState = ControlModeFlags.RoboticArm;
+			else if (IsRoboticArmGroup(lastState))
+				newState = ControlModeFlags.DeepSampler | ControlModeFlags.SurfaceSampler;
+			else if (IsSamplerGroup(lastState))
+				newState = ControlModeFlags.Drive;
 			else
-				newState++;
+				newState = ControlModeFlags.Drive;
 		}
+
+		if ((Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.JoystickLeftPress, targetInputDevice), exactMatch: true) &&
+			(Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.JoystickRightPress, targetInputDevice), exactMatch: true))) &&
+			(inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.JoystickLeftPress, targetInputDevice), exactMatch: true) ||
+			(inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.JoystickRightPress, targetInputDevice), exactMatch: true))))
+		{
+			if (newState.HasFlag(ControlModeFlags.Stop))
+				newState &= ~ControlModeFlags.Stop;
+			else
+				newState |= ControlModeFlags.Stop;
+		}
+
 		return newState;
+	}
+
+	private static bool IsDriveGroup(ControlModeFlags mode) =>
+		(mode & (ControlModeFlags.Drive | ControlModeFlags.DriveAutonomy)) != 0;
+
+	private static bool IsRoboticArmGroup(ControlModeFlags mode) =>
+		(mode & (ControlModeFlags.RoboticArm | ControlModeFlags.RoboticArmAutonomy)) != 0;
+
+	private static bool IsSamplerGroup(ControlModeFlags mode) =>
+		(mode & (ControlModeFlags.DeepSampler | ControlModeFlags.DeepSamplerAutonomy
+			| ControlModeFlags.SurfaceSampler | ControlModeFlags.SurfaceSamplerAutonomy)) != 0;
+
+	private static readonly (ControlModeFlags Manual, ControlModeFlags Autonomy)[] _autonomyPairs =
+	[
+		(ControlModeFlags.Drive, ControlModeFlags.DriveAutonomy),
+		(ControlModeFlags.RoboticArm, ControlModeFlags.RoboticArmAutonomy),
+		(ControlModeFlags.DeepSampler, ControlModeFlags.DeepSamplerAutonomy),
+		(ControlModeFlags.SurfaceSampler, ControlModeFlags.SurfaceSamplerAutonomy),
+	];
+
+	private static ControlModeFlags ToggleAutonomy(ControlModeFlags state)
+	{
+		ControlModeFlags result = state;
+		foreach (var (manual, autonomy) in _autonomyPairs)
+		{
+			if (state.HasFlag(manual))
+				result = (result & ~manual) | autonomy;
+			else if (state.HasFlag(autonomy))
+				result = (result & ~autonomy) | manual;
+		}
+		return result;
 	}
 
 	public System.Collections.Generic.Dictionary<StringName, Array<InputEvent>> GetInputActions() =>
@@ -84,5 +133,8 @@ public class StandardModeController : IControlModeController
 	"""
 	To quick select control mode on the controller:
 	 HOLD 'controlmode_estop' and PRESS desired mode.
+	 Use 'controlmode_change' to cycle: Drive -> RoboticArm -> Sampler.
+	 Autonomy is toggled by pressing EStop + X (or + 4 on keyboard) on an active control mode.
+	 Stop is toggled by pressing both joysticks at the same time. (Master ONLY)
 	""";
 }

@@ -15,8 +15,8 @@ public partial class SafeMode_UIOverlay : UIOverlay
 	//position under rovermode master
 	const float POSITION_RIGHT = -181.0f;
 
-	private int _inputMode;
-	private int _inputModeSlave;
+	private MqttClasses.ControlModeFlags _inputModeMaster;
+	private MqttClasses.ControlModeFlags _inputModeSlave;
 
 	private static float _speedLimit => LocalSettings.Singleton.SpeedLimiter.MaxSpeed;
 
@@ -27,16 +27,16 @@ public partial class SafeMode_UIOverlay : UIOverlay
 
 	};
 
-	public Task ControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
+	public Task MasterControlModeChangedSubscriber(MqttClasses.ControlModeFlags newMode)
 	{
-		_inputMode = (int)newMode;
+		_inputModeMaster = newMode;
 		CallDeferred(MethodName.UpdateSafeModeIndicator);
 		return Task.CompletedTask;
 	}
 
-	public Task SlaveControlModeChangedSubscriber(MqttClasses.ControlMode newMode)
+	public Task SlaveControlModeChangedSubscriber(MqttClasses.ControlModeFlags newMode)
 	{
-		_inputModeSlave = (int)newMode;
+		_inputModeSlave = newMode;
 		CallDeferred(MethodName.UpdateSafeModeIndicator);
 		return Task.CompletedTask;
 	}
@@ -75,27 +75,23 @@ public partial class SafeMode_UIOverlay : UIOverlay
 	{
 		this.Visible = true;
 
-		switch ((MqttClasses.ControlMode)_inputMode)
+		if (_inputModeMaster.HasFlag(MqttClasses.ControlModeFlags.Drive))
 		{
-			case MqttClasses.ControlMode.Rover:
-				//reanimate on position change
-				if(!Mathf.IsEqualApprox(OffsetRight, POSITION_RIGHT))
-					OnSetControlMode();
-				OffsetRight = POSITION_RIGHT;
-				break;
-
-			case not MqttClasses.ControlMode.Rover
-			when (MqttClasses.ControlMode)_inputModeSlave == MqttClasses.ControlMode.Rover:
-				//reanimate on position change
-				if(!Mathf.IsEqualApprox(OffsetRight, POSITION_LEFT))
-					OnSetControlMode();
-				OffsetRight = POSITION_LEFT;
-				break;
-
-			default:
-				this.Visible = false;
-				break;
+			if (!Mathf.IsEqualApprox(OffsetRight, POSITION_RIGHT))
+				OnSetControlMode();
+			OffsetRight = POSITION_RIGHT;
+			return;
 		}
+
+		if (_inputModeSlave.HasFlag(MqttClasses.ControlModeFlags.Drive))
+		{
+			if (!Mathf.IsEqualApprox(OffsetRight, POSITION_LEFT))
+				OnSetControlMode();
+			OffsetRight = POSITION_LEFT;
+			return;
+		}
+		
+		this.Visible = false;
 	}
 
 	void OnVisibleChange()
