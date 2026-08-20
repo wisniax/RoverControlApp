@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -23,6 +23,7 @@ public partial class LocalSettings : Node
 		public Settings.Sampler? Sampler { get; set; } = null;
 		public Settings.Battery? Battery { get; set; } = null;
 		public Settings.WheelData? WheelData { get; set; } = null;
+		public Settings.Rosout? Rosout { get; set; } = null;
 	}
 
 	private JsonSerializerOptions serializerOptions = new() { WriteIndented = true };
@@ -62,6 +63,7 @@ public partial class LocalSettings : Node
 		_sampler = new();
 		_battery = new();
 		_wheelData = new();
+		_rosout = new();
 
 		if (LoadSettings()) return;
 
@@ -119,6 +121,7 @@ public partial class LocalSettings : Node
 			Sampler = packedSettings.Sampler ?? new();
 			Battery = packedSettings.Battery ?? new();
 			WheelData = packedSettings.WheelData ?? new();
+			Rosout = packedSettings.Rosout ?? new();
 		}
 		catch (Exception e)
 		{
@@ -152,7 +155,8 @@ public partial class LocalSettings : Node
 				General = General,
 				Sampler = Sampler,
 				Battery = Battery,
-				WheelData = WheelData
+				WheelData = WheelData,
+				Rosout = Rosout
 			};
 
 			settingsFileAccess.StoreString(JsonSerializer.Serialize(packedSettings, serializerOptions));
@@ -183,6 +187,7 @@ public partial class LocalSettings : Node
 		Sampler = new();
 		Battery = new();
 		WheelData = new();
+		Rosout = new();
 	}
 
 	private void EmitSignalCategoryChanged(string sectionName)
@@ -403,6 +408,27 @@ public partial class LocalSettings : Node
 			EmitSignalCategoryChanged(nameof(WheelData));
 		}
 	}
+	
+	[SettingsManagerVisible(customName: "RosoutLogs Settings")]
+	public Settings.Rosout Rosout
+	{
+		get => _rosout;
+		set
+		{
+			_rosout = value;
+
+			_rosout.Connect(
+				Settings.Rosout.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
+			);
+			_rosout.Connect(
+				Settings.Rosout.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(Rosout));
+		}
+	}
 
 	Settings.Camera _camera;
 	Settings.Mqtt _mqtt;
@@ -413,6 +439,5 @@ public partial class LocalSettings : Node
 	Settings.Sampler _sampler;
 	Settings.Battery _battery;
 	Settings.WheelData _wheelData;
+	Settings.Rosout _rosout;
 }
-
-

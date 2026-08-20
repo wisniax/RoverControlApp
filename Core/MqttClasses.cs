@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 
@@ -385,6 +385,17 @@ namespace RoverControlApp.Core
 			public AngularVelocity angular_velocity { get; set; } = new();
 			public LinearAcceleration linear_acceleration { get; set; } = new();
 			public Orientation orientation { get; set; } = new();
+			public long Timestamp { get; set; }
+		}
+
+		public class RosoutLogs
+		{
+			public int line {  get; set; }
+			public string function { get; set; } = null!;
+			public string file { get; set; } = null!;
+			public string message { get; set; } = null!;
+			public string name { get; set; } = null!;
+			public int level { get; set; }
 			public long Timestamp { get; set; }
 		}
 

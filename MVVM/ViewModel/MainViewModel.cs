@@ -53,7 +53,7 @@ namespace RoverControlApp.MVVM.ViewModel
 		private DualSeatSlave_UIOverlay DualSeatSlaveUIDis = null!;
 
 		[Export]
-		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!, ShowBatteryMonitor = null!;
+		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!, ShowBatteryMonitor = null!, ShowRosoutLogs = null!;
 		[Export]
 		private SettingsManager SettingsManagerNode = null!;
 		[Export]
@@ -72,7 +72,12 @@ namespace RoverControlApp.MVVM.ViewModel
 
 		[Export]
 		private InputHelpMaster InputHelpMaster = null!;
-
+		
+		[Export]
+		private RosoutLogs RosoutLogs = null!;
+		
+		[Export]
+		private TextureRect RosoutDot = null!;
 
 		public override void _EnterTree()
 		{
@@ -95,6 +100,9 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			BatteryMonitor.OnBatteryDataChanged += HandleBatteryPercentageChangedHandler;
 			BatteryMonitor.SetMushroomState += GrzybUIDis.SetMushroom;
+			
+			RosoutLogs.OnNewLogReceived += HandleNewLogHandler;
+			
 
 			InputHelp_HandleControlModeChanged(PressedKeys.Singleton.MasterControlMode);
 			OnPadConnectionChanged(false);
@@ -109,7 +117,8 @@ namespace RoverControlApp.MVVM.ViewModel
 
 			RoverModeUIDis.ControlMode = (int)PressedKeys.Singleton.MasterControlMode;
 			DualSeatSlaveUIDis.ControlMode = (int)PressedKeys.Singleton.SlaveControlMode;
-
+			
+			
 			ManagePtzStatus();
 			ManageRtspStatus();
 			InputHelpMaster.GenerateHints();
@@ -139,6 +148,8 @@ namespace RoverControlApp.MVVM.ViewModel
 			MissionStatus.Singleton.OnRoverMissionStatusChanged -= MissionControlNode.MissionStatusUpdatedSubscriber;
 
 			BatteryMonitor.OnBatteryDataChanged -= HandleBatteryPercentageChangedHandler;
+			
+			RosoutLogs.OnNewLogReceived -= HandleNewLogHandler;
 
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 			LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
@@ -379,6 +390,33 @@ namespace RoverControlApp.MVVM.ViewModel
 			{
 				ShowBatteryMonitor.SetPressed(true);
 				BatteryMonitor.SetVisible(true);
+			}
+		}
+		
+		void HandleNewLogHandler(int level, Color color)
+		{
+			CallDeferred(nameof(HandleNewLog), level, color);
+		}
+		
+		void HandleNewLog(int level,Color color)
+		{
+			if(!RosoutLogs.Visible)
+			{
+				RosoutDot.SetModulate(color);
+				RosoutDot.SetVisible(true);
+			}
+			if (level != 50) return;
+			RosoutLogs.SetVisible(true);
+			RosoutDot.SetVisible(false);
+		}
+		
+		void OnRosoutButtonToggled(bool toggle)
+		{
+			RosoutLogs.SetVisible(toggle);
+			
+			if (toggle)
+			{
+				RosoutDot.SetVisible(false);
 			}
 		}
 

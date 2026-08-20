@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene load_steps=29 format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" uid="uid://rm5y7hlwqlxo" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -16,6 +16,7 @@
 [ext_resource type="Script" uid="uid://qhxw5cl42q3p" path="res://MVVM/ViewModel/MaxSizeContainer.cs" id="13_0svft"]
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
+[ext_resource type="PackedScene" uid="uid://cogwboqxf01dn" path="res://MVVM/View/RosoutLogs.tscn" id="17_dmtgn"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -44,6 +45,18 @@ keycode = 71
 [sub_resource type="Shortcut" id="Shortcut_nofgb"]
 events = [SubResource("InputEventKey_57mg7")]
 
+[sub_resource type="Gradient" id="Gradient_nrybp"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.6)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_lgu23"]
+gradient = SubResource("Gradient_nrybp")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
 [sub_resource type="InputEventKey" id="InputEventKey_ywgy7"]
 device = -1
 alt_pressed = true
@@ -52,7 +65,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
+[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "ShowRosoutLogs", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster", "RosoutLogs", "RosoutDot")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -71,6 +84,7 @@ ShowSettingsBtn = NodePath("HBoxContainer/ShowSettingsBtn")
 ShowVelMonitor = NodePath("HBoxContainer/ShowVelMonitor")
 ShowMissionControlBrn = NodePath("HBoxContainer/ShowMissionControl")
 ShowBatteryMonitor = NodePath("HBoxContainer/ShowBatteryMonitor")
+ShowRosoutLogs = NodePath("HBoxContainer/ShowRosoutLogs")
 SettingsManagerNode = NodePath("SettingsManager")
 MissionControlNode = NodePath("MissionControl")
 FancyDebugViewRLab = NodePath("FancyDebugViewRLab")
@@ -78,6 +92,8 @@ VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
 BatteryMonitor = NodePath("BatteryMonitor")
 InputHelpMaster = NodePath("MaxSizeContainer/InputHelpMaster")
+RosoutLogs = NodePath("RosoutLogs")
+RosoutDot = NodePath("HBoxContainer/ShowRosoutLogs/RosoutDot")
 
 [node name="CameraView" type="TextureRect" parent="."]
 layout_mode = 1
@@ -279,6 +295,21 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_nofgb")
 text = "GYRO"
 
+[node name="ShowRosoutLogs" type="Button" parent="HBoxContainer"]
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 2
+toggle_mode = true
+text = "LOGS"
+
+[node name="RosoutDot" type="TextureRect" parent="HBoxContainer/ShowRosoutLogs"]
+visible = false
+layout_mode = 0
+offset_left = 1.0
+offset_right = 14.0
+offset_bottom = 13.0
+texture = SubResource("GradientTexture2D_lgu23")
+expand_mode = 1
+
 [node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
 layout_mode = 2
 focus_mode = 0
@@ -358,6 +389,14 @@ ShowEmpty = true
 CycleHints = true
 metadata/_edit_lock_ = true
 
+[node name="RosoutLogs" parent="." instance=ExtResource("17_dmtgn")]
+visible = false
+layout_mode = 1
+offset_left = 8.692
+offset_top = 148.704
+offset_right = 612.692
+offset_bottom = 518.704
+
 [node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
 visible = false
 layout_mode = 1
@@ -373,6 +412,7 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowRosoutLogs" to="." method="OnRosoutButtonToggled"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
