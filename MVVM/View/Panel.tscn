@@ -1,0 +1,231 @@
+[gd_scene format=3 uid="uid://brab7hvdc7g5e"]
+
+[ext_resource type="Texture2D" uid="uid://djndc342mh0kw" path="res://Resources/panel.png" id="1_dysra"]
+[ext_resource type="Script" uid="uid://dk6ko3j6ndnf6" path="res://MVVM/ViewModel/PanelElement.cs" id="2_qcsfn"]
+
+[node name="Control" type="Control" unique_id=1069641514]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=1778185157]
+layout_mode = 0
+offset_right = 264.3462
+offset_bottom = 376.0
+mouse_filter = 2
+texture = ExtResource("1_dysra")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Breakers" type="Control" parent="." unique_id=787530863]
+anchors_preset = 0
+offset_top = 85.0
+offset_bottom = 85.0
+
+[node name="BreakerMain" type="Button" parent="Breakers" unique_id=208410140]
+layout_mode = 0
+offset_left = 10.0
+offset_right = 24.0
+offset_bottom = 36.0
+tooltip_text = "hello
+"
+clip_text = true
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "RCD"
+
+[node name="Breaker1" type="Button" parent="Breakers" unique_id=1130782406]
+layout_mode = 0
+offset_left = 63.0
+offset_right = 77.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "M"
+
+[node name="Breaker2" type="Button" parent="Breakers" unique_id=253259631]
+layout_mode = 0
+offset_left = 78.0
+offset_right = 92.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "03"
+
+[node name="Breaker3" type="Button" parent="Breakers" unique_id=703544547]
+layout_mode = 0
+offset_left = 93.0
+offset_right = 107.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "04"
+
+[node name="Breaker4" type="Button" parent="Breakers" unique_id=1204864904]
+layout_mode = 0
+offset_left = 108.0
+offset_right = 122.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "05"
+
+[node name="Breaker5" type="Button" parent="Breakers" unique_id=1481681660]
+layout_mode = 0
+offset_left = 123.0
+offset_right = 137.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "06"
+
+[node name="Breaker6" type="Button" parent="Breakers" unique_id=625949443]
+layout_mode = 0
+offset_left = 138.0
+offset_right = 152.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "07"
+
+[node name="Breaker7" type="Button" parent="Breakers" unique_id=1420658511]
+layout_mode = 0
+offset_left = 153.0
+offset_right = 167.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "08"
+
+[node name="Breaker8" type="Button" parent="Breakers" unique_id=2013203459]
+layout_mode = 0
+offset_left = 168.0
+offset_right = 182.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "09"
+
+[node name="Breaker9" type="Button" parent="Breakers" unique_id=1202324728]
+layout_mode = 0
+offset_left = 183.0
+offset_right = 197.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "10"
+
+[node name="Breaker10" type="Button" parent="Breakers" unique_id=22622383]
+layout_mode = 0
+offset_left = 198.0
+offset_right = 212.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "11"
+
+[node name="Breaker11" type="Button" parent="Breakers" unique_id=1531953695]
+layout_mode = 0
+offset_left = 213.0
+offset_right = 227.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "12"
+
+[node name="Breaker12" type="Button" parent="Breakers" unique_id=34395509]
+layout_mode = 0
+offset_left = 228.0
+offset_right = 242.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "13"
+
+[node name="Breaker13" type="Button" parent="Breakers" unique_id=465051266]
+layout_mode = 0
+offset_left = 243.0
+offset_right = 257.0
+offset_bottom = 36.0
+script = ExtResource("2_qcsfn")
+_type = 2
+_item = "14"
+
+[node name="Rotary" type="Control" parent="." unique_id=1147534134]
+anchors_preset = 0
+offset_top = 177.0
+offset_bottom = 177.0
+
+[node name="Rotary1" type="Button" parent="Rotary" unique_id=1052961067]
+layout_mode = 0
+offset_left = 20.0
+offset_right = 51.0
+offset_bottom = 31.0
+script = ExtResource("2_qcsfn")
+_item = "1"
+
+[node name="Rotary2" type="Button" parent="Rotary" unique_id=1327188140]
+layout_mode = 0
+offset_left = 68.0
+offset_right = 99.0
+offset_bottom = 31.0
+script = ExtResource("2_qcsfn")
+_item = "2"
+
+[node name="Rotary3" type="Button" parent="Rotary" unique_id=383081337]
+layout_mode = 0
+offset_left = 117.0
+offset_right = 148.0
+offset_bottom = 31.0
+script = ExtResource("2_qcsfn")
+_item = "3"
+
+[node name="Rotary4" type="Button" parent="Rotary" unique_id=2060262152]
+layout_mode = 0
+offset_left = 164.0
+offset_right = 195.0
+offset_bottom = 31.0
+script = ExtResource("2_qcsfn")
+_item = "4"
+
+[node name="Rotary5" type="Button" parent="Rotary" unique_id=724961073]
+layout_mode = 0
+offset_left = 213.0
+offset_right = 244.0
+offset_bottom = 31.0
+script = ExtResource("2_qcsfn")
+_item = "5"
+
+[node name="Engine" type="Control" parent="." unique_id=1549146271]
+anchors_preset = 0
+offset_top = 243.0
+offset_right = 40.0
+offset_bottom = 283.0
+
+[node name="Engine A" type="Button" parent="Engine" unique_id=673185885]
+layout_mode = 0
+offset_left = 140.0
+offset_right = 195.0
+offset_bottom = 55.0
+script = ExtResource("2_qcsfn")
+_type = 1
+_item = "A"
+
+[node name="Engine B" type="Button" parent="Engine" unique_id=1314108019]
+layout_mode = 0
+offset_left = 204.0
+offset_right = 259.0
+offset_bottom = 55.0
+script = ExtResource("2_qcsfn")
+_type = 1
+_item = "B"
+
+[node name="Bar" type="Button" parent="." unique_id=69586527]
+layout_mode = 0
+offset_left = 101.0
+offset_top = 329.0
+offset_right = 255.0
+offset_bottom = 348.0
+script = ExtResource("2_qcsfn")
+_type = 3

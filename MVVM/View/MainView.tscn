@@ -18,6 +18,7 @@
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
 [ext_resource type="Script" uid="uid://bfg0ffyat7n25" path="res://MVVM/ViewModel/StatusPanelController.cs" id="17_a5ovi"]
 [ext_resource type="PackedScene" uid="uid://s5clmfanc4i" path="res://MVVM/View/EStopStatusPanel.tscn" id="17_exayt"]
+[ext_resource type="PackedScene" uid="uid://b8jd7sjnl15bq" path="res://MVVM/View/ArmAutonomyStatusPanel.tscn" id="18_bvsyq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -368,7 +369,7 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
-[node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel")]
+[node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel", "_armAutonomyPanel")]
 layout_mode = 0
 offset_left = 2.0
 offset_top = 42.0
@@ -376,8 +377,14 @@ offset_right = 371.0
 offset_bottom = 538.0
 script = ExtResource("17_a5ovi")
 _eStopPanel = NodePath("EStopStatusPanel")
+_armAutonomyPanel = NodePath("ArmAutonomyStatusPanel")
 
-[node name="EStopStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("17_exayt")]
+[node name="ArmAutonomyStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("18_bvsyq")]
+visible = false
+layout_mode = 2
+
+[node name="EStopStatusPanel" parent="StatusPanels" unique_id=820670947 instance=ExtResource("17_exayt")]
+visible = false
 layout_mode = 2
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
