@@ -25,6 +25,7 @@ public struct TaskEntry
 {
     public ArmAutonomyTask task;
     public int entry_id;
+    public TaskCheckStatus possibility;
 }
 
 public enum TaskType
@@ -35,6 +36,13 @@ public enum TaskType
     Bar,
     Home,
     Ready,
+}
+
+public enum TaskCheckStatus
+{
+    Unchecked,
+    Impossible,
+    Possible,
 }
 
 public partial class ArmAutonomyPanel : Control
@@ -74,7 +82,8 @@ public partial class ArmAutonomyPanel : Control
         TaskEntry entry = new()
         {
             task = task,
-            entry_id = _entryIdCounter++
+            entry_id = _entryIdCounter++,
+            possibility = TaskCheckStatus.Unchecked,
         };
 
         var row = _entryRowScene.Instantiate<EntryRow>();

@@ -1,10 +1,12 @@
 using Godot;
 using System;
+using System.Xml.Schema;
 
 public partial class EntryRow : Control
 {
-    [Export] public required Label _taskLabel;
-    [Export] public required Button _removeButton;
+    [Export] public Label _taskLabel = null!;
+    [Export] public Button _removeButton = null!;
+    [Export] public Panel _statusIcon = null!;
 
     private int _entryId;
 
@@ -19,6 +21,19 @@ public partial class EntryRow : Control
     {
         _entryId = entry.entry_id;
         _taskLabel.Text = entry.task.ToString();
+        var iconColor = entry.possibility switch
+        {
+            TaskCheckStatus.Unchecked => Colors.Yellow,
+            TaskCheckStatus.Impossible => Colors.Red,
+            TaskCheckStatus.Possible => Colors.Green,
+            _ => Colors.Magenta,
+        };
+        var style = _statusIcon.GetThemeStylebox("panel").Duplicate() as StyleBoxFlat;
+        if (style is not null)
+        {
+            style.BgColor = iconColor;
+            _statusIcon.AddThemeStyleboxOverride("panel", style);
+        }
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
