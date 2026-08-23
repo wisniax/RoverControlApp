@@ -395,5 +395,36 @@ namespace RoverControlApp.Core
 			public bool panel_found { get; set; }
 		}
 
+		public enum RoboticArmAutonomyActionType : byte
+		{
+			Stop = 0,
+			Check = 1,
+			Run = 2
+		}
+
+		public enum RoboticArmTaskType : byte
+		{
+			Rotary = 0,
+			Engine = 1,
+			Breaker = 2,
+			Bar = 3,
+			Home = 4,
+			Ready = 5
+		}
+
+		public sealed class RoboticArmAutonomy
+		{
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+			public RoboticArmAutonomyActionType action { get; set; } = RoboticArmAutonomyActionType.Stop;
+			public RoboticArmTask[] tasks { get; set; } = [];
+		}
+
+		public sealed class RoboticArmTask
+		{
+			public RoboticArmTaskType task_type { get; set; } = RoboticArmTaskType.Rotary;
+			public string item { get; set; } = string.Empty;
+			public bool skip_on_failure { get; set; }
+		}
+
 	}
 }

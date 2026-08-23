@@ -30,6 +30,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 		string? topicBatteryInfo = null;
 		string? topicBatteryControl = null;
 		string? topicArmAutonomyCheckResult = null;
+		string? topicArmAutonomy = null;
 
 		while (reader.Read())
 		{
@@ -89,6 +90,9 @@ public class MqttConverter : JsonConverter<Mqtt>
 				case nameof(Mqtt.TopicArmAutonomyCheckResult):
 					topicArmAutonomyCheckResult = reader.GetString();
 					break;
+				case nameof(Mqtt.TopicArmAutonomy):
+					topicArmAutonomy = reader.GetString();
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -111,7 +115,8 @@ public class MqttConverter : JsonConverter<Mqtt>
 			topicSampler ?? Default.TopicSamplerControl,
 			topicBatteryInfo ?? Default.TopicBatteryInfo,
 			topicBatteryControl ?? Default.TopicBatteryControl,
-			topicArmAutonomyCheckResult ?? Default.TopicArmAutonomyCheckResult
+			topicArmAutonomyCheckResult ?? Default.TopicArmAutonomyCheckResult,
+			topicArmAutonomy ?? Default.TopicArmAutonomy
 		);
 	}
 
@@ -134,6 +139,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 		writer.WriteString(nameof(Mqtt.TopicBatteryInfo), value.TopicBatteryInfo);
 		writer.WriteString(nameof(Mqtt.TopicBatteryControl), value.TopicBatteryControl);
 		writer.WriteString(nameof(Mqtt.TopicArmAutonomyCheckResult), value.TopicArmAutonomyCheckResult);
+		writer.WriteString(nameof(Mqtt.TopicArmAutonomy), value.TopicArmAutonomy);
 		writer.WriteEndObject();
 	}
 }

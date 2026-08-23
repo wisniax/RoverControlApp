@@ -14,7 +14,7 @@ using RoverControlApp.Core.Settings;
 
 public struct ArmAutonomyTask
 {
-    public TaskType type;
+    public MqttClasses.RoboticArmTaskType type;
     public string item;
     public bool skip_on_failure;
 
@@ -31,16 +31,6 @@ public struct TaskEntry
     public ArmAutonomyTask task;
     public int entry_id;
     public TaskCheckStatus possibility;
-}
-
-public enum TaskType
-{
-    Rotary,
-    Engine,
-    Breaker,
-    Bar,
-    Home,
-    Ready,
 }
 
 public enum TaskCheckStatus

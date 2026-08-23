@@ -1,10 +1,11 @@
 using Godot;
+using RoverControlApp.Core;
 using System;
 using System.ComponentModel;
 
 public partial class PanelElement : Button
 {
-	[Export] public TaskType _type = TaskType.Rotary;
+	[Export] public MqttClasses.RoboticArmTaskType _type = MqttClasses.RoboticArmTaskType.Rotary;
 	[Export] public string _item = "";
 	[Export] public bool _skip_on_failure = false;
 
