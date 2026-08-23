@@ -424,6 +424,13 @@ namespace RoverControlApp.Core
 			public RoboticArmTaskType task_type { get; set; } = RoboticArmTaskType.Rotary;
 			public string item { get; set; } = string.Empty;
 			public bool skip_on_failure { get; set; }
+
+			public override string ToString()
+			{
+				var item_str = item != "" ? $"/{item}" : "";
+				var skip_str = skip_on_failure ? "?" : "";
+				return task_type.ToString() + item_str + skip_str;
+			}
 		}
 
 	}

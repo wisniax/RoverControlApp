@@ -11,24 +11,11 @@ using MQTTnet;
 using System.Text.Json;
 using System.IO;
 using RoverControlApp.Core.Settings;
-
-public struct ArmAutonomyTask
-{
-    public MqttClasses.RoboticArmTaskType type;
-    public string item;
-    public bool skip_on_failure;
-
-    public override readonly string ToString()
-    {
-        var item_str = item != "" ? $"/{item}" : "";
-        var skip_str = skip_on_failure ? "?" : "";
-        return type.ToString() + item_str + skip_str;
-    }
-}
+using static RoverControlApp.Core.MqttClasses;
 
 public struct TaskEntry
 {
-    public ArmAutonomyTask task;
+    public RoboticArmTask task;
     public int entry_id;
     public TaskCheckStatus possibility;
 }
@@ -70,9 +57,9 @@ public partial class ArmAutonomyPanel : Control
 
     private void AddEntry(PanelElement button)
     {
-        ArmAutonomyTask task = new()
+        RoboticArmTask task = new()
         {
-            type = button._type,
+            task_type = button._type,
             item = button._item,
             skip_on_failure = button._skip_on_failure,
         };
@@ -96,10 +83,8 @@ public partial class ArmAutonomyPanel : Control
         _list.AddChild(row);
         _rowsByEntryId.Add(entry.entry_id, row);
         _entries.Add(entry);
-        mission_id++;
-        EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Verbose, "Mission ID is now " + mission_id);
-        _lastCheckResultAtMs = null;
-        _lastCheckResultAgeLabel.Text = $"Last check: N/A ago";
+
+        OnMissionChange();
     }
 
     private void RemoveEntry(int entryId)
@@ -111,10 +96,7 @@ public partial class ArmAutonomyPanel : Control
         if (_rowsByEntryId.Remove(entryId, out EntryRow? row))
             row.QueueFree();
 
-        mission_id++;
-        EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Verbose, "Mission ID is now " + mission_id);
-        _lastCheckResultAtMs = null;
-        _lastCheckResultAgeLabel.Text = $"Last check: N/A ago";
+        OnMissionChange();
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -141,7 +123,7 @@ public partial class ArmAutonomyPanel : Control
         MqttNode.Singleton.MessageReceivedAsync -= OnArmAutonomyCheckResult;
     }
 
-    public void UpdateCheckResult(MqttClasses.ArmAutonomyCheckResult result)
+    public void UpdateCheckResult(ArmAutonomyCheckResult result)
     {
         _lastCheckPanelFound = result.panel_found;
         _lastCheckResultAtMs = Godot.Time.GetTicksMsec();
@@ -180,7 +162,7 @@ public partial class ArmAutonomyPanel : Control
 
         try
         {
-            var result = JsonSerializer.Deserialize<MqttClasses.ArmAutonomyCheckResult>(msg.ConvertPayloadToString());
+            var result = JsonSerializer.Deserialize<ArmAutonomyCheckResult>(msg.ConvertPayloadToString());
             if (result is null)
                 throw new InvalidDataException("Invalid ArmAutonomyCheckResult payload.");
             Callable.From(() => UpdateCheckResult(result)).CallDeferred();
@@ -190,5 +172,22 @@ public partial class ArmAutonomyPanel : Control
             EventLogger.LogMessage("ArmAutonomyCheckResult", EventLogger.LogLevel.Error, $"Something is wrong with json/deserialization: {e.Message}");
         }
         return Task.CompletedTask;
+    }
+
+    private void OnMissionChange()
+    {
+        mission_id++;
+        EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Verbose, "Mission ID is now " + mission_id);
+        _lastCheckResultAtMs = null;
+        _lastCheckResultAgeLabel.Text = $"Last check: N/A ago";
+        RoboticArmAutonomy msg = new()
+        {
+            action = RoboticArmAutonomyActionType.Check,
+            tasks = _entries.Select(e => e.task).ToArray()
+        };
+
+        // Consider using async?
+        MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicArmAutonomy,
+            JsonSerializer.Serialize(msg));
     }
 }
