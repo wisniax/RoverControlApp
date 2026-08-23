@@ -195,7 +195,7 @@ namespace RoverControlApp.Core
 				return HashCode.Combine(temp1, temp2, temp3, temp4);
 			}
 		}
-		
+
 		public enum ActionType
 		{
 			Stop = 0,
@@ -386,6 +386,12 @@ namespace RoverControlApp.Core
 			public LinearAcceleration linear_acceleration { get; set; } = new();
 			public Orientation orientation { get; set; } = new();
 			public long Timestamp { get; set; }
+		}
+
+		public sealed class ArmAutonomyCheckResult
+		{
+			public bool[] possibility { get; set; } = [];
+			public int mission_id { get; set; }
 		}
 
 	}

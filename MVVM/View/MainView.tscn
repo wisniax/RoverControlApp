@@ -361,14 +361,6 @@ ShowEmpty = true
 CycleHints = true
 metadata/_edit_lock_ = true
 
-[node name="SettingsManager" parent="." unique_id=2093540964 instance=ExtResource("4_b20oh")]
-visible = false
-layout_mode = 1
-offset_left = 36.0
-offset_top = 29.0
-offset_right = -27.0
-offset_bottom = -40.0
-
 [node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel", "_armAutonomyPanel")]
 layout_mode = 0
 offset_left = 2.0
@@ -386,6 +378,14 @@ layout_mode = 2
 [node name="EStopStatusPanel" parent="StatusPanels" unique_id=820670947 instance=ExtResource("17_exayt")]
 visible = false
 layout_mode = 2
+
+[node name="SettingsManager" parent="." unique_id=2093540964 instance=ExtResource("4_b20oh")]
+visible = false
+layout_mode = 1
+offset_left = 36.0
+offset_top = 29.0
+offset_right = -27.0
+offset_bottom = -40.0
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
