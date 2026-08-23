@@ -64,6 +64,7 @@ public partial class ArmAutonomyPanel : Control
 
     private ulong? _lastCheckResultAtMs;
     private ulong _lastDisplayedAgeSeconds = ulong.MaxValue; // Use to avoid rendering each frame
+    private bool _lastCheckPanelFound = false;
 
     public override void _Ready()
     {
@@ -137,7 +138,7 @@ public partial class ArmAutonomyPanel : Control
         if (checkAgeSeconds != _lastDisplayedAgeSeconds)
         {
             _lastDisplayedAgeSeconds = checkAgeSeconds;
-            _lastCheckResultAgeLabel.Text = $"Last check: {checkAgeSeconds}s ago";
+            _lastCheckResultAgeLabel.Text = $"Last check: {checkAgeSeconds}s ago; Panel: " + (_lastCheckPanelFound ? "found" : "NOT found");
         }
     }
     public override void _EnterTree()
@@ -152,9 +153,10 @@ public partial class ArmAutonomyPanel : Control
 
     public void UpdateCheckResult(MqttClasses.ArmAutonomyCheckResult result)
     {
+        _lastCheckPanelFound = result.panel_found;
         _lastCheckResultAtMs = Godot.Time.GetTicksMsec();
         _lastDisplayedAgeSeconds = 0;
-        _lastCheckResultAgeLabel.Text = $"Last check: 0s ago";
+        _lastCheckResultAgeLabel.Text = "Last check: 0s ago; Panel: " + (_lastCheckPanelFound ? "found" : "NOT found");
 
         if (result.mission_id != mission_id)
         {

@@ -247,7 +247,7 @@ namespace RoverControlApp.Core
 
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-			public float this [int index]
+			public float this[int index]
 			{
 				get => index switch
 				{
@@ -260,7 +260,7 @@ namespace RoverControlApp.Core
 				};
 				set
 				{
-					switch(index)
+					switch (index)
 					{
 						case 0:
 							ContainerDegrees0 = value;
@@ -392,6 +392,7 @@ namespace RoverControlApp.Core
 		{
 			public bool[] possibility { get; set; } = [];
 			public int mission_id { get; set; }
+			public bool panel_found { get; set; }
 		}
 
 	}
