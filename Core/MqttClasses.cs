@@ -388,5 +388,12 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; }
 		}
 
+		public class RotaryFeedback
+		{
+			public double weight1 { get; set; }
+			public double weight2 { get; set; }
+			public long Timestamp { get; set; }
+		}
+
 	}
 }
