@@ -395,5 +395,19 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; }
 		}
 
+		public class SamplerFeedback
+		{
+			public double platform_pos { get; set; }
+			public double drill_pos { get; set; }
+			public double container_pos { get; set; }
+			public double drill_rot_vel { get; set; }
+			public double vacuum_suction_vel { get; set; }
+			public double brush_rot_vel { get; set; }
+			public int control_type { get; set; }
+			public int autonomy_state { get; set; }
+			public int goal_state { get; set; }
+			public long Timestamp { get; set; }
+		}
+
 	}
 }
