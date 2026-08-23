@@ -55,11 +55,16 @@ public partial class ArmAutonomyPanel : Control
     private readonly List<TaskEntry> _entries = [];
     private readonly Dictionary<int, EntryRow> _rowsByEntryId = [];
     private int mission_id = 0;
+    private int _entryIdCounter = 0;
     [Export] private Node _panel = null!;
     [Export] private VBoxContainer _list = null!;
     [Export] private PackedScene _entryRowScene = null!;
-    private int _entryIdCounter = 0;
-    // Called when the node enters the scene tree for the first time.
+
+    [Export] private Label _lastCheckResultAgeLabel = null!;
+
+    private ulong? _lastCheckResultAtMs;
+    private ulong _lastDisplayedAgeSeconds = ulong.MaxValue; // Use to avoid rendering each frame
+
     public override void _Ready()
     {
         GetChildren();
@@ -102,6 +107,8 @@ public partial class ArmAutonomyPanel : Control
         _entries.Add(entry);
         mission_id++;
         EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Verbose, "Mission ID is now " + mission_id);
+        _lastCheckResultAtMs = null;
+        _lastCheckResultAgeLabel.Text = $"Last check: N/A ago";
     }
 
     private void RemoveEntry(int entryId)
@@ -115,11 +122,23 @@ public partial class ArmAutonomyPanel : Control
 
         mission_id++;
         EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Verbose, "Mission ID is now " + mission_id);
+        _lastCheckResultAtMs = null;
+        _lastCheckResultAgeLabel.Text = $"Last check: N/A ago";
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.
     public override void _Process(double delta)
     {
+        if (_lastCheckResultAtMs is not ulong receivedAt)
+            return;
+
+        ulong checkAgeSeconds = (Godot.Time.GetTicksMsec() - receivedAt) / 1000;
+
+        if (checkAgeSeconds != _lastDisplayedAgeSeconds)
+        {
+            _lastDisplayedAgeSeconds = checkAgeSeconds;
+            _lastCheckResultAgeLabel.Text = $"Last check: {checkAgeSeconds}s ago";
+        }
     }
     public override void _EnterTree()
     {
@@ -133,6 +152,10 @@ public partial class ArmAutonomyPanel : Control
 
     public void UpdateCheckResult(MqttClasses.ArmAutonomyCheckResult result)
     {
+        _lastCheckResultAtMs = Godot.Time.GetTicksMsec();
+        _lastDisplayedAgeSeconds = 0;
+        _lastCheckResultAgeLabel.Text = $"Last check: 0s ago";
+
         if (result.mission_id != mission_id)
         {
             // Maybe log warning
