@@ -417,6 +417,7 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 			public RoboticArmAutonomyActionType action { get; set; } = RoboticArmAutonomyActionType.Stop;
 			public RoboticArmTask[] tasks { get; set; } = [];
+			public int mission_id { get; set; }
 		}
 
 		public sealed class RoboticArmTask

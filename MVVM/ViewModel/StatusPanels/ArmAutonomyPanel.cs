@@ -43,6 +43,8 @@ public partial class ArmAutonomyPanel : Control
     private ulong _lastDisplayedAgeSeconds = ulong.MaxValue; // Use to avoid rendering each frame
     private bool _lastCheckPanelFound = false;
 
+    [Export] private Button _startButton = null!;
+
     public override void _Ready()
     {
         GetChildren();
@@ -53,6 +55,7 @@ public partial class ArmAutonomyPanel : Control
                 button.Pressed += () => AddEntry(button);
             }
         }
+        _startButton.Pressed += StartMission;
     }
 
     private void AddEntry(PanelElement button)
@@ -132,16 +135,18 @@ public partial class ArmAutonomyPanel : Control
 
         if (result.mission_id != mission_id)
         {
-            // Maybe log warning
-            return;
+            EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Warning, "Mission ID mismatch");
+            // return;
         }
-        if (result.possibility.Count() != _entries.Count())
+        if (result.possibility.Length != _entries.Count)
         {
-            // definitely log warning or error
+            EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Error, "Mission task count mismatch");
             return;
         }
+            EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Info, "Yep0");
         for (int i = 0; i < result.possibility.Count(); i++)
         {
+            EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Info, "Yep");
             var entry = _entries[i];
             entry.possibility = result.possibility[i] ? TaskCheckStatus.Possible : TaskCheckStatus.Impossible;
             _entries[i] = entry;
@@ -152,6 +157,7 @@ public partial class ArmAutonomyPanel : Control
 
     public Task OnArmAutonomyCheckResult(string subTopic, MqttApplicationMessage? msg)
     {
+        EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Info, "Got the message");
         if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicArmAutonomyCheckResult) || subTopic != LocalSettings.Singleton.Mqtt.TopicArmAutonomyCheckResult)
             return Task.CompletedTask;
         if (msg is null || msg.PayloadSegment.Count == 0)
@@ -183,10 +189,24 @@ public partial class ArmAutonomyPanel : Control
         RoboticArmAutonomy msg = new()
         {
             action = RoboticArmAutonomyActionType.Check,
-            tasks = _entries.Select(e => e.task).ToArray()
+            tasks = _entries.Select(e => e.task).ToArray(),
+            mission_id = mission_id,
         };
 
         // Consider using async?
+        MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicArmAutonomy,
+            JsonSerializer.Serialize(msg));
+    }
+
+    private void StartMission()
+    {
+        RoboticArmAutonomy msg = new()
+        {
+            action = RoboticArmAutonomyActionType.Run,
+            tasks = _entries.Select(e => e.task).ToArray(),
+            mission_id = mission_id,
+        };
+
         MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicArmAutonomy,
             JsonSerializer.Serialize(msg));
     }

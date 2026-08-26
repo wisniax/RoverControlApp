@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bah8nap6e2ylp" path="res://MVVM/View/EntryRow.tscn" id="3_lifp3"]
 [ext_resource type="PackedScene" uid="uid://brab7hvdc7g5e" path="res://MVVM/View/Panel.tscn" id="3_qyyis"]
 
-[node name="ArmAutonomyStatusPanel" type="Control" unique_id=2107319711 node_paths=PackedStringArray("_panel", "_list", "_lastCheckResultAgeLabel")]
+[node name="ArmAutonomyStatusPanel" type="Control" unique_id=2107319711 node_paths=PackedStringArray("_panel", "_list", "_lastCheckResultAgeLabel", "_startButton")]
 use_parent_material = true
 layout_mode = 3
 anchors_preset = 15
@@ -19,6 +19,7 @@ _panel = NodePath("ShownState/Panel")
 _list = NodePath("ShownState/ScrollContainer/VBoxContainer")
 _entryRowScene = ExtResource("3_lifp3")
 _lastCheckResultAgeLabel = NodePath("ShownState/CheckResultAge")
+_startButton = NodePath("ShownState/StartButton")
 
 [node name="HiddenState" type="Panel" parent="." unique_id=1100169613]
 visible = false
@@ -124,6 +125,14 @@ offset_right = 212.0
 offset_bottom = 440.0
 theme_override_font_sizes/font_size = 12
 text = "Last check: N/A ago"
+
+[node name="StartButton" type="Button" parent="ShownState" unique_id=1242878553]
+layout_mode = 0
+offset_left = 492.0
+offset_top = 408.0
+offset_right = 559.0
+offset_bottom = 439.0
+text = "Start"
 
 [connection signal="pressed" from="HiddenState/ShowShown" to="HiddenState" method="set_visible" binds= [false]]
 [connection signal="pressed" from="HiddenState/ShowShown" to="ShownState" method="set_visible" binds= [true]]

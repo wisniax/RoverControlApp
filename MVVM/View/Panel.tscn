@@ -51,7 +51,7 @@ offset_right = 92.0
 offset_bottom = 36.0
 script = ExtResource("2_qcsfn")
 _type = 2
-_item = "03"
+_item = "3"
 
 [node name="Breaker3" type="Button" parent="Breakers" unique_id=703544547]
 layout_mode = 0
@@ -60,7 +60,7 @@ offset_right = 107.0
 offset_bottom = 36.0
 script = ExtResource("2_qcsfn")
 _type = 2
-_item = "04"
+_item = "4"
 
 [node name="Breaker4" type="Button" parent="Breakers" unique_id=1204864904]
 layout_mode = 0
@@ -69,7 +69,7 @@ offset_right = 122.0
 offset_bottom = 36.0
 script = ExtResource("2_qcsfn")
 _type = 2
-_item = "05"
+_item = "5"
 
 [node name="Breaker5" type="Button" parent="Breakers" unique_id=1481681660]
 layout_mode = 0
@@ -78,7 +78,7 @@ offset_right = 137.0
 offset_bottom = 36.0
 script = ExtResource("2_qcsfn")
 _type = 2
-_item = "06"
+_item = "6"
 
 [node name="Breaker6" type="Button" parent="Breakers" unique_id=625949443]
 layout_mode = 0
@@ -87,7 +87,7 @@ offset_right = 152.0
 offset_bottom = 36.0
 script = ExtResource("2_qcsfn")
 _type = 2
-_item = "07"
+_item = "7"
 
 [node name="Breaker7" type="Button" parent="Breakers" unique_id=1420658511]
 layout_mode = 0
@@ -96,7 +96,7 @@ offset_right = 167.0
 offset_bottom = 36.0
 script = ExtResource("2_qcsfn")
 _type = 2
-_item = "08"
+_item = "8"
 
 [node name="Breaker8" type="Button" parent="Breakers" unique_id=2013203459]
 layout_mode = 0
@@ -105,7 +105,7 @@ offset_right = 182.0
 offset_bottom = 36.0
 script = ExtResource("2_qcsfn")
 _type = 2
-_item = "09"
+_item = "9"
 
 [node name="Breaker9" type="Button" parent="Breakers" unique_id=1202324728]
 layout_mode = 0
