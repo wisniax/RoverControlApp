@@ -8,18 +8,24 @@ public partial class EntryRow : Control
     [Export] public Button _removeButton = null!;
     [Export] public Panel _statusIcon = null!;
 
-    private int _entryId;
+    private int _entryId = -1;
 
     public event Action<int>? RemovalRequested;
     // Called when the node enters the scene tree for the first time.
     public override void _Ready()
     {
-        _removeButton.Pressed += () => RemovalRequested?.Invoke(_entryId);
+        _removeButton.Visible = _entryId != -1;
+        _removeButton.Pressed += () =>
+        {
+            if (_entryId != -1)
+                RemovalRequested?.Invoke(_entryId);
+        };
     }
 
     public void SetTask(TaskEntry entry)
     {
         _entryId = entry.entry_id;
+        _removeButton.Visible = _entryId != -1;
         _taskLabel.Text = entry.task.ToString();
         var iconColor = entry.possibility switch
         {

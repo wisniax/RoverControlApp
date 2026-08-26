@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bah8nap6e2ylp" path="res://MVVM/View/EntryRow.tscn" id="3_lifp3"]
 [ext_resource type="PackedScene" uid="uid://brab7hvdc7g5e" path="res://MVVM/View/Panel.tscn" id="3_qyyis"]
 
-[node name="ArmAutonomyStatusPanel" type="Control" unique_id=2107319711 node_paths=PackedStringArray("_panel", "_list", "_lastCheckResultAgeLabel", "_startButton")]
+[node name="ArmAutonomyStatusPanel" type="Control" unique_id=2107319711 node_paths=PackedStringArray("_panel", "_list", "_lastCheckResultAgeLabel", "_startButton", "_feedbackList")]
 use_parent_material = true
 layout_mode = 3
 anchors_preset = 15
@@ -20,6 +20,7 @@ _list = NodePath("ShownState/ScrollContainer/VBoxContainer")
 _entryRowScene = ExtResource("3_lifp3")
 _lastCheckResultAgeLabel = NodePath("ShownState/CheckResultAge")
 _startButton = NodePath("ShownState/StartButton")
+_feedbackList = NodePath("ShownState/ScrollContainer2/VBoxContainer")
 
 [node name="HiddenState" type="Panel" parent="." unique_id=1100169613]
 visible = false
@@ -61,7 +62,7 @@ text = "▶ "
 
 [node name="ShownState" type="Panel" parent="." unique_id=1681091173]
 layout_mode = 0
-offset_right = 575.0
+offset_right = 871.0
 offset_bottom = 447.0
 
 [node name="ShowHidden" type="Button" parent="ShownState" unique_id=2056434553]
@@ -113,6 +114,20 @@ horizontal_scroll_mode = 4
 vertical_scroll_mode = 4
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ShownState/ScrollContainer" unique_id=1693421274]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ScrollContainer2" type="ScrollContainer" parent="ShownState" unique_id=713589494]
+layout_mode = 0
+offset_left = 564.0
+offset_top = 46.0
+offset_right = 814.0
+offset_bottom = 403.0
+horizontal_scroll_mode = 4
+vertical_scroll_mode = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ShownState/ScrollContainer2" unique_id=1019476268]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

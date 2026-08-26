@@ -17,7 +17,7 @@ public static class MqttSubscribedExtension
             ( mqttSettings.TopicEStopStatus, MqttQualityOfServiceLevel.AtMostOnce ),
             ( mqttSettings.TopicBatteryInfo, MqttQualityOfServiceLevel.ExactlyOnce ),
             ( mqttSettings.TopicArmAutonomyCheckResult, MqttQualityOfServiceLevel.ExactlyOnce ),
-            ( mqttSettings.TopicArmAutonomy, MqttQualityOfServiceLevel.ExactlyOnce ),
+            ( mqttSettings.TopicArmMissionFeedback, MqttQualityOfServiceLevel.AtMostOnce ),
         ];
 
 }

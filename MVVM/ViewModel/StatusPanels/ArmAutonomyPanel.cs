@@ -45,6 +45,9 @@ public partial class ArmAutonomyPanel : Control
 
     [Export] private Button _startButton = null!;
 
+    [Export] private VBoxContainer _feedbackList = null!;
+    private readonly List<EntryRow> _feedbackRows = [];
+
     public override void _Ready()
     {
         GetChildren();
@@ -119,11 +122,13 @@ public partial class ArmAutonomyPanel : Control
     public override void _EnterTree()
     {
         MqttNode.Singleton.MessageReceivedAsync += OnArmAutonomyCheckResult;
+        MqttNode.Singleton.MessageReceivedAsync += OnArmMissionFeedback;
     }
 
     public override void _ExitTree()
     {
         MqttNode.Singleton.MessageReceivedAsync -= OnArmAutonomyCheckResult;
+        MqttNode.Singleton.MessageReceivedAsync -= OnArmMissionFeedback;
     }
 
     public void UpdateCheckResult(ArmAutonomyCheckResult result)
@@ -143,7 +148,7 @@ public partial class ArmAutonomyPanel : Control
             EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Error, "Mission task count mismatch");
             return;
         }
-            EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Info, "Yep0");
+        EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Info, "Yep0");
         for (int i = 0; i < result.possibility.Count(); i++)
         {
             EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Info, "Yep");
@@ -157,7 +162,6 @@ public partial class ArmAutonomyPanel : Control
 
     public Task OnArmAutonomyCheckResult(string subTopic, MqttApplicationMessage? msg)
     {
-        EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Info, "Got the message");
         if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicArmAutonomyCheckResult) || subTopic != LocalSettings.Singleton.Mqtt.TopicArmAutonomyCheckResult)
             return Task.CompletedTask;
         if (msg is null || msg.PayloadSegment.Count == 0)
@@ -209,5 +213,74 @@ public partial class ArmAutonomyPanel : Control
 
         MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicArmAutonomy,
             JsonSerializer.Serialize(msg));
+    }
+
+    private void SetRowListLength(VBoxContainer list_element, List<EntryRow> row_list, int length)
+    {
+        if (length < 0)
+            length = 0;
+
+        while (row_list.Count > length)
+        {
+            // if (row_list.RemoveAt(row_list.Count - 1, out EntryRow? row))
+            var row = row_list[^1];
+            row_list.RemoveAt(row_list.Count - 1);
+            row.QueueFree();
+        }
+        while (row_list.Count < length)
+        {
+            var row = _entryRowScene.Instantiate<EntryRow>();
+            row.RemovalRequested += entryId => RemoveEntry(entryId);
+
+            list_element.AddChild(row);
+            row_list.Add(row);
+        }
+    }
+
+    private void SetRowListTasks(VBoxContainer list_element, List<EntryRow> row_list, RoboticArmTask[] tasks, bool[] completed)
+    {
+        if (completed.Length != tasks.Length)
+        {
+            EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Warning, "Invalid feedback - completed count does not match tasks count");
+            return;
+        }
+        SetRowListLength(list_element, row_list, tasks.Length);
+        for (int i = 0; i < tasks.Length; i++)
+        {
+            TaskCheckStatus status = completed.Length > i
+                ? (completed[i] ? TaskCheckStatus.Possible : TaskCheckStatus.Impossible)
+                : TaskCheckStatus.Unchecked;
+            TaskEntry entry = new()
+            {
+                entry_id = -1,
+                possibility = status,
+                task = tasks[i]
+            };
+            row_list[i].SetTask(entry);
+        }
+    }
+
+    public Task OnArmMissionFeedback(string subTopic, MqttApplicationMessage? msg)
+    {
+        if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicArmMissionFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicArmMissionFeedback)
+            return Task.CompletedTask;
+        if (msg is null || msg.PayloadSegment.Count == 0)
+        {
+            EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Error, "Empty payload (feedback)");
+            return Task.CompletedTask;
+        }
+
+        try
+        {
+            var feedback = JsonSerializer.Deserialize<RoboticArmMissionFeedback>(msg.ConvertPayloadToString());
+            if (feedback is null)
+                throw new InvalidDataException("Invalid RoboticArmMissionFeedback payload.");
+            Callable.From(() => SetRowListTasks(_feedbackList, _feedbackRows, feedback.tasks, feedback.completed_tasks)).CallDeferred();
+        }
+        catch (Exception e)
+        {
+            EventLogger.LogMessage("ArmAutonomyCheckResult", EventLogger.LogLevel.Error, $"Something is wrong with json/deserialization: {e.Message}");
+        }
+        return Task.CompletedTask;
     }
 }

@@ -434,5 +434,21 @@ namespace RoverControlApp.Core
 			}
 		}
 
+		public enum RoboticArmMissionFeedbackStatus : byte
+		{
+			Running = 0,
+			Success = 1,
+			Cancelled = 2,
+			Failure = 3,
+		}
+
+		public sealed class RoboticArmMissionFeedback
+		{
+			public RoboticArmMissionFeedbackStatus status { get; set; }
+			public RoboticArmTask[] tasks { get; set; } = [];
+			public bool[] completed_tasks { get; set; } = [];
+			public int mission_id { get; set; }
+		}
+
 	}
 }
