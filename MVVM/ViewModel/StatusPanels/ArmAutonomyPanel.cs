@@ -48,6 +48,10 @@ public partial class ArmAutonomyPanel : Control
     [Export] private VBoxContainer _feedbackList = null!;
     private readonly List<EntryRow> _feedbackRows = [];
 
+    [Export] private Button _checkButton = null!;
+    [Export] private Button _stopButton = null!;
+    [Export] private Label _feedbackStatusLabel = null!;
+
     public override void _Ready()
     {
         GetChildren();
@@ -59,6 +63,8 @@ public partial class ArmAutonomyPanel : Control
             }
         }
         _startButton.Pressed += StartMission;
+        _checkButton.Pressed += SendCheck;
+        _stopButton.Pressed += SendStop;
     }
 
     private void AddEntry(PanelElement button)
@@ -148,10 +154,8 @@ public partial class ArmAutonomyPanel : Control
             EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Error, "Mission task count mismatch");
             return;
         }
-        EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Info, "Yep0");
-        for (int i = 0; i < result.possibility.Count(); i++)
+        for (int i = 0; i < result.possibility.Length; i++)
         {
-            EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Info, "Yep");
             var entry = _entries[i];
             entry.possibility = result.possibility[i] ? TaskCheckStatus.Possible : TaskCheckStatus.Impossible;
             _entries[i] = entry;
@@ -190,11 +194,28 @@ public partial class ArmAutonomyPanel : Control
         EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Verbose, "Mission ID is now " + mission_id);
         _lastCheckResultAtMs = null;
         _lastCheckResultAgeLabel.Text = $"Last check: N/A ago";
+        SendCheck();
+    }
+
+    private void SendCheck()
+    {
         RoboticArmAutonomy msg = new()
         {
             action = RoboticArmAutonomyActionType.Check,
             tasks = _entries.Select(e => e.task).ToArray(),
             mission_id = mission_id,
+        };
+
+        // Consider using async?
+        MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicArmAutonomy,
+            JsonSerializer.Serialize(msg));
+    }
+
+    private void SendStop()
+    {
+        RoboticArmAutonomy msg = new()
+        {
+            action = RoboticArmAutonomyActionType.Stop,
         };
 
         // Consider using async?
@@ -275,12 +296,19 @@ public partial class ArmAutonomyPanel : Control
             var feedback = JsonSerializer.Deserialize<RoboticArmMissionFeedback>(msg.ConvertPayloadToString());
             if (feedback is null)
                 throw new InvalidDataException("Invalid RoboticArmMissionFeedback payload.");
-            Callable.From(() => SetRowListTasks(_feedbackList, _feedbackRows, feedback.tasks, feedback.completed_tasks)).CallDeferred();
+            Callable.From(() => HandleFeedback(feedback)).CallDeferred();
         }
         catch (Exception e)
         {
             EventLogger.LogMessage("ArmAutonomyCheckResult", EventLogger.LogLevel.Error, $"Something is wrong with json/deserialization: {e.Message}");
         }
         return Task.CompletedTask;
+    }
+
+    private void HandleFeedback(RoboticArmMissionFeedback feedback)
+    {
+        SetRowListTasks(_feedbackList, _feedbackRows, feedback.tasks, feedback.completed_tasks);
+        EventLogger.LogMessage("ArmAutonomyCheckResult", EventLogger.LogLevel.Info, "Got feedback, status " + feedback.status);
+        _feedbackStatusLabel.Text = $"Status: {feedback.status}";
     }
 }

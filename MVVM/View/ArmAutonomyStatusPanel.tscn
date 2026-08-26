@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bah8nap6e2ylp" path="res://MVVM/View/EntryRow.tscn" id="3_lifp3"]
 [ext_resource type="PackedScene" uid="uid://brab7hvdc7g5e" path="res://MVVM/View/Panel.tscn" id="3_qyyis"]
 
-[node name="ArmAutonomyStatusPanel" type="Control" unique_id=2107319711 node_paths=PackedStringArray("_panel", "_list", "_lastCheckResultAgeLabel", "_startButton", "_feedbackList")]
+[node name="ArmAutonomyStatusPanel" type="Control" unique_id=2107319711 node_paths=PackedStringArray("_panel", "_list", "_lastCheckResultAgeLabel", "_startButton", "_feedbackList", "_checkButton", "_stopButton", "_feedbackStatusLabel")]
 use_parent_material = true
 layout_mode = 3
 anchors_preset = 15
@@ -21,6 +21,9 @@ _entryRowScene = ExtResource("3_lifp3")
 _lastCheckResultAgeLabel = NodePath("ShownState/CheckResultAge")
 _startButton = NodePath("ShownState/StartButton")
 _feedbackList = NodePath("ShownState/ScrollContainer2/VBoxContainer")
+_checkButton = NodePath("ShownState/CheckButton")
+_stopButton = NodePath("ShownState/StopButton")
+_feedbackStatusLabel = NodePath("ShownState/LastFeedbackStatus")
 
 [node name="HiddenState" type="Panel" parent="." unique_id=1100169613]
 visible = false
@@ -143,11 +146,39 @@ text = "Last check: N/A ago"
 
 [node name="StartButton" type="Button" parent="ShownState" unique_id=1242878553]
 layout_mode = 0
-offset_left = 492.0
-offset_top = 408.0
-offset_right = 559.0
-offset_bottom = 439.0
+offset_left = 433.0
+offset_top = 410.0
+offset_right = 500.0
+offset_bottom = 441.0
 text = "Start"
+
+[node name="CheckButton" type="Button" parent="ShownState" unique_id=642446998]
+layout_mode = 0
+offset_left = 509.0
+offset_top = 410.0
+offset_right = 576.0
+offset_bottom = 441.0
+text = "Check
+"
+
+[node name="StopButton" type="Button" parent="ShownState" unique_id=1526637597]
+layout_mode = 0
+offset_left = 583.0
+offset_top = 410.0
+offset_right = 650.0
+offset_bottom = 441.0
+theme_override_colors/font_color = Color(0.8, 0, 0, 1)
+text = "Stop
+
+"
+
+[node name="LastFeedbackStatus" type="Label" parent="ShownState" unique_id=1229801434]
+layout_mode = 0
+offset_left = 663.0
+offset_top = 415.0
+offset_right = 825.0
+offset_bottom = 438.0
+text = "Status: None"
 
 [connection signal="pressed" from="HiddenState/ShowShown" to="HiddenState" method="set_visible" binds= [false]]
 [connection signal="pressed" from="HiddenState/ShowShown" to="ShownState" method="set_visible" binds= [true]]
