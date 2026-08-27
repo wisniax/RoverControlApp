@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bah8nap6e2ylp" path="res://MVVM/View/EntryRow.tscn" id="3_lifp3"]
 [ext_resource type="PackedScene" uid="uid://brab7hvdc7g5e" path="res://MVVM/View/Panel.tscn" id="3_qyyis"]
 
-[node name="ArmAutonomyStatusPanel" type="Control" unique_id=2107319711 node_paths=PackedStringArray("_panel", "_list", "_lastCheckResultAgeLabel", "_startButton", "_feedbackList", "_checkButton", "_stopButton", "_feedbackStatusLabel")]
+[node name="ArmAutonomyStatusPanel" type="Control" unique_id=2107319711 node_paths=PackedStringArray("_panel", "_list", "_lastCheckResultAgeLabel", "_startButton", "_feedbackList", "_checkButton", "_stopButton", "_feedbackStatusLabel", "_clearButton")]
 use_parent_material = true
 layout_mode = 3
 anchors_preset = 15
@@ -24,6 +24,7 @@ _feedbackList = NodePath("ShownState/ScrollContainer2/VBoxContainer")
 _checkButton = NodePath("ShownState/CheckButton")
 _stopButton = NodePath("ShownState/StopButton")
 _feedbackStatusLabel = NodePath("ShownState/LastFeedbackStatus")
+_clearButton = NodePath("ShownState/ClearButton")
 
 [node name="HiddenState" type="Panel" parent="." unique_id=1100169613]
 visible = false
@@ -151,6 +152,14 @@ offset_top = 410.0
 offset_right = 500.0
 offset_bottom = 441.0
 text = "Start"
+
+[node name="ClearButton" type="Button" parent="ShownState" unique_id=401778550]
+layout_mode = 0
+offset_left = 298.0
+offset_top = 410.0
+offset_right = 365.0
+offset_bottom = 441.0
+text = "Clear"
 
 [node name="CheckButton" type="Button" parent="ShownState" unique_id=642446998]
 layout_mode = 0

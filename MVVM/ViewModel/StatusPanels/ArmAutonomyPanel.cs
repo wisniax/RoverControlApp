@@ -51,6 +51,7 @@ public partial class ArmAutonomyPanel : Control
     [Export] private Button _checkButton = null!;
     [Export] private Button _stopButton = null!;
     [Export] private Label _feedbackStatusLabel = null!;
+    [Export] private Button _clearButton = null!;
 
     public override void _Ready()
     {
@@ -65,6 +66,7 @@ public partial class ArmAutonomyPanel : Control
         _startButton.Pressed += StartMission;
         _checkButton.Pressed += SendCheck;
         _stopButton.Pressed += SendStop;
+        _clearButton.Pressed += ClearMission;
     }
 
     private void AddEntry(PanelElement button)
@@ -107,6 +109,19 @@ public partial class ArmAutonomyPanel : Control
 
         if (_rowsByEntryId.Remove(entryId, out EntryRow? row))
             row.QueueFree();
+
+        OnMissionChange();
+    }
+
+    private void ClearMission()
+    {
+        _entries.Clear();
+
+        foreach (var row in _rowsByEntryId.Values)
+        {
+            row.QueueFree();
+        }
+        _rowsByEntryId.Clear();
 
         OnMissionChange();
     }
