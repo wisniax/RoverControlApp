@@ -409,7 +409,8 @@ namespace RoverControlApp.Core
 			Breaker = 2,
 			Bar = 3,
 			Home = 4,
-			Ready = 5
+			Ready = 5,
+			Ref = 6
 		}
 
 		public sealed class RoboticArmAutonomy

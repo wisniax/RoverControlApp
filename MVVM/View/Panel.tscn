@@ -229,3 +229,27 @@ offset_right = 255.0
 offset_bottom = 348.0
 script = ExtResource("2_qcsfn")
 _type = 3
+
+[node name="Home" type="Button" parent="." unique_id=851275465]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 233.0
+offset_right = 46.0
+offset_bottom = 258.0
+theme_override_font_sizes/font_size = 12
+text = "Home"
+script = ExtResource("2_qcsfn")
+_type = 6
+_item = "home"
+
+[node name="Ready" type="Button" parent="." unique_id=1818629181]
+layout_mode = 0
+offset_left = 3.0
+offset_top = 262.0
+offset_right = 47.0
+offset_bottom = 287.0
+theme_override_font_sizes/font_size = 12
+text = "Skbd"
+script = ExtResource("2_qcsfn")
+_type = 6
+_item = "skibidi"
