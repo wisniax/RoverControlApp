@@ -218,7 +218,7 @@ public partial class ArmAutonomyPanel : Control
         {
             action = RoboticArmAutonomyActionType.Check,
             tasks = _entries.Select(e => e.task).ToArray(),
-            mission_id = mission_id,
+            mission_id = mission_id.ToString(),
         };
 
         // Consider using async?
@@ -244,7 +244,7 @@ public partial class ArmAutonomyPanel : Control
         {
             action = RoboticArmAutonomyActionType.Run,
             tasks = _entries.Select(e => e.task).ToArray(),
-            mission_id = mission_id,
+            mission_id = mission_id.ToString(),
         };
 
         MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicArmAutonomy,
