@@ -25,14 +25,17 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 		RcaInEvName.ManipulatorSimInvChangeRef
 	];
 
+	MultiAxisManipulatorController multiAxisManipulatorController = new();
+
 	private bool _useToolReference = false;
 	private int _GTRReference = 0; // "Go to reference" reference
 	private ActionType actionType = ActionType.InvKinJoystick;
+	private bool _movingToReference = false;
+
 
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in ManipulatorControl lastState)
 	{
 		ManipulatorControl manipulatorControl = new();
-		manipulatorControl.ActionType = ActionType.InvKinJoystick;
 		manipulatorControl.InvJoystick = new();
 
 		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorModeChange, targetInputDevice), exactMatch: true))
@@ -44,8 +47,12 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 					break;
 				case ActionType.GoToReference:
 					actionType = ActionType.UseMoveITPlanning;
+					_movingToReference = false; // reset moving to reference when changing action type
 					break;
 				case ActionType.UseMoveITPlanning:
+					actionType = ActionType.ForwardKin;
+					break;
+				case ActionType.ForwardKin:
 					actionType = ActionType.InvKinJoystick;
 					break;
 				default:
@@ -96,6 +103,7 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 				{
 					_GTRReference++;
 					_GTRReference = _GTRReference % 10; // wrap around to 0 after 9
+					_movingToReference = false; // reset moving to reference when changing reference
 				}
 
 				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrChangeRefMinus, targetInputDevice), exactMatch: true))
@@ -104,26 +112,33 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 					if (_GTRReference < 0) // wrap around to 0 after 9
 					{
 						_GTRReference = 9; 
-					} 
+					}
+					_movingToReference = false; // reset moving to reference when changing reference
 				}
 
 				manipulatorControl.Reference = $"Ref{_GTRReference}";
 				
-				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrAccept, targetInputDevice), exactMatch: true))
+				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrAccept, targetInputDevice), exactMatch: true))
 				{
-					manipulatorControl.ActionType = ActionType.GoToReference;
+					_movingToReference = true;
 				}
 
-				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrCancel, targetInputDevice), exactMatch: true))
+				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrCancel, targetInputDevice), exactMatch: true))
 				{
-					manipulatorControl.ActionType = ActionType.Stop;	
+					_movingToReference = false;
 				}
-				
+
+				manipulatorControl.ActionType = _movingToReference ? ActionType.GoToReference : ActionType.Stop;
 				return manipulatorControl;	
 			}
 			case ActionType.UseMoveITPlanning:
 			{
 				manipulatorControl.ActionType = ActionType.UseMoveITPlanning;
+				return manipulatorControl;
+			}
+			case ActionType.ForwardKin:
+			{
+				manipulatorControl = multiAxisManipulatorController.CalculateMoveVector(inputEvent, targetInputDevice, lastState);
 				return manipulatorControl;
 			}
 			default:
@@ -141,6 +156,39 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 
 	public string[] GetControlledAxes()
 	{
+		switch (actionType)
+		{
+			case ActionType.InvKinJoystick:
+				return new string[]
+				{
+					"ManipulatorSimInvJoystickPosXPlus",
+					"ManipulatorSimInvJoystickPosXMinus",
+					"ManipulatorSimInvJoystickPosYPlus",
+					"ManipulatorSimInvJoystickPosYMinus",
+					"ManipulatorSimInvJoystickPosZPlus",
+					"ManipulatorSimInvJoystickPosZMinus",
+					"ManipulatorSimInvJoystickRotXPlus",
+					"ManipulatorSimInvJoystickRotXMinus",
+					"ManipulatorSimInvJoystickRotYPlus",
+					"ManipulatorSimInvJoystickRotYMinus",
+					"ManipulatorSimInvJoystickRotZPlus",
+					"ManipulatorSimInvJoystickRotZMinus"
+				};
+			case ActionType.GoToReference:
+				return new string[]
+				{
+					"ManipulatorGtrChangeRefPlus",
+					"ManipulatorGtrChangeRefMinus",
+					"ManipulatorGtrAccept",
+					"ManipulatorGtrCancel"
+				};
+			case ActionType.UseMoveITPlanning:
+				return new string[0];
+			case ActionType.ForwardKin:
+				return multiAxisManipulatorController.GetControlledAxes();
+			default:
+				break;
+		}
 		return new string[0];
 	}
 
