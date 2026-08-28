@@ -26,6 +26,8 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 	];
 
 	private bool _useToolReference = false;
+	private int _GTRReference = 0; // "Go to reference" reference
+	private ActionType actionType = ActionType.InvKinJoystick;
 
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in ManipulatorControl lastState)
 	{
@@ -33,35 +35,102 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 		manipulatorControl.ActionType = ActionType.InvKinJoystick;
 		manipulatorControl.InvJoystick = new();
 
-		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvChangeRef, targetInputDevice), exactMatch: true))
+		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorModeChange, targetInputDevice), exactMatch: true))
 		{
-			_useToolReference = !_useToolReference;
+			switch (actionType)
+			{
+				case ActionType.InvKinJoystick:
+					actionType = ActionType.GoToReference;
+					break;
+				case ActionType.GoToReference:
+					actionType = ActionType.UseMoveITPlanning;
+					break;
+				case ActionType.UseMoveITPlanning:
+					actionType = ActionType.InvKinJoystick;
+					break;
+				default:
+					break;		
+			}
 		}
 
-		if (_useToolReference)
+		manipulatorControl.ActionType = actionType;
+
+		switch (actionType)
 		{
-			manipulatorControl.Reference = "tool";
+			case ActionType.InvKinJoystick:
+			{
+				manipulatorControl.ActionType = ActionType.InvKinJoystick;
+
+				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvChangeRef, targetInputDevice), exactMatch: true))
+				{
+					_useToolReference = !_useToolReference;
+				}
+
+				if (_useToolReference)
+				{
+					manipulatorControl.Reference = "tool";
+				}
+
+				Vec3 linearSpeed = new();
+				Vec3 angularSpeed = new();
+				
+				linearSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosXMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosXPlus, targetInputDevice));
+				linearSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosYMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosYPlus, targetInputDevice));
+				linearSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosZMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosZPlus, targetInputDevice));
+				
+				angularSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotXMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotXPlus, targetInputDevice));
+				angularSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotYMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotYPlus, targetInputDevice));
+				angularSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotZMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotZPlus, targetInputDevice));
+				
+
+				manipulatorControl.InvJoystick.LinearSpeed = linearSpeed;
+				manipulatorControl.InvJoystick.RotationSpeed = angularSpeed;
+
+				manipulatorControl.Gripper = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, targetInputDevice));
+
+				return manipulatorControl;
+			}
+			case ActionType.GoToReference:
+			{
+				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrChangeRefPlus, targetInputDevice), exactMatch: true))
+				{
+					_GTRReference++;
+					_GTRReference = _GTRReference % 10; // wrap around to 0 after 9
+				}
+
+				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrChangeRefMinus, targetInputDevice), exactMatch: true))
+				{
+					_GTRReference--;
+					if (_GTRReference < 0) // wrap around to 0 after 9
+					{
+						_GTRReference = 9; 
+					} 
+				}
+
+				manipulatorControl.Reference = $"Ref{_GTRReference}";
+				
+				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrAccept, targetInputDevice), exactMatch: true))
+				{
+					manipulatorControl.ActionType = ActionType.GoToReference;
+				}
+
+				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrCancel, targetInputDevice), exactMatch: true))
+				{
+					manipulatorControl.ActionType = ActionType.Stop;	
+				}
+				
+				return manipulatorControl;	
+			}
+			case ActionType.UseMoveITPlanning:
+			{
+				manipulatorControl.ActionType = ActionType.UseMoveITPlanning;
+				return manipulatorControl;
+			}
+			default:
+				return manipulatorControl;
 		}
 
-		Vec3 linearSpeed = new();
-		Vec3 angularSpeed = new();
 
-		
-		linearSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosXMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosXPlus, targetInputDevice));
-		linearSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosYMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosYPlus, targetInputDevice));
-		linearSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosZMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickPosZPlus, targetInputDevice));
-		
-		angularSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotXMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotXPlus, targetInputDevice));
-		angularSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotYMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotYPlus, targetInputDevice));
-		angularSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotZMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvJoystickRotZPlus, targetInputDevice));
-		
-
-		manipulatorControl.InvJoystick.LinearSpeed = linearSpeed;
-		manipulatorControl.InvJoystick.RotationSpeed = angularSpeed;
-
-		manipulatorControl.Gripper = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, targetInputDevice));
-
-		return manipulatorControl;
 	}
 
 	public Dictionary<StringName, Godot.Collections.Array<InputEvent>> GetInputActions() =>

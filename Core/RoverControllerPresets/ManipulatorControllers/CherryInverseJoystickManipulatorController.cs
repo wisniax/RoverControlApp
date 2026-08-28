@@ -22,9 +22,11 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 		RcaInEvName.ManipulatorCherryInvJoystickRotYMinus,
 		RcaInEvName.ManipulatorCherryInvJoystickRotZPlus,
 		RcaInEvName.ManipulatorCherryInvJoystickRotZMinus,
-		RcaInEvName.ManipulatorCherryInvChangeRef,
-		RcaInEvName.ManipulatorCherryInvDpadDown,
-		RcaInEvName.ManipulatorCherryInvDpadUp,
+		RcaInEvName.ManipulatorGtrChangeRefPlus,
+		RcaInEvName.ManipulatorGtrChangeRefMinus,
+		RcaInEvName.ManipulatorGtrAccept,
+		RcaInEvName.ManipulatorGtrCancel,
+		RcaInEvName.ManipulatorModeChange,
 	];
 
 	private bool _useToolReference = false;
@@ -33,7 +35,7 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in ManipulatorControl lastState)
 	{
-		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvDpadUp, targetInputDevice), exactMatch: true))
+		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorModeChange, targetInputDevice), exactMatch: true))
 		{
 			switch (actionType)
 			{
@@ -60,7 +62,7 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 			{
 				manipulatorControl.InvJoystick = new();
 
-				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvChangeRef, targetInputDevice), exactMatch: true))
+				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrChangeRefPlus, targetInputDevice), exactMatch: true))
 				{
 					_useToolReference = !_useToolReference;
 				}
@@ -93,7 +95,7 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 
 			case ActionType.GoToReference:
 			{
-				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvChangeRef, targetInputDevice), exactMatch: true))
+				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrChangeRefPlus, targetInputDevice), exactMatch: true))
 				{
 					_GTRReference++;
 					if (_GTRReference > 4)
@@ -104,11 +106,11 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 
 				manipulatorControl.Reference = $"Ref{_GTRReference}";
 				
-				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvDpadDown, targetInputDevice), exactMatch: true))
+				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrAccept, targetInputDevice), exactMatch: true))
 				{
 					manipulatorControl.ActionType = ActionType.GoToReference;
 				}
-				else if (Input.IsActionJustReleased(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvDpadDown, targetInputDevice), exactMatch: true))
+				else if (Input.IsActionJustReleased(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrAccept, targetInputDevice), exactMatch: true))
 				{
 					manipulatorControl.ActionType = ActionType.GoToReference;
 				}

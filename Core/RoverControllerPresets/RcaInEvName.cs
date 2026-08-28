@@ -55,8 +55,9 @@ public static class RcaInEvName
 	public static readonly StringName ManipulatorInvJoystickRotYMinus = new("manipulator_inv_joy_rot_y-");
 	public static readonly StringName ManipulatorInvJoystickRotZPlus = new("manipulator_inv_joy_rot_z+");
 	public static readonly StringName ManipulatorInvJoystickRotZMinus = new("manipulator_inv_joy_rot_z-");
-	public static readonly StringName ManipulatorModeChange = new("manipulator_mode_change");
 	public static readonly StringName ManipulatorInvChangeRef = new("manipulator_inv_change_ref");
+	
+	public static readonly StringName ManipulatorModeChange = new("manipulator_mode_change");
 
 	public static readonly StringName ManipulatorSimInvJoystickPosXPlus = new("manipulator_sim_inv_joy_pos_x+");
 	public static readonly StringName ManipulatorSimInvJoystickPosXMinus = new("manipulator_sim_inv_joy_pos_x-");
@@ -84,9 +85,10 @@ public static class RcaInEvName
 	public static readonly StringName ManipulatorCherryInvJoystickRotYMinus = new("manipulator_cherry_inv_joy_rot_y-");
 	public static readonly StringName ManipulatorCherryInvJoystickRotZPlus = new("manipulator_cherry_inv_joy_rot_z+");
 	public static readonly StringName ManipulatorCherryInvJoystickRotZMinus = new("manipulator_cherry_inv_joy_rot_z-");
-	public static readonly StringName ManipulatorCherryInvChangeRef = new("manipulator_cherry_inv_change_ref");
-	public static readonly StringName ManipulatorCherryInvDpadUp = new("manipulator_cherry_inv_dpad_up");
-	public static readonly StringName ManipulatorCherryInvDpadDown = new("manipulator_cherry_inv_dpad_down");
+	public static readonly StringName ManipulatorGtrChangeRefPlus = new("manipulator_gtr_change_ref+");
+	public static readonly StringName ManipulatorGtrChangeRefMinus = new("manipulator_gtr_change_ref-");
+	public static readonly StringName ManipulatorGtrAccept = new("manipulator_gtr_accept");
+	public static readonly StringName ManipulatorGtrCancel = new("manipulator_gtr_cancel");
 
 	public static readonly StringName SamplerMoveDown = new("sampler_move_down");
 	public static readonly StringName SamplerMoveUp = new("sampler_move_up");
