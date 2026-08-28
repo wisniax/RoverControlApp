@@ -22,7 +22,27 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 		RcaInEvName.ManipulatorSimInvJoystickRotYMinus,
 		RcaInEvName.ManipulatorSimInvJoystickRotZPlus,
 		RcaInEvName.ManipulatorSimInvJoystickRotZMinus,
-		RcaInEvName.ManipulatorSimInvChangeRef
+		RcaInEvName.ManipulatorSimInvChangeRef,
+		RcaInEvName.ManipulatorModeChange,
+		RcaInEvName.ManipulatorGtrChangeRefPlus,
+		RcaInEvName.ManipulatorGtrChangeRefMinus,
+		RcaInEvName.ManipulatorGtrAccept,
+		RcaInEvName.ManipulatorGtrCancel,
+		RcaInEvName.ManipulatorMultiGripperBackward,
+		RcaInEvName.ManipulatorMultiGripperForward,
+		RcaInEvName.ManipulatorMultiAxis1Backward,
+		RcaInEvName.ManipulatorMultiAxis2Backward,
+		RcaInEvName.ManipulatorMultiAxis3Backward,
+		RcaInEvName.ManipulatorMultiAxis4Backward,
+		RcaInEvName.ManipulatorMultiAxis5Backward,
+		RcaInEvName.ManipulatorMultiAxis6Backward,
+		RcaInEvName.ManipulatorMultiAxis1Forward,
+		RcaInEvName.ManipulatorMultiAxis2Forward,
+		RcaInEvName.ManipulatorMultiAxis3Forward,
+		RcaInEvName.ManipulatorMultiAxis4Forward,
+		RcaInEvName.ManipulatorMultiAxis5Forward,
+		RcaInEvName.ManipulatorMultiAxis6Forward,
+		RcaInEvName.ManipulatorMultiChangeAxes
 	];
 
 	MultiAxisManipulatorController multiAxisManipulatorController = new();
@@ -152,7 +172,11 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"Use joysticks to control manipulator movement. Hold the right and left bumper to roll the effector. Use the ABXY buttons to control pitch and yaw. Gripper is controlled with triggers.";
+		"D-pad UP: cycle modes (InvKinJoystick → GoToReference → UseMoveITPlanning → ForwardKin).\n\n" +
+		"InvKinJoystick: Left stick = posX/posY, Right stick = posZ, Left/right bumper = rotX, A/Y = rotY, X/B = rotZ, Triggers = gripper. D-pad right toggles 'tool' reference.\n\n" +
+		"GoToReference: Y/X cycles Ref0–Ref9, A sends GoToReference, B cancels (Stop).\n\n" +
+		"UseMoveITPlanning: Hands off — sends control to MoveIT.\n\n" +
+		"ForwardKin: Joysticks control axes 1–3, right bumper toggles axes 4–6, Triggers = gripper.";
 
 	public string[] GetControlledAxes()
 	{

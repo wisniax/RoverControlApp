@@ -27,6 +27,21 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 		RcaInEvName.ManipulatorGtrAccept,
 		RcaInEvName.ManipulatorGtrCancel,
 		RcaInEvName.ManipulatorModeChange,
+		RcaInEvName.ManipulatorMultiGripperBackward,
+		RcaInEvName.ManipulatorMultiGripperForward,
+		RcaInEvName.ManipulatorMultiAxis1Backward,
+		RcaInEvName.ManipulatorMultiAxis2Backward,
+		RcaInEvName.ManipulatorMultiAxis3Backward,
+		RcaInEvName.ManipulatorMultiAxis4Backward,
+		RcaInEvName.ManipulatorMultiAxis5Backward,
+		RcaInEvName.ManipulatorMultiAxis6Backward,
+		RcaInEvName.ManipulatorMultiAxis1Forward,
+		RcaInEvName.ManipulatorMultiAxis2Forward,
+		RcaInEvName.ManipulatorMultiAxis3Forward,
+		RcaInEvName.ManipulatorMultiAxis4Forward,
+		RcaInEvName.ManipulatorMultiAxis5Forward,
+		RcaInEvName.ManipulatorMultiAxis6Forward,
+		RcaInEvName.ManipulatorMultiChangeAxes
 	];
 
 	private MultiAxisManipulatorController multiAxisManipulatorController = new();
@@ -153,11 +168,11 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"D-pad UP: cycle modes (InvKinJoystick → GoToReference → UseMoveITPlanning).\n" +
-		"D-pad DOWN: in GoToReference mode, sends the GoToReference command.\n\n" +
-		"InvKinJoystick: Left stick = posX/posY, Y/A = posZ±, Right stick = rotY/rotZ, B/X = rotX±, Triggers = gripper. ChangeRef toggles 'tool' reference.\n\n" +
-		"GoToReference: ChangeRef cycles Ref0–Ref4, D-pad DOWN sends GoToReference, otherwise sends Stop.\n\n" +
-		"MoveITPlanning: Hands off — sends control to MoveIT.";
+		"D-pad UP: cycle modes (InvKinJoystick → GoToReference → UseMoveITPlanning → ForwardKin).\n\n" +
+		"InvKinJoystick: Left stick = posX/posY, Right stick = rotY/rotZ, Y/A = posZ±, B/X = rotX±, Triggers = gripper. ChangeRef toggles 'tool' reference.\n\n" +
+		"GoToReference: Y/X cycles Ref0–Ref9, A sends GoToReference, B cancels (Stop).\n\n" +
+		"UseMoveITPlanning: Hands off — sends control to MoveIT.\n\n" +
+		"ForwardKin: Joysticks control axes 1–3, right bumper toggles axes 4–6, Triggers = gripper.";
 
 	public string[] GetControlledAxes()
 	{
