@@ -29,9 +29,12 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 		RcaInEvName.ManipulatorModeChange,
 	];
 
+	private MultiAxisManipulatorController multiAxisManipulatorController = new();
+
 	private bool _useToolReference = false;
 	private int _GTRReference = 0; // "Go to reference" reference
 	private ActionType actionType = ActionType.InvKinJoystick;
+	private bool _movingToReference = false;
 
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in ManipulatorControl lastState)
 	{
@@ -44,8 +47,12 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 					break;
 				case ActionType.GoToReference:
 					actionType = ActionType.UseMoveITPlanning;
+					_movingToReference = false; // reset moving to reference when changing mode
 					break;
 				case ActionType.UseMoveITPlanning:
+					actionType = ActionType.ForwardKin;
+					break;
+				case ActionType.ForwardKin:
 					actionType = ActionType.InvKinJoystick;
 					break;
 				default:
@@ -94,37 +101,49 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 			}
 
 			case ActionType.GoToReference:
-			{
-				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrChangeRefPlus, targetInputDevice), exactMatch: true))
 				{
-					_GTRReference++;
-					if (_GTRReference > 4)
+					if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrChangeRefPlus, targetInputDevice), exactMatch: true))
 					{
-						_GTRReference = 0;	
+						_GTRReference++;
+						_GTRReference = _GTRReference % 10; // wrap around to 0 after 9
+						_movingToReference = false; // reset moving to reference when changing reference
 					}
-				}
 
-				manipulatorControl.Reference = $"Ref{_GTRReference}";
-				
-				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrAccept, targetInputDevice), exactMatch: true))
-				{
-					manipulatorControl.ActionType = ActionType.GoToReference;
-				}
-				else if (Input.IsActionJustReleased(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrAccept, targetInputDevice), exactMatch: true))
-				{
-					manipulatorControl.ActionType = ActionType.GoToReference;
-				}
-				else
-				{
-					manipulatorControl.ActionType = ActionType.Stop;	
-				}
-				
-				return manipulatorControl;	
-			}
+					if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrChangeRefMinus, targetInputDevice), exactMatch: true))
+					{
+						_GTRReference--;
+						if (_GTRReference < 0) // wrap around to 0 after 9
+						{
+							_GTRReference = 9;
+						}
+						_movingToReference = false; // reset moving to reference when changing reference
+					}
 
+					manipulatorControl.Reference = $"Ref{_GTRReference}";
+
+					if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrAccept, targetInputDevice), exactMatch: true))
+					{
+						_movingToReference = true;
+					}
+
+					if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrCancel, targetInputDevice), exactMatch: true))
+					{
+						_movingToReference = false;
+					}
+
+					manipulatorControl.ActionType = _movingToReference ? ActionType.GoToReference : ActionType.Stop;
+					return manipulatorControl;
+				}
 			case ActionType.UseMoveITPlanning:
-				return manipulatorControl;
-
+				{
+					manipulatorControl.ActionType = ActionType.UseMoveITPlanning;
+					return manipulatorControl;
+				}
+			case ActionType.ForwardKin:
+				{
+					manipulatorControl = multiAxisManipulatorController.CalculateMoveVector(inputEvent, targetInputDevice, lastState);
+					return manipulatorControl;
+				}
 			default:
 				return manipulatorControl;
 		}
@@ -142,7 +161,19 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 
 	public string[] GetControlledAxes()
 	{
-		return new string[0];
+		switch (actionType)
+		{
+			case ActionType.InvKinJoystick:
+				return new string[] { "posX", "posY", "posZ", "rotX", "rotY", "rotZ", "gripper" };
+			case ActionType.GoToReference:
+				return new string[0];
+			case ActionType.UseMoveITPlanning:
+				return new string[0];
+			case ActionType.ForwardKin:
+				return multiAxisManipulatorController.GetControlledAxes();
+			default:
+				return new string[0];
+		}
 	}
 
 }

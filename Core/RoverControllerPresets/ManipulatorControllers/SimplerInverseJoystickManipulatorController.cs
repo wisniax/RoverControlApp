@@ -159,37 +159,16 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 		switch (actionType)
 		{
 			case ActionType.InvKinJoystick:
-				return new string[]
-				{
-					"ManipulatorSimInvJoystickPosXPlus",
-					"ManipulatorSimInvJoystickPosXMinus",
-					"ManipulatorSimInvJoystickPosYPlus",
-					"ManipulatorSimInvJoystickPosYMinus",
-					"ManipulatorSimInvJoystickPosZPlus",
-					"ManipulatorSimInvJoystickPosZMinus",
-					"ManipulatorSimInvJoystickRotXPlus",
-					"ManipulatorSimInvJoystickRotXMinus",
-					"ManipulatorSimInvJoystickRotYPlus",
-					"ManipulatorSimInvJoystickRotYMinus",
-					"ManipulatorSimInvJoystickRotZPlus",
-					"ManipulatorSimInvJoystickRotZMinus"
-				};
+				return new string[0];
 			case ActionType.GoToReference:
-				return new string[]
-				{
-					"ManipulatorGtrChangeRefPlus",
-					"ManipulatorGtrChangeRefMinus",
-					"ManipulatorGtrAccept",
-					"ManipulatorGtrCancel"
-				};
+				return new string[0];
 			case ActionType.UseMoveITPlanning:
 				return new string[0];
 			case ActionType.ForwardKin:
 				return multiAxisManipulatorController.GetControlledAxes();
 			default:
-				break;
+				return new string[0];
 		}
-		return new string[0];
 	}
 
 }
