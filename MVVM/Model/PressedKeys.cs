@@ -60,7 +60,7 @@ public partial class PressedKeys : Node
 	public static PressedKeys Singleton { get; private set; }
 #pragma warning restore CS8618
 
-	public ControlModeFlags ControlMode
+	private ControlModeFlags ControlMode
 	{
 		get => _controlMode;
 		set
@@ -608,6 +608,10 @@ public partial class PressedKeys : Node
 		return true;
 	}
 
+	public ControlModeFlags GetCurrentControlMode()
+	{
+		return ControlMode;
+	}
 
 	#endregion Methods
 }
