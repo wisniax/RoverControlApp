@@ -23,6 +23,8 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 		RcaInEvName.ManipulatorSimInvJoystickRotZPlus,
 		RcaInEvName.ManipulatorSimInvJoystickRotZMinus,
 		RcaInEvName.ManipulatorSimInvChangeRef,
+		RcaInEvName.ManipulatorSimInvForceCartesian,
+		RcaInEvName.ManipulatorSimInvForceMovement,
 		RcaInEvName.ManipulatorModeChange,
 		RcaInEvName.ManipulatorGtrChangeRefPlus,
 		RcaInEvName.ManipulatorGtrChangeRefMinus,
@@ -48,6 +50,8 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 	MultiAxisManipulatorController multiAxisManipulatorController = new();
 
 	private bool _useToolReference = false;
+	private bool _forceCartesian = false;
+	private bool _forceMovement = false;
 	private int _GTRReference = 0; // "Go to reference" reference
 	private ActionType actionType = ActionType.InvKinJoystick;
 	private bool _movingToReference = false;
@@ -93,6 +97,16 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 					_useToolReference = !_useToolReference;
 				}
 
+				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvForceCartesian, targetInputDevice), exactMatch: true))
+				{
+					_forceCartesian = !_forceCartesian;
+				}
+
+				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvForceMovement, targetInputDevice), exactMatch: true))
+				{
+					_forceMovement = !_forceMovement;
+				}
+
 				if (_useToolReference)
 				{
 					manipulatorControl.Reference = "tool";
@@ -114,6 +128,8 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 				manipulatorControl.InvJoystick.RotationSpeed = angularSpeed;
 
 				manipulatorControl.Gripper = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, targetInputDevice));
+				manipulatorControl.ForceCartesian = _forceCartesian;
+				manipulatorControl.ForceMovement = _forceMovement;
 
 				return manipulatorControl;
 			}
@@ -173,7 +189,7 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 
 	public string GetInputActionsAdditionalNote() =>
 		"D-pad UP: cycle modes (InvKinJoystick → GoToReference → UseMoveITPlanning → ForwardKin).\n\n" +
-		"InvKinJoystick: Left stick = posX/posY, Right stick = posZ, Left/right bumper = rotX, A/Y = rotY, X/B = rotZ, Triggers = gripper. D-pad down toggles 'tool' reference.\n\n" +
+		"InvKinJoystick: Left stick = posX/posY, Right stick = posZ, Left/right bumper = rotX, A/Y = rotY, X/B = rotZ, Triggers = gripper. D-pad down toggles 'tool' reference, D-pad left toggles force cartesian, D-pad right toggles force movement.\n\n" +
 		"GoToReference: Y/X cycles Ref0–Ref9, A sends GoToReference, B cancels (Stop).\n\n" +
 		"UseMoveITPlanning: Hands off — sends control to MoveIT.\n\n" +
 		"ForwardKin: Joysticks control axes 1–3, right bumper toggles axes 4–6, Triggers = gripper.";

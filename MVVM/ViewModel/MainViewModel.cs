@@ -428,6 +428,8 @@ namespace RoverControlApp.MVVM.ViewModel
                             $"{(controlledAxes.Contains("RotX") ? "[b]X:[/b] " : "X: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.RotationSpeed.X, 2)} rad/s, " +
                             $"{(controlledAxes.Contains("RotY") ? "[b]Y:[/b] " : "Y: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.RotationSpeed.Y, 2)} rad/s, " +
                             $"{(controlledAxes.Contains("RotZ") ? "[b]Z:[/b] " : "Z: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.InvJoystick.RotationSpeed.Z, 2)} rad/s}}\n" +
+                            $"ForceCartesian: {PressedKeys.Singleton.ManipulatorMovement.ForceCartesian}, " +
+                            $"ForceMovement: {PressedKeys.Singleton.ManipulatorMovement.ForceMovement}, \n" +
                             $"Reference: {PressedKeys.Singleton.ManipulatorMovement.Reference}, " +
                             $"{(controlledAxes.Contains("Gripper") ? "[b]Gripper:[/b] " : "Gripper: ") + Math.Round(PressedKeys.Singleton.ManipulatorMovement.Gripper, 2)}, " +
                             $"Timestamp: {PressedKeys.Singleton.ManipulatorMovement.Timestamp}\n"

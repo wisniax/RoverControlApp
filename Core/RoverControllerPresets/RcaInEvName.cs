@@ -72,6 +72,8 @@ public static class RcaInEvName
 	public static readonly StringName ManipulatorSimInvJoystickRotZPlus = new("manipulator_sim_inv_joy_rot_z+");
 	public static readonly StringName ManipulatorSimInvJoystickRotZMinus = new("manipulator_sim_inv_joy_rot_z-");
 	public static readonly StringName ManipulatorSimInvChangeRef = new("manipulator_sim_inv_change_ref");
+	public static readonly StringName ManipulatorSimInvForceCartesian = new("manipulator_sim_inv_force_cartesian");
+	public static readonly StringName ManipulatorSimInvForceMovement = new("manipulator_sim_inv_force_movement");
 
 	public static readonly StringName ManipulatorCherryInvJoystickPosXPlus = new("manipulator_cherry_inv_joy_pos_x+");
 	public static readonly StringName ManipulatorCherryInvJoystickPosXMinus = new("manipulator_cherry_inv_joy_pos_x-");
