@@ -506,16 +506,6 @@ public partial class PressedKeys : Node
 		LastAcceptedInput?.Invoke(inputIsJoystick ? InputHelpHint.HintVisibility.Joy : InputHelpHint.HintVisibility.Kb);
 	}
 
-	public ControlModeFlags SetFlag(ControlModeFlags oldFlags, ControlModeFlags flag)
-	{
-		return oldFlags |= flag;
-	}
-
-	public ControlModeFlags ResetFlag(ControlModeFlags oldFlags, ControlModeFlags flag)
-	{
-		return oldFlags &= ~flag;
-	}
-
 	public ControlModeFlags CombineFlags(ControlModeFlags masterControlMode, ControlModeFlags slaveControlMode)
 	{
 		slaveControlMode &= ~ControlModeFlags.EStop; // Slave cannot override Master EStop
