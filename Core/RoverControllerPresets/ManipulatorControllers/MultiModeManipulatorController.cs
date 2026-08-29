@@ -23,6 +23,8 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorInvJoystickRotYMinus,
 		RcaInEvName.ManipulatorInvJoystickRotZPlus,
 		RcaInEvName.ManipulatorInvJoystickRotZMinus,
+		RcaInEvName.ManipulatorSimInvForceCartesian,
+		RcaInEvName.ManipulatorSimInvForceMovement,
 		RcaInEvName.ManipulatorMultiAxis1Backward,
 		RcaInEvName.ManipulatorMultiAxis2Backward,
 		RcaInEvName.ManipulatorMultiAxis3Backward,
