@@ -15,7 +15,7 @@ public static class RoverManipulatorControllerSelector
 		CherryInverseJoystick = 5,
 	}
 
-	public const Controller DEFAULT = Controller.MultiAxis;
+	public const Controller DEFAULT = Controller.SimplerInverseJoystick;
 
 	public static IRoverManipulatorController GetController(Controller controller)
 	{
