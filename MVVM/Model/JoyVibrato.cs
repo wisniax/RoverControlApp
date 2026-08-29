@@ -70,6 +70,19 @@ public class JoyVibrato : IDisposable
 		},
 	};
 
+	private static readonly MqttClasses.ControlModeFlags AutonomyMask =
+		MqttClasses.ControlModeFlags.DriveAutonomy |
+		MqttClasses.ControlModeFlags.RoboticArmAutonomy |
+		MqttClasses.ControlModeFlags.DeepSamplerAutonomy |
+		MqttClasses.ControlModeFlags.SurfaceSamplerAutonomy;
+
+	private static readonly VibrationSequence[] AutonomySequence =
+	[
+		new VibrationSequence(0.1f, 0.6f, 0.0f),
+		new VibrationSequence(0.1f, 0.0f, 0.0f),
+		new VibrationSequence(0.1f, 0.6f, 0.0f),
+	];
+
 	private Task? _taskVibrato;
 	private CancellationTokenSource _ctSource;
 	private CancellationToken _ctToken;
@@ -118,6 +131,12 @@ public class JoyVibrato : IDisposable
 		_ctToken.ThrowIfCancellationRequested();
 
 		int joyId = _isMasterVibrato ? 0 : 1;
+
+		if ((controlMode & AutonomyMask) != 0)
+		{
+			await PlaySequence(AutonomySequence, joyId);
+			return;
+		}
 
 		foreach (var (flag, sequence) in Presets)
 		{
