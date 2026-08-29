@@ -188,6 +188,8 @@ public partial class PressedKeys : Node
 		_manipulatorMovement = new();
 		_samplerControl = new();
 		SetupControllerPresets();
+
+		ControlMode = ControlModeFlags.EStop;
 	}
 
 	public override void _UnhandledInput(InputEvent @event)
