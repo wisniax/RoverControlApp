@@ -135,6 +135,7 @@ public class StandardModeController : IControlModeController
 	 HOLD 'controlmode_estop' and PRESS desired mode.
 	 Use 'controlmode_change' to cycle: Drive -> RoboticArm -> Sampler.
 	 Autonomy is toggled per-mode by the active controller or UI.
-	 Stop is toggled by pressing both joysticks at the same time. (Master ONLY)
+	 Stop is toggled by pressing both joysticks at the same time.
+	 Priority (highest first): EStop > Master > Master+Stop > Master+Slave
 	""";
 }

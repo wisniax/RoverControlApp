@@ -169,7 +169,7 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 
 	public string GetInputActionsAdditionalNote() =>
 		"D-pad UP: cycle modes (InvKinJoystick → GoToReference → UseMoveITPlanning → ForwardKin).\n\n" +
-		"InvKinJoystick: Left stick = posX/posY, Right stick = rotY/rotZ, Y/A = posZ±, B/X = rotX±, Triggers = gripper. ChangeRef toggles 'tool' reference.\n\n" +
+		"InvKinJoystick: Left stick = posX/posY, Right stick = rotY/rotZ, Y/A = posZ±, B/X = rotX±, Triggers = gripper. D-pad down toggles 'tool' reference.\n\n" +
 		"GoToReference: Y/X cycles Ref0–Ref9, A sends GoToReference, B cancels (Stop).\n\n" +
 		"UseMoveITPlanning: Hands off — sends control to MoveIT.\n\n" +
 		"ForwardKin: Joysticks control axes 1–3, right bumper toggles axes 4–6, Triggers = gripper.";

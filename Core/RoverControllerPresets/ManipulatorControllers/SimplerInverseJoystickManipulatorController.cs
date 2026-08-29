@@ -173,7 +173,7 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 
 	public string GetInputActionsAdditionalNote() =>
 		"D-pad UP: cycle modes (InvKinJoystick → GoToReference → UseMoveITPlanning → ForwardKin).\n\n" +
-		"InvKinJoystick: Left stick = posX/posY, Right stick = posZ, Left/right bumper = rotX, A/Y = rotY, X/B = rotZ, Triggers = gripper. D-pad right toggles 'tool' reference.\n\n" +
+		"InvKinJoystick: Left stick = posX/posY, Right stick = posZ, Left/right bumper = rotX, A/Y = rotY, X/B = rotZ, Triggers = gripper. D-pad down toggles 'tool' reference.\n\n" +
 		"GoToReference: Y/X cycles Ref0–Ref9, A sends GoToReference, B cancels (Stop).\n\n" +
 		"UseMoveITPlanning: Hands off — sends control to MoveIT.\n\n" +
 		"ForwardKin: Joysticks control axes 1–3, right bumper toggles axes 4–6, Triggers = gripper.";
