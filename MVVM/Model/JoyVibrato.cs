@@ -95,6 +95,9 @@ public class JoyVibrato : IDisposable
 			_ctToken = _ctSource.Token;
 		}
 
+		if (!LocalSettings.Singleton.Joystick.VibrateOnModeChange)
+			return;
+
 		if (newMode.HasFlag(MqttClasses.ControlModeFlags.EStop) &&
 			LocalSettings.Singleton.General.NoInputSecondsToEstop > 0 &&
 			!LocalSettings.Singleton.Joystick.VibrateOnAutoEstop &&
@@ -103,10 +106,9 @@ public class JoyVibrato : IDisposable
 			// no vibrato on Auto E-Stop
 			return;
 		}
-		else
-		{
-			_taskVibrato = Task.Run(async () => await Vibrate(newMode), _ctToken);
-		}
+		
+		
+		_taskVibrato = Task.Run(async () => await Vibrate(newMode), _ctToken);
 	}
 
 	private async Task Vibrate(MqttClasses.ControlModeFlags controlMode)
