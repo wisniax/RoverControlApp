@@ -58,7 +58,7 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 		ManipulatorControl manipulatorControl = new();
 		manipulatorControl.InvJoystick = new();
 
-		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorModeChange, targetInputDevice), exactMatch: true))
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorModeChange, targetInputDevice), exactMatch: true))
 		{
 			switch (actionType)
 			{
@@ -88,7 +88,7 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 			{
 				manipulatorControl.ActionType = ActionType.InvKinJoystick;
 
-				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvChangeRef, targetInputDevice), exactMatch: true))
+				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvChangeRef, targetInputDevice), exactMatch: true))
 				{
 					_useToolReference = !_useToolReference;
 				}

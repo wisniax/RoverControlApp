@@ -551,7 +551,7 @@ manipulator_sim_inv_joy_rot_z-={
 }
 manipulator_sim_inv_change_ref={
 "deadzone": 0.2,
-"events": [Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":14,"pressure":0.0,"pressed":false,"script":null)
+"events": [Object(InputEventJoypadButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"button_index":12,"pressure":0.0,"pressed":false,"script":null)
 ]
 }
 manipulator_cherry_inv_joy_pos_x+={

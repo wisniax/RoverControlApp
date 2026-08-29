@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://dnwu865kngoa1"]
+[gd_scene format=3 uid="uid://dnwu865kngoa1"]
 
 [ext_resource type="Script" uid="uid://rm5y7hlwqlxo" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
@@ -52,7 +52,7 @@ keycode = 83
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
 
-[node name="MainView" type="Control" node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
+[node name="MainView" type="Control" unique_id=170146618 node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -79,7 +79,7 @@ ZedMonitor = NodePath("ZedMonitor")
 BatteryMonitor = NodePath("BatteryMonitor")
 InputHelpMaster = NodePath("MaxSizeContainer/InputHelpMaster")
 
-[node name="CameraView" type="TextureRect" parent="."]
+[node name="CameraView" type="TextureRect" parent="." unique_id=374774120]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -89,7 +89,7 @@ grow_vertical = 2
 texture = ExtResource("2_1llr5")
 expand_mode = 2
 
-[node name="FancyDebugViewRLab" type="RichTextLabel" parent="."]
+[node name="FancyDebugViewRLab" type="RichTextLabel" parent="." unique_id=2093037081]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -109,7 +109,7 @@ fit_content = true
 scroll_active = false
 autowrap_mode = 0
 
-[node name="GrzybUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
+[node name="GrzybUIDis" parent="." unique_id=859294310 node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
 offset_left = 264.0
 offset_top = 4.0
@@ -125,7 +125,7 @@ custom_minimum_size = Vector2(170, 26)
 offset_left = -31.0
 offset_right = 188.0
 
-[node name="RoverModeUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
+[node name="RoverModeUIDis" parent="." unique_id=1641741377 node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -145,7 +145,7 @@ custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
 offset_right = 178.0
 
-[node name="DriveModeUIDis" parent="." node_paths=PackedStringArray("_panelContainer", "Animator") instance=ExtResource("3_mtbtk")]
+[node name="DriveModeUIDis" parent="." unique_id=1697598035 node_paths=PackedStringArray("_panelContainer", "Animator") instance=ExtResource("3_mtbtk")]
 visible = false
 layout_mode = 1
 anchors_preset = -1
@@ -167,7 +167,7 @@ custom_minimum_size = Vector2(180, 26)
 offset_left = -2.0
 offset_right = 178.0
 
-[node name="SpeedLimiterUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
+[node name="SpeedLimiterUIDis" parent="." unique_id=1620510534 node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 visible = false
 layout_mode = 1
 anchors_preset = -1
@@ -191,7 +191,7 @@ offset_right = 178.0
 [node name="Background" parent="SpeedLimiterUIDis/RoverMode" index="0"]
 color = Color(0.321569, 0.792157, 0.956863, 1)
 
-[node name="DualSeatSlaveUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
+[node name="DualSeatSlaveUIDis" parent="." unique_id=1395538547 node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -209,7 +209,7 @@ LabelNodePath = NodePath("RoverMode/Label")
 [node name="RoverMode" parent="DualSeatSlaveUIDis" index="0"]
 offset_right = 180.0
 
-[node name="MissonStatusUIDis" parent="." node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
+[node name="MissonStatusUIDis" parent="." unique_id=1874022150 node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
 offset_left = 8.0
 offset_top = 4.0
@@ -224,7 +224,7 @@ LabelNodePath = NodePath("RoverMode/Label")
 custom_minimum_size = Vector2(210, 26)
 offset_right = 210.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=1560302731]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -236,35 +236,35 @@ offset_top = -40.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="BackCapture" type="Button" parent="HBoxContainer"]
+[node name="BackCapture" type="Button" parent="HBoxContainer" unique_id=1659605741]
 layout_mode = 2
 focus_mode = 0
 text = "BackCapture"
 
-[node name="RTSPCapture" type="Button" parent="HBoxContainer"]
+[node name="RTSPCapture" type="Button" parent="HBoxContainer" unique_id=196676825]
 layout_mode = 2
 focus_mode = 0
 text = "RTSP Capture"
 
-[node name="Separator" type="Control" parent="HBoxContainer"]
+[node name="Separator" type="Control" parent="HBoxContainer" unique_id=1848501027]
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 
-[node name="ShowMissionControl" type="Button" parent="HBoxContainer"]
+[node name="ShowMissionControl" type="Button" parent="HBoxContainer" unique_id=1662982871]
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
 shortcut = SubResource("Shortcut_psw5f")
 text = "MISSION CONTROL"
 
-[node name="ShowVelMonitor" type="Button" parent="HBoxContainer"]
+[node name="ShowVelMonitor" type="Button" parent="HBoxContainer" unique_id=594729781]
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
 shortcut = SubResource("Shortcut_x20sx")
 text = "VEL MONITOR"
 
-[node name="ShowBatteryMonitor" type="Button" parent="HBoxContainer"]
+[node name="ShowBatteryMonitor" type="Button" parent="HBoxContainer" unique_id=486639607]
 custom_minimum_size = Vector2(140, 0)
 layout_mode = 2
 focus_mode = 0
@@ -272,25 +272,25 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_x20sx")
 text = "BATTERY"
 
-[node name="ShowZedMonitor" type="Button" parent="HBoxContainer"]
+[node name="ShowZedMonitor" type="Button" parent="HBoxContainer" unique_id=1503551608]
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
 shortcut = SubResource("Shortcut_nofgb")
 text = "GYRO"
 
-[node name="ShowSettingsBtn" type="Button" parent="HBoxContainer"]
+[node name="ShowSettingsBtn" type="Button" parent="HBoxContainer" unique_id=795607795]
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
 shortcut = SubResource("Shortcut_gr50h")
 text = "SETTINGS"
 
-[node name="MissionControl" parent="." instance=ExtResource("4_wrhi8")]
+[node name="MissionControl" parent="." unique_id=1671618797 instance=ExtResource("4_wrhi8")]
 visible = false
 layout_mode = 0
 
-[node name="BatteryMonitor" parent="." instance=ExtResource("13_gec13")]
+[node name="BatteryMonitor" parent="." unique_id=576377510 instance=ExtResource("13_gec13")]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -305,7 +305,7 @@ offset_bottom = -45.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="VelMonitor" parent="." instance=ExtResource("6_wqihy")]
+[node name="VelMonitor" parent="." unique_id=1273856176 instance=ExtResource("6_wqihy")]
 visible = false
 layout_mode = 1
 anchors_preset = 6
@@ -318,7 +318,7 @@ offset_right = -9.0
 offset_bottom = 213.0
 grow_horizontal = 0
 
-[node name="ZedMonitor" parent="." instance=ExtResource("10_ypnjt")]
+[node name="ZedMonitor" parent="." unique_id=674057008 instance=ExtResource("10_ypnjt")]
 visible = false
 layout_mode = 1
 anchors_preset = 3
@@ -333,7 +333,7 @@ offset_bottom = -45.38
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="MaxSizeContainer" type="Container" parent="."]
+[node name="MaxSizeContainer" type="Container" parent="." unique_id=1368192907]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -347,7 +347,7 @@ script = ExtResource("13_0svft")
 ChildMaxSize = Vector2(450, 9999)
 MinimalMargin = Vector2(700, 0)
 
-[node name="InputHelpMaster" parent="MaxSizeContainer" instance=ExtResource("13_1wevo")]
+[node name="InputHelpMaster" parent="MaxSizeContainer" unique_id=955127659 instance=ExtResource("13_1wevo")]
 visible = false
 custom_minimum_size = Vector2(250, 0)
 layout_mode = 2
@@ -358,7 +358,7 @@ ShowEmpty = true
 CycleHints = true
 metadata/_edit_lock_ = true
 
-[node name="SettingsManager" parent="." instance=ExtResource("4_b20oh")]
+[node name="SettingsManager" parent="." unique_id=1212527379 instance=ExtResource("4_b20oh")]
 visible = false
 layout_mode = 1
 offset_left = 36.0

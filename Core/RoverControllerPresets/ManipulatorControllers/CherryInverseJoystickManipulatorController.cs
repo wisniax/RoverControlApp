@@ -53,7 +53,7 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in ManipulatorControl lastState)
 	{
-		if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorModeChange, targetInputDevice), exactMatch: true))
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorModeChange, targetInputDevice), exactMatch: true))
 		{
 			switch (actionType)
 			{
@@ -84,7 +84,7 @@ public class CherryInverseJoystickManipulatorController : IRoverManipulatorContr
 			{
 				manipulatorControl.InvJoystick = new();
 
-				if (Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrChangeRefPlus, targetInputDevice), exactMatch: true))
+				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvChangeRef, targetInputDevice), exactMatch: true))
 				{
 					_useToolReference = !_useToolReference;
 				}
