@@ -375,9 +375,12 @@ offset_top = 42.0
 offset_right = 371.0
 offset_bottom = 538.0
 script = ExtResource("17_a5ovi")
-_eStopPanel = NodePath("EStopStatusPanel")
+_eStopPanel = NodePath("")
 
 [node name="EStopStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("17_exayt")]
+layout_mode = 2
+
+[node name="EStopStatusPanel2" parent="StatusPanels" unique_id=1746583561 instance=ExtResource("17_exayt")]
 layout_mode = 2
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
