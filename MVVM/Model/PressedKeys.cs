@@ -18,7 +18,7 @@ namespace RoverControlApp.MVVM.Model;
 public partial class PressedKeys : Node
 {
 	#region Fields
-	private ControlModeFlags _controlMode;
+	private ControlModeFlags _controlMode = ControlModeFlags.EStop;
 	private ControlModeFlags _masterControlMode;
 	private ControlModeFlags _slaveControlMode;
 	private Vector4 _cameraMoveVector;
