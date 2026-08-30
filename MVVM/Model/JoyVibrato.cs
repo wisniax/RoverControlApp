@@ -70,6 +70,19 @@ public class JoyVibrato : IDisposable
 		},
 	};
 
+	private static readonly MqttClasses.ControlModeFlags AutonomyMask =
+		MqttClasses.ControlModeFlags.DriveAutonomy |
+		MqttClasses.ControlModeFlags.RoboticArmAutonomy |
+		MqttClasses.ControlModeFlags.DeepSamplerAutonomy |
+		MqttClasses.ControlModeFlags.SurfaceSamplerAutonomy;
+
+	private static readonly VibrationSequence[] AutonomySequence =
+	[
+		new VibrationSequence(0.1f, 0.6f, 0.0f),
+		new VibrationSequence(0.1f, 0.0f, 0.0f),
+		new VibrationSequence(0.1f, 0.6f, 0.0f),
+	];
+
 	private Task? _taskVibrato;
 	private CancellationTokenSource _ctSource;
 	private CancellationToken _ctToken;
@@ -95,6 +108,9 @@ public class JoyVibrato : IDisposable
 			_ctToken = _ctSource.Token;
 		}
 
+		if (!LocalSettings.Singleton.Joystick.VibrateOnModeChange)
+			return;
+
 		if (newMode.HasFlag(MqttClasses.ControlModeFlags.EStop) &&
 			LocalSettings.Singleton.General.NoInputSecondsToEstop > 0 &&
 			!LocalSettings.Singleton.Joystick.VibrateOnAutoEstop &&
@@ -103,10 +119,9 @@ public class JoyVibrato : IDisposable
 			// no vibrato on Auto E-Stop
 			return;
 		}
-		else
-		{
-			_taskVibrato = Task.Run(async () => await Vibrate(newMode), _ctToken);
-		}
+		
+		
+		_taskVibrato = Task.Run(async () => await Vibrate(newMode), _ctToken);
 	}
 
 	private async Task Vibrate(MqttClasses.ControlModeFlags controlMode)
@@ -116,6 +131,12 @@ public class JoyVibrato : IDisposable
 		_ctToken.ThrowIfCancellationRequested();
 
 		int joyId = _isMasterVibrato ? 0 : 1;
+
+		if ((controlMode & AutonomyMask) != 0)
+		{
+			await PlaySequence(AutonomySequence, joyId);
+			return;
+		}
 
 		foreach (var (flag, sequence) in Presets)
 		{
