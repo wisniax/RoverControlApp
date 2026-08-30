@@ -132,10 +132,10 @@ public class StandardModeController : IControlModeController
 	public string GetInputActionsAdditionalNote() =>
 	"""
 	To quick select control mode on the controller:
-	 HOLD 'controlmode_estop' and PRESS desired mode.
-	 Use 'controlmode_change' to cycle: Drive -> RoboticArm -> Sampler.
-	 Autonomy is toggled per-mode by the active controller or UI.
-	 Stop is toggled by pressing both joysticks at the same time.
-	 Priority (highest first): EStop > Master > Master+Stop > Master+Slave
+	HOLD 'controlmode_estop' and PRESS desired mode.
+	Use 'controlmode_change' to cycle: Drive -> RoboticArm -> Sampler.
+	Autonomy is toggled by pressing EStop + X (or + 4 on keyboard) on an active control mode.
+	Stop is toggled by pressing both joysticks at the same time.
+	Priority (highest first): EStop > Master > Master+Stop > Master+Slave
 	""";
 }
