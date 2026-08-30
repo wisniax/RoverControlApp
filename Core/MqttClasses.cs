@@ -391,7 +391,7 @@ namespace RoverControlApp.Core
 		public sealed class ArmAutonomyCheckResult
 		{
 			public bool[] possibility { get; set; } = [];
-			public int mission_id { get; set; }
+			public string mission_id { get; set; } = "";
 			public bool panel_found { get; set; }
 		}
 
@@ -448,7 +448,7 @@ namespace RoverControlApp.Core
 			public RoboticArmMissionFeedbackStatus status { get; set; }
 			public RoboticArmTask[] tasks { get; set; } = [];
 			public bool[] completed_tasks { get; set; } = [];
-			public int mission_id { get; set; }
+			public string mission_id { get; set; } = "";
 		}
 
 	}

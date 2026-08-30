@@ -159,7 +159,7 @@ public partial class ArmAutonomyPanel : Control
         _lastDisplayedAgeSeconds = 0;
         _lastCheckResultAgeLabel.Text = "Last check: 0s ago; Panel: " + (_lastCheckPanelFound ? "found" : "NOT found");
 
-        if (result.mission_id != mission_id)
+        if (result.mission_id != mission_id.ToString())
         {
             EventLogger.LogMessage("ArmAutonomyPanel", EventLogger.LogLevel.Warning, "Mission ID mismatch");
             // return;
