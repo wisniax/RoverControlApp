@@ -14,7 +14,7 @@ namespace RoverControlApp.MVVM.Model
 	public partial class RoverCommunication : Node
 	{
 		public event Func<MqttClasses.RoverStatus?, Task>? OnRoverStatusChanged;
-		private MqttClasses.ControlModeFlags ControlMode => PressedKeys.Singleton.ControlMode;
+		private MqttClasses.ControlModeFlags ControlMode => PressedKeys.Singleton.GetCurrentControlMode();
 
 		private MqttClasses.RoverStatus? _roverStatus;
 		private bool _disposedValue = false;
