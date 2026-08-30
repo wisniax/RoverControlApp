@@ -23,6 +23,8 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorInvJoystickRotYMinus,
 		RcaInEvName.ManipulatorInvJoystickRotZPlus,
 		RcaInEvName.ManipulatorInvJoystickRotZMinus,
+		RcaInEvName.ManipulatorSimInvForceCartesian,
+		RcaInEvName.ManipulatorSimInvForceMovement,
 		RcaInEvName.ManipulatorMultiAxis1Backward,
 		RcaInEvName.ManipulatorMultiAxis2Backward,
 		RcaInEvName.ManipulatorMultiAxis3Backward,
@@ -42,7 +44,7 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 
 	private ActionType _currentActionType = ActionType.InvKinJoystick;
 
-	InverseJoystickManipulatorController inverseJoystickManipulatorController = new();
+	InverseJoystickManipulatorController inverseJoystickManipulator = new();
 	MultiAxisManipulatorController multiAxisManipulatorController = new();
 
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice tagetInputDevice, in ManipulatorControl lastState)
@@ -71,7 +73,7 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 			case ActionType.ForwardKin:
 				return multiAxisManipulatorController.CalculateMoveVector(inputEvent, tagetInputDevice, lastState);
 			case ActionType.InvKinJoystick:
-				return inverseJoystickManipulatorController.CalculateMoveVector(inputEvent, tagetInputDevice, lastState);
+				return inverseJoystickManipulator.CalculateMoveVector(inputEvent, tagetInputDevice, lastState);
 			default:
 				return new ManipulatorControl() { ActionType = ActionType.ForwardKin };
 		}
@@ -82,7 +84,7 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 
 	public string GetInputActionsAdditionalNote() =>
 		"MULTIMODE: Left bumper changes modes forward/inverse_joystick. \n\n" +
-		"INVERSE_KIN:" + inverseJoystickManipulatorController.GetInputActionsAdditionalNote() + "\n\n" +
+		"INVERSE_KIN:" + inverseJoystickManipulator.GetInputActionsAdditionalNote() + "\n\n" +
 		"FORWARD_KIN:" + multiAxisManipulatorController.GetInputActionsAdditionalNote();
 
 	public string[] GetControlledAxes()
@@ -92,7 +94,7 @@ public class MultiModeManipulatorController : IRoverManipulatorController
 			case ActionType.ForwardKin:
 				return multiAxisManipulatorController.GetControlledAxes();
 			case ActionType.InvKinJoystick:
-				return inverseJoystickManipulatorController.GetControlledAxes();
+				return inverseJoystickManipulator.GetControlledAxes();
 			default:
 				return Array.Empty<string>();
 		}
