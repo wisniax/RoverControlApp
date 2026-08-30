@@ -17,7 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
 [ext_resource type="Script" uid="uid://bfg0ffyat7n25" path="res://MVVM/ViewModel/StatusPanelController.cs" id="17_a5ovi"]
-[ext_resource type="PackedScene" uid="uid://s5clmfanc4i" path="res://MVVM/View/EStopStatusPanel.tscn" id="17_exayt"]
+[ext_resource type="PackedScene" uid="uid://s5clmfanc4i" path="res://MVVM/View/StatusPanels/EStopStatusPanel.tscn" id="17_exayt"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -375,7 +375,7 @@ offset_top = 42.0
 offset_right = 371.0
 offset_bottom = 538.0
 script = ExtResource("17_a5ovi")
-_eStopPanel = NodePath("")
+_eStopPanel = NodePath("EStopStatusPanel")
 
 [node name="EStopStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("17_exayt")]
 layout_mode = 2
