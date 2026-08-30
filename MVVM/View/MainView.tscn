@@ -18,6 +18,7 @@
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
 [ext_resource type="Script" uid="uid://bfg0ffyat7n25" path="res://MVVM/ViewModel/StatusPanelController.cs" id="17_a5ovi"]
 [ext_resource type="PackedScene" uid="uid://s5clmfanc4i" path="res://MVVM/View/StatusPanels/EStopStatusPanel.tscn" id="17_exayt"]
+[ext_resource type="PackedScene" uid="uid://citcc8i5oor0u" path="res://MVVM/View/StatusPanels/ManipulatorStatusPanel.tscn" id="19_bvsyq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -335,6 +336,24 @@ offset_bottom = -45.38
 grow_horizontal = 0
 grow_vertical = 0
 
+[node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel", "_manipulatorPanel")]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 42.0
+offset_right = 371.0
+offset_bottom = 538.0
+script = ExtResource("17_a5ovi")
+_eStopPanel = NodePath("EStopStatusPanel")
+_manipulatorPanel = NodePath("ManipulatorStatusPanel")
+
+[node name="EStopStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("17_exayt")]
+visible = false
+layout_mode = 2
+
+[node name="ManipulatorStatusPanel" parent="StatusPanels" unique_id=56255439 instance=ExtResource("19_bvsyq")]
+visible = false
+layout_mode = 2
+
 [node name="MaxSizeContainer" type="Container" parent="." unique_id=55379842]
 layout_mode = 1
 anchors_preset = -1
@@ -368,21 +387,6 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
-[node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel")]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 42.0
-offset_right = 371.0
-offset_bottom = 538.0
-script = ExtResource("17_a5ovi")
-_eStopPanel = NodePath("EStopStatusPanel")
-
-[node name="EStopStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("17_exayt")]
-layout_mode = 2
-
-[node name="EStopStatusPanel2" parent="StatusPanels" unique_id=1746583561 instance=ExtResource("17_exayt")]
-layout_mode = 2
-
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
@@ -390,9 +394,9 @@ layout_mode = 2
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]

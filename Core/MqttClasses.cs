@@ -328,6 +328,26 @@ namespace RoverControlApp.Core
 			public bool EStop { get; set; } = true;
 			public string Status { get; set; } = string.Empty;
 		}
+
+		public class ServoStatus
+		{
+			public StatusCode Code { get; set; }
+			public string Message { get; set; }
+			public long Timestamp { get; set; }
+		}
+
+		public enum StatusCode : sbyte
+		{
+			Invalid = -1,
+			NoWarning = 0,
+			DecelerateForApproachingSingularity = 1,
+			HaltForSingularity = 2,
+			DecelerateForLeavingSingularity = 3,
+			DecelerateForCollision = 4,
+			HaltForCollision = 5,
+			JointBound = 6
+		}
+
 		public class RoverMissionStatus
 		{
 			public MissionStatus MissionStatus { get; set; } = MissionStatus.Stopped;

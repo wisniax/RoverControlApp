@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://citcc8i5oor0u"]
+
+[ext_resource type="Script" uid="uid://c02qf0ravxoee" path="res://MVVM/ViewModel/StatusPanels/ManipulatorPanel.cs" id="1_22ts8"]
+
+[node name="ManipulatorStatusPanel" type="Control" unique_id=2107319711 node_paths=PackedStringArray("_statusLabel", "_messageLabel", "_hiddenStatePanel", "_shownStatePanel")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -785.0
+offset_bottom = -403.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_22ts8")
+_statusLabel = NodePath("ShownState/StatusLabel")
+_messageLabel = NodePath("ShownState/MessageLabel")
+_hiddenStatePanel = NodePath("HiddenState")
+_shownStatePanel = NodePath("ShownState")
+
+[node name="HiddenState" type="Panel" parent="." unique_id=1100169613]
+visible = false
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 41.0
+
+[node name="ShowShown" type="Button" parent="HiddenState" unique_id=1433286214]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 41.0
+focus_mode = 0
+
+[node name="Label" type="Label" parent="HiddenState" unique_id=1183509566]
+layout_mode = 0
+offset_right = 368.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 27
+text = "Manipulator Status             ▶"
+
+[node name="ShownState" type="Panel" parent="." unique_id=1681091173]
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 176.0
+
+[node name="ShowHidden" type="Button" parent="ShownState" unique_id=2056434553]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 176.0
+focus_mode = 0
+
+[node name="Label2" type="Label" parent="ShownState" unique_id=2077917312]
+layout_mode = 0
+offset_right = 368.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 27
+text = "Manipulator Status             ▼"
+
+[node name="StaticLabel" type="Label" parent="ShownState" unique_id=1309216063]
+layout_mode = 0
+offset_left = -21.0
+offset_top = 43.0
+offset_right = 73.0
+offset_bottom = 106.0
+theme_override_font_sizes/font_size = 16
+text = "Status:
+Message:"
+horizontal_alignment = 2
+
+[node name="StatusLabel" type="Label" parent="ShownState" unique_id=1057291327]
+layout_mode = 0
+offset_left = 73.0
+offset_top = 43.0
+offset_right = 286.0
+offset_bottom = 77.0
+theme_override_font_sizes/font_size = 16
+text = "*insert status here*"
+
+[node name="MessageLabel" type="Label" parent="ShownState" unique_id=313525791]
+layout_mode = 0
+offset_left = 73.0
+offset_top = 69.0
+offset_right = 368.0
+offset_bottom = 174.0
+theme_override_font_sizes/font_size = 16
+text = "*insert message here*"
+autowrap_mode = 3
+
+[connection signal="pressed" from="HiddenState/ShowShown" to="." method="PanelPressed"]
+[connection signal="pressed" from="ShownState/ShowHidden" to="." method="PanelPressed"]
