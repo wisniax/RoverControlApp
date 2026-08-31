@@ -108,14 +108,6 @@ namespace RoverControlApp.Core
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
 			public ControlModeFlags ControlMode { get; set; } = ControlModeFlags.EStop;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
-			public RoverStatus() { }
-			public RoverStatus(ControlModeFlags flag, CommunicationState state)
-			{
-				ControlMode = flag;
-				CommunicationState = state;
-				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-			}
 		}
 
 		public class RoverControl
@@ -203,8 +195,9 @@ namespace RoverControlApp.Core
 			InvKinJoystick = 2,
 			InvKinPosition = 3,
 			InvKinOffset = 4,
-			GoToReference = 5 // with Reference e.g. "inverse_home_pose"
+			GoToReference = 5, // with Reference e.g. "inverse_home_pose"
 							  // ... predefined positions (Driving position, sampler, etc)? Later.
+			UseMoveITPlanning = 6, // give control away to moveit
 		}
 		public class ForwardKinMode
 		{

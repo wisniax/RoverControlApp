@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cn60bklagxpbt" path="res://MVVM/ViewModel/StatusPanels/EStopPanel.cs" id="1_nvk1p"]
 
-[node name="EStopStatusPanel" type="Control" unique_id=2107319711]
+[node name="EStopStatusPanel" type="Control" unique_id=2107319711 node_paths=PackedStringArray("_hiddenStatePanel", "_shownStatePanel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,6 +12,8 @@ offset_bottom = -403.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_nvk1p")
+_hiddenStatePanel = NodePath("HiddenState")
+_shownStatePanel = NodePath("ShownState")
 
 [node name="HiddenState" type="Panel" parent="." unique_id=1100169613]
 layout_mode = 0
@@ -61,7 +63,5 @@ offset_bottom = 152.0
 theme_override_font_sizes/font_size = 27
 text = "empty lol"
 
-[connection signal="pressed" from="HiddenState/ShowShown" to="HiddenState" method="set_visible" binds= [false]]
-[connection signal="pressed" from="HiddenState/ShowShown" to="ShownState" method="set_visible" binds= [true]]
-[connection signal="pressed" from="ShownState/ShowHidden" to="HiddenState" method="set_visible" binds= [true]]
-[connection signal="pressed" from="ShownState/ShowHidden" to="ShownState" method="set_visible" binds= [false]]
+[connection signal="pressed" from="HiddenState/ShowShown" to="." method="PanelPressed"]
+[connection signal="pressed" from="ShownState/ShowHidden" to="." method="PanelPressed"]

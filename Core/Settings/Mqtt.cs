@@ -16,7 +16,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_clientSettings = new();
 
 		_topicRoverControl = "RoverControl";
-		_topicManipulatorControl = "ManipulatorControl";
+		_topicManipulatorControl = "RoboticArmControl";
 		_topicRoverFeedback = "RoverFeedback";
 		_topicRoverStatus = "RoverStatus";
 		_topicMissionStatus = "MissionStatus";

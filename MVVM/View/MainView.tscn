@@ -17,7 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
 [ext_resource type="Script" uid="uid://bfg0ffyat7n25" path="res://MVVM/ViewModel/StatusPanelController.cs" id="17_a5ovi"]
-[ext_resource type="PackedScene" uid="uid://s5clmfanc4i" path="res://MVVM/View/EStopStatusPanel.tscn" id="17_exayt"]
+[ext_resource type="PackedScene" uid="uid://s5clmfanc4i" path="res://MVVM/View/StatusPanels/EStopStatusPanel.tscn" id="17_exayt"]
 [ext_resource type="PackedScene" uid="uid://b8jd7sjnl15bq" path="res://MVVM/View/ArmAutonomyStatusPanel.tscn" id="18_bvsyq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
@@ -375,10 +375,6 @@ _armAutonomyPanel = NodePath("ArmAutonomyStatusPanel")
 visible = false
 layout_mode = 2
 
-[node name="EStopStatusPanel" parent="StatusPanels" unique_id=820670947 instance=ExtResource("17_exayt")]
-visible = false
-layout_mode = 2
-
 [node name="SettingsManager" parent="." unique_id=2093540964 instance=ExtResource("4_b20oh")]
 visible = false
 layout_mode = 1
@@ -386,6 +382,12 @@ offset_left = 36.0
 offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
+
+[node name="EStopStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("17_exayt")]
+layout_mode = 2
+
+[node name="EStopStatusPanel2" parent="StatusPanels" unique_id=1746583561 instance=ExtResource("17_exayt")]
+layout_mode = 2
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
