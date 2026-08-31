@@ -337,7 +337,7 @@ offset_bottom = -45.38
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel", "_manipulatorPanel")]
+[node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel", "_armAutonomyPanel", "_manipulatorPanel")]
 layout_mode = 0
 offset_left = 2.0
 offset_top = 42.0
@@ -345,6 +345,7 @@ offset_right = 371.0
 offset_bottom = 538.0
 script = ExtResource("17_a5ovi")
 _eStopPanel = NodePath("EStopStatusPanel")
+_armAutonomyPanel = NodePath("ArmAutonomyStatusPanel")
 _manipulatorPanel = NodePath("ManipulatorStatusPanel")
 
 [node name="EStopStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("17_exayt")]
@@ -352,6 +353,10 @@ visible = false
 layout_mode = 2
 
 [node name="ManipulatorStatusPanel" parent="StatusPanels" unique_id=56255439 instance=ExtResource("19_bvsyq")]
+visible = false
+layout_mode = 2
+
+[node name="ArmAutonomyStatusPanel" parent="StatusPanels" unique_id=1051090000 instance=ExtResource("18_bvsyq")]
 visible = false
 layout_mode = 2
 
@@ -379,23 +384,6 @@ ReactiveHints = true
 ShowEmpty = true
 CycleHints = true
 metadata/_edit_lock_ = true
-
-[node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel", "_armAutonomyPanel")]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 42.0
-offset_right = 371.0
-offset_bottom = 538.0
-script = ExtResource("17_a5ovi")
-_eStopPanel = NodePath("EStopStatusPanel")
-_armAutonomyPanel = NodePath("ArmAutonomyStatusPanel")
-
-[node name="ArmAutonomyStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("18_bvsyq")]
-visible = false
-layout_mode = 2
-
-[node name="EStopStatusPanel" parent="StatusPanels" unique_id=978816490 instance=ExtResource("17_exayt")]
-layout_mode = 2
 
 [node name="SettingsManager" parent="." unique_id=2093540964 instance=ExtResource("4_b20oh")]
 visible = false

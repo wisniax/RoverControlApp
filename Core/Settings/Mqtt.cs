@@ -219,8 +219,9 @@ public partial class Mqtt : SettingBase, ICloneable
 	{
 		get => _topicRoboticArmMissionFeedback;
 		set => EmitSignal_SettingChanged(ref _topicRoboticArmMissionFeedback, value);
+	}
 	
-  [SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicServoStatus
 	{
 		get => _topicServoStatus; 
