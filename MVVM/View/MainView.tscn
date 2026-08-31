@@ -375,6 +375,9 @@ _armAutonomyPanel = NodePath("ArmAutonomyStatusPanel")
 visible = false
 layout_mode = 2
 
+[node name="EStopStatusPanel" parent="StatusPanels" unique_id=978816490 instance=ExtResource("17_exayt")]
+layout_mode = 2
+
 [node name="SettingsManager" parent="." unique_id=2093540964 instance=ExtResource("4_b20oh")]
 visible = false
 layout_mode = 1
@@ -382,12 +385,6 @@ offset_left = 36.0
 offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
-
-[node name="EStopStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("17_exayt")]
-layout_mode = 2
-
-[node name="EStopStatusPanel2" parent="StatusPanels" unique_id=1746583561 instance=ExtResource("17_exayt")]
-layout_mode = 2
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
