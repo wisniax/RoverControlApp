@@ -142,17 +142,17 @@ public partial class ArmAutonomyPanel : Control
     }
     public override void _EnterTree()
     {
-        MqttNode.Singleton.MessageReceivedAsync += OnArmAutonomyCheckResult;
-        MqttNode.Singleton.MessageReceivedAsync += OnArmMissionFeedback;
+        MqttNode.Singleton.MessageReceivedAsync += OnRoboticArmCheckResult;
+        MqttNode.Singleton.MessageReceivedAsync += OnRoboticArmMissionFeedback;
     }
 
     public override void _ExitTree()
     {
-        MqttNode.Singleton.MessageReceivedAsync -= OnArmAutonomyCheckResult;
-        MqttNode.Singleton.MessageReceivedAsync -= OnArmMissionFeedback;
+        MqttNode.Singleton.MessageReceivedAsync -= OnRoboticArmCheckResult;
+        MqttNode.Singleton.MessageReceivedAsync -= OnRoboticArmMissionFeedback;
     }
 
-    public void UpdateCheckResult(ArmAutonomyCheckResult result)
+    public void UpdateCheckResult(RoboticArmCheckResult result)
     {
         _lastCheckPanelFound = result.panel_found;
         _lastCheckResultAtMs = Godot.Time.GetTicksMsec();
@@ -179,9 +179,9 @@ public partial class ArmAutonomyPanel : Control
         }
     }
 
-    public Task OnArmAutonomyCheckResult(string subTopic, MqttApplicationMessage? msg)
+    public Task OnRoboticArmCheckResult(string subTopic, MqttApplicationMessage? msg)
     {
-        if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicArmAutonomyCheckResult) || subTopic != LocalSettings.Singleton.Mqtt.TopicArmAutonomyCheckResult)
+        if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicRoboticArmCheckResult) || subTopic != LocalSettings.Singleton.Mqtt.TopicRoboticArmCheckResult)
             return Task.CompletedTask;
         if (msg is null || msg.PayloadSegment.Count == 0)
         {
@@ -191,14 +191,14 @@ public partial class ArmAutonomyPanel : Control
 
         try
         {
-            var result = JsonSerializer.Deserialize<ArmAutonomyCheckResult>(msg.ConvertPayloadToString());
+            var result = JsonSerializer.Deserialize<RoboticArmCheckResult>(msg.ConvertPayloadToString());
             if (result is null)
-                throw new InvalidDataException("Invalid ArmAutonomyCheckResult payload.");
+                throw new InvalidDataException("Invalid RoboticArmCheckResult payload.");
             Callable.From(() => UpdateCheckResult(result)).CallDeferred();
         }
         catch (Exception e)
         {
-            EventLogger.LogMessage("ArmAutonomyCheckResult", EventLogger.LogLevel.Error, $"Something is wrong with json/deserialization: {e.Message}");
+            EventLogger.LogMessage("RoboticArmCheckResult", EventLogger.LogLevel.Error, $"Something is wrong with json/deserialization: {e.Message}");
         }
         return Task.CompletedTask;
     }
@@ -222,7 +222,7 @@ public partial class ArmAutonomyPanel : Control
         };
 
         // Consider using async?
-        MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicArmAutonomy,
+        MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicRoboticArmAutonomy,
             JsonSerializer.Serialize(msg));
     }
 
@@ -234,7 +234,7 @@ public partial class ArmAutonomyPanel : Control
         };
 
         // Consider using async?
-        MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicArmAutonomy,
+        MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicRoboticArmAutonomy,
             JsonSerializer.Serialize(msg));
     }
 
@@ -247,7 +247,7 @@ public partial class ArmAutonomyPanel : Control
             mission_id = mission_id.ToString(),
         };
 
-        MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicArmAutonomy,
+        MqttNode.Singleton.EnqueueMessage(LocalSettings.Singleton.Mqtt.TopicRoboticArmAutonomy,
             JsonSerializer.Serialize(msg));
     }
 
@@ -296,9 +296,9 @@ public partial class ArmAutonomyPanel : Control
         }
     }
 
-    public Task OnArmMissionFeedback(string subTopic, MqttApplicationMessage? msg)
+    public Task OnRoboticArmMissionFeedback(string subTopic, MqttApplicationMessage? msg)
     {
-        if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicArmMissionFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicArmMissionFeedback)
+        if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicRoboticArmMissionFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicRoboticArmMissionFeedback)
             return Task.CompletedTask;
         if (msg is null || msg.PayloadSegment.Count == 0)
         {
@@ -315,7 +315,7 @@ public partial class ArmAutonomyPanel : Control
         }
         catch (Exception e)
         {
-            EventLogger.LogMessage("ArmAutonomyCheckResult", EventLogger.LogLevel.Error, $"Something is wrong with json/deserialization: {e.Message}");
+            EventLogger.LogMessage("RoboticArmMissionFeedback", EventLogger.LogLevel.Error, $"Something is wrong with json/deserialization: {e.Message}");
         }
         return Task.CompletedTask;
     }
@@ -323,7 +323,7 @@ public partial class ArmAutonomyPanel : Control
     private void HandleFeedback(RoboticArmMissionFeedback feedback)
     {
         SetRowListTasks(_feedbackList, _feedbackRows, feedback.tasks, feedback.completed_tasks);
-        EventLogger.LogMessage("ArmAutonomyCheckResult", EventLogger.LogLevel.Info, "Got feedback, status " + feedback.status);
+        EventLogger.LogMessage("RoboticArmMissionFeedback", EventLogger.LogLevel.Info, "Got feedback, status " + feedback.status);
         _feedbackStatusLabel.Text = $"Status: {feedback.status}";
     }
 }

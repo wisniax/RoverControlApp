@@ -381,7 +381,7 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; }
 		}
 
-		public sealed class ArmAutonomyCheckResult
+		public sealed class RoboticArmCheckResult
 		{
 			public bool[] possibility { get; set; } = [];
 			public string mission_id { get; set; } = "";

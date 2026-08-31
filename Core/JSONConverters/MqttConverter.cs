@@ -29,9 +29,9 @@ public class MqttConverter : JsonConverter<Mqtt>
 		string? topicSampler = null;
 		string? topicBatteryInfo = null;
 		string? topicBatteryControl = null;
-		string? topicArmAutonomyCheckResult = null;
-		string? topicArmAutonomy = null;
-		string? topicArmMissionFeedback = null;
+		string? topicRoboticArmCheckResult = null;
+		string? topicRoboticArmAutonomy = null;
+		string? topicRoboticArmMissionFeedback = null;
 
 		while (reader.Read())
 		{
@@ -88,14 +88,14 @@ public class MqttConverter : JsonConverter<Mqtt>
 				case nameof(Mqtt.TopicBatteryControl):
 					topicBatteryControl = reader.GetString();
 					break;
-				case nameof(Mqtt.TopicArmAutonomyCheckResult):
-					topicArmAutonomyCheckResult = reader.GetString();
+				case nameof(Mqtt.TopicRoboticArmCheckResult):
+					topicRoboticArmCheckResult = reader.GetString();
 					break;
-				case nameof(Mqtt.TopicArmAutonomy):
-					topicArmAutonomy = reader.GetString();
+				case nameof(Mqtt.TopicRoboticArmAutonomy):
+					topicRoboticArmAutonomy = reader.GetString();
 					break;
-				case nameof(Mqtt.TopicArmMissionFeedback):
-					topicArmMissionFeedback = reader.GetString();
+				case nameof(Mqtt.TopicRoboticArmMissionFeedback):
+					topicRoboticArmMissionFeedback = reader.GetString();
 					break;
 				default:
 					reader.Skip();
@@ -119,9 +119,9 @@ public class MqttConverter : JsonConverter<Mqtt>
 			topicSampler ?? Default.TopicSamplerControl,
 			topicBatteryInfo ?? Default.TopicBatteryInfo,
 			topicBatteryControl ?? Default.TopicBatteryControl,
-			topicArmAutonomyCheckResult ?? Default.TopicArmAutonomyCheckResult,
-			topicArmAutonomy ?? Default.TopicArmAutonomy,
-			topicArmMissionFeedback ?? Default.TopicArmMissionFeedback
+			topicRoboticArmCheckResult ?? Default.TopicRoboticArmCheckResult,
+			topicRoboticArmAutonomy ?? Default.TopicRoboticArmAutonomy,
+			topicRoboticArmMissionFeedback ?? Default.TopicRoboticArmMissionFeedback
 		);
 	}
 
@@ -143,9 +143,9 @@ public class MqttConverter : JsonConverter<Mqtt>
 		writer.WriteString(nameof(Mqtt.TopicSamplerControl), value.TopicSamplerControl);
 		writer.WriteString(nameof(Mqtt.TopicBatteryInfo), value.TopicBatteryInfo);
 		writer.WriteString(nameof(Mqtt.TopicBatteryControl), value.TopicBatteryControl);
-		writer.WriteString(nameof(Mqtt.TopicArmAutonomyCheckResult), value.TopicArmAutonomyCheckResult);
-		writer.WriteString(nameof(Mqtt.TopicArmAutonomy), value.TopicArmAutonomy);
-		writer.WriteString(nameof(Mqtt.TopicArmMissionFeedback), value.TopicArmMissionFeedback);
+		writer.WriteString(nameof(Mqtt.TopicRoboticArmCheckResult), value.TopicRoboticArmCheckResult);
+		writer.WriteString(nameof(Mqtt.TopicRoboticArmAutonomy), value.TopicRoboticArmAutonomy);
+		writer.WriteString(nameof(Mqtt.TopicRoboticArmMissionFeedback), value.TopicRoboticArmMissionFeedback);
 		writer.WriteEndObject();
 	}
 }
