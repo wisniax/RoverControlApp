@@ -387,21 +387,6 @@ offset_top = 29.0
 offset_right = -27.0
 offset_bottom = -40.0
 
-[node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel")]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 42.0
-offset_right = 371.0
-offset_bottom = 538.0
-script = ExtResource("17_a5ovi")
-_eStopPanel = NodePath("EStopStatusPanel")
-
-[node name="EStopStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("17_exayt")]
-layout_mode = 2
-
-[node name="EStopStatusPanel2" parent="StatusPanels" unique_id=1746583561 instance=ExtResource("17_exayt")]
-layout_mode = 2
-
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
