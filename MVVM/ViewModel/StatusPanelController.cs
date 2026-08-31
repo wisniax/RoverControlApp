@@ -13,6 +13,7 @@ public partial class StatusPanelController : VBoxContainer
 	public override void _Ready()
 	{
 		PressedKeys.Singleton.OnControlModeChanged += ControlModeChangedSubscriber;
+		ControlModeChangedSubscriber(PressedKeys.Singleton.GetCurrentControlMode());
 	}
 
 	public override void _ExitTree()

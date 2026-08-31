@@ -331,8 +331,8 @@ namespace RoverControlApp.Core
 
 		public class ServoStatus
 		{
-			public StatusCode Code { get; set; }
-			public string Message { get; set; }
+			public StatusCode Code { get; set; } = StatusCode.Invalid;
+			public string Message { get; set; } = string.Empty;
 			public long Timestamp { get; set; }
 		}
 
