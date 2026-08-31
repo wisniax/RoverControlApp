@@ -32,6 +32,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 		string? topicRoboticArmCheckResult = null;
 		string? topicRoboticArmAutonomy = null;
 		string? topicRoboticArmMissionFeedback = null;
+		string? topicServoStatus = null;
 
 		while (reader.Read())
 		{
@@ -96,6 +97,8 @@ public class MqttConverter : JsonConverter<Mqtt>
 					break;
 				case nameof(Mqtt.TopicRoboticArmMissionFeedback):
 					topicRoboticArmMissionFeedback = reader.GetString();
+				case nameof(Mqtt.TopicServoStatus):
+					topicServoStatus = reader.GetString();
 					break;
 				default:
 					reader.Skip();
@@ -122,6 +125,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 			topicRoboticArmCheckResult ?? Default.TopicRoboticArmCheckResult,
 			topicRoboticArmAutonomy ?? Default.TopicRoboticArmAutonomy,
 			topicRoboticArmMissionFeedback ?? Default.TopicRoboticArmMissionFeedback
+			topicServoStatus ?? Default.TopicServoStatus
 		);
 	}
 
@@ -146,6 +150,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 		writer.WriteString(nameof(Mqtt.TopicRoboticArmCheckResult), value.TopicRoboticArmCheckResult);
 		writer.WriteString(nameof(Mqtt.TopicRoboticArmAutonomy), value.TopicRoboticArmAutonomy);
 		writer.WriteString(nameof(Mqtt.TopicRoboticArmMissionFeedback), value.TopicRoboticArmMissionFeedback);
+		writer.WriteString(nameof(Mqtt.TopicServoStatus), value.TopicServoStatus);
 		writer.WriteEndObject();
 	}
 }

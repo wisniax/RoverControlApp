@@ -10,9 +10,11 @@ public partial class StatusPanelController : VBoxContainer
 {
 	[Export] EStopPanel _eStopPanel = null!;
 	[Export] ArmAutonomyPanel _armAutonomyPanel = null!;
+	[Export] ManipulatorPanel _manipulatorPanel = null!;
 	public override void _Ready()
 	{
 		PressedKeys.Singleton.OnControlModeChanged += ControlModeChangedSubscriber;
+		ControlModeChangedSubscriber(PressedKeys.Singleton.GetCurrentControlMode());
 	}
 
 	public override void _ExitTree()
@@ -24,6 +26,7 @@ public partial class StatusPanelController : VBoxContainer
 	{
 		_eStopPanel.SetVisible(newMode.HasFlag(MqttClasses.ControlModeFlags.EStop));
 		_armAutonomyPanel.SetVisible(newMode.HasFlag(MqttClasses.ControlModeFlags.RoboticArmAutonomy));
+		_manipulatorPanel.SetVisible(newMode.HasFlag(MqttClasses.ControlModeFlags.RoboticArm) || newMode.HasFlag(MqttClasses.ControlModeFlags.RoboticArmAutonomy));
 
 		return Task.CompletedTask;
 	}
