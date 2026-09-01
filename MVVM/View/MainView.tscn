@@ -17,8 +17,8 @@
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
 [ext_resource type="Script" uid="uid://bfg0ffyat7n25" path="res://MVVM/ViewModel/StatusPanelController.cs" id="17_a5ovi"]
-[ext_resource type="PackedScene" uid="uid://s5clmfanc4i" path="res://MVVM/View/EStopStatusPanel.tscn" id="17_exayt"]
-[ext_resource type="PackedScene" uid="uid://bs14nsa8w6e30" path="res://MVVM/View/SamplerFeedbackPanel.tscn" id="19_bvsyq"]
+[ext_resource type="PackedScene" uid="uid://s5clmfanc4i" path="res://MVVM/View/StatusPanels/EStopStatusPanel.tscn" id="17_exayt"]
+[ext_resource type="PackedScene" uid="uid://bs14nsa8w6e30" path="res://MVVM/View/StatusPanels/SamplerFeedbackPanel.tscn" id="20_bvsyq"]
 [ext_resource type="PackedScene" uid="uid://b8jd7sjnl15bq" path="res://MVVM/View/StatusPanels/ArmAutonomyStatusPanel.tscn" id="18_bvsyq"]
 [ext_resource type="PackedScene" uid="uid://citcc8i5oor0u" path="res://MVVM/View/StatusPanels/ManipulatorStatusPanel.tscn" id="19_bvsyq"]
 
@@ -338,7 +338,7 @@ offset_bottom = -45.38
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel", "_armAutonomyPanel", "_manipulatorPanel")]
+[node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel", "_samplerPanel", "_armAutonomyPanel", "_manipulatorPanel")]
 layout_mode = 0
 offset_left = 2.0
 offset_top = 42.0
@@ -346,6 +346,7 @@ offset_right = 371.0
 offset_bottom = 538.0
 script = ExtResource("17_a5ovi")
 _eStopPanel = NodePath("EStopStatusPanel")
+_samplerPanel = NodePath("SamplerFeedbackPanel")
 _armAutonomyPanel = NodePath("ArmAutonomyStatusPanel")
 _manipulatorPanel = NodePath("ManipulatorStatusPanel")
 
@@ -358,6 +359,10 @@ visible = false
 layout_mode = 2
 
 [node name="ArmAutonomyStatusPanel" parent="StatusPanels" unique_id=1051090000 instance=ExtResource("18_bvsyq")]
+visible = false
+layout_mode = 2
+
+[node name="SamplerFeedbackPanel" parent="StatusPanels" unique_id=656370114 instance=ExtResource("20_bvsyq")]
 visible = false
 layout_mode = 2
 
@@ -385,23 +390,6 @@ ReactiveHints = true
 ShowEmpty = true
 CycleHints = true
 metadata/_edit_lock_ = true
-
-[node name="StatusPanels" type="VBoxContainer" parent="." unique_id=1727709663 node_paths=PackedStringArray("_eStopPanel", "_samplerPanel")]
-layout_mode = 0
-offset_left = 2.0
-offset_top = 42.0
-offset_right = 371.0
-offset_bottom = 538.0
-script = ExtResource("17_a5ovi")
-_eStopPanel = NodePath("EStopStatusPanel")
-_samplerPanel = NodePath("SamplerFeedbackPanel")
-
-[node name="EStopStatusPanel" parent="StatusPanels" unique_id=2107319711 instance=ExtResource("17_exayt")]
-layout_mode = 2
-
-[node name="SamplerFeedbackPanel" parent="StatusPanels" unique_id=656370114 instance=ExtResource("19_bvsyq")]
-visible = false
-layout_mode = 2
 
 [node name="SettingsManager" parent="." unique_id=2093540964 instance=ExtResource("4_b20oh")]
 visible = false

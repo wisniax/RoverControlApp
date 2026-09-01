@@ -96,6 +96,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 					break;
 				case nameof(Mqtt.TopicSamplerFeedback):
 					topicSamplerFeedback = reader.GetString();
+					break;
 				case nameof(Mqtt.TopicRoboticArmCheckResult):
 					topicRoboticArmCheckResult = reader.GetString();
 					break;
@@ -131,7 +132,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 			topicBatteryInfo ?? Default.TopicBatteryInfo,
 			topicBatteryControl ?? Default.TopicBatteryControl,
 			topicRotaryFeedback ?? Default.TopicRotaryFeedback,
-			topicSamplerFeedback ?? Default.TopicSamplerFeedback
+			topicSamplerFeedback ?? Default.TopicSamplerFeedback,
 			topicRoboticArmCheckResult ?? Default.TopicRoboticArmCheckResult,
 			topicRoboticArmAutonomy ?? Default.TopicRoboticArmAutonomy,
 			topicRoboticArmMissionFeedback ?? Default.TopicRoboticArmMissionFeedback,

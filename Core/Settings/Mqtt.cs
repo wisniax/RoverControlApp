@@ -102,7 +102,7 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicBatteryInfo = _topicBatteryInfo,
 			TopicBatteryControl = _topicBatteryControl,
 			TopicRotaryFeedback = _topicRotaryFeedback,
-			TopicSamplerFeedback = _topicSamplerFeedback
+			TopicSamplerFeedback = _topicSamplerFeedback,
 			TopicRoboticArmCheckResult = _topicRoboticArmCheckResult,
 			TopicRoboticArmAutonomy = _topicRoboticArmAutonomy,
 			TopicRoboticArmMissionFeedback = _topicRoboticArmMissionFeedback,
@@ -211,15 +211,18 @@ public partial class Mqtt : SettingBase, ICloneable
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicRotaryFeedback
 	{
-		get => _topicRotaryFeedback; 
+		get => _topicRotaryFeedback;
 		set => EmitSignal_SettingChanged(ref _topicRotaryFeedback, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicSamplerFeedback
 	{
-		get => _topicSamplerFeedback; 
+		get => _topicSamplerFeedback;
 		set => EmitSignal_SettingChanged(ref _topicSamplerFeedback, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicRoboticArmCheckResult
 	{
 		get => _topicRoboticArmCheckResult;

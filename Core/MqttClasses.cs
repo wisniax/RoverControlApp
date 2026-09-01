@@ -426,8 +426,8 @@ namespace RoverControlApp.Core
 			public int autonomy_state { get; set; }
 			public int goal_state { get; set; }
 			public long Timestamp { get; set; }
-    }
-    
+		}
+
 		public sealed class RoboticArmCheckResult
 		{
 			public bool[] possibility { get; set; } = [];
