@@ -9,7 +9,7 @@ using MQTTnet;
 using RoverControlApp.Core;
 using RoverControlApp.MVVM.Model;
 
-public partial class SamplerFeedbackPanel : Control
+public partial class SamplerFeedbackPanel : StatusPanel
 {
 	[Export] private Label _scale1 = null!;
 	[Export] private Label _scale2 = null!;
@@ -24,6 +24,7 @@ public partial class SamplerFeedbackPanel : Control
 
 	public override void _EnterTree()
 	{
+		base._EnterTree();
 		MqttNode.Singleton.MessageReceivedAsync += OnWeightChanged;
 		MqttNode.Singleton.MessageReceivedAsync += OnSamplerInfo;
 	}

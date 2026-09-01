@@ -20,7 +20,7 @@ border_width_bottom = 1
 border_color = Color(0.0076186024, 0.0076186024, 0.0076186024, 1)
 border_blend = true
 
-[node name="SamplerFeedbackPanel" type="Control" unique_id=656370114 node_paths=PackedStringArray("_scale1", "_scale2", "_platform", "_drill", "_container", "_vacuum", "_drillRot", "_brush", "_save1", "_save2")]
+[node name="SamplerFeedbackPanel" type="Control" unique_id=656370114 node_paths=PackedStringArray("_scale1", "_scale2", "_platform", "_drill", "_container", "_vacuum", "_drillRot", "_brush", "_save1", "_save2", "_hiddenStatePanel", "_shownStatePanel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -38,6 +38,8 @@ _drillRot = NodePath("ShownState/VBoxContainer/HBoxContainer7/drillRot")
 _brush = NodePath("ShownState/VBoxContainer/HBoxContainer8/brush")
 _save1 = NodePath("ShownState/VBoxContainer/HBoxContainer/save1")
 _save2 = NodePath("ShownState/VBoxContainer/HBoxContainer2/save2")
+_hiddenStatePanel = NodePath("HiddenState")
+_shownStatePanel = NodePath("ShownState")
 
 [node name="HiddenState" type="Panel" parent="." unique_id=1102447694]
 layout_mode = 0
@@ -209,9 +211,7 @@ custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
 
-[connection signal="pressed" from="HiddenState/ShowShown" to="HiddenState" method="set_visible" binds= [false]]
-[connection signal="pressed" from="HiddenState/ShowShown" to="ShownState" method="set_visible" binds= [true]]
-[connection signal="pressed" from="ShownState/ShowHidden" to="HiddenState" method="set_visible" binds= [true]]
-[connection signal="pressed" from="ShownState/ShowHidden" to="ShownState" method="set_visible" binds= [false]]
+[connection signal="pressed" from="HiddenState/ShowShown" to="." method="PanelPressed"]
+[connection signal="pressed" from="ShownState/ShowHidden" to="." method="PanelPressed"]
 [connection signal="pressed" from="ShownState/VBoxContainer/HBoxContainer/button1" to="." method="SaveScale1"]
 [connection signal="pressed" from="ShownState/VBoxContainer/HBoxContainer2/button2" to="." method="SaveScale2"]
