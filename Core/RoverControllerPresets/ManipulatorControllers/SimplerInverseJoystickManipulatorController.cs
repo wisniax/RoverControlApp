@@ -49,7 +49,7 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 
 	MultiAxisManipulatorController multiAxisManipulatorController = new();
 
-	private bool _useToolReference = false;
+	private MovementReference _currentReference = MovementReference.base_link;
 	private bool _forceCartesian = false;
 	private bool _forceMovement = false;
 	private int _GTRReference = 0; // "Go to reference" reference
@@ -94,8 +94,9 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 
 				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvChangeRef, targetInputDevice), exactMatch: true))
 				{
-					_useToolReference = !_useToolReference;
+					_currentReference = (MovementReference)(((int)_currentReference + 1) % 3);
 				}
+				manipulatorControl.Reference = _currentReference.ToString();
 
 				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvForceCartesian, targetInputDevice), exactMatch: true))
 				{
@@ -105,11 +106,6 @@ public class SimplerInverseJoystickManipulatorController : IRoverManipulatorCont
 				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvForceMovement, targetInputDevice), exactMatch: true))
 				{
 					_forceMovement = !_forceMovement;
-				}
-
-				if (_useToolReference)
-				{
-					manipulatorControl.Reference = "tool";
 				}
 
 				Vec3 linearSpeed = new();

@@ -199,6 +199,12 @@ namespace RoverControlApp.Core
 							  // ... predefined positions (Driving position, sampler, etc)? Later.
 			UseMoveITPlanning = 6, // give control away to moveit
 		}
+		public enum MovementReference
+		{
+			base_link,
+			tool,
+			m_panel,
+		}
 		public class ForwardKinMode
 		{
 			public float Axis1 { get; set; } = 0;
