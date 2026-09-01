@@ -20,7 +20,7 @@ border_width_bottom = 1
 border_color = Color(0.0076186024, 0.0076186024, 0.0076186024, 1)
 border_blend = true
 
-[node name="SamplerFeedbackPanel" type="Control" unique_id=656370114 node_paths=PackedStringArray("_scale1", "_scale2", "_platform", "_drill", "_container", "_vacuum", "_drillRot", "_brush", "_save1", "_save2", "_hiddenStatePanel", "_shownStatePanel")]
+[node name="SamplerFeedbackPanel" type="Control" unique_id=656370114 node_paths=PackedStringArray("_scale1", "_scale2", "_scale3", "_save1", "_save2", "_save3", "_platform", "_drill", "_container", "_vacuum", "_drillRot", "_brush", "_hiddenStatePanel", "_shownStatePanel")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,18 +30,21 @@ grow_vertical = 2
 script = ExtResource("1_fomex")
 _scale1 = NodePath("ShownState/VBoxContainer/HBoxContainer/scale1")
 _scale2 = NodePath("ShownState/VBoxContainer/HBoxContainer2/scale2")
+_scale3 = NodePath("ShownState/VBoxContainer/HBoxContainer9/scale3")
+_save1 = NodePath("ShownState/VBoxContainer/HBoxContainer/save1")
+_save2 = NodePath("ShownState/VBoxContainer/HBoxContainer2/save2")
+_save3 = NodePath("ShownState/VBoxContainer/HBoxContainer9/save3")
 _platform = NodePath("ShownState/VBoxContainer/HBoxContainer3/platform")
 _drill = NodePath("ShownState/VBoxContainer/HBoxContainer4/drill")
 _container = NodePath("ShownState/VBoxContainer/HBoxContainer5/container")
 _vacuum = NodePath("ShownState/VBoxContainer/HBoxContainer6/vacuum")
 _drillRot = NodePath("ShownState/VBoxContainer/HBoxContainer7/drillRot")
 _brush = NodePath("ShownState/VBoxContainer/HBoxContainer8/brush")
-_save1 = NodePath("ShownState/VBoxContainer/HBoxContainer/save1")
-_save2 = NodePath("ShownState/VBoxContainer/HBoxContainer2/save2")
 _hiddenStatePanel = NodePath("HiddenState")
 _shownStatePanel = NodePath("ShownState")
 
 [node name="HiddenState" type="Panel" parent="." unique_id=1102447694]
+visible = false
 layout_mode = 0
 offset_right = 369.0
 offset_bottom = 41.0
@@ -61,16 +64,15 @@ theme_override_font_sizes/font_size = 27
 text = "Sampler Feedback               ▶"
 
 [node name="ShownState" type="Panel" parent="." unique_id=867189673]
-visible = false
 layout_mode = 0
 offset_right = 369.0
-offset_bottom = 297.0
+offset_bottom = 330.0
 
 [node name="ShowHidden" type="Button" parent="ShownState" unique_id=1638031814]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 0
 offset_right = 369.0
-offset_bottom = 122.0
+offset_bottom = 330.0
 focus_mode = 0
 
 [node name="Label2" type="Label" parent="ShownState" unique_id=267370632]
@@ -129,6 +131,29 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_hq3xs")
 
 [node name="button2" type="Button" parent="ShownState/VBoxContainer/HBoxContainer2" unique_id=1500417523]
+layout_mode = 2
+focus_mode = 0
+text = "save"
+
+[node name="HBoxContainer9" type="HBoxContainer" parent="ShownState/VBoxContainer" unique_id=954498578]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="name" type="Label" parent="ShownState/VBoxContainer/HBoxContainer9" unique_id=2066291842]
+layout_mode = 2
+text = "Scale 3"
+
+[node name="scale3" type="Label" parent="ShownState/VBoxContainer/HBoxContainer9" unique_id=990599802]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
+
+[node name="save3" type="Label" parent="ShownState/VBoxContainer/HBoxContainer9" unique_id=1023635444]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hq3xs")
+
+[node name="button3" type="Button" parent="ShownState/VBoxContainer/HBoxContainer9" unique_id=2145724228]
 layout_mode = 2
 focus_mode = 0
 text = "save"
@@ -215,3 +240,4 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
 [connection signal="pressed" from="ShownState/ShowHidden" to="." method="PanelPressed"]
 [connection signal="pressed" from="ShownState/VBoxContainer/HBoxContainer/button1" to="." method="SaveScale1"]
 [connection signal="pressed" from="ShownState/VBoxContainer/HBoxContainer2/button2" to="." method="SaveScale2"]
+[connection signal="pressed" from="ShownState/VBoxContainer/HBoxContainer9/button3" to="." method="SaveScale3"]

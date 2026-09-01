@@ -13,18 +13,23 @@ public partial class SamplerFeedbackPanel : StatusPanel
 {
 	[Export] private Label _scale1 = null!;
 	[Export] private Label _scale2 = null!;
+	[Export] private Label _scale3 = null!;
+	[Export] private Label _save1 = null!;
+	[Export] private Label _save2 = null!;
+	[Export] private Label _save3 = null!;
 	[Export] private Label _platform = null!;
 	[Export] private Label _drill = null!;
 	[Export] private Label _container = null!;
 	[Export] private Label _vacuum = null!;
 	[Export] private Label _drillRot = null!;
 	[Export] private Label _brush = null!;
-	[Export] private Label _save1 = null!;
-	[Export] private Label _save2 = null!;
 
-	public override void _EnterTree()
+	float _weight1 = 0.0f;
+	float _weight2 = 0.0f;
+	float _weight3 = 0.0f;
+
+	public override void _Ready()
 	{
-		base._EnterTree();
 		MqttNode.Singleton.MessageReceivedAsync += OnWeightChanged;
 		MqttNode.Singleton.MessageReceivedAsync += OnSamplerInfo;
 	}
@@ -51,7 +56,7 @@ public partial class SamplerFeedbackPanel : StatusPanel
 			var data = JsonSerializer.Deserialize<MqttClasses.RotaryFeedback>(msg.ConvertPayloadToString());
 			if (data is null)
 				throw new InvalidDataException("Invalid RotaryFeedback payload.");
-			Callable.From(() => UpdateRotaryFeedbackInfo(data.weight1, data.weight2)).CallDeferred();
+			Callable.From(() => UpdateRotaryFeedbackInfo(data.weight1, data.weight2, data.weight3)).CallDeferred();
 		}
 		catch (Exception e)
 		{
@@ -87,10 +92,15 @@ public partial class SamplerFeedbackPanel : StatusPanel
 		return Task.CompletedTask;
 	}
 
-	private void UpdateRotaryFeedbackInfo(double w1, double w2)
+	private void UpdateRotaryFeedbackInfo(double w1, double w2, double w3)
 	{
-		_scale1.Text = w1.ToString("0.000");
-		_scale2.Text = w2.ToString("0.000");
+		_weight1 = _weight1 * 0.8f + (float)w1 * 0.2f;
+		_weight2 = _weight2 * 0.8f + (float)w2 * 0.2f;
+		_weight3 = _weight3 * 0.8f + (float)w3 * 0.2f;
+
+		_scale1.Text = _weight1.ToString("0.0") + " g";
+		_scale2.Text = _weight2.ToString("0.0") + " g";
+		_scale3.Text = _weight3.ToString("0.0") + " g";
 	}
 
 	private void UpdateSamplerFeedbackInfo(MqttClasses.SamplerFeedback data)
@@ -111,5 +121,10 @@ public partial class SamplerFeedbackPanel : StatusPanel
 	public void SaveScale2()
 	{
 		_save2.Text = _scale2.Text;
+	}
+
+	public void SaveScale3()
+	{
+		_save3.Text = _scale3.Text;
 	}
 }
