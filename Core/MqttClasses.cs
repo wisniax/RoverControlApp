@@ -187,7 +187,7 @@ namespace RoverControlApp.Core
 				return HashCode.Combine(temp1, temp2, temp3, temp4);
 			}
 		}
-		
+
 		public enum ActionType
 		{
 			Stop = 0,
@@ -240,7 +240,7 @@ namespace RoverControlApp.Core
 
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-			public float this [int index]
+			public float this[int index]
 			{
 				get => index switch
 				{
@@ -253,7 +253,7 @@ namespace RoverControlApp.Core
 				};
 				set
 				{
-					switch(index)
+					switch (index)
 					{
 						case 0:
 							ContainerDegrees0 = value;
@@ -399,6 +399,69 @@ namespace RoverControlApp.Core
 			public LinearAcceleration linear_acceleration { get; set; } = new();
 			public Orientation orientation { get; set; } = new();
 			public long Timestamp { get; set; }
+		}
+
+		public sealed class RoboticArmCheckResult
+		{
+			public bool[] possibility { get; set; } = [];
+			public string mission_id { get; set; } = "";
+			public bool panel_found { get; set; }
+		}
+
+		public enum RoboticArmAutonomyActionType : byte
+		{
+			Stop = 0,
+			Check = 1,
+			Run = 2
+		}
+
+		public enum RoboticArmTaskType : byte
+		{
+			Rotary = 0,
+			Engine = 1,
+			Breaker = 2,
+			Bar = 3,
+			Home = 4,
+			Ready = 5,
+			Ref = 6
+		}
+
+		public sealed class RoboticArmAutonomy
+		{
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+			public RoboticArmAutonomyActionType action { get; set; } = RoboticArmAutonomyActionType.Stop;
+			public RoboticArmTask[] tasks { get; set; } = [];
+			public string mission_id { get; set; } = "";
+		}
+
+		public sealed class RoboticArmTask
+		{
+			public RoboticArmTaskType task_type { get; set; } = RoboticArmTaskType.Rotary;
+			public string item { get; set; } = string.Empty;
+			public bool skip_on_failure { get; set; }
+
+			public override string ToString()
+			{
+				var item_str = item != "" ? $"/{item}" : "";
+				var skip_str = skip_on_failure ? "?" : "";
+				return task_type.ToString() + item_str + skip_str;
+			}
+		}
+
+		public enum RoboticArmMissionFeedbackStatus : byte
+		{
+			Running = 0,
+			Success = 1,
+			Cancelled = 2,
+			Failure = 3,
+		}
+
+		public sealed class RoboticArmMissionFeedback
+		{
+			public RoboticArmMissionFeedbackStatus status { get; set; }
+			public RoboticArmTask[] tasks { get; set; } = [];
+			public bool[] completed_tasks { get; set; } = [];
+			public string mission_id { get; set; } = "";
 		}
 
 	}

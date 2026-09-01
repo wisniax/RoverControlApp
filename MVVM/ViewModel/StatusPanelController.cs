@@ -9,6 +9,7 @@ using RoverControlApp.MVVM;
 public partial class StatusPanelController : VBoxContainer
 {
 	[Export] EStopPanel _eStopPanel = null!;
+	[Export] ArmAutonomyPanel _armAutonomyPanel = null!;
 	[Export] ManipulatorPanel _manipulatorPanel = null!;
 	public override void _Ready()
 	{
@@ -24,6 +25,7 @@ public partial class StatusPanelController : VBoxContainer
 	public Task ControlModeChangedSubscriber(MqttClasses.ControlModeFlags newMode)
 	{
 		_eStopPanel.SetVisible(newMode.HasFlag(MqttClasses.ControlModeFlags.EStop));
+		_armAutonomyPanel.SetVisible(newMode.HasFlag(MqttClasses.ControlModeFlags.RoboticArmAutonomy));
 		_manipulatorPanel.SetVisible(newMode.HasFlag(MqttClasses.ControlModeFlags.RoboticArm) || newMode.HasFlag(MqttClasses.ControlModeFlags.RoboticArmAutonomy));
 
 		return Task.CompletedTask;

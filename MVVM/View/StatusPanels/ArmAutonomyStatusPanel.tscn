@@ -1,0 +1,195 @@
+[gd_scene format=3 uid="uid://b8jd7sjnl15bq"]
+
+[ext_resource type="Script" uid="uid://cvd800rw272wt" path="res://MVVM/ViewModel/StatusPanels/ArmAutonomyPanel.cs" id="1_s7hta"]
+[ext_resource type="PackedScene" uid="uid://bah8nap6e2ylp" path="res://MVVM/View/EntryRow.tscn" id="3_lifp3"]
+[ext_resource type="PackedScene" uid="uid://brab7hvdc7g5e" path="res://MVVM/View/Panel.tscn" id="3_qyyis"]
+
+[node name="ArmAutonomyStatusPanel" type="Control" unique_id=2107319711 node_paths=PackedStringArray("_panel", "_list", "_lastCheckResultAgeLabel", "_startButton", "_feedbackList", "_checkButton", "_stopButton", "_feedbackStatusLabel", "_clearButton")]
+use_parent_material = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -581.0
+offset_bottom = -610.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_s7hta")
+_panel = NodePath("ShownState/Panel")
+_list = NodePath("ShownState/ScrollContainer/VBoxContainer")
+_entryRowScene = ExtResource("3_lifp3")
+_lastCheckResultAgeLabel = NodePath("ShownState/CheckResultAge")
+_startButton = NodePath("ShownState/StartButton")
+_feedbackList = NodePath("ShownState/ScrollContainer2/VBoxContainer")
+_checkButton = NodePath("ShownState/CheckButton")
+_stopButton = NodePath("ShownState/StopButton")
+_feedbackStatusLabel = NodePath("ShownState/LastFeedbackStatus")
+_clearButton = NodePath("ShownState/ClearButton")
+
+[node name="HiddenState" type="Panel" parent="." unique_id=1100169613]
+visible = false
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 37.0
+
+[node name="ShowShown" type="Button" parent="HiddenState" unique_id=1421494376]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 38.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+focus_mode = 0
+icon_alignment = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HiddenState/ShowShown" unique_id=420087956]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="HiddenState/ShowShown/HBoxContainer" unique_id=1394067350]
+layout_mode = 2
+text = "  Autonomy Arm Control"
+
+[node name="Filler" type="Control" parent="HiddenState/ShowShown/HBoxContainer" unique_id=1509923821]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Arrow" type="Label" parent="HiddenState/ShowShown/HBoxContainer" unique_id=595136526]
+layout_mode = 2
+text = "▶ "
+
+[node name="ShownState" type="Panel" parent="." unique_id=1681091173]
+layout_mode = 0
+offset_right = 871.0
+offset_bottom = 447.0
+
+[node name="ShowHidden" type="Button" parent="ShownState" unique_id=2056434553]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 38.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+focus_mode = 0
+icon_alignment = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ShownState/ShowHidden" unique_id=1418385017]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="ShownState/ShowHidden/HBoxContainer" unique_id=1940227893]
+layout_mode = 2
+text = "  Autonomy Arm Control"
+
+[node name="Filler" type="Control" parent="ShownState/ShowHidden/HBoxContainer" unique_id=2141772721]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="Arrow" type="Label" parent="ShownState/ShowHidden/HBoxContainer" unique_id=1697669635]
+layout_mode = 2
+text = "▼ "
+
+[node name="Panel" parent="ShownState" unique_id=1069641514 instance=ExtResource("3_qyyis")]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 51.0
+offset_right = 200.0
+offset_bottom = 322.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ShownState" unique_id=2014249255]
+layout_mode = 0
+offset_left = 282.0
+offset_top = 51.0
+offset_right = 532.0
+offset_bottom = 408.0
+horizontal_scroll_mode = 4
+vertical_scroll_mode = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ShownState/ScrollContainer" unique_id=1693421274]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ScrollContainer2" type="ScrollContainer" parent="ShownState" unique_id=713589494]
+layout_mode = 0
+offset_left = 564.0
+offset_top = 46.0
+offset_right = 814.0
+offset_bottom = 403.0
+horizontal_scroll_mode = 4
+vertical_scroll_mode = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ShownState/ScrollContainer2" unique_id=1019476268]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CheckResultAge" type="Label" parent="ShownState" unique_id=458389056]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 417.0
+offset_right = 212.0
+offset_bottom = 440.0
+theme_override_font_sizes/font_size = 12
+text = "Last check: N/A ago"
+
+[node name="StartButton" type="Button" parent="ShownState" unique_id=1242878553]
+layout_mode = 0
+offset_left = 433.0
+offset_top = 410.0
+offset_right = 500.0
+offset_bottom = 441.0
+text = "Start"
+
+[node name="ClearButton" type="Button" parent="ShownState" unique_id=401778550]
+layout_mode = 0
+offset_left = 298.0
+offset_top = 410.0
+offset_right = 365.0
+offset_bottom = 441.0
+text = "Clear"
+
+[node name="CheckButton" type="Button" parent="ShownState" unique_id=642446998]
+layout_mode = 0
+offset_left = 509.0
+offset_top = 410.0
+offset_right = 576.0
+offset_bottom = 441.0
+text = "Check
+"
+
+[node name="StopButton" type="Button" parent="ShownState" unique_id=1526637597]
+layout_mode = 0
+offset_left = 583.0
+offset_top = 410.0
+offset_right = 650.0
+offset_bottom = 441.0
+theme_override_colors/font_color = Color(0.8, 0, 0, 1)
+text = "Stop
+
+"
+
+[node name="LastFeedbackStatus" type="Label" parent="ShownState" unique_id=1229801434]
+layout_mode = 0
+offset_left = 663.0
+offset_top = 415.0
+offset_right = 825.0
+offset_bottom = 438.0
+text = "Status: None"
+
+[connection signal="pressed" from="HiddenState/ShowShown" to="HiddenState" method="set_visible" binds= [false]]
+[connection signal="pressed" from="HiddenState/ShowShown" to="ShownState" method="set_visible" binds= [true]]
+[connection signal="pressed" from="ShownState/ShowHidden" to="HiddenState" method="set_visible" binds= [true]]
+[connection signal="pressed" from="ShownState/ShowHidden" to="ShownState" method="set_visible" binds= [false]]

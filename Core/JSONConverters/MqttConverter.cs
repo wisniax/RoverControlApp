@@ -29,6 +29,9 @@ public class MqttConverter : JsonConverter<Mqtt>
 		string? topicSampler = null;
 		string? topicBatteryInfo = null;
 		string? topicBatteryControl = null;
+		string? topicRoboticArmCheckResult = null;
+		string? topicRoboticArmAutonomy = null;
+		string? topicRoboticArmMissionFeedback = null;
 		string? topicServoStatus = null;
 
 		while (reader.Read())
@@ -86,6 +89,15 @@ public class MqttConverter : JsonConverter<Mqtt>
 				case nameof(Mqtt.TopicBatteryControl):
 					topicBatteryControl = reader.GetString();
 					break;
+				case nameof(Mqtt.TopicRoboticArmCheckResult):
+					topicRoboticArmCheckResult = reader.GetString();
+					break;
+				case nameof(Mqtt.TopicRoboticArmAutonomy):
+					topicRoboticArmAutonomy = reader.GetString();
+					break;
+				case nameof(Mqtt.TopicRoboticArmMissionFeedback):
+					topicRoboticArmMissionFeedback = reader.GetString();
+					break;
 				case nameof(Mqtt.TopicServoStatus):
 					topicServoStatus = reader.GetString();
 					break;
@@ -111,6 +123,9 @@ public class MqttConverter : JsonConverter<Mqtt>
 			topicSampler ?? Default.TopicSamplerControl,
 			topicBatteryInfo ?? Default.TopicBatteryInfo,
 			topicBatteryControl ?? Default.TopicBatteryControl,
+			topicRoboticArmCheckResult ?? Default.TopicRoboticArmCheckResult,
+			topicRoboticArmAutonomy ?? Default.TopicRoboticArmAutonomy,
+			topicRoboticArmMissionFeedback ?? Default.TopicRoboticArmMissionFeedback,
 			topicServoStatus ?? Default.TopicServoStatus
 		);
 	}
@@ -133,6 +148,9 @@ public class MqttConverter : JsonConverter<Mqtt>
 		writer.WriteString(nameof(Mqtt.TopicSamplerControl), value.TopicSamplerControl);
 		writer.WriteString(nameof(Mqtt.TopicBatteryInfo), value.TopicBatteryInfo);
 		writer.WriteString(nameof(Mqtt.TopicBatteryControl), value.TopicBatteryControl);
+		writer.WriteString(nameof(Mqtt.TopicRoboticArmCheckResult), value.TopicRoboticArmCheckResult);
+		writer.WriteString(nameof(Mqtt.TopicRoboticArmAutonomy), value.TopicRoboticArmAutonomy);
+		writer.WriteString(nameof(Mqtt.TopicRoboticArmMissionFeedback), value.TopicRoboticArmMissionFeedback);
 		writer.WriteString(nameof(Mqtt.TopicServoStatus), value.TopicServoStatus);
 		writer.WriteEndObject();
 	}

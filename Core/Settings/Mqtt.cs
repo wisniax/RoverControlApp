@@ -28,6 +28,9 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicSamplerControlControl = "SamplerControl";
 		_topicBatteryInfo = "BatteryInfo";
 		_topicBatteryControl = "BatteryControl";
+		_topicRoboticArmCheckResult = "RoboticArmCheckResult";
+		_topicRoboticArmAutonomy = "RoboticArmAutonomy";
+		_topicRoboticArmMissionFeedback = "RoboticArmMissionFeedback";
 		_topicServoStatus = "ServoStatus";
 	}
 
@@ -47,6 +50,9 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicSamplerControlControl,
 		string topicBatteryInfo,
 		string topicBatteryControl,
+		string topicRoboticArmCheckResult,
+		string topicRoboticArmAutonomy,
+		string topicRoboticArmMissionFeedback,
 		string topicServoStatus
 	)
 	{
@@ -64,6 +70,9 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicSamplerControlControl = topicSamplerControlControl;
 		_topicBatteryInfo = topicBatteryInfo;
 		_topicBatteryControl = topicBatteryControl;
+		_topicRoboticArmCheckResult = topicRoboticArmCheckResult;
+		_topicRoboticArmAutonomy = topicRoboticArmAutonomy;
+		_topicRoboticArmMissionFeedback = topicRoboticArmMissionFeedback;
 		_topicServoStatus = topicServoStatus;
 	}
 
@@ -86,6 +95,9 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicSamplerControl = _topicSamplerControlControl,
 			TopicBatteryInfo = _topicBatteryInfo,
 			TopicBatteryControl = _topicBatteryControl,
+			TopicRoboticArmCheckResult = _topicRoboticArmCheckResult,
+			TopicRoboticArmAutonomy = _topicRoboticArmAutonomy,
+			TopicRoboticArmMissionFeedback = _topicRoboticArmMissionFeedback,
 			TopicServoStatus = _topicServoStatus,
 		};
 	}
@@ -100,7 +112,7 @@ public partial class Mqtt : SettingBase, ICloneable
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicRoverControl
 	{
-		get => _topicRoverControl; 
+		get => _topicRoverControl;
 		set => EmitSignal_SettingChanged(ref _topicRoverControl, value);
 	}
 
@@ -184,10 +196,31 @@ public partial class Mqtt : SettingBase, ICloneable
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicBatteryControl
 	{
-		get => _topicBatteryControl; 
+		get => _topicBatteryControl;
 		set => EmitSignal_SettingChanged(ref _topicBatteryControl, value);
 	}
 
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicRoboticArmCheckResult
+	{
+		get => _topicRoboticArmCheckResult;
+		set => EmitSignal_SettingChanged(ref _topicRoboticArmCheckResult, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicRoboticArmAutonomy
+	{
+		get => _topicRoboticArmAutonomy;
+		set => EmitSignal_SettingChanged(ref _topicRoboticArmAutonomy, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicRoboticArmMissionFeedback
+	{
+		get => _topicRoboticArmMissionFeedback;
+		set => EmitSignal_SettingChanged(ref _topicRoboticArmMissionFeedback, value);
+	}
+	
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicServoStatus
 	{
@@ -211,7 +244,9 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicSamplerControlControl;
 	string _topicBatteryInfo;
 	string _topicBatteryControl;
+	string _topicRoboticArmCheckResult;
+	string _topicRoboticArmAutonomy;
+	string _topicRoboticArmMissionFeedback;
 	string _topicServoStatus;
 }
-
 
