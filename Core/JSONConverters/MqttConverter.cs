@@ -29,6 +29,8 @@ public class MqttConverter : JsonConverter<Mqtt>
 		string? topicSampler = null;
 		string? topicBatteryInfo = null;
 		string? topicBatteryControl = null;
+		string? topicRotaryFeedback = null;
+		string? topicSamplerFeedback = null;
 		string? topicRoboticArmCheckResult = null;
 		string? topicRoboticArmAutonomy = null;
 		string? topicRoboticArmMissionFeedback = null;
@@ -89,6 +91,12 @@ public class MqttConverter : JsonConverter<Mqtt>
 				case nameof(Mqtt.TopicBatteryControl):
 					topicBatteryControl = reader.GetString();
 					break;
+				case nameof(Mqtt.TopicRotaryFeedback):
+					topicRotaryFeedback = reader.GetString();
+					break;
+				case nameof(Mqtt.TopicSamplerFeedback):
+					topicSamplerFeedback = reader.GetString();
+					break;
 				case nameof(Mqtt.TopicRoboticArmCheckResult):
 					topicRoboticArmCheckResult = reader.GetString();
 					break;
@@ -123,6 +131,8 @@ public class MqttConverter : JsonConverter<Mqtt>
 			topicSampler ?? Default.TopicSamplerControl,
 			topicBatteryInfo ?? Default.TopicBatteryInfo,
 			topicBatteryControl ?? Default.TopicBatteryControl,
+			topicRotaryFeedback ?? Default.TopicRotaryFeedback,
+			topicSamplerFeedback ?? Default.TopicSamplerFeedback,
 			topicRoboticArmCheckResult ?? Default.TopicRoboticArmCheckResult,
 			topicRoboticArmAutonomy ?? Default.TopicRoboticArmAutonomy,
 			topicRoboticArmMissionFeedback ?? Default.TopicRoboticArmMissionFeedback,
@@ -148,6 +158,8 @@ public class MqttConverter : JsonConverter<Mqtt>
 		writer.WriteString(nameof(Mqtt.TopicSamplerControl), value.TopicSamplerControl);
 		writer.WriteString(nameof(Mqtt.TopicBatteryInfo), value.TopicBatteryInfo);
 		writer.WriteString(nameof(Mqtt.TopicBatteryControl), value.TopicBatteryControl);
+		writer.WriteString(nameof(Mqtt.TopicRotaryFeedback), value.TopicRotaryFeedback);
+		writer.WriteString(nameof(Mqtt.TopicSamplerFeedback), value.TopicSamplerFeedback);
 		writer.WriteString(nameof(Mqtt.TopicRoboticArmCheckResult), value.TopicRoboticArmCheckResult);
 		writer.WriteString(nameof(Mqtt.TopicRoboticArmAutonomy), value.TopicRoboticArmAutonomy);
 		writer.WriteString(nameof(Mqtt.TopicRoboticArmMissionFeedback), value.TopicRoboticArmMissionFeedback);

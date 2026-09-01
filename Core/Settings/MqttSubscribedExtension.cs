@@ -16,6 +16,8 @@ public static class MqttSubscribedExtension
             ( mqttSettings.TopicZedImuData, MqttQualityOfServiceLevel.AtMostOnce ),
             ( mqttSettings.TopicEStopStatus, MqttQualityOfServiceLevel.AtMostOnce ),
             ( mqttSettings.TopicBatteryInfo, MqttQualityOfServiceLevel.ExactlyOnce ),
+            ( mqttSettings.TopicRotaryFeedback, MqttQualityOfServiceLevel.ExactlyOnce ),
+            ( mqttSettings.TopicSamplerFeedback, MqttQualityOfServiceLevel.ExactlyOnce ),
             ( mqttSettings.TopicRoboticArmCheckResult, MqttQualityOfServiceLevel.ExactlyOnce ),
             ( mqttSettings.TopicRoboticArmMissionFeedback, MqttQualityOfServiceLevel.AtMostOnce ),
             ( mqttSettings.TopicServoStatus, MqttQualityOfServiceLevel.ExactlyOnce )

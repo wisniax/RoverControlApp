@@ -1,0 +1,243 @@
+[gd_scene format=3 uid="uid://bs14nsa8w6e30"]
+
+[ext_resource type="Script" uid="uid://bsx4jak724sxy" path="res://MVVM/ViewModel/StatusPanels/SamplerFeedbackPanel.cs" id="1_fomex"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qpg4d"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.0076186024, 0.0076186024, 0.0076186024, 1)
+border_blend = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hq3xs"]
+draw_center = false
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.0076186024, 0.0076186024, 0.0076186024, 1)
+border_blend = true
+
+[node name="SamplerFeedbackPanel" type="Control" unique_id=656370114 node_paths=PackedStringArray("_scale1", "_scale2", "_scale3", "_save1", "_save2", "_save3", "_platform", "_drill", "_container", "_vacuum", "_drillRot", "_brush", "_hiddenStatePanel", "_shownStatePanel")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_fomex")
+_scale1 = NodePath("ShownState/VBoxContainer/HBoxContainer/scale1")
+_scale2 = NodePath("ShownState/VBoxContainer/HBoxContainer2/scale2")
+_scale3 = NodePath("ShownState/VBoxContainer/HBoxContainer9/scale3")
+_save1 = NodePath("ShownState/VBoxContainer/HBoxContainer/save1")
+_save2 = NodePath("ShownState/VBoxContainer/HBoxContainer2/save2")
+_save3 = NodePath("ShownState/VBoxContainer/HBoxContainer9/save3")
+_platform = NodePath("ShownState/VBoxContainer/HBoxContainer3/platform")
+_drill = NodePath("ShownState/VBoxContainer/HBoxContainer4/drill")
+_container = NodePath("ShownState/VBoxContainer/HBoxContainer5/container")
+_vacuum = NodePath("ShownState/VBoxContainer/HBoxContainer6/vacuum")
+_drillRot = NodePath("ShownState/VBoxContainer/HBoxContainer7/drillRot")
+_brush = NodePath("ShownState/VBoxContainer/HBoxContainer8/brush")
+_hiddenStatePanel = NodePath("HiddenState")
+_shownStatePanel = NodePath("ShownState")
+
+[node name="HiddenState" type="Panel" parent="." unique_id=1102447694]
+visible = false
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 41.0
+
+[node name="ShowShown" type="Button" parent="HiddenState" unique_id=295328812]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 41.0
+focus_mode = 0
+
+[node name="Label" type="Label" parent="HiddenState" unique_id=1710412682]
+layout_mode = 0
+offset_right = 371.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 27
+text = "Sampler Feedback               ▶"
+
+[node name="ShownState" type="Panel" parent="." unique_id=867189673]
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 330.0
+
+[node name="ShowHidden" type="Button" parent="ShownState" unique_id=1638031814]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_right = 369.0
+offset_bottom = 330.0
+focus_mode = 0
+
+[node name="Label2" type="Label" parent="ShownState" unique_id=267370632]
+layout_mode = 0
+offset_right = 368.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 27
+text = "Sampler Feedback              ▼"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ShownState" unique_id=487360689]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 47.0
+offset_right = 365.0
+offset_bottom = 117.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ShownState/VBoxContainer" unique_id=611173794]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="name" type="Label" parent="ShownState/VBoxContainer/HBoxContainer" unique_id=1487916840]
+layout_mode = 2
+text = "Scale 1"
+
+[node name="scale1" type="Label" parent="ShownState/VBoxContainer/HBoxContainer" unique_id=1399884177]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
+
+[node name="save1" type="Label" parent="ShownState/VBoxContainer/HBoxContainer" unique_id=656856363]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hq3xs")
+
+[node name="button1" type="Button" parent="ShownState/VBoxContainer/HBoxContainer" unique_id=1719364279]
+layout_mode = 2
+focus_mode = 0
+text = "save"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="ShownState/VBoxContainer" unique_id=1238589157]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="name" type="Label" parent="ShownState/VBoxContainer/HBoxContainer2" unique_id=149508180]
+layout_mode = 2
+text = "Scale 2"
+
+[node name="scale2" type="Label" parent="ShownState/VBoxContainer/HBoxContainer2" unique_id=287622375]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
+
+[node name="save2" type="Label" parent="ShownState/VBoxContainer/HBoxContainer2" unique_id=102415174]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hq3xs")
+
+[node name="button2" type="Button" parent="ShownState/VBoxContainer/HBoxContainer2" unique_id=1500417523]
+layout_mode = 2
+focus_mode = 0
+text = "save"
+
+[node name="HBoxContainer9" type="HBoxContainer" parent="ShownState/VBoxContainer" unique_id=954498578]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="name" type="Label" parent="ShownState/VBoxContainer/HBoxContainer9" unique_id=2066291842]
+layout_mode = 2
+text = "Scale 3"
+
+[node name="scale3" type="Label" parent="ShownState/VBoxContainer/HBoxContainer9" unique_id=990599802]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
+
+[node name="save3" type="Label" parent="ShownState/VBoxContainer/HBoxContainer9" unique_id=1023635444]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_hq3xs")
+
+[node name="button3" type="Button" parent="ShownState/VBoxContainer/HBoxContainer9" unique_id=2145724228]
+layout_mode = 2
+focus_mode = 0
+text = "save"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="ShownState/VBoxContainer" unique_id=710655960]
+layout_mode = 2
+theme_override_constants/separation = 25
+
+[node name="name" type="Label" parent="ShownState/VBoxContainer/HBoxContainer3" unique_id=1186381783]
+layout_mode = 2
+text = "Platform Position"
+
+[node name="platform" type="Label" parent="ShownState/VBoxContainer/HBoxContainer3" unique_id=1420665535]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
+
+[node name="HBoxContainer4" type="HBoxContainer" parent="ShownState/VBoxContainer" unique_id=188135564]
+layout_mode = 2
+theme_override_constants/separation = 61
+
+[node name="name" type="Label" parent="ShownState/VBoxContainer/HBoxContainer4" unique_id=750458463]
+layout_mode = 2
+text = "Drill Position"
+
+[node name="drill" type="Label" parent="ShownState/VBoxContainer/HBoxContainer4" unique_id=605296664]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
+
+[node name="HBoxContainer5" type="HBoxContainer" parent="ShownState/VBoxContainer" unique_id=524084798]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="name" type="Label" parent="ShownState/VBoxContainer/HBoxContainer5" unique_id=413721565]
+layout_mode = 2
+text = "Container Position"
+
+[node name="container" type="Label" parent="ShownState/VBoxContainer/HBoxContainer5" unique_id=842993189]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
+
+[node name="HBoxContainer6" type="HBoxContainer" parent="ShownState/VBoxContainer" unique_id=127440805]
+layout_mode = 2
+theme_override_constants/separation = 31
+
+[node name="name" type="Label" parent="ShownState/VBoxContainer/HBoxContainer6" unique_id=471168459]
+layout_mode = 2
+text = "Vacuum Suction "
+
+[node name="vacuum" type="Label" parent="ShownState/VBoxContainer/HBoxContainer6" unique_id=1354104253]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
+
+[node name="HBoxContainer7" type="HBoxContainer" parent="ShownState/VBoxContainer" unique_id=986069938]
+layout_mode = 2
+theme_override_constants/separation = 57
+
+[node name="name" type="Label" parent="ShownState/VBoxContainer/HBoxContainer7" unique_id=1610467156]
+layout_mode = 2
+text = "Drill Rotation"
+
+[node name="drillRot" type="Label" parent="ShownState/VBoxContainer/HBoxContainer7" unique_id=714208963]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
+
+[node name="HBoxContainer8" type="HBoxContainer" parent="ShownState/VBoxContainer" unique_id=552042152]
+layout_mode = 2
+theme_override_constants/separation = 43
+
+[node name="name" type="Label" parent="ShownState/VBoxContainer/HBoxContainer8" unique_id=2041177970]
+layout_mode = 2
+text = "Brush Rotation"
+
+[node name="brush" type="Label" parent="ShownState/VBoxContainer/HBoxContainer8" unique_id=353610491]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_qpg4d")
+
+[connection signal="pressed" from="HiddenState/ShowShown" to="." method="PanelPressed"]
+[connection signal="pressed" from="ShownState/ShowHidden" to="." method="PanelPressed"]
+[connection signal="pressed" from="ShownState/VBoxContainer/HBoxContainer/button1" to="." method="SaveScale1"]
+[connection signal="pressed" from="ShownState/VBoxContainer/HBoxContainer2/button2" to="." method="SaveScale2"]
+[connection signal="pressed" from="ShownState/VBoxContainer/HBoxContainer9/button3" to="." method="SaveScale3"]
