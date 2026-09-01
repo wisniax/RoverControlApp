@@ -151,7 +151,7 @@ public partial class MqttNode : Node
 			return false;
 		}
 		//await completion
-		_managedMqttClient.EnqueueAsync(subtopic, arg, qos, retain).ConfigureAwait(false).GetAwaiter().GetResult();
+		_managedMqttClient.EnqueueAsync(TopicFull(subtopic), arg, qos, retain).ConfigureAwait(false).GetAwaiter().GetResult();
 		EventLogger.LogMessage("MqttNode", EventLogger.LogLevel.Verbose, $"Message enqueued (sync) at subtopic: \"{subtopic}\" with:\n{arg}");
 		return true;
 	}
@@ -212,7 +212,7 @@ public partial class MqttNode : Node
 		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Requesting thread stop");
 		_cts!.Cancel();
 
-		if(awaitFullStop)
+		if (awaitFullStop)
 		{
 			_mqttThread!.Join();
 			EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, "Thread stop confirmed!");
@@ -234,7 +234,7 @@ public partial class MqttNode : Node
 	{
 		if (string.IsNullOrEmpty(subtopic)) return;
 		var topic = TopicFull(subtopic);
-		EventLogger.LogMessage(LogSource,EventLogger.LogLevel.Verbose, $"Subscribing to topic: \"{topic}\"");
+		EventLogger.LogMessage(LogSource, EventLogger.LogLevel.Verbose, $"Subscribing to topic: \"{topic}\"");
 		await _managedMqttClient.SubscribeAsync(topic, qos);
 	}
 
@@ -262,7 +262,7 @@ public partial class MqttNode : Node
 
 		List<Task> subTasks = [];
 
-		foreach(var (topic, qos) in LocalSettings.Singleton.Mqtt.GetAllTopicsToSubscribe())
+		foreach (var (topic, qos) in LocalSettings.Singleton.Mqtt.GetAllTopicsToSubscribe())
 			subTasks.Add(MqSubscribeTopicAsync(topic, qos));
 
 		await Task.WhenAll(subTasks);

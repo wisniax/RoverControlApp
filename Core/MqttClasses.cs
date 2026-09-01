@@ -108,14 +108,6 @@ namespace RoverControlApp.Core
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
 			public ControlModeFlags ControlMode { get; set; } = ControlModeFlags.EStop;
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
-			public RoverStatus() { }
-			public RoverStatus(ControlModeFlags flag, CommunicationState state)
-			{
-				ControlMode = flag;
-				CommunicationState = state;
-				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-			}
 		}
 
 		public class RoverControl
@@ -195,7 +187,7 @@ namespace RoverControlApp.Core
 				return HashCode.Combine(temp1, temp2, temp3, temp4);
 			}
 		}
-		
+
 		public enum ActionType
 		{
 			Stop = 0,
@@ -203,8 +195,15 @@ namespace RoverControlApp.Core
 			InvKinJoystick = 2,
 			InvKinPosition = 3,
 			InvKinOffset = 4,
-			GoToReference = 5 // with Reference e.g. "inverse_home_pose"
+			GoToReference = 5, // with Reference e.g. "inverse_home_pose"
 							  // ... predefined positions (Driving position, sampler, etc)? Later.
+			UseMoveITPlanning = 6, // give control away to moveit
+		}
+		public enum MovementReference
+		{
+			base_link,
+			tool,
+			m_panel,
 		}
 		public class ForwardKinMode
 		{
@@ -247,7 +246,7 @@ namespace RoverControlApp.Core
 
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-			public float this [int index]
+			public float this[int index]
 			{
 				get => index switch
 				{
@@ -260,7 +259,7 @@ namespace RoverControlApp.Core
 				};
 				set
 				{
-					switch(index)
+					switch (index)
 					{
 						case 0:
 							ContainerDegrees0 = value;
@@ -335,6 +334,26 @@ namespace RoverControlApp.Core
 			public bool EStop { get; set; } = true;
 			public string Status { get; set; } = string.Empty;
 		}
+
+		public class ServoStatus
+		{
+			public StatusCode Code { get; set; } = StatusCode.Invalid;
+			public string Message { get; set; } = string.Empty;
+			public long Timestamp { get; set; }
+		}
+
+		public enum StatusCode : sbyte
+		{
+			Invalid = -1,
+			NoWarning = 0,
+			DecelerateForApproachingSingularity = 1,
+			HaltForSingularity = 2,
+			DecelerateForLeavingSingularity = 3,
+			DecelerateForCollision = 4,
+			HaltForCollision = 5,
+			JointBound = 6
+		}
+
 		public class RoverMissionStatus
 		{
 			public MissionStatus MissionStatus { get; set; } = MissionStatus.Stopped;
@@ -407,6 +426,69 @@ namespace RoverControlApp.Core
 			public int autonomy_state { get; set; }
 			public int goal_state { get; set; }
 			public long Timestamp { get; set; }
+    }
+    
+		public sealed class RoboticArmCheckResult
+		{
+			public bool[] possibility { get; set; } = [];
+			public string mission_id { get; set; } = "";
+			public bool panel_found { get; set; }
+		}
+
+		public enum RoboticArmAutonomyActionType : byte
+		{
+			Stop = 0,
+			Check = 1,
+			Run = 2
+		}
+
+		public enum RoboticArmTaskType : byte
+		{
+			Rotary = 0,
+			Engine = 1,
+			Breaker = 2,
+			Bar = 3,
+			Home = 4,
+			Ready = 5,
+			Ref = 6
+		}
+
+		public sealed class RoboticArmAutonomy
+		{
+			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+			public RoboticArmAutonomyActionType action { get; set; } = RoboticArmAutonomyActionType.Stop;
+			public RoboticArmTask[] tasks { get; set; } = [];
+			public string mission_id { get; set; } = "";
+		}
+
+		public sealed class RoboticArmTask
+		{
+			public RoboticArmTaskType task_type { get; set; } = RoboticArmTaskType.Rotary;
+			public string item { get; set; } = string.Empty;
+			public bool skip_on_failure { get; set; }
+
+			public override string ToString()
+			{
+				var item_str = item != "" ? $"/{item}" : "";
+				var skip_str = skip_on_failure ? "?" : "";
+				return task_type.ToString() + item_str + skip_str;
+			}
+		}
+
+		public enum RoboticArmMissionFeedbackStatus : byte
+		{
+			Running = 0,
+			Success = 1,
+			Cancelled = 2,
+			Failure = 3,
+		}
+
+		public sealed class RoboticArmMissionFeedback
+		{
+			public RoboticArmMissionFeedbackStatus status { get; set; }
+			public RoboticArmTask[] tasks { get; set; } = [];
+			public bool[] completed_tasks { get; set; } = [];
+			public string mission_id { get; set; } = "";
 		}
 
 	}

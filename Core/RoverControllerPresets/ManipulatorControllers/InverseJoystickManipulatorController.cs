@@ -26,10 +26,14 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		RcaInEvName.ManipulatorMultiGripperBackward,
 		RcaInEvName.ManipulatorMultiChangeAxes,
 		RcaInEvName.ManipulatorModeChange,
-		RcaInEvName.ManipulatorInvChangeRef
+		RcaInEvName.ManipulatorInvChangeRef,
+		RcaInEvName.ManipulatorSimInvForceCartesian,
+		RcaInEvName.ManipulatorSimInvForceMovement
 	];
 
 	private bool _useSecondaryAxes = false;
+	private bool _forceCartesian = false;
+	private bool _forceMovement = false;
 
 	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in ManipulatorControl lastState)
 	{
@@ -54,6 +58,16 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 			manipulatorControl.Reference = "tool";
 		}
 
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvForceCartesian, targetInputDevice), exactMatch: true))
+		{
+			_forceCartesian = !_forceCartesian;
+		}
+
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvForceMovement, targetInputDevice), exactMatch: true))
+		{
+			_forceMovement = !_forceMovement;
+		}
+
 		Vec3 linearSpeed = new();
 		Vec3 angularSpeed = new();
 
@@ -74,6 +88,8 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		manipulatorControl.InvJoystick.RotationSpeed = angularSpeed;
 
 		manipulatorControl.Gripper = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, targetInputDevice));
+		manipulatorControl.ForceCartesian = _forceCartesian;
+		manipulatorControl.ForceMovement = _forceMovement;
 
 		return manipulatorControl;
 	}
@@ -82,7 +98,7 @@ public class InverseJoystickManipulatorController : IRoverManipulatorController
 		IActionAwareController.FetchAllActionEvents(_usedActions);
 
 	public string GetInputActionsAdditionalNote() =>
-		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between position and rotation. Hold Y (xbox) to change reference to 'tool' Gripper is controlled with triggers.";
+		"Use joysticks to control the axes of the manipulator. Click the right bumper to toggle between position and rotation. Hold Y (xbox) to change reference to 'tool'. D-pad left toggles force cartesian, D-pad right toggles force movement. Gripper is controlled with triggers.";
 
 	public string[] GetControlledAxes()
 	{

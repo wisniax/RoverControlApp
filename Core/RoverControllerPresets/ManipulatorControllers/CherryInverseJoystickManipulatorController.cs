@@ -1,0 +1,207 @@
+﻿using System;
+using System.Collections.Generic;
+using Godot;
+
+using static RoverControlApp.Core.MqttClasses;
+
+namespace RoverControlApp.Core.RoverControllerPresets.ManipulatorControllers;
+
+public class CherryInverseJoystickManipulatorController : IRoverManipulatorController
+{
+	private readonly StringName[] _usedActions =
+	[
+		RcaInEvName.ManipulatorCherryInvJoystickPosXPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickPosXMinus,
+		RcaInEvName.ManipulatorCherryInvJoystickPosYPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickPosYMinus,
+		RcaInEvName.ManipulatorCherryInvJoystickPosZPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickPosZMinus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotXPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotXMinus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotYPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotYMinus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotZPlus,
+		RcaInEvName.ManipulatorCherryInvJoystickRotZMinus,
+		RcaInEvName.ManipulatorSimInvChangeRef,
+		RcaInEvName.ManipulatorSimInvForceCartesian,
+		RcaInEvName.ManipulatorSimInvForceMovement,
+		RcaInEvName.ManipulatorGtrChangeRefPlus,
+		RcaInEvName.ManipulatorGtrChangeRefMinus,
+		RcaInEvName.ManipulatorGtrAccept,
+		RcaInEvName.ManipulatorGtrCancel,
+		RcaInEvName.ManipulatorModeChange,
+		RcaInEvName.ManipulatorMultiGripperBackward,
+		RcaInEvName.ManipulatorMultiGripperForward,
+		RcaInEvName.ManipulatorMultiAxis1Backward,
+		RcaInEvName.ManipulatorMultiAxis2Backward,
+		RcaInEvName.ManipulatorMultiAxis3Backward,
+		RcaInEvName.ManipulatorMultiAxis4Backward,
+		RcaInEvName.ManipulatorMultiAxis5Backward,
+		RcaInEvName.ManipulatorMultiAxis6Backward,
+		RcaInEvName.ManipulatorMultiAxis1Forward,
+		RcaInEvName.ManipulatorMultiAxis2Forward,
+		RcaInEvName.ManipulatorMultiAxis3Forward,
+		RcaInEvName.ManipulatorMultiAxis4Forward,
+		RcaInEvName.ManipulatorMultiAxis5Forward,
+		RcaInEvName.ManipulatorMultiAxis6Forward,
+		RcaInEvName.ManipulatorMultiChangeAxes
+	];
+
+	private MultiAxisManipulatorController multiAxisManipulatorController = new();
+
+	private MovementReference _currentReference = MovementReference.base_link;
+	private bool _forceCartesian = false;
+	private bool _forceMovement = false;
+	private int _GTRReference = 0; // "Go to reference" reference
+	private ActionType actionType = ActionType.InvKinJoystick;
+	private bool _movingToReference = false;
+
+	public ManipulatorControl CalculateMoveVector(in InputEvent inputEvent, DualSeatEvent.InputDevice targetInputDevice, in ManipulatorControl lastState)
+	{
+		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorModeChange, targetInputDevice), exactMatch: true))
+		{
+			switch (actionType)
+			{
+				case ActionType.InvKinJoystick:
+					actionType = ActionType.GoToReference;
+					break;
+				case ActionType.GoToReference:
+					actionType = ActionType.UseMoveITPlanning;
+					_movingToReference = false; // reset moving to reference when changing mode
+					break;
+				case ActionType.UseMoveITPlanning:
+					actionType = ActionType.ForwardKin;
+					break;
+				case ActionType.ForwardKin:
+					actionType = ActionType.InvKinJoystick;
+					break;
+				default:
+					break;
+			}
+		}
+
+		ManipulatorControl manipulatorControl = new();
+		manipulatorControl.ActionType = actionType;
+
+		switch (actionType)
+		{
+			case ActionType.InvKinJoystick:
+			{
+				manipulatorControl.InvJoystick = new();
+
+				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvChangeRef, targetInputDevice), exactMatch: true))
+				{
+					_currentReference = (MovementReference)(((int)_currentReference + 1) % 3);
+				}
+				manipulatorControl.Reference = _currentReference.ToString();
+
+				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvForceCartesian, targetInputDevice), exactMatch: true))
+				{
+					_forceCartesian = !_forceCartesian;
+				}
+
+				if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorSimInvForceMovement, targetInputDevice), exactMatch: true))
+				{
+					_forceMovement = !_forceMovement;
+				}
+
+				Vec3 linearSpeed = new();
+				Vec3 angularSpeed = new();
+
+				
+				linearSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosXMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosXPlus, targetInputDevice));
+				linearSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosYMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosYPlus, targetInputDevice));
+				linearSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxLinearSpeed / 100f * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosZMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickPosZPlus, targetInputDevice));
+				
+				angularSpeed.X = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotXMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotXPlus, targetInputDevice));
+				angularSpeed.Y = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotYMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotYPlus, targetInputDevice));
+				angularSpeed.Z = LocalSettings.Singleton.Manipulator.InvKinScaler.MaxAngularSpeed * Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotZMinus, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorCherryInvJoystickRotZPlus, targetInputDevice));
+				
+
+				manipulatorControl.InvJoystick.LinearSpeed = linearSpeed;
+				manipulatorControl.InvJoystick.RotationSpeed = angularSpeed;
+
+				manipulatorControl.Gripper = Input.GetAxis(DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperBackward, targetInputDevice), DualSeatEvent.GetName(RcaInEvName.ManipulatorMultiGripperForward, targetInputDevice));
+				manipulatorControl.ForceCartesian = _forceCartesian;
+				manipulatorControl.ForceMovement = _forceMovement;
+
+				return manipulatorControl;	
+			}
+
+			case ActionType.GoToReference:
+				{
+					if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrChangeRefPlus, targetInputDevice), exactMatch: true))
+					{
+						_GTRReference++;
+						_GTRReference = _GTRReference % 10; // wrap around to 0 after 9
+						_movingToReference = false; // reset moving to reference when changing reference
+					}
+
+					if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrChangeRefMinus, targetInputDevice), exactMatch: true))
+					{
+						_GTRReference--;
+						if (_GTRReference < 0) // wrap around to 0 after 9
+						{
+							_GTRReference = 9;
+						}
+						_movingToReference = false; // reset moving to reference when changing reference
+					}
+
+					manipulatorControl.Reference = $"Ref{_GTRReference}";
+
+					if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrAccept, targetInputDevice), exactMatch: true))
+					{
+						_movingToReference = true;
+					}
+
+					if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.ManipulatorGtrCancel, targetInputDevice), exactMatch: true))
+					{
+						_movingToReference = false;
+					}
+
+					manipulatorControl.ActionType = _movingToReference ? ActionType.GoToReference : ActionType.Stop;
+					return manipulatorControl;
+				}
+			case ActionType.UseMoveITPlanning:
+				{
+					manipulatorControl.ActionType = ActionType.UseMoveITPlanning;
+					return manipulatorControl;
+				}
+			case ActionType.ForwardKin:
+				{
+					manipulatorControl = multiAxisManipulatorController.CalculateMoveVector(inputEvent, targetInputDevice, lastState);
+					return manipulatorControl;
+				}
+			default:
+				return manipulatorControl;
+		}
+	}
+
+	public Dictionary<StringName, Godot.Collections.Array<InputEvent>> GetInputActions() =>
+		IActionAwareController.FetchAllActionEvents(_usedActions);
+
+	public string GetInputActionsAdditionalNote() =>
+		"D-pad up / M: cycle modes (InvKinJoystick → GoToReference → UseMoveITPlanning → ForwardKin).\n\n" +
+		"InvKinJoystick: Left stick = posX/posY, Right stick = rotY/rotZ, Y/A = posZ±, B/X = rotX±, Triggers = gripper. D-pad down toggles 'tool' reference, D-pad left toggles force cartesian, D-pad right toggles force movement.\n\n" +
+		"GoToReference: Y/X cycles Ref0–Ref9, A sends GoToReference, B cancels (Stop).\n\n" +
+		"UseMoveITPlanning: Hands off — sends control to MoveIT.\n\n" +
+		"ForwardKin: Joysticks control axes 1–3, right bumper toggles axes 4–6, Triggers = gripper.";
+
+	public string[] GetControlledAxes()
+	{
+		switch (actionType)
+		{
+			case ActionType.InvKinJoystick:
+				return new string[] { "posX", "posY", "posZ", "rotX", "rotY", "rotZ", "gripper" };
+			case ActionType.GoToReference:
+				return new string[0];
+			case ActionType.UseMoveITPlanning:
+				return new string[0];
+			case ActionType.ForwardKin:
+				return multiAxisManipulatorController.GetControlledAxes();
+			default:
+				return new string[0];
+		}
+	}
+
+}

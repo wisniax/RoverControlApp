@@ -16,7 +16,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_clientSettings = new();
 
 		_topicRoverControl = "RoverControl";
-		_topicManipulatorControl = "ManipulatorControl";
+		_topicManipulatorControl = "RoboticArmControl";
 		_topicRoverFeedback = "RoverFeedback";
 		_topicRoverStatus = "RoverStatus";
 		_topicMissionStatus = "MissionStatus";
@@ -30,6 +30,10 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicBatteryControl = "BatteryControl";
 		_topicRotaryFeedback = "RotaryFeedback";
 		_topicSamplerFeedback = "SamplerFeedback";
+		_topicRoboticArmCheckResult = "RoboticArmCheckResult";
+		_topicRoboticArmAutonomy = "RoboticArmAutonomy";
+		_topicRoboticArmMissionFeedback = "RoboticArmMissionFeedback";
+		_topicServoStatus = "ServoStatus";
 	}
 
 	public Mqtt
@@ -49,7 +53,11 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicBatteryInfo,
 		string topicBatteryControl,
 		string topicRotaryFeedback,
-		string topicSamplerFeedback
+		string topicSamplerFeedback,
+		string topicRoboticArmCheckResult,
+		string topicRoboticArmAutonomy,
+		string topicRoboticArmMissionFeedback,
+		string topicServoStatus
 	)
 	{
 		_clientSettings = clientSettings;
@@ -68,6 +76,10 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicBatteryControl = topicBatteryControl;
 		_topicRotaryFeedback = topicRotaryFeedback;
 		_topicSamplerFeedback = topicSamplerFeedback;
+		_topicRoboticArmCheckResult = topicRoboticArmCheckResult;
+		_topicRoboticArmAutonomy = topicRoboticArmAutonomy;
+		_topicRoboticArmMissionFeedback = topicRoboticArmMissionFeedback;
+		_topicServoStatus = topicServoStatus;
 	}
 
 	public object Clone()
@@ -91,6 +103,10 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicBatteryControl = _topicBatteryControl,
 			TopicRotaryFeedback = _topicRotaryFeedback,
 			TopicSamplerFeedback = _topicSamplerFeedback
+			TopicRoboticArmCheckResult = _topicRoboticArmCheckResult,
+			TopicRoboticArmAutonomy = _topicRoboticArmAutonomy,
+			TopicRoboticArmMissionFeedback = _topicRoboticArmMissionFeedback,
+			TopicServoStatus = _topicServoStatus,
 		};
 	}
 
@@ -104,7 +120,7 @@ public partial class Mqtt : SettingBase, ICloneable
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicRoverControl
 	{
-		get => _topicRoverControl; 
+		get => _topicRoverControl;
 		set => EmitSignal_SettingChanged(ref _topicRoverControl, value);
 	}
 
@@ -188,7 +204,7 @@ public partial class Mqtt : SettingBase, ICloneable
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicBatteryControl
 	{
-		get => _topicBatteryControl; 
+		get => _topicBatteryControl;
 		set => EmitSignal_SettingChanged(ref _topicBatteryControl, value);
 	}
 
@@ -204,6 +220,31 @@ public partial class Mqtt : SettingBase, ICloneable
 	{
 		get => _topicSamplerFeedback; 
 		set => EmitSignal_SettingChanged(ref _topicSamplerFeedback, value);
+	public string TopicRoboticArmCheckResult
+	{
+		get => _topicRoboticArmCheckResult;
+		set => EmitSignal_SettingChanged(ref _topicRoboticArmCheckResult, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicRoboticArmAutonomy
+	{
+		get => _topicRoboticArmAutonomy;
+		set => EmitSignal_SettingChanged(ref _topicRoboticArmAutonomy, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicRoboticArmMissionFeedback
+	{
+		get => _topicRoboticArmMissionFeedback;
+		set => EmitSignal_SettingChanged(ref _topicRoboticArmMissionFeedback, value);
+	}
+	
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicServoStatus
+	{
+		get => _topicServoStatus; 
+		set => EmitSignal_SettingChanged(ref _topicServoStatus, value);
 	}
 
 
@@ -224,6 +265,9 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicBatteryControl;
 	string _topicRotaryFeedback;
 	string _topicSamplerFeedback;
+	string _topicRoboticArmCheckResult;
+	string _topicRoboticArmAutonomy;
+	string _topicRoboticArmMissionFeedback;
+	string _topicServoStatus;
 }
-
 
