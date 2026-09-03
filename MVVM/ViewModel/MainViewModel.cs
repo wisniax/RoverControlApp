@@ -457,16 +457,16 @@ namespace RoverControlApp.MVVM.ViewModel
 				FancyDebugViewRLab.AppendText($"PressedKeys.Singleton: Sampler DrillAction: {PressedKeys.Singleton.SamplerMovement.DrillAction:F2}, " +
 												$"DrillMov: {PressedKeys.Singleton.SamplerMovement.DrillMovement:F2}, " +
 												$"PlatformMov: {PressedKeys.Singleton.SamplerMovement.PlatformMovement:F2}, \n" +
-												$"{(LocalSettings.Singleton.Sampler.Container0.CustomName == "-" ? "Container0" : LocalSettings.Singleton.Sampler.Container0.CustomName)}" +
+												$"{(LocalSettings.Singleton.Sampler.Container0.CustomName == "-" ? "VacuumA" : LocalSettings.Singleton.Sampler.Container0.CustomName)}" +
+															$": {PressedKeys.Singleton.SamplerMovement.VacuumA:F1}, " +
+												$"{(LocalSettings.Singleton.Sampler.Container1.CustomName == "-" ? "VacuumB" : LocalSettings.Singleton.Sampler.Container1.CustomName)}" +
+															$": {PressedKeys.Singleton.SamplerMovement.VacuumB:F1}, " +
+												$"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "VacuumSuction" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
+															$": {PressedKeys.Singleton.SamplerMovement.VacuumSuction:F1}, " +
+												$"{(LocalSettings.Singleton.Sampler.Container3.CustomName == "-" ? "Container0" : LocalSettings.Singleton.Sampler.Container3.CustomName)}" +
 															$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees0:F1}, " +
-												$"{(LocalSettings.Singleton.Sampler.Container1.CustomName == "-" ? "Container1" : LocalSettings.Singleton.Sampler.Container1.CustomName)}" +
-															$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees1:F1}, " +
-												$"{(LocalSettings.Singleton.Sampler.Container2.CustomName == "-" ? "Container2" : LocalSettings.Singleton.Sampler.Container2.CustomName)}" +
-															$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees2:F1}, " +
-												$"{(LocalSettings.Singleton.Sampler.Container3.CustomName == "-" ? "Container3" : LocalSettings.Singleton.Sampler.Container3.CustomName)}" +
-															$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees3:F1}, " +
-												$"{(LocalSettings.Singleton.Sampler.Container4.CustomName == "-" ? "Container4" : LocalSettings.Singleton.Sampler.Container4.CustomName)}" +
-															$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees4:F1}\n");
+												$"{(LocalSettings.Singleton.Sampler.Container4.CustomName == "-" ? "Container1" : LocalSettings.Singleton.Sampler.Container4.CustomName)}" +
+															$": {PressedKeys.Singleton.SamplerMovement.ContainerDegrees1:F1}\n");
 			}
 		}
 

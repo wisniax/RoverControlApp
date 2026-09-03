@@ -62,11 +62,11 @@ public class SamplerController : IRoverSamplerController
 				DrillMovement = drillSpeed,
 				PlatformMovement = 0f,
 				DrillAction = drillSpeed,
+				VacuumA = lastState.VacuumA,
+				VacuumB = lastState.VacuumB,
+				VacuumSuction = lastState.VacuumSuction,
 				ContainerDegrees0 = lastState.ContainerDegrees0,
 				ContainerDegrees1 = lastState.ContainerDegrees1,
-				ContainerDegrees2 = lastState.ContainerDegrees2,
-				ContainerDegrees3 = lastState.ContainerDegrees3,
-				ContainerDegrees4 = lastState.ContainerDegrees4,
 				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
 			};
 		}
@@ -77,11 +77,11 @@ public class SamplerController : IRoverSamplerController
 				DrillMovement = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerDrillMovement, targetInputDevice)) ? movement : 0f,
 				PlatformMovement = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerPlatformMovement, targetInputDevice)) ? movement : 0f,
 				DrillAction = Input.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerDrillEnable, targetInputDevice)) ? drillSpeed : 0f,
+				VacuumA = lastState.VacuumA,
+				VacuumB = lastState.VacuumB,
+				VacuumSuction = lastState.VacuumSuction,
 				ContainerDegrees0 = lastState.ContainerDegrees0,
 				ContainerDegrees1 = lastState.ContainerDegrees1,
-				ContainerDegrees2 = lastState.ContainerDegrees2,
-				ContainerDegrees3 = lastState.ContainerDegrees3,
-				ContainerDegrees4 = lastState.ContainerDegrees4,
 				Timestamp = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
 			};
 		};
@@ -89,46 +89,46 @@ public class SamplerController : IRoverSamplerController
 		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainer0, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 0;
-			newSamplerControl.ContainerDegrees0 = OperateContainer(
+			newSamplerControl.VacuumA = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container0,
 				true,
-				newSamplerControl.ContainerDegrees0
+				newSamplerControl.VacuumA
 			);
 		}
 		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainer1, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 1;
-			newSamplerControl.ContainerDegrees1 = OperateContainer(
+			newSamplerControl.VacuumB = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container1,
 				true,
-				newSamplerControl.ContainerDegrees1
+				newSamplerControl.VacuumB
 			);
 		}
 		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainer2, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 2;
-			newSamplerControl.ContainerDegrees2 = OperateContainer(
+			newSamplerControl.VacuumSuction = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container2,
 				true,
-				newSamplerControl.ContainerDegrees2
+				newSamplerControl.VacuumSuction
 			);
 		}
 		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainer3, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 3;
-			newSamplerControl.ContainerDegrees3 = OperateContainer(
+			newSamplerControl.ContainerDegrees0 = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container3,
 				true,
-				newSamplerControl.ContainerDegrees3
+				newSamplerControl.ContainerDegrees0
 			);
 		}
 		if (inputEvent.IsActionPressed(DualSeatEvent.GetName(RcaInEvName.SamplerContainer4, targetInputDevice), allowEcho: false, exactMatch: true))
 		{
 			LastMovedContainer = 4;
-			newSamplerControl.ContainerDegrees4 = OperateContainer(
+			newSamplerControl.ContainerDegrees1 = OperateContainer(
 				LocalSettings.Singleton.Sampler.Container4,
 				true,
-				newSamplerControl.ContainerDegrees4
+				newSamplerControl.ContainerDegrees1
 			);
 		}
 

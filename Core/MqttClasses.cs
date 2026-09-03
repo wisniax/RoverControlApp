@@ -238,11 +238,11 @@ namespace RoverControlApp.Core
 			public float DrillMovement { get; set; } = 0f;
 			public float PlatformMovement { get; set; } = 0f;
 			public float DrillAction { get; set; } = 0f;
+			public float VacuumA { get; set; } = 0f;
+			public float VacuumB { get; set; } = 0f;
+			public float VacuumSuction { get; set; } = 0f;
 			public float ContainerDegrees0 { get; set; } = 0f;
 			public float ContainerDegrees1 { get; set; } = 0f;
-			public float ContainerDegrees2 { get; set; } = 0f;
-			public float ContainerDegrees3 { get; set; } = 0f;
-			public float ContainerDegrees4 { get; set; } = 0f;
 
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
@@ -250,11 +250,11 @@ namespace RoverControlApp.Core
 			{
 				get => index switch
 				{
-					0 => ContainerDegrees0,
-					1 => ContainerDegrees1,
-					2 => ContainerDegrees2,
-					3 => ContainerDegrees3,
-					4 => ContainerDegrees4,
+					0 => VacuumA,
+					1 => VacuumB,
+					2 => VacuumSuction,
+					3 => ContainerDegrees0,
+					4 => ContainerDegrees1,
 					_ => throw new IndexOutOfRangeException("Container index out of range")
 				};
 				set
@@ -262,19 +262,19 @@ namespace RoverControlApp.Core
 					switch (index)
 					{
 						case 0:
-							ContainerDegrees0 = value;
+							VacuumA = value;
 							break;
 						case 1:
-							ContainerDegrees1 = value;
+							VacuumB = value;
 							break;
 						case 2:
-							ContainerDegrees2 = value;
+							VacuumSuction = value;
 							break;
 						case 3:
-							ContainerDegrees3 = value;
+							ContainerDegrees0 = value;
 							break;
 						case 4:
-							ContainerDegrees4 = value;
+							ContainerDegrees1 = value;
 							break;
 						default:
 							throw new IndexOutOfRangeException("Container index out of range");
