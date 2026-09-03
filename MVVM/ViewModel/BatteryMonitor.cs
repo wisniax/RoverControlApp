@@ -74,7 +74,7 @@ public partial class BatteryMonitor : Panel
 		
 		data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
 
-		await (battery[data.Slot - 1].UpdateBattInfoHandler(msg.ConvertPayloadToString()));
+		battery[0].UpdateBattInfoHandler(msg.ConvertPayloadToString()); //Todo fix after embedded is done
 
 		UpdateGeneralPowerInfo(data.HotswapStatus);
 

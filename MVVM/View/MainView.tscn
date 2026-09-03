@@ -18,9 +18,9 @@
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
 [ext_resource type="Script" uid="uid://bfg0ffyat7n25" path="res://MVVM/ViewModel/StatusPanelController.cs" id="17_a5ovi"]
 [ext_resource type="PackedScene" uid="uid://s5clmfanc4i" path="res://MVVM/View/StatusPanels/EStopStatusPanel.tscn" id="17_exayt"]
-[ext_resource type="PackedScene" uid="uid://bs14nsa8w6e30" path="res://MVVM/View/StatusPanels/SamplerFeedbackPanel.tscn" id="20_bvsyq"]
 [ext_resource type="PackedScene" uid="uid://b8jd7sjnl15bq" path="res://MVVM/View/StatusPanels/ArmAutonomyStatusPanel.tscn" id="18_bvsyq"]
 [ext_resource type="PackedScene" uid="uid://citcc8i5oor0u" path="res://MVVM/View/StatusPanels/ManipulatorStatusPanel.tscn" id="19_bvsyq"]
+[ext_resource type="PackedScene" uid="uid://bs14nsa8w6e30" path="res://MVVM/View/StatusPanels/SamplerFeedbackPanel.tscn" id="20_bvsyq"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
 bg_color = Color(0, 0, 0, 0.501961)
@@ -277,7 +277,15 @@ toggle_mode = true
 shortcut = SubResource("Shortcut_x20sx")
 text = "BATTERY"
 
+[node name="ShowSensorMonitor" type="Button" parent="HBoxContainer" unique_id=1190138829]
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+shortcut = SubResource("Shortcut_x20sx")
+text = "SENSORS"
+
 [node name="ShowZedMonitor" type="Button" parent="HBoxContainer" unique_id=77806719]
+visible = false
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
@@ -405,6 +413,7 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowSensorMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
