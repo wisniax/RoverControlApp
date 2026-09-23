@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://rm5y7hlwqlxo" path="res://MVVM/ViewModel/MainViewModel.cs" id="1_84vv0"]
 [ext_resource type="Texture2D" uid="uid://beldbepsb6x" path="res://Resources/raptors_logoHorizontal_color_nobg.png" id="2_1llr5"]
+[ext_resource type="Script" uid="uid://b8rms8er3ggdj" path="res://MVVM/Model/JoyLedFeedback.cs" id="2_joy_led"]
 [ext_resource type="PackedScene" uid="uid://bpm7uiv1e6n8i" path="res://MVVM/View/UIOverlayTemplate.tscn" id="3_mtbtk"]
 [ext_resource type="Script" uid="uid://cxwb66qc83iki" path="res://MVVM/ViewModel/Grzyb_UIOverlay.cs" id="4_2nwr4"]
 [ext_resource type="PackedScene" uid="uid://em10imnbie42" path="res://MVVM/View/SettingsManager.tscn" id="4_b20oh"]
@@ -78,6 +79,11 @@ VelMonitor = NodePath("VelMonitor")
 ZedMonitor = NodePath("ZedMonitor")
 BatteryMonitor = NodePath("BatteryMonitor")
 InputHelpMaster = NodePath("MaxSizeContainer/InputHelpMaster")
+
+[node name="JoyLedFeedback" type="Node" parent="." unique_id=711484017]
+script = ExtResource("2_joy_led")
+AutonomyModeDurationSeconds = 0.8500000000000001
+AutonomyColorDurationSeconds = 0.15000000000000002
 
 [node name="CameraView" type="TextureRect" parent="." unique_id=374774120]
 layout_mode = 1
@@ -373,9 +379,9 @@ offset_bottom = -40.0
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowBatteryMonitor" to="BatteryMonitor" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowZedMonitor" to="ZedMonitor" method="set_visible"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
-[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
 [connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="set_visible"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="OnVisibilityChange"]
+[connection signal="toggled" from="HBoxContainer/ShowSettingsBtn" to="SettingsManager" method="Redraw"]
 
 [editable path="GrzybUIDis"]
 [editable path="RoverModeUIDis"]
