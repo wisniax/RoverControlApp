@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://chbyeplulidak"]
+
+[ext_resource type="PackedScene" uid="uid://bq5v7e60s5w4l" path="res://MVVM/View/3DVisualizer.tscn" id="1_mggfe"]
+[ext_resource type="Script" uid="uid://b6fhcbwspnpxm" path="res://MVVM/ViewModel/ThreeDModelView.cs" id="1_vui5t"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_vui5t"]
+viewport_path = NodePath("SubViewport")
+
+[node name="3DModelView" type="Panel" unique_id=1552232]
+offset_right = 799.0
+offset_bottom = 532.0
+script = ExtResource("1_vui5t")
+
+[node name="VisualiserView" type="TextureRect" parent="." unique_id=127261473]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 522.0
+offset_bottom = 522.0
+texture = SubResource("ViewportTexture_vui5t")
+stretch_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=1161272621]
+
+[node name="RoverVisualizer" parent="SubViewport" unique_id=1750992984 instance=ExtResource("1_mggfe")]
