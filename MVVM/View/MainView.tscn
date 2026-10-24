@@ -18,9 +18,6 @@
 [ext_resource type="PackedScene" uid="uid://cb4iwcuigx2m0" path="res://MVVM/View/InputHelpMaster.tscn" id="13_1wevo"]
 [ext_resource type="PackedScene" uid="uid://c78k3jqowm3q0" path="res://MVVM/View/BatteryMonitor.tscn" id="13_gec13"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
-bg_color = Color(0, 0, 0, 0.501961)
-
 [sub_resource type="InputEventKey" id="InputEventKey_ab7qa"]
 device = -1
 alt_pressed = true
@@ -52,6 +49,9 @@ keycode = 83
 
 [sub_resource type="Shortcut" id="Shortcut_gr50h"]
 events = [SubResource("InputEventKey_ywgy7")]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w78xs"]
+bg_color = Color(0, 0, 0, 0.501961)
 
 [node name="MainView" type="Control" unique_id=170146618 node_paths=PackedStringArray("imTextureRect", "RoverModeUIDis", "DriveModeUIDis", "SafeModeUIDis", "GrzybUIDis", "MissionStatusUIDis", "DualSeatSlaveUIDis", "ShowSettingsBtn", "ShowVelMonitor", "ShowMissionControlBrn", "ShowBatteryMonitor", "SettingsManagerNode", "MissionControlNode", "FancyDebugViewRLab", "VelMonitor", "ZedMonitor", "BatteryMonitor", "InputHelpMaster")]
 layout_mode = 3
@@ -89,33 +89,6 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_1llr5")
 expand_mode = 2
-
-[node name="3DModelView" parent="." unique_id=1552232 instance=ExtResource("3_exayt")]
-layout_mode = 0
-offset_left = 9.0
-offset_top = 39.0
-offset_right = 808.0
-offset_bottom = 571.0
-
-[node name="FancyDebugViewRLab" type="RichTextLabel" parent="." unique_id=2093037081]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = -102.0
-offset_right = 454.0
-offset_bottom = -10.0
-grow_vertical = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_w78xs")
-bbcode_enabled = true
-text = "1Line
-2Line
-3Line
-4Line"
-fit_content = true
-scroll_active = false
-autowrap_mode = 0
 
 [node name="GrzybUIDis" parent="." unique_id=859294310 node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
@@ -218,6 +191,7 @@ LabelNodePath = NodePath("RoverMode/Label")
 offset_right = 180.0
 
 [node name="MissonStatusUIDis" parent="." unique_id=1874022150 node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
+visible = false
 layout_mode = 1
 offset_left = 8.0
 offset_top = 4.0
@@ -258,7 +232,15 @@ text = "RTSP Capture"
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 
+[node name="ShowVisualizer" type="Button" parent="HBoxContainer" unique_id=820008442]
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+shortcut = SubResource("Shortcut_psw5f")
+text = "3D VISUALIZER"
+
 [node name="ShowMissionControl" type="Button" parent="HBoxContainer" unique_id=1662982871]
+visible = false
 layout_mode = 2
 focus_mode = 0
 toggle_mode = true
@@ -293,6 +275,14 @@ focus_mode = 0
 toggle_mode = true
 shortcut = SubResource("Shortcut_gr50h")
 text = "SETTINGS"
+
+[node name="3DModelView" parent="." unique_id=1552232 instance=ExtResource("3_exayt")]
+visible = false
+layout_mode = 0
+offset_left = 9.0
+offset_top = 39.0
+offset_right = 808.0
+offset_bottom = 571.0
 
 [node name="MissionControl" parent="." unique_id=1671618797 instance=ExtResource("4_wrhi8")]
 visible = false
@@ -341,6 +331,26 @@ offset_bottom = -45.38
 grow_horizontal = 0
 grow_vertical = 0
 
+[node name="FancyDebugViewRLab" type="RichTextLabel" parent="." unique_id=2093037081]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -102.0
+offset_right = 454.0
+offset_bottom = -10.0
+grow_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_w78xs")
+bbcode_enabled = true
+text = "1Line
+2Line
+3Line
+4Line"
+fit_content = true
+scroll_active = false
+autowrap_mode = 0
+
 [node name="MaxSizeContainer" type="Container" parent="." unique_id=1368192907]
 layout_mode = 1
 anchors_preset = -1
@@ -376,6 +386,7 @@ offset_bottom = -40.0
 
 [connection signal="pressed" from="HBoxContainer/BackCapture" to="." method="OnBackCapture"]
 [connection signal="pressed" from="HBoxContainer/RTSPCapture" to="." method="OnRTSPCapture"]
+[connection signal="toggled" from="HBoxContainer/ShowVisualizer" to="3DModelView" method="set_visible"]
 [connection signal="button_down" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="SaveSizeAndPos"]
 [connection signal="toggled" from="HBoxContainer/ShowMissionControl" to="MissionControl" method="set_visible"]
 [connection signal="toggled" from="HBoxContainer/ShowVelMonitor" to="VelMonitor" method="set_visible"]
