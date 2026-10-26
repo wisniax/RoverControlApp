@@ -54,16 +54,16 @@ public partial class ThreeDVisualizer : Node3D
 		switch (vescID)
 		{
 			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.FrontLeftTurn): // Front Left turn
-				_wheelFL.RotationDegrees = new Vector3(0, (float)velData.PrecisePos, 0);
+				CallDeferred(nameof(UpdateWheelRotation), _wheelFL, velData.PrecisePos);
 				break;
 			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.FrontRightTurn): // Front Right turn
-				_wheelFR.RotationDegrees = new Vector3(0, (float)velData.PrecisePos, 0);
+				CallDeferred(nameof(UpdateWheelRotation), _wheelFR, velData.PrecisePos);
 				break;
 			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.BackLeftTurn): // Rear Left turn
-				_wheelRL.RotationDegrees = new Vector3(0, (float)velData.PrecisePos, 0);
+				CallDeferred(nameof(UpdateWheelRotation), _wheelRL, velData.PrecisePos);
 				break;
 			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.BackRightTurn): // Rear Right turn
-				_wheelRR.RotationDegrees = new Vector3(0, (float)velData.PrecisePos, 0);
+				CallDeferred(nameof(UpdateWheelRotation), _wheelRR, velData.PrecisePos);
 				break;
 			default:
 				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled VESC ID: {vescID}");
@@ -80,6 +80,11 @@ public partial class ThreeDVisualizer : Node3D
 			hexString = hexString.Substring(2);
 		}
 		return Convert.ToInt32(hexString, 16);
+	}
+
+	void UpdateWheelRotation(Node3D wheelNode, double precisePos)
+	{
+		wheelNode.RotationDegrees = new Vector3(0, -(float)precisePos, 0);
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
