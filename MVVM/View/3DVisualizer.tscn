@@ -7,20 +7,6 @@
 [ext_resource type="PackedScene" uid="uid://b44803jmfpi3n" path="res://MVVM/View/3DRotary.tscn" id="3_qq1bi"]
 [ext_resource type="PackedScene" uid="uid://dthia7ci4jb8i" path="res://MVVM/View/3DVaccum.tscn" id="4_3ui5f"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_3ui5f"]
-sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
-ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
-
-[sub_resource type="Sky" id="Sky_4jnsp"]
-sky_material = SubResource("ProceduralSkyMaterial_3ui5f")
-
-[sub_resource type="Environment" id="Environment_g1fg0"]
-background_mode = 2
-sky = SubResource("Sky_4jnsp")
-ambient_light_color = Color(1, 1, 1, 1)
-ambient_light_energy = 9.54
-tonemap_mode = 2
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jr5db"]
 resource_name = "mat_3"
 cull_mode = 2
@@ -25714,14 +25700,11 @@ _hotswap0 = NodePath("Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembl
 _hotswap1 = NodePath("Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembly_14_03_2025 v1_2/wm686 v1 (1)_2/wm686 v1_002")
 _hotswap2 = NodePath("Rover/Frame/FrameBody/obudowa v1/obudowa_zlozenie v7/hotswap_lewy v15/elektronika/assembly_hotswap_lewy_2/hotswap_poprawione v1 (1)_001/wm686 v1 (1) (1)_001/wm686 v1_1_002")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=343382160]
-environment = SubResource("Environment_g1fg0")
-
 [node name="Lights" type="Node3D" parent="." unique_id=598980061]
+visible = false
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Lights" unique_id=572515731]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 1.1307613, 0)
-visible = false
 light_cull_mask = 4294959103
 
 [node name="CameraPositions" type="Node3D" parent="." unique_id=1811163647]
@@ -25751,6 +25734,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -0.704)
 visible = false
 light_energy = 2.753
 light_size = 1.0
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Camera3D" unique_id=249419225]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.9604645e-08, 4.5519857)
 
 [node name="Rover" type="Node3D" parent="." unique_id=1231744712]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
