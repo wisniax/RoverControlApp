@@ -1,15 +1,16 @@
 [gd_scene format=3 uid="uid://chbyeplulidak"]
 
 [ext_resource type="PackedScene" uid="uid://bq5v7e60s5w4l" path="res://MVVM/View/3DVisualizer.tscn" id="1_mggfe"]
-[ext_resource type="Script" uid="uid://b6fhcbwspnpxm" path="res://MVVM/ViewModel/ThreeDModelView.cs" id="1_vui5t"]
+[ext_resource type="Script" uid="uid://bpme5jocn2uve" path="res://MVVM/ViewModel/ThreeDViewer.cs" id="1_vui5t"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_vui5t"]
 viewport_path = NodePath("SubViewport")
 
-[node name="3DModelView" type="Panel" unique_id=1552232]
+[node name="3DViewer" type="Panel" unique_id=1552232 node_paths=PackedStringArray("_threeDVisualizer")]
 offset_right = 799.0
 offset_bottom = 532.0
 script = ExtResource("1_vui5t")
+_threeDVisualizer = NodePath("SubViewport/RoverVisualizer")
 
 [node name="VisualiserView" type="TextureRect" parent="." unique_id=127261473]
 layout_mode = 0
@@ -23,3 +24,12 @@ stretch_mode = 2
 [node name="SubViewport" type="SubViewport" parent="." unique_id=1161272621]
 
 [node name="RoverVisualizer" parent="SubViewport" unique_id=1750992984 instance=ExtResource("1_mggfe")]
+
+[node name="Label" type="Label" parent="." unique_id=371298161]
+layout_mode = 0
+offset_left = 532.0
+offset_top = 10.0
+offset_right = 789.0
+offset_bottom = 70.0
+theme_override_font_sizes/font_size = 41
+text = "3D Visualizer"

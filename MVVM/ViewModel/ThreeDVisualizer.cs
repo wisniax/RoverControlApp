@@ -1,9 +1,12 @@
 using Godot;
 using MQTTnet;
 using RoverControlApp.Core;
+using RoverControlApp.Core.Settings;
+using RoverControlApp.MVVM.Model;
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
+using static RoverControlApp.Core.MqttClasses;
 
 public partial class ThreeDVisualizer : Node3D
 {
@@ -29,13 +32,13 @@ public partial class ThreeDVisualizer : Node3D
 
 
 
-
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	public override void _EnterTree()
 	{
+		MqttNode.Singleton.MessageReceivedAsync += VescInfoChanged;
+		//MqttNode.Singleton.MessageReceivedAsync += BatteryInfoChanged;
 	}
 
-	private async Task VescInfoChanged(string subTopic, MqttApplicationMessage? msg)
+	public async Task VescInfoChanged(string subTopic, MqttApplicationMessage? msg)
 	{
 		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicWheelFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicWheelFeedback)
 			return;
@@ -51,16 +54,16 @@ public partial class ThreeDVisualizer : Node3D
 		switch (vescID)
 		{
 			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.FrontLeftTurn): // Front Left turn
-				_wheelFL.RotationDegrees = new Vector3((float)velData.PrecisePos, 0, 0);
+				_wheelFL.RotationDegrees = new Vector3(0, (float)velData.PrecisePos, 0);
 				break;
 			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.FrontRightTurn): // Front Right turn
-				_wheelFR.RotationDegrees = new Vector3((float)velData.PrecisePos, 0, 0);
+				_wheelFR.RotationDegrees = new Vector3(0, (float)velData.PrecisePos, 0);
 				break;
 			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.BackLeftTurn): // Rear Left turn
-				_wheelRL.RotationDegrees = new Vector3((float)velData.PrecisePos, 0, 0);
+				_wheelRL.RotationDegrees = new Vector3(0, (float)velData.PrecisePos, 0);
 				break;
 			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.BackRightTurn): // Rear Right turn
-				_wheelRR.RotationDegrees = new Vector3((float)velData.PrecisePos, 0, 0);
+				_wheelRR.RotationDegrees = new Vector3(0, (float)velData.PrecisePos, 0);
 				break;
 			default:
 				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled VESC ID: {vescID}");

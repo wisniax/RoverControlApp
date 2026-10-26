@@ -25753,10 +25753,10 @@ transform = Transform3D(999.99994, 0, 0, 0, -0.00035762784, -999.9998, 0, 999.99
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08873135, 0.009657573, -0.009061497)
 
 [node name="FRWheel" type="Node3D" parent="Rover/Frame/Suspension/FRSuspension" unique_id=2106957611]
-transform = Transform3D(0.001, 0, 0, 0, -3.5762796e-10, 0.0010000002, 0, -0.0010000002, -3.5762796e-10, -0.00010377169, -0.009657573, -0.13219318)
+transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, -0.00010377169, -0.009657573, -0.13219318)
 
 [node name="napedy_poprawione v18_1" type="Node3D" parent="Rover/Frame/Suspension/FRSuspension/FRWheel" unique_id=1398460236]
-transform = Transform3D(-1, -2.3976267e-14, 2.397619e-14, 2.3976267e-14, -3.2186508e-06, 0.9999999, -2.3976182e-14, 0.9999999, 3.2186508e-06, 179.1206, 0.64904785, 14.953554)
+transform = Transform3D(-1, 5.311479e-13, -1.7484551e-07, -2.3976182e-14, 0.9999999, 3.1749394e-06, 1.748455e-07, 3.1749394e-06, -0.9999999, 179.1206, 14.953554, -0.64907837)
 
 [node name="Część876" type="MeshInstance3D" parent="Rover/Frame/Suspension/FRSuspension/FRWheel/napedy_poprawione v18_1" unique_id=434982957]
 mesh = SubResource("ArrayMesh_67fts")
@@ -26186,10 +26186,10 @@ skeleton = NodePath("")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08867842, 0.009657573, -0.009061497)
 
 [node name="FLWheel" type="Node3D" parent="Rover/Frame/Suspension/FLSuspension" unique_id=1482035013]
-transform = Transform3D(0.001, 0, 0, 0, -3.5762796e-10, 0.0010000002, 0, -0.0010000002, -3.5762796e-10, -0.00013642013, -0.009657573, -0.13249591)
+transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, -0.00013642013, -0.009657573, -0.13249591)
 
 [node name="napedy_poprawione v18_3" type="Node3D" parent="Rover/Frame/Suspension/FLSuspension/FLWheel" unique_id=342396620]
-transform = Transform3D(1, 0, 0, 0, 3.3974636e-06, -0.9999999, 0, 0.9999999, 3.3974636e-06, -178.93336, -0.5396271, 14.952741)
+transform = Transform3D(1, -1.0450789e-28, 0, 0, 0.9999999, 3.755091e-06, 0, -3.755091e-06, 0.9999999, -178.93336, 14.952741, 0.5396271)
 
 [node name="Część884" type="MeshInstance3D" parent="Rover/Frame/Suspension/FLSuspension/FLWheel/napedy_poprawione v18_3" unique_id=743644718]
 mesh = SubResource("ArrayMesh_ihuyc")
@@ -26624,10 +26624,10 @@ skeleton = NodePath("")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08873135, 0.009657573, 0.008861238)
 
 [node name="RRWheel" type="Node3D" parent="Rover/Frame/Suspension/RRSuspension" unique_id=2114700936]
-transform = Transform3D(0.001, 0, 0, 0, -3.5762796e-10, 0.0010000002, 0, -0.0010000002, -3.5762796e-10, 0.0005226508, -0.009657573, 0.13180806)
+transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, 0.0005226508, -0.009657573, 0.13180806)
 
 [node name="napedy_poprawione v18" type="Node3D" parent="Rover/Frame/Suspension/RRSuspension/RRWheel" unique_id=404444397]
-transform = Transform3D(-0.9999598, 0, 0.008964062, 0.008964062, -3.0994415e-06, 0.9999598, 2.7008355e-08, 1, 3.0398369e-06, 178.49106, -1.952591, 14.952839)
+transform = Transform3D(-0.9999598, -2.378327e-28, 0.008964062, 2.3802556e-08, 1, 2.6822233e-06, -0.008964062, 2.7418137e-06, -0.9999598, 178.49106, 14.95284, 1.9525757)
 
 [node name="2977N15_Rounded Machine Key" type="MeshInstance3D" parent="Rover/Frame/Suspension/RRSuspension/RRWheel/napedy_poprawione v18" unique_id=1151192235]
 transform = Transform3D(0, 7.232436e-15, -1, -7.232436e-15, -1, -7.232436e-15, -1, 7.232436e-15, 0, 169.31827, -56.563183, -0.44641483)
@@ -27077,10 +27077,10 @@ skeleton = NodePath("")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08867842, 0.009657573, 0.008861238)
 
 [node name="RLWheel" type="Node3D" parent="Rover/Frame/Suspension/RLSuspension" unique_id=513441052]
-transform = Transform3D(0.001, 0, 0, 0, -3.5762796e-10, 0.0010000002, 0, -0.0010000002, -3.5762796e-10, -0.00023506582, -0.009657573, 0.13265969)
+transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, -0.00023506582, -0.009657573, 0.13265969)
 
 [node name="napedy_poprawione v18_2" type="Node3D" parent="Rover/Frame/Suspension/RLSuspension/RLWheel" unique_id=1609583089]
-transform = Transform3D(1, 0, 0, 0, 3.3974636e-06, -0.9999999, 0, 0.9999999, 3.3974636e-06, -178.83472, -0.38279724, 14.953651)
+transform = Transform3D(1, -1.0450789e-28, 0, 0, 0.9999999, 3.755091e-06, 0, -3.755091e-06, 0.9999999, -178.83472, 14.953651, 0.38279724)
 
 [node name="91290A168_Alloy Steel Socket Head Screw_008" type="MeshInstance3D" parent="Rover/Frame/Suspension/RLSuspension/RLWheel/napedy_poprawione v18_2" unique_id=1593096154]
 transform = Transform3D(0, -2.298367e-21, 1, 2.298367e-21, -1, -2.298367e-21, 1, 2.298367e-21, 0, 220.09319, -51.232185, -7.5174036)

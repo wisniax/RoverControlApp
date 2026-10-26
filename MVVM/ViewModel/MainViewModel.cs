@@ -53,6 +53,9 @@ namespace RoverControlApp.MVVM.ViewModel
 		private DualSeatSlave_UIOverlay DualSeatSlaveUIDis = null!;
 
 		[Export]
+		private ThreeDViewer ThreeDViewer = null!;
+
+		[Export]
 		private Button ShowSettingsBtn = null!, ShowVelMonitor = null!, ShowMissionControlBrn = null!, ShowBatteryMonitor = null!;
 		[Export]
 		private SettingsManager SettingsManagerNode = null!;
