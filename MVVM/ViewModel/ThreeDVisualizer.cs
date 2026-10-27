@@ -22,9 +22,9 @@ public partial class ThreeDVisualizer : Node3D
 	[Export] private Node3D _wheelRL = null!;
 	[Export] private Node3D _wheelRR = null!;
 
-	[Export] private Node3D _battery0 = null!;
-	[Export] private Node3D _battery1 = null!;
-	[Export] private Node3D _battery2 = null!;
+	[Export] private ThreeDBattery _battery0 = null!;
+	[Export] private ThreeDBattery _battery1 = null!;
+	[Export] private ThreeDBattery _battery2 = null!;
 
 	[Export] private Node3D _hotswap0 = null!;
 	[Export] private Node3D _hotswap1 = null!;
