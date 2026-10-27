@@ -19,15 +19,20 @@ public partial class ThreeDBattery : Node3D
 	{
 	}
 
-	private void UpdateBatteryLevel(MqttClasses.BatteryInfo batteryInfo)
+	public void UpdateBatteryLevel(MqttClasses.BatteryInfo batteryInfo)
 	{
-		_batteryLabel.Text = $"{batteryInfo.Voltage:F1} V\n{batteryInfo.ChargePercent:F1}%";
+		CallDeferred(nameof(UpdateBatteryLabel), batteryInfo.ChargePercent, batteryInfo.Voltage, batteryInfo.Current);
 
 		// Color the battery based on the charge percentage
-		UpdateBatteryColor(batteryInfo.ChargePercent);
+		CallDeferred(nameof(UpdateBatteryColor), batteryInfo.ChargePercent);
 
 		// Scale the battery fill based on the charge percentage
-		UpdateBatteryFill(batteryInfo.ChargePercent);
+		CallDeferred(nameof(UpdateBatteryFill), batteryInfo.ChargePercent);
+	}
+
+	void UpdateBatteryLabel(float chargePercent, float voltage, float current)
+	{
+		_batteryLabel.Text = $"{voltage:F1} V\n{chargePercent:F1}%\n{current:F1} A";
 	}
 
 	void UpdateBatteryColor(float chargePercent)

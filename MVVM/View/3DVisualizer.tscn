@@ -23398,12 +23398,12 @@ transform = Transform3D(-0.3457514, -0.10285808, 0.3462314, 0, 0.47929674, 0.142
 transform = Transform3D(0.5, 0, 0, 0, -2.1855694e-08, 0.5, 0, -0.5, -2.1855694e-08, -0.0031844298, 1.257598, 0.0010157462)
 
 [node name="BatteryCamera" type="Node3D" parent="CameraPositions" unique_id=1453083413]
-transform = Transform3D(0.24991433, 0.003222471, -0.005695693, 0, 0.21758887, 0.12310598, 0.0065440997, -0.123063795, 0.2175143, 0.0016510338, 0.18914574, 0.26948702)
+transform = Transform3D(0.24991433, 0.003222471, -0.0056956923, 0, 0.21758887, 0.123105966, 0.006544099, -0.123063795, 0.21751428, 0.004142454, 0.09530274, 0.17434154)
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=91785477]
-transform = Transform3D(-0.3457514, -0.10285809, 0.3462314, 0, 0.47929674, 0.14238901, -0.3611869, 0.0984624, -0.33143505, 1.4038031, 0.6234751, -1.3583133)
+transform = Transform3D(0.24991433, 0.003222471, -0.0056956927, 0, 0.21758887, 0.12310597, 0.0065440997, -0.123063795, 0.21751429, 0.004142454, 0.09530274, 0.17434154)
 projection = 1
-size = 2.2
+size = 0.34
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Camera3D" unique_id=1675985146]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -0.704)
@@ -23424,16 +23424,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.9604645e-08, 4.5519857)
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 
 [node name="Battery0" parent="Rover" unique_id=345640126 instance=ExtResource("1_qq1bi")]
-transform = Transform3D(0.001, -1.6653352e-19, 1.6653355e-19, -1.6653362e-19, -3.5762796e-10, 0.0010000002, -1.6653347e-19, -0.0010000002, -3.5762796e-10, 0, 0, 0)
-visible = false
+transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, -0.02308707, 0.004368863, 0.029366102)
 
 [node name="Battery1" parent="Rover" unique_id=726907507 instance=ExtResource("1_qq1bi")]
-transform = Transform3D(0.001, -1.6653352e-19, 1.6653355e-19, -1.6653362e-19, -3.5762796e-10, 0.0010000002, -1.6653347e-19, -0.0010000002, -3.5762796e-10, 0.022200016, -3.6970494e-18, -3.6970457e-18)
-visible = false
+transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, -0.00020480709, 0.004368863, 0.029366102)
 
 [node name="Battery2" parent="Rover" unique_id=2117011454 instance=ExtResource("1_qq1bi")]
-transform = Transform3D(0.001, -1.6653352e-19, 1.6653355e-19, -1.6653362e-19, -3.5762796e-10, 0.0010000002, -1.6653347e-19, -0.0010000002, -3.5762796e-10, 0.044274554, -7.373203e-18, -7.373195e-18)
-visible = false
+transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, 0.022549909, 0.004368863, 0.029366102)
 
 [node name="Sampler" parent="Rover" unique_id=1216958742 instance=ExtResource("2_qu72h")]
 transform = Transform3D(-0.001, 9.3885105e-17, 1.5099583e-10, 3.988478e-17, 0.0010000002, -3.5762796e-10, -1.5099581e-10, -3.5762796e-10, -0.0010000002, -0.015000001, 4.2915353e-08, 0.12000002)
@@ -25704,6 +25701,7 @@ transform = Transform3D(-1, -1.920726e-15, 1.920726e-15, 1.920726e-15, 0, 1, -1.
 transform = Transform3D(-1.1920929e-07, -0.99999994, 0, 0.99999994, -1.1920929e-07, 0, 0, 0, 1, 18.536528, 13.695066, 3.9749997)
 
 [node name="909CAEDF-3FBF-4318-AE93-20E600F74F45_001" type="MeshInstance3D" parent="Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembly_14_03_2025 v1_1/XT90PB-M_1" unique_id=1055159103]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7807505, 0, -1.6940659e-20)
 mesh = SubResource("ArrayMesh_hkftr")
 skeleton = NodePath("")
 
@@ -25766,6 +25764,7 @@ skeleton = NodePath("")
 transform = Transform3D(-1.1920929e-07, -0.99999994, 0, 0.99999994, -1.1920929e-07, 0, 0, 0, 1, 18.53653, 13.6950655, 3.9749997)
 
 [node name="909CAEDF-3FBF-4318-AE93-20E600F74F45_002" type="MeshInstance3D" parent="Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembly_14_03_2025 v1_2/XT90PB-M_2" unique_id=1910514377]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.80738986, 0, 0)
 mesh = SubResource("ArrayMesh_ke36q")
 skeleton = NodePath("")
 
@@ -26038,9 +26037,10 @@ mesh = SubResource("ArrayMesh_m08nd")
 skeleton = NodePath("")
 
 [node name="XT90PB-M (1)_001" type="Node3D" parent="Rover/Frame/FrameBody/obudowa v1/obudowa_zlozenie v7/hotswap_lewy v15/elektronika/assembly_hotswap_lewy_2/hotswap_poprawione v1 (1)_001" unique_id=1004037505]
-transform = Transform3D(-1.1920929e-07, -0.99999994, 0, 0.99999994, -1.1920929e-07, 0, 0, 0, 1, 18.536533, 13.695063, 3.975001)
+transform = Transform3D(-1.1920929e-07, -0.99999994, 0, 0.99999994, -1.1920929e-07, 0, 0, 0, 1, 18.536533, 12.439131, 3.975001)
 
 [node name="909CAEDF-3FBF-4318-AE93-20E600F74F45_1_002" type="MeshInstance3D" parent="Rover/Frame/FrameBody/obudowa v1/obudowa_zlozenie v7/hotswap_lewy v15/elektronika/assembly_hotswap_lewy_2/hotswap_poprawione v1 (1)_001/XT90PB-M (1)_001" unique_id=1484446379]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.04438109, 0, -4.2351647e-22)
 mesh = SubResource("ArrayMesh_1hi1j")
 skeleton = NodePath("")
 

@@ -35,7 +35,8 @@ public partial class ThreeDVisualizer : Node3D
 	public override void _EnterTree()
 	{
 		MqttNode.Singleton.MessageReceivedAsync += VescInfoChanged;
-		//MqttNode.Singleton.MessageReceivedAsync += BatteryInfoChanged;
+
+		MqttNode.Singleton.MessageReceivedAsync += BatteryInfoChanged;
 	}
 
 	public async Task VescInfoChanged(string subTopic, MqttApplicationMessage? msg)
@@ -71,6 +72,32 @@ public partial class ThreeDVisualizer : Node3D
 		}
 
 		await Task.Yield();
+	}
+
+	public async Task BatteryInfoChanged(string subTopic, MqttApplicationMessage? msg)
+	{
+		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicBatteryInfo) || subTopic != LocalSettings.Singleton.Mqtt.TopicBatteryInfo)
+			return;
+		if (msg is null || msg.PayloadSegment.Count == 0)
+			return;
+		string payload = System.Text.Encoding.UTF8.GetString(msg.PayloadSegment.ToArray());
+		var batteryData = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(payload);
+		if (batteryData is null) return;
+		switch (batteryData.Slot)
+		{
+			case 0:
+				_battery0.UpdateBatteryLevel(batteryData);
+				break;
+			case 1:
+				_battery1.UpdateBatteryLevel(batteryData);
+				break;
+			case 2:
+				_battery2.UpdateBatteryLevel(batteryData);
+				break;
+			default:
+				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled Battery Slot: {batteryData.Slot}");
+				break;
+		}
 	}
 
 	int HexStringToInt(string hexString)

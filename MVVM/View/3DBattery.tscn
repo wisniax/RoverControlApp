@@ -449,7 +449,7 @@ mesh = SubResource("ArrayMesh_upfjs")
 skeleton = NodePath("")
 
 [node name="obudowa_BMS_2" type="Node3D" parent="Body" unique_id=333948693]
-transform = Transform3D(1, 0, -5.9554778e-24, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 43.908432, -6.096319, -32.413063)
+transform = Transform3D(1, 0, -5.9554778e-24, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 43.908432, -6.096319, -33.71109)
 
 [node name="Component12_1_001" type="MeshInstance3D" parent="Body/obudowa_BMS_2" unique_id=668171768]
 mesh = SubResource("ArrayMesh_aikg5")
@@ -472,10 +472,11 @@ material = SubResource("StandardMaterial3D_gkqfp")
 [node name="Data" type="Node3D" parent="." unique_id=959779166]
 
 [node name="Label3D" type="Label3D" parent="Data" unique_id=427605434]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 38.665947, 15.197372)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 34.435467, 15.197372)
 pixel_size = 0.2
 text = "XX.X V
 XXX.X%
+-XX.X A
 "
 
 [node name="BatteryFilled" type="CSGBox3D" parent="Data" unique_id=1264136169]
