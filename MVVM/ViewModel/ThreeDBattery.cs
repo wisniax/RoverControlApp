@@ -8,19 +8,24 @@ public partial class ThreeDBattery : Node3D
 	[Export] CsgBox3D _batteryFilled = null!;
 	[Export] CsgBox3D _batteryBody = null!;
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
-	{
-
-	}
+	private DateTime _lastUpdateTime = DateTime.MinValue;
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		if ((DateTime.Now - _lastUpdateTime).TotalSeconds > LocalSettings.Singleton.Battery.ExpectedMessageInterval)
+		{
+			this.Visible = false;
+		}
 	}
 
 	public void UpdateBatteryLevel(MqttClasses.BatteryInfo batteryInfo)
 	{
+		_lastUpdateTime = DateTime.Now;
+
+		this.Visible = true;
+
+		// Update the battery label with the latest information
 		CallDeferred(nameof(UpdateBatteryLabel), batteryInfo.ChargePercent, batteryInfo.Voltage, batteryInfo.Current);
 
 		// Color the battery based on the charge percentage
