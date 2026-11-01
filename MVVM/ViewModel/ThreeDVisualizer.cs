@@ -30,26 +30,47 @@ public partial class ThreeDVisualizer : Node3D
 	[Export] private Node3D _hotswap1 = null!;
 	[Export] private Node3D _hotswap2 = null!;
 
+
 	[Export] private Camera3D _camera = null!;
+	private Camera3D _targetCamera = null!;
 
-	[Export] private Node3D _cameraTargetFreemode = null!;
-	[Export] private Node3D _cameraTargetWheels = null!;
-	[Export] private Node3D _cameraTargetBattery = null!;
-	[Export] private Node3D _cameraTargetManipulator = null!;
-	[Export] private Node3D _cameraTargetSampler = null!;
+	[Export] private Camera3D _cameraTargetFreemode = null!;
+	[Export] private Camera3D _cameraTargetWheels = null!;
+	[Export] private Camera3D _cameraTargetBattery = null!;
+	[Export] private Camera3D _cameraTargetManipulator = null!;
+	[Export] private Camera3D _cameraTargetSampler = null!;
 
-	public void MoveCameraToTarget(Node3D target)
+	public void ChangeCameraTarget(MqttClasses.CameraTarget3D target)
 	{
-		if (target is null) return;
-		_camera.GlobalPosition = target.GlobalPosition;
-		_camera.GlobalRotation = target.GlobalRotation;
+		switch (target)
+		{
+			case MqttClasses.CameraTarget3D.Freemode:
+				_targetCamera = _cameraTargetFreemode;
+				break;
+			case MqttClasses.CameraTarget3D.Wheels:
+				_targetCamera = _cameraTargetWheels;
+				break;
+			case MqttClasses.CameraTarget3D.Manipulator:
+				_targetCamera = _cameraTargetManipulator;
+				break;
+			case MqttClasses.CameraTarget3D.Sampler:
+				_targetCamera = _cameraTargetSampler;
+				break;
+			case MqttClasses.CameraTarget3D.Battery:
+				_targetCamera = _cameraTargetBattery;
+				break;
+			default:
+				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled Camera Target: {target}");
+				return;
+		}
 	}
 
 	public override void _EnterTree()
 	{
 		MqttNode.Singleton.MessageReceivedAsync += VescInfoChanged;
-
 		MqttNode.Singleton.MessageReceivedAsync += BatteryInfoChanged;
+
+		_targetCamera = _cameraTargetFreemode;
 	}
 
 	public async Task VescInfoChanged(string subTopic, MqttApplicationMessage? msg)
@@ -130,5 +151,9 @@ public partial class ThreeDVisualizer : Node3D
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		if (_camera == null || _targetCamera == null)
+			return;
+
+		_camera.GlobalTransform = _targetCamera.GlobalTransform;
 	}
 }
