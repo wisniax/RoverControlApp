@@ -23391,18 +23391,20 @@ light_cull_mask = 4294959103
 
 [node name="CameraPositions" type="Node3D" parent="." unique_id=1811163647]
 
-[node name="FreemodeCamera" type="Node3D" parent="CameraPositions" unique_id=2040040463]
-transform = Transform3D(-0.3457514, -0.10285808, 0.3462314, 0, 0.47929674, 0.142389, -0.3611869, 0.098462395, -0.33143505, 1.4038031, 0.6234751, -1.3583133)
+[node name="FreemodeCamera2" type="Camera3D" parent="CameraPositions" unique_id=543991512]
+transform = Transform3D(-0.3457514, -0.10285809, 0.3462314, 0, 0.47929674, 0.14238901, -0.3611869, 0.0984624, -0.33143505, 1.4038031, 0.6234751, -1.3583133)
+projection = 1
+size = 2.0
 
-[node name="WheelCamera" type="Node3D" parent="CameraPositions" unique_id=1830701031]
+[node name="WheelCamera" type="Camera3D" parent="CameraPositions" unique_id=1931103316]
 transform = Transform3D(0.5, 0, 0, 0, -2.1855694e-08, 0.5, 0, -0.5, -2.1855694e-08, -0.0031844298, 1.257598, 0.0010157462)
-
-[node name="BatteryCamera" type="Node3D" parent="CameraPositions" unique_id=1453083413]
-transform = Transform3D(0.24991433, 0.003222471, -0.0056956923, 0, 0.21758887, 0.123105966, 0.006544099, -0.123063795, 0.21751428, 0.004142454, 0.09530274, 0.17434154)
+projection = 1
+size = 2.0
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=91785477]
-transform = Transform3D(0.24991433, 0.003222471, -0.0056956927, 0, 0.21758887, 0.12310597, 0.0065440997, -0.123063795, 0.21751429, 0.004142454, 0.09530274, 0.17434154)
+transform = Transform3D(0.24991433, 0.003222471, -0.005695692, 0, 0.21758887, 0.12310595, 0.0065440997, -0.123063795, 0.21751426, 0.004559671, 0.10783432, 0.15840831)
 projection = 1
+current = true
 size = 0.34
 
 [node name="OmniLight3D" type="OmniLight3D" parent="Camera3D" unique_id=1675985146]
@@ -23431,6 +23433,11 @@ transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, -0.
 
 [node name="Battery2" parent="Rover" unique_id=2117011454 instance=ExtResource("1_qq1bi")]
 transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, 0.022549909, 0.004368863, 0.029366102)
+
+[node name="BatteryCamera" type="Camera3D" parent="Rover" unique_id=1656265488]
+transform = Transform3D(0.24991433, 0.003222471, -0.0056956927, 0, 0.21758887, 0.12310599, 0.006544099, -0.123063795, 0.21751432, 0.0022798348, 0.05391716, 0.07920416)
+projection = 1
+size = 0.4
 
 [node name="Sampler" parent="Rover" unique_id=1216958742 instance=ExtResource("2_qu72h")]
 transform = Transform3D(-0.001, 9.3885105e-17, 1.5099583e-10, 3.988478e-17, 0.0010000002, -3.5762796e-10, -1.5099581e-10, -3.5762796e-10, -0.0010000002, -0.015000001, 4.2915353e-08, 0.12000002)

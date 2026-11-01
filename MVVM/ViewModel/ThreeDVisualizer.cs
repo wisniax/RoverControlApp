@@ -30,7 +30,20 @@ public partial class ThreeDVisualizer : Node3D
 	[Export] private Node3D _hotswap1 = null!;
 	[Export] private Node3D _hotswap2 = null!;
 
+	[Export] private Camera3D _camera = null!;
 
+	[Export] private Node3D _cameraTargetFreemode = null!;
+	[Export] private Node3D _cameraTargetWheels = null!;
+	[Export] private Node3D _cameraTargetBattery = null!;
+	[Export] private Node3D _cameraTargetManipulator = null!;
+	[Export] private Node3D _cameraTargetSampler = null!;
+
+	public void MoveCameraToTarget(Node3D target)
+	{
+		if (target is null) return;
+		_camera.GlobalPosition = target.GlobalPosition;
+		_camera.GlobalRotation = target.GlobalRotation;
+	}
 
 	public override void _EnterTree()
 	{

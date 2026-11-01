@@ -103,6 +103,15 @@ namespace RoverControlApp.Core
 			NotAvailable = 2
 		}
 
+		public enum CameraTarget3D
+		{
+			Freemode = 0,
+			Wheels = 1,
+			Manipulator = 2,
+			Sampler = 3,
+			Battery = 4,
+		}
+
 		public class RoverStatus
 		{
 			public CommunicationState CommunicationState { get; set; } = CommunicationState.Closed;
@@ -187,7 +196,7 @@ namespace RoverControlApp.Core
 				return HashCode.Combine(temp1, temp2, temp3, temp4);
 			}
 		}
-		
+
 		public enum ActionType
 		{
 			Stop = 0,
@@ -196,7 +205,7 @@ namespace RoverControlApp.Core
 			InvKinPosition = 3,
 			InvKinOffset = 4,
 			GoToReference = 5, // with Reference e.g. "inverse_home_pose"
-							  // ... predefined positions (Driving position, sampler, etc)? Later.
+							   // ... predefined positions (Driving position, sampler, etc)? Later.
 			UseMoveITPlanning = 6, // give control away to moveit
 		}
 		public class ForwardKinMode
@@ -240,7 +249,7 @@ namespace RoverControlApp.Core
 
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
-			public float this [int index]
+			public float this[int index]
 			{
 				get => index switch
 				{
@@ -253,7 +262,7 @@ namespace RoverControlApp.Core
 				};
 				set
 				{
-					switch(index)
+					switch (index)
 					{
 						case 0:
 							ContainerDegrees0 = value;

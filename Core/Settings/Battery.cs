@@ -14,7 +14,7 @@ public partial class Battery : SettingBase, ICloneable
 		_warningVoltage = 21.6f;
 		_criticalVoltage = 20f;
 		_warningTemperature = 70f;
-		_expectedMessageInterval = 5;
+		_expectedMessageInterval = 2;
 		_batteryStatusByBMS = false;
 
 		_averageAll = true;
