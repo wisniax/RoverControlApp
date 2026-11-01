@@ -132,6 +132,7 @@ public partial class ThreeDVisualizer : Node3D
 				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled Battery Slot: {batteryData.Slot}");
 				break;
 		}
+		await Task.Yield();
 	}
 
 	int HexStringToInt(string hexString)
@@ -163,13 +164,23 @@ public partial class ThreeDVisualizer : Node3D
 		return _availableCameras;
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
+	public void UpdateCameraInterpolation(double delta)
+	{
+		if (_camera == null || _targetCamera == null)
+			return;
+
+		float CameraSizeKp = 2.0f; // Proportional gain for camera size adjustment
+		float CameraTransformKp = 3.0f; // Proportional gain for camera position adjustment
+
+		_camera.Size += (_targetCamera.Size - _camera.Size) * CameraSizeKp * (float)delta;
+		_camera.GlobalTransform = _camera.GlobalTransform.InterpolateWith(_targetCamera.GlobalTransform, CameraTransformKp * (float)delta);
+	}
+
 	public override void _Process(double delta)
 	{
 		if (_camera == null || _targetCamera == null)
 			return;
 
-		_camera.GlobalTransform = _targetCamera.GlobalTransform;
-		_camera.Size = _targetCamera.Size;
+		UpdateCameraInterpolation(delta);
 	}
 }
