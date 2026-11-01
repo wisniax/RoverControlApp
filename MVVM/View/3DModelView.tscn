@@ -1,16 +1,19 @@
 [gd_scene format=3 uid="uid://chbyeplulidak"]
 
 [ext_resource type="PackedScene" uid="uid://bq5v7e60s5w4l" path="res://MVVM/View/3DVisualizer.tscn" id="1_mggfe"]
-[ext_resource type="Script" uid="uid://bpme5jocn2uve" path="res://MVVM/ViewModel/ThreeDViewer.cs" id="1_vui5t"]
+[ext_resource type="Script" uid="uid://dhw5v20ynqqgf" path="res://MVVM/ViewModel/ThreeDModelView.cs" id="1_vui5t"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_vui5t"]
 viewport_path = NodePath("SubViewport")
 
-[node name="3DViewer" type="Panel" unique_id=1552232 node_paths=PackedStringArray("_threeDVisualizer")]
+[node name="3DModelView" type="Panel" unique_id=1552232 node_paths=PackedStringArray("_threeDVisualizer", "_buttonForward", "_buttonBackward", "_labelCurrentCamera")]
 offset_right = 799.0
 offset_bottom = 532.0
 script = ExtResource("1_vui5t")
 _threeDVisualizer = NodePath("SubViewport/RoverVisualizer")
+_buttonForward = NodePath("VBoxContainer/HBoxContainer/ButtonCameraForward")
+_buttonBackward = NodePath("VBoxContainer/HBoxContainer/ButtonCameraBackward")
+_labelCurrentCamera = NodePath("VBoxContainer/HBoxContainer/CurrentCameraLabel")
 
 [node name="VisualiserView" type="TextureRect" parent="." unique_id=127261473]
 layout_mode = 0
@@ -25,11 +28,42 @@ stretch_mode = 2
 
 [node name="RoverVisualizer" parent="SubViewport" unique_id=1750992984 instance=ExtResource("1_mggfe")]
 
-[node name="Label" type="Label" parent="." unique_id=371298161]
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=778518441]
 layout_mode = 0
-offset_left = 532.0
-offset_top = 10.0
-offset_right = 789.0
-offset_bottom = 70.0
-theme_override_font_sizes/font_size = 41
-text = "3D Visualizer"
+offset_left = 524.0
+offset_top = 3.0
+offset_right = 798.0
+offset_bottom = 110.0
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=371298161]
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "3D Model View"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer" unique_id=154754332]
+layout_mode = 2
+
+[node name="ButtonCameraForward" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=854387190]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "◀
+"
+icon_alignment = 1
+
+[node name="CurrentCameraLabel" type="Label" parent="VBoxContainer/HBoxContainer" unique_id=1781221097]
+custom_minimum_size = Vector2(165, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "Freemode"
+horizontal_alignment = 1
+
+[node name="ButtonCameraBackward" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=1417503106]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+text = "▶"
+icon_alignment = 1
+
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/ButtonCameraForward" to="." method="_OnForwardButtonPressed"]
+[connection signal="pressed" from="VBoxContainer/HBoxContainer/ButtonCameraBackward" to="." method="_OnBackwardButtonPressed"]

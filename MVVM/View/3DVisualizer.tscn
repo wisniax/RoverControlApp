@@ -23363,7 +23363,7 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_3m3ie")
 
-[node name="RoverVisualizer" type="Node3D" unique_id=1750992984 node_paths=PackedStringArray("_chassis", "_suspensionFL", "_suspensionFR", "_suspensionRL", "_suspensionRR", "_wheelFL", "_wheelFR", "_wheelRL", "_wheelRR", "_battery0", "_battery1", "_battery2", "_hotswap0", "_hotswap1", "_hotswap2")]
+[node name="RoverVisualizer" type="Node3D" unique_id=1750992984 node_paths=PackedStringArray("_chassis", "_suspensionFL", "_suspensionFR", "_suspensionRL", "_suspensionRR", "_wheelFL", "_wheelFR", "_wheelRL", "_wheelRR", "_battery0", "_battery1", "_battery2", "_hotswap0", "_hotswap1", "_hotswap2", "_camera", "_cameraTargetBattery")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 script = ExtResource("1_3ui5f")
 _chassis = NodePath("Rover/Frame")
@@ -23381,16 +23381,11 @@ _battery2 = NodePath("Rover/Battery2")
 _hotswap0 = NodePath("Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembly_14_03_2025 v1_2/wm686 v1 (1)_2/wm686 v1_003")
 _hotswap1 = NodePath("Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembly_14_03_2025 v1_2/wm686 v1 (1)_2/wm686 v1_002")
 _hotswap2 = NodePath("Rover/Frame/FrameBody/obudowa v1/obudowa_zlozenie v7/hotswap_lewy v15/elektronika/assembly_hotswap_lewy_2/hotswap_poprawione v1 (1)_001/wm686 v1 (1) (1)_001/wm686 v1_1_002")
+_camera = NodePath("Camera3D")
+_cameraTargetBattery = NodePath("Rover/BatteryCamera")
 
-[node name="CameraPositions" type="Node3D" parent="." unique_id=1811163647]
-
-[node name="FreemodeCamera2" type="Camera3D" parent="CameraPositions" unique_id=543991512]
+[node name="FreemodeCamera" type="Camera3D" parent="." unique_id=543991512]
 transform = Transform3D(-0.3457514, -0.10285809, 0.3462314, 0, 0.47929674, 0.14238901, -0.3611869, 0.0984624, -0.33143505, 1.4038031, 0.6234751, -1.3583133)
-projection = 1
-size = 2.0
-
-[node name="WheelCamera" type="Camera3D" parent="CameraPositions" unique_id=1931103316]
-transform = Transform3D(0.5, 0, 0, 0, -2.1855694e-08, 0.5, 0, -0.5, -2.1855694e-08, -0.0031844298, 1.257598, 0.0010157462)
 projection = 1
 size = 2.0
 
@@ -23418,6 +23413,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.9604645e-08, 4.5519857)
 [node name="Rover" type="Node3D" parent="." unique_id=1231744712]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 
+[node name="WheelCamera" type="Camera3D" parent="Rover" unique_id=1931103316]
+transform = Transform3D(0.25, 0, 0, 0, -1.0927847e-08, 0.25, 0, -0.25, -1.0927847e-08, -0.0015922149, 0.628799, 0.0005078731)
+projection = 1
+size = 2.0
+
+[node name="BatteryCamera" type="Camera3D" parent="Rover" unique_id=1656265488]
+transform = Transform3D(0.24991433, 0.003222471, -0.0056956927, 0, 0.21758887, 0.12310599, 0.006544099, -0.123063795, 0.21751432, 0.0022798348, 0.05391716, 0.07920416)
+projection = 1
+size = 0.4
+
 [node name="Battery0" parent="Rover" unique_id=345640126 instance=ExtResource("1_qq1bi")]
 transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, -0.02308707, 0.004368863, 0.029366102)
 
@@ -23427,14 +23432,8 @@ transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, -0.
 [node name="Battery2" parent="Rover" unique_id=2117011454 instance=ExtResource("1_qq1bi")]
 transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, 0.022549909, 0.004368863, 0.029366102)
 
-[node name="BatteryCamera" type="Camera3D" parent="Rover" unique_id=1656265488]
-transform = Transform3D(0.24991433, 0.003222471, -0.0056956927, 0, 0.21758887, 0.12310599, 0.006544099, -0.123063795, 0.21751432, 0.0022798348, 0.05391716, 0.07920416)
-projection = 1
-size = 0.4
-
 [node name="Sampler" parent="Rover" unique_id=1216958742 instance=ExtResource("2_qu72h")]
 transform = Transform3D(-0.001, 9.3885105e-17, 1.5099583e-10, 3.988478e-17, 0.0010000002, -3.5762796e-10, -1.5099581e-10, -3.5762796e-10, -0.0010000002, -0.015000001, 4.2915353e-08, 0.12000002)
-visible = true
 
 [node name="Rotary" parent="Rover" unique_id=665061669 instance=ExtResource("3_qq1bi")]
 transform = Transform3D(0.00077547546, -3.5905712e-11, -0.00063137774, 1.6619363e-10, 0.0010000002, 1.4725475e-10, 0.00063137774, -2.191234e-10, 0.00077547546, -0.044614453, -0.0041999663, 0.0960204)
