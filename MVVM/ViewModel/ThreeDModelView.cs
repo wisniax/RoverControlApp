@@ -12,33 +12,45 @@ public partial class ThreeDModelView : Panel
 	[Export] private Label _labelCurrentCamera = null!;
 
 	private MqttClasses.CameraTarget3D _currentCameraType = MqttClasses.CameraTarget3D.Freemode;
+	private MqttClasses.CameraTarget3D AvailableCameras
+	{
+		get => _threeDVisualizer.ReportAvailableCameras();	
+	} 
 
 	private void _OnForwardButtonPressed()
 	{
-		_currentCameraType = _currentCameraType switch
+		do
 		{
-			MqttClasses.CameraTarget3D.Freemode => MqttClasses.CameraTarget3D.Wheels,
-			MqttClasses.CameraTarget3D.Wheels => MqttClasses.CameraTarget3D.Manipulator,
-			MqttClasses.CameraTarget3D.Manipulator => MqttClasses.CameraTarget3D.Sampler,
-			MqttClasses.CameraTarget3D.Sampler => MqttClasses.CameraTarget3D.Battery,
-			MqttClasses.CameraTarget3D.Battery => MqttClasses.CameraTarget3D.Freemode,
-			_ => throw new ArgumentOutOfRangeException()
-		};
+			_currentCameraType = _currentCameraType switch
+			{
+				MqttClasses.CameraTarget3D.Freemode => MqttClasses.CameraTarget3D.Wheels,
+				MqttClasses.CameraTarget3D.Wheels => MqttClasses.CameraTarget3D.Manipulator,
+				MqttClasses.CameraTarget3D.Manipulator => MqttClasses.CameraTarget3D.Sampler,
+				MqttClasses.CameraTarget3D.Sampler => MqttClasses.CameraTarget3D.Battery,
+				MqttClasses.CameraTarget3D.Battery => MqttClasses.CameraTarget3D.Freemode,
+				_ => throw new ArgumentOutOfRangeException()
+			};
+		} while (!AvailableCameras.HasFlag(_currentCameraType));
+
 		CallDeferred(nameof(UpdateCameraTargetLabel));
 		_threeDVisualizer.ChangeCameraTarget(_currentCameraType);
 	}
 
 	private void _OnBackwardButtonPressed()
 	{
-		_currentCameraType = _currentCameraType switch
+		do
 		{
-			MqttClasses.CameraTarget3D.Freemode => MqttClasses.CameraTarget3D.Battery,
-			MqttClasses.CameraTarget3D.Wheels => MqttClasses.CameraTarget3D.Freemode,
-			MqttClasses.CameraTarget3D.Manipulator => MqttClasses.CameraTarget3D.Wheels,
-			MqttClasses.CameraTarget3D.Sampler => MqttClasses.CameraTarget3D.Manipulator,
-			MqttClasses.CameraTarget3D.Battery => MqttClasses.CameraTarget3D.Sampler,
-			_ => throw new ArgumentOutOfRangeException()
-		};
+			_currentCameraType = _currentCameraType switch
+			{
+				MqttClasses.CameraTarget3D.Freemode => MqttClasses.CameraTarget3D.Battery,
+				MqttClasses.CameraTarget3D.Wheels => MqttClasses.CameraTarget3D.Freemode,
+				MqttClasses.CameraTarget3D.Manipulator => MqttClasses.CameraTarget3D.Wheels,
+				MqttClasses.CameraTarget3D.Sampler => MqttClasses.CameraTarget3D.Manipulator,
+				MqttClasses.CameraTarget3D.Battery => MqttClasses.CameraTarget3D.Sampler,
+				_ => throw new ArgumentOutOfRangeException()
+			};
+		} while (!AvailableCameras.HasFlag(_currentCameraType));
+
 		CallDeferred(nameof(UpdateCameraTargetLabel));
 		_threeDVisualizer.ChangeCameraTarget(_currentCameraType);
 	}
@@ -51,5 +63,6 @@ public partial class ThreeDModelView : Panel
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		
 	}
 }

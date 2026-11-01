@@ -148,6 +148,21 @@ public partial class ThreeDVisualizer : Node3D
 		wheelNode.RotationDegrees = new Vector3(0, -(float)precisePos, 0);
 	}
 
+	public MqttClasses.CameraTarget3D ReportAvailableCameras()
+	{
+		MqttClasses.CameraTarget3D _availableCameras = MqttClasses.CameraTarget3D.Freemode;
+		if (_cameraTargetWheels != null)
+			_availableCameras |= MqttClasses.CameraTarget3D.Wheels;
+		if (_cameraTargetBattery != null)
+			_availableCameras |= MqttClasses.CameraTarget3D.Battery;
+		if (_cameraTargetManipulator != null && /*_threeDManipulator.Visible*/ false) // TODO: Implement visibility check for manipulator
+			_availableCameras |= MqttClasses.CameraTarget3D.Manipulator;
+		if (_cameraTargetSampler != null && /*_threeDSampler.Visible*/ false) // TODO: Implement visibility check for sampler
+			_availableCameras |= MqttClasses.CameraTarget3D.Sampler;
+
+		return _availableCameras;
+	}
+
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{

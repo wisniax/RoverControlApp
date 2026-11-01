@@ -103,13 +103,14 @@ namespace RoverControlApp.Core
 			NotAvailable = 2
 		}
 
+		[Flags]
 		public enum CameraTarget3D
 		{
 			Freemode = 0,
 			Wheels = 1,
-			Manipulator = 2,
-			Sampler = 3,
-			Battery = 4,
+			Battery = 2,
+			Manipulator = 4,
+			Sampler = 8,
 		}
 
 		public class RoverStatus
