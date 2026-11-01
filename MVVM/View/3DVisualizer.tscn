@@ -23421,7 +23421,7 @@ projection = 1
 size = 2.0
 
 [node name="BatteryCamera" type="Camera3D" parent="Rover" unique_id=1656265488]
-transform = Transform3D(0.24991433, 0.003222471, -0.0056956927, 0, 0.21758887, 0.12310599, 0.006544099, -0.123063795, 0.21751432, 0.0022798348, 0.05391716, 0.07920416)
+transform = Transform3D(0.25, 0, 0, 0, 0.21758892, 0.12310589, 0, -0.12310589, 0.21758892, 0, 0.054, 0.079)
 projection = 1
 size = 0.4
 

@@ -15,7 +15,7 @@ public partial class ThreeDBattery : Node3D
 	{
 		if ((DateTime.Now - _lastUpdateTime).TotalSeconds > LocalSettings.Singleton.Battery.ExpectedMessageInterval)
 		{
-			this.Visible = false;
+			CallDeferred(nameof(UpdateBatteryVisibility), false);
 		}
 	}
 
@@ -23,7 +23,7 @@ public partial class ThreeDBattery : Node3D
 	{
 		_lastUpdateTime = DateTime.Now;
 
-		this.Visible = true;
+		CallDeferred(nameof(UpdateBatteryVisibility), true);
 
 		// Update the battery label with the latest information
 		CallDeferred(nameof(UpdateBatteryLabel), batteryInfo.ChargePercent, batteryInfo.Voltage, batteryInfo.Current);
@@ -33,6 +33,11 @@ public partial class ThreeDBattery : Node3D
 
 		// Scale the battery fill based on the charge percentage
 		CallDeferred(nameof(UpdateBatteryFill), batteryInfo.ChargePercent);
+	}
+
+	void UpdateBatteryVisibility(bool isVisible)
+	{
+		this.Visible = isVisible;
 	}
 
 	void UpdateBatteryLabel(float chargePercent, float voltage, float current)

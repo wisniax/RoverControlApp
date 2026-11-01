@@ -92,9 +92,9 @@ expand_mode = 2
 
 [node name="GrzybUIDis" parent="." unique_id=859294310 node_paths=PackedStringArray("Animator") instance=ExtResource("3_mtbtk")]
 layout_mode = 1
-offset_left = 264.0
+offset_left = 35.0
 offset_top = 4.0
-offset_right = 264.0
+offset_right = 35.0
 offset_bottom = 4.0
 script = ExtResource("4_2nwr4")
 Animator = NodePath("RoverMode/AnimationPlayer")

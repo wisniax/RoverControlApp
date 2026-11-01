@@ -472,7 +472,7 @@ material = SubResource("StandardMaterial3D_gkqfp")
 [node name="Data" type="Node3D" parent="." unique_id=959779166]
 
 [node name="Label3D" type="Label3D" parent="Data" unique_id=427605434]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 34.435467, 15.197372)
+transform = Transform3D(1, 0, 0, 0, 0.8660254, 0.5, 0, -0.5, 0.8660254, -5.293956e-23, 35.23016, 20.974878)
 pixel_size = 0.2
 text = "XX.X V
 XXX.X%

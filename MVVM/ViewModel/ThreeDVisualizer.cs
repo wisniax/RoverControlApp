@@ -170,5 +170,6 @@ public partial class ThreeDVisualizer : Node3D
 			return;
 
 		_camera.GlobalTransform = _targetCamera.GlobalTransform;
+		_camera.Size = _targetCamera.Size;
 	}
 }
