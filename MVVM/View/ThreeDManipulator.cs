@@ -25,16 +25,16 @@ public partial class ThreeDManipulator : Node3D
 				_axis3.RotationDegrees = new Vector3((float)value, 0, 0);
 				break;
 			case 3:
-				_axis4.RotationDegrees = new Vector3((float)value, 0, 0);
+				_axis4.RotationDegrees = new Vector3(0, (float)value, 0);
 				break;
 			case 4:
 				_axis5.RotationDegrees = new Vector3((float)value, 0, 0);
 				break;
 			case 5:
-				_axis6.RotationDegrees = new Vector3((float)value, 0, 0);
+				_axis6.RotationDegrees = new Vector3(0, 0, (float)value));
 				break;
 			case 6:
-				_gripper.RotationDegrees = new Vector3((float)value, 0, 0);
+				//_gripper.RotationDegrees = new Vector3(0, 0, (float)value);
 				break;
 			default:
 				GD.PrintErr($"Invalid axis number: {axisNumber}");
