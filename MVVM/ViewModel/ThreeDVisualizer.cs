@@ -178,9 +178,6 @@ public partial class ThreeDVisualizer : Node3D
 
 	public override void _Process(double delta)
 	{
-		if (_camera == null || _targetCamera == null)
-			return;
-
 		UpdateCameraInterpolation(delta);
 	}
 }
