@@ -23445,7 +23445,6 @@ transform = Transform3D(0.001, -1.323489e-23, 7.3468392e-37, 1.323489e-23, 0.001
 
 [node name="Manipulator" parent="Rover" unique_id=489036806 instance=ExtResource("1_i5l4o")]
 transform = Transform3D(-0.001, -8.742279e-11, -3.8213714e-18, 0, -4.3711396e-11, 0.0010000002, -8.742278e-11, 0.0010000002, 4.3711396e-11, -0.015986947, 0.03406689, -0.10238466)
-visible = false
 
 [node name="Frame" type="Node3D" parent="Rover" unique_id=201270566]
 transform = Transform3D(0.001, 1.5336665e-24, 4.5494934e-24, 0, -3.5762796e-10, 0.0010000002, -1.6703744e-25, -0.0010000002, -3.5762796e-10, -1.8626451e-09, 0, -7.450581e-09)

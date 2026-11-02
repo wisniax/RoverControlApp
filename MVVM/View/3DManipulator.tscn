@@ -5069,16 +5069,16 @@ skeleton = NodePath("")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -15.806922, 25.466814, 19.100113)
 
 [node name="Actuator1" type="Node3D" parent="Axis1" unique_id=307492966 node_paths=PackedStringArray("Part1", "Part2")]
-transform = Transform3D(1, -4.2632564e-14, -3.5527137e-15, 1.4210855e-14, 0.99002355, 0.14090121, 7.5747827e-16, -0.14090121, 0.99002355, -0.5159998, -60.34904, 171.03001)
+transform = Transform3D(1, 0, 0, 0, 0.9999999, 0, 0, 0, 0.9999999, -0.5159998, -60.34904, 171.03001)
 script = ExtResource("1_l4l7g")
 Part1 = NodePath("Part1")
 Part2 = NodePath("../Axis2/Actuator1/Part2")
 
 [node name="Part1" type="Node3D" parent="Axis1/Actuator1" unique_id=149028895]
-transform = Transform3D(0.99999976, 0, 0, 0, 0.97196084, 0.23514201, 0, -0.23514207, 0.9719606, 16.322922, 85.57378, -128.93091)
+transform = Transform3D(-0.99999976, -1.1451983e-06, -1.5089343e-07, -1.1499764e-06, 0.9993222, 0.036807615, 1.08639156e-07, 0.036807623, -0.99932194, 16.322918, 66.390366, -139.90799)
 
 [node name="SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna" type="MeshInstance3D" parent="Axis1/Actuator1/Part1" unique_id=686693388]
-transform = Transform3D(-0.9999618, -0.007302929, -0.0047198655, 0.008608655, -0.90793, -0.4190324, -0.0012251437, -0.41905707, 0.9079588, -9.59795, 15.411684, 7.3965836)
+transform = Transform3D(0.9999996, 1.779772e-07, -1.6911838e-07, 1.7797716e-07, -0.9999996, 3.9284623e-07, -1.691184e-07, -1.309117e-07, -0.9999998, 9.536905, 16.802053, -3.5652885)
 mesh = SubResource("ArrayMesh_borte")
 skeleton = NodePath("")
 
@@ -5135,7 +5135,6 @@ skeleton = NodePath("")
 
 [node name="enkoder_wał_Domyślna" type="MeshInstance3D" parent="Axis1/Axis1Body/Podstawa_Domyślna" unique_id=1526386784]
 transform = Transform3D(0, 1, -7.9239636e-15, 1, 0, 7.9239636e-15, 7.9239636e-15, -7.9239636e-15, -1, 2.7003965, 7.5687017, 288.4512)
-visible = false
 mesh = SubResource("ArrayMesh_xk0n2")
 skeleton = NodePath("")
 
@@ -5150,27 +5149,30 @@ mesh = SubResource("ArrayMesh_pexsk")
 skeleton = NodePath("")
 
 [node name="Axis2" type="Node3D" parent="Axis1" unique_id=625843171]
-transform = Transform3D(1, 0, 0, 0, 0.99999976, 0, 0, 0, 0.99999976, -0.43913746, -6.967348, 14.26902)
+transform = Transform3D(1, 0, 0, 0, 0.9999997, 0, 0, 0, 0.9999997, -0.43913746, -6.967348, 14.26902)
 
 [node name="Actuator1" type="Node3D" parent="Axis1/Axis2" unique_id=1766170435]
-transform = Transform3D(0.99999994, -4.5235993e-10, -2.2737368e-10, -1.4428281e-10, 0.94997185, 0.31233487, -4.3125153e-10, -0.3123349, 0.9499718, 16.246058, -27.996334, -25.921703)
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999976, 0, 0, 0, 0.9999997, 16.246058, -27.996334, -25.921703)
 
 [node name="Part2" type="Node3D" parent="Axis1/Axis2/Actuator1" unique_id=1960391873]
-transform = Transform3D(0.99999994, 7.105428e-15, -1.3659677e-17, -7.1054274e-15, 1, 0, 1.3659677e-17, 9.705786e-32, 0.99999994, -4.866472e-15, 4.01467, 111.518715)
+transform = Transform3D(0.99999994, -1.1491976e-06, 4.232787e-08, 1.1499768e-06, 0.99932235, -0.03680763, 5.6843415e-14, 0.036807634, 0.9993223, 1.5962064e-07, 38.721558, 104.77017)
 
 [node name="tłoczysko_SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Actuator1/Part2" unique_id=1555137980]
-transform = Transform3D(0.9999619, 0.0073028384, -0.0047198604, -0.008608571, 0.9079302, -0.41903174, 0.0012251815, 0.41905695, 0.9079591, -15.88733, 13.125343, -28.084106)
+transform = Transform3D(0.9999997, 0, 0, 0, 0.99999964, 0, 0, 0, 0.9999998, -15.887328, 0.17235565, -32.035854)
 mesh = SubResource("ArrayMesh_07i3j")
 skeleton = NodePath("")
 
-[node name="Actuator2" type="Node3D" parent="Axis1/Axis2" unique_id=708094017]
-transform = Transform3D(0.9999998, 0, -8.4703295e-22, 0, 0.9999998, 7.1054274e-15, 4.2351647e-22, -7.1054274e-15, 0.9999998, 0, 0, 0)
+[node name="Actuator2" type="Node3D" parent="Axis1/Axis2" unique_id=708094017 node_paths=PackedStringArray("Part1", "Part2")]
+transform = Transform3D(0.9999998, 3.0092663e-36, -4.2351647e-22, 0, 0.9999998, 7.1054274e-15, 4.2351647e-22, -7.1054274e-15, 0.9999998, 0, 0, 0)
+script = ExtResource("1_l4l7g")
+Part1 = NodePath("Part1")
+Part2 = NodePath("../Axis3/Actuator2/Part2")
 
 [node name="Part1" type="Node3D" parent="Axis1/Axis2/Actuator2" unique_id=951789964]
-transform = Transform3D(0.99999976, 0, 0, 0, 1, 0, 0, 0, 0.9999999, 16.246058, 10.680415, 93.717575)
+transform = Transform3D(0.99999934, -0.00029189928, -3.4715395e-05, -0.00029395625, -0.9930004, -0.1181089, 3.5070096e-09, 0.11810893, -0.9930002, -0.0014343262, 10.483019, 94.11226)
 
 [node name="SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Actuator2/Part1" unique_id=1189256209]
-transform = Transform3D(-0.9999621, -0.008001067, -0.003404628, 0.0075829225, -0.99402773, 0.108865835, -0.0042553376, 0.10883581, 0.99405104, -9.97108, 16.773983, 1.5049133)
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.742278e-08, 0, -1.0000002, 5.998665, -17.208132, -3.1570578)
 mesh = SubResource("ArrayMesh_3qrnk")
 skeleton = NodePath("")
 
@@ -5518,16 +5520,16 @@ mesh = SubResource("ArrayMesh_7vinf")
 skeleton = NodePath("")
 
 [node name="Axis3" type="Node3D" parent="Axis1/Axis2" unique_id=57351639]
-transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, -0.076862335, -1.7491875, 165.59154)
+transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, -1.749, 165.592)
 
 [node name="Actuator2" type="Node3D" parent="Axis1/Axis2/Axis3" unique_id=89679356]
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 16.322922, -26.24715, -191.51326)
 
 [node name="Part2" type="Node3D" parent="Axis1/Axis2/Axis3/Actuator2" unique_id=1658497267]
-transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 2.5119612e-06, 48.189827, 199.37772)
+transform = Transform3D(-0.9999999, -0.0002919002, 3.4707915e-05, 0.0002939564, -0.99300045, 0.118108936, -1.1048541e-08, 0.11810895, 0.9930004, -16.321596, 47.867947, 198.96968)
 
 [node name="tłoczysko_SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Part2" unique_id=1674269327]
-transform = Transform3D(0.999962, 0.008001061, -0.0034046285, -0.0075454973, 0.9930398, 0.11753625, 0.004321348, -0.11750602, 0.99306285, -15.671448, -4.4177017, -32.64244)
+transform = Transform3D(0.9999997, 1.1368684e-13, 7.1054274e-15, 0, 0.9999997, -7.450581e-09, -1.4210855e-14, 1.4901161e-08, 0.99999994, 0.050683975, -0.24641609, -32.64244)
 mesh = SubResource("ArrayMesh_ittmb")
 skeleton = NodePath("")
 
