@@ -23363,7 +23363,7 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_vfv1m")
 
-[node name="RoverVisualizer" type="Node3D" unique_id=1750992984 node_paths=PackedStringArray("_chassis", "_suspensionFL", "_suspensionFR", "_suspensionRL", "_suspensionRR", "_wheelFL", "_wheelFR", "_wheelRL", "_wheelRR", "_battery0", "_battery1", "_battery2", "_hotswap0", "_hotswap1", "_hotswap2", "_camera", "_cameraTargetFreemode", "_cameraTargetWheels", "_cameraTargetBattery")]
+[node name="RoverVisualizer" type="Node3D" unique_id=1750992984 node_paths=PackedStringArray("_chassis", "_suspensionFL", "_suspensionFR", "_suspensionRL", "_suspensionRR", "_wheelFL", "_wheelFR", "_wheelRL", "_wheelRR", "_battery0", "_battery1", "_battery2", "_hotswap0", "_hotswap1", "_hotswap2", "_threeDManipulator", "_camera", "_cameraTargetFreemode", "_cameraTargetWheels", "_cameraTargetBattery")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 script = ExtResource("1_3ui5f")
 _chassis = NodePath("Rover/Frame")
@@ -23381,6 +23381,7 @@ _battery2 = NodePath("Rover/Battery2")
 _hotswap0 = NodePath("Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembly_14_03_2025 v1_2/wm686 v1 (1)_2/wm686 v1_003")
 _hotswap1 = NodePath("Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembly_14_03_2025 v1_2/wm686 v1 (1)_2/wm686 v1_002")
 _hotswap2 = NodePath("Rover/Frame/FrameBody/obudowa v1/obudowa_zlozenie v7/hotswap_lewy v15/elektronika/assembly_hotswap_lewy_2/hotswap_poprawione v1 (1)_001/wm686 v1 (1) (1)_001/wm686 v1_1_002")
+_threeDManipulator = NodePath("Rover/Manipulator")
 _camera = NodePath("Camera3D")
 _cameraTargetFreemode = NodePath("FreemodeCamera")
 _cameraTargetWheels = NodePath("Rover/WheelCamera")

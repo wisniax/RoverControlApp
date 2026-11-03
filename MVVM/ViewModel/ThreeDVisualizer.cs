@@ -102,25 +102,25 @@ public partial class ThreeDVisualizer : Node3D
 				CallDeferred(nameof(UpdateWheelRotation), _wheelRR, velData.PrecisePos);
 				break;
 			case 0x70: // Manipulator Axis 1
-				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 0, velData.PrecisePos);
+				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 0, velData.PrecisePos);
 				break;
 			case 0x71: // Manipulator Axis 2
-				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 1, velData.PrecisePos);
+				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 1, velData.PrecisePos);
 				break;
 			case 0x72: // Manipulator Axis 3
-				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 2, velData.PrecisePos);
+				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 2, velData.PrecisePos);
 				break;
 			case 0x73: // Manipulator Axis 4
-				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 3, velData.PrecisePos);
+				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 3, velData.PrecisePos);
 				break;
 			case 0x74: // Manipulator Axis 5
-				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 4, velData.PrecisePos);
+				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 4, velData.PrecisePos);
 				break;
 			case 0x75: // Manipulator Axis 6
-				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 5, velData.PrecisePos);
+				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 5, velData.PrecisePos);
 				break;
 			case 0x76: // Manipulator Gripper
-				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 6, velData.PrecisePos);
+				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 6, velData.PrecisePos);
 				break;
 			default:
 				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled VESC ID: {vescID}");
