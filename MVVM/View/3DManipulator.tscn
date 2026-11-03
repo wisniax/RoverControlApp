@@ -5075,7 +5075,7 @@ Part1 = NodePath("Part1")
 Part2 = NodePath("../Axis2/Actuator1/Part2")
 
 [node name="Part1" type="Node3D" parent="Axis1/Actuator1" unique_id=149028895]
-transform = Transform3D(-0.99999976, -1.1451983e-06, -1.5089343e-07, -1.1499764e-06, 0.9993222, 0.036807615, 1.08639156e-07, 0.036807623, -0.99932194, 16.322918, 66.390366, -139.90799)
+transform = Transform3D(-0.99999976, -1.1463114e-06, -1.5089343e-07, -1.1510887e-06, 0.9993222, 0.036807615, 1.08598186e-07, 0.036807623, -0.99932194, 16.322918, 66.390366, -139.90799)
 
 [node name="SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna" type="MeshInstance3D" parent="Axis1/Actuator1/Part1" unique_id=686693388]
 transform = Transform3D(0.9999996, 1.779772e-07, -1.6911838e-07, 1.7797716e-07, -0.9999996, 3.9284623e-07, -1.691184e-07, -1.309117e-07, -0.9999998, 9.536905, 16.802053, -3.5652885)
@@ -5155,7 +5155,7 @@ transform = Transform3D(1, 0, 0, 0, 0.9999997, 0, 0, 0, 0.9999997, -0.43913746, 
 transform = Transform3D(0.99999994, 0, 0, 0, 0.99999976, 0, 0, 0, 0.9999997, 16.246058, -27.996334, -25.921703)
 
 [node name="Part2" type="Node3D" parent="Axis1/Axis2/Actuator1" unique_id=1960391873]
-transform = Transform3D(0.99999994, -1.1491976e-06, 4.232787e-08, 1.1499768e-06, 0.99932235, -0.03680763, 5.6843415e-14, 0.036807634, 0.9993223, 1.5962064e-07, 38.721558, 104.77017)
+transform = Transform3D(0.99999994, -1.1503093e-06, 4.2368818e-08, 1.1510892e-06, 0.99932235, -0.03680763, 5.3290702e-14, 0.036807634, 0.9993223, 1.6216086e-07, 38.721558, 104.77017)
 
 [node name="tłoczysko_SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Actuator1/Part2" unique_id=1555137980]
 transform = Transform3D(0.9999997, 0, 0, 0, 0.99999964, 0, 0, 0, 0.9999998, -15.887328, 0.17235565, -32.035854)
@@ -5169,354 +5169,11 @@ Part1 = NodePath("Part1")
 Part2 = NodePath("../Axis3/Actuator2/Part2")
 
 [node name="Part1" type="Node3D" parent="Axis1/Axis2/Actuator2" unique_id=951789964]
-transform = Transform3D(0.99999934, -0.00029189928, -3.4715395e-05, -0.00029395625, -0.9930004, -0.1181089, 3.5070096e-09, 0.11810893, -0.9930002, -0.0014343262, 10.483019, 94.11226)
+transform = Transform3D(0.9999993, -0.0002918961, -3.471501e-05, -0.00029395302, -0.9929895, -0.118200175, 3.0529897e-08, 0.118200205, -0.9929893, -0.0014343262, 10.483019, 94.11226)
 
 [node name="SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Actuator2/Part1" unique_id=1189256209]
 transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.742278e-08, 0, -1.0000002, 5.998665, -17.208132, -3.1570578)
 mesh = SubResource("ArrayMesh_3qrnk")
-skeleton = NodePath("")
-
-[node name="Axis2Body" type="Node3D" parent="Axis1/Axis2" unique_id=2020800757]
-transform = Transform3D(0.99999994, -1.4210855e-14, 7.1054274e-15, 0, 0.89648634, 0.4430711, 8.4703295e-22, -0.4430711, 0.89648634, 0, 0, 0)
-
-[node name="Driver obudowa_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body" unique_id=1419073623]
-transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 35.125244, 230.32878, 175.8964)
-mesh = SubResource("ArrayMesh_k276x")
-surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
-
-[node name="Driver obudowa_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body" unique_id=140317681]
-transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 35.054585, 222.20316, 192.15923)
-mesh = SubResource("ArrayMesh_mvi6g")
-skeleton = NodePath("")
-surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
-
-[node name="Driver obudowa_Domyślna_002" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body" unique_id=783029966]
-transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 34.98394, 214.07768, 208.42226)
-mesh = SubResource("ArrayMesh_tjqlr")
-skeleton = NodePath("")
-surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
-
-[node name="Driver obudowa_Domyślna_003" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body" unique_id=1764734443]
-transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 34.91327, 205.95216, 224.68527)
-mesh = SubResource("ArrayMesh_ryoqr")
-skeleton = NodePath("")
-surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
-
-[node name="Driver obudowa_Domyślna_004" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body" unique_id=1889010516]
-transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 34.842617, 197.82657, 240.94821)
-mesh = SubResource("ArrayMesh_k7leu")
-skeleton = NodePath("")
-surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
-
-[node name="Driver obudowa_Domyślna_005" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body" unique_id=1686474840]
-transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 34.77195, 189.70111, 257.21118)
-mesh = SubResource("ArrayMesh_xl0e5")
-skeleton = NodePath("")
-surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
-
-[node name="Power obudowa_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body" unique_id=2145393454]
-transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 0.4189663, 242.83565, 184.4206)
-mesh = SubResource("ArrayMesh_3nvqg")
-skeleton = NodePath("")
-surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
-
-[node name="Ramie_1_Domyślna" type="Node3D" parent="Axis1/Axis2/Axis2Body" unique_id=214006684]
-transform = Transform3D(0.99996203, 0.007778414, -0.0038865076, -0.008695321, 0.89451736, -0.44694847, -9.313223e-10, 0.4469655, 0.894551, 3.335332, 127.52414, -262.50418)
-
-[node name="DIN 7379 M6 L30" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=931023849]
-transform = Transform3D(-1, -5.0669885e-10, -7.5758777e-10, 5.0669885e-10, 0.38184905, -0.92422473, 7.5758777e-10, -0.92422473, -0.38184917, 4.5054116, 14.380796, 370.49997)
-mesh = SubResource("ArrayMesh_wfvmo")
-skeleton = NodePath("")
-
-[node name="DIN 7379 M6 L30_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1988469171]
-transform = Transform3D(-1, -5.0669885e-10, -7.5758777e-10, 5.0669885e-10, 0.38184905, -0.92422473, 7.5758777e-10, -0.92422473, -0.38184917, 4.505412, 14.380832, 385.5)
-mesh = SubResource("ArrayMesh_m5kn6")
-skeleton = NodePath("")
-
-[node name="DIN 7379 M6 L60" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=849910257]
-transform = Transform3D(-1, -5.0669885e-10, -7.5758777e-10, 5.0669885e-10, 0.38184905, -0.92422473, 7.5758777e-10, -0.92422473, -0.38184917, 8.885412, 2.380796, 457.49997)
-mesh = SubResource("ArrayMesh_b1whv")
-skeleton = NodePath("")
-
-[node name="enkoder_Domyślna" type="Node3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1226732351]
-transform = Transform3D(0, 0, 1, 1, 0, 0, 0, 1, 0, 8.945413, 2.3808196, 291.59998)
-
-[node name="Część88^enkoder_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna/enkoder_Domyślna" unique_id=934995755]
-transform = Transform3D(0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0)
-mesh = SubResource("ArrayMesh_p86qi")
-skeleton = NodePath("")
-
-[node name="Część89^enkoder_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna/enkoder_Domyślna" unique_id=409279382]
-transform = Transform3D(-1.1920929e-07, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -1.1920929e-07, 0, 0, 0)
-mesh = SubResource("ArrayMesh_46ewx")
-skeleton = NodePath("")
-
-[node name="enkoder_Domyślna_1" type="Node3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1732199675]
-transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, 10.445413, 2.3808062, 457.49997)
-
-[node name="Część88^enkoder_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna/enkoder_Domyślna_1" unique_id=421499054]
-transform = Transform3D(0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0)
-mesh = SubResource("ArrayMesh_g8sah")
-skeleton = NodePath("")
-
-[node name="Część89^enkoder_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna/enkoder_Domyślna_1" unique_id=201351440]
-transform = Transform3D(-1.1920929e-07, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -1.1920929e-07, 0, 0, 0)
-mesh = SubResource("ArrayMesh_k4cbw")
-skeleton = NodePath("")
-
-[node name="moc_podstawadoramie1_cz2_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=490917300]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.69459, -1.5191796, 299.99997)
-mesh = SubResource("ArrayMesh_bhtal")
-skeleton = NodePath("")
-
-[node name="moc_ramie1doramie2_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1381324885]
-transform = Transform3D(0, -9.333599e-09, -1, 9.333599e-09, -1, 9.333599e-09, -1, -9.333599e-09, 0, -9.294589, 2.3807957, 457.49997)
-mesh = SubResource("ArrayMesh_bu20m")
-skeleton = NodePath("")
-
-[node name="moc_ramie1doramie2_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1700901432]
-transform = Transform3D(-1.1920929e-07, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -1.1920929e-07, 5.705412, 2.3807826, 457.49997)
-mesh = SubResource("ArrayMesh_4okxf")
-skeleton = NodePath("")
-
-[node name="moc_siłownik1_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=811594593]
-transform = Transform3D(-1, -1.5652703e-11, -1.5652703e-11, 1.5652703e-11, 0, -1, 1.5652703e-11, -1, 0, 5.705411, 7.780811, 387)
-mesh = SubResource("ArrayMesh_o60qf")
-skeleton = NodePath("")
-
-[node name="moc_siłownik1_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1399022400]
-transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, -0.99999994, 0, 0.99999994, -3.5762787e-07, -9.294589, 7.780787, 368.99997)
-mesh = SubResource("ArrayMesh_0th1c")
-skeleton = NodePath("")
-
-[node name="mocowanie_1_Szyna Długa_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=2131085188]
-transform = Transform3D(0, 1, -5.778485e-09, 1, 0, 5.778485e-09, 5.778485e-09, -5.778485e-09, -1, -9.29459, -1.519197, 276.47995)
-mesh = SubResource("ArrayMesh_ccwea")
-skeleton = NodePath("")
-
-[node name="mocowanie_1_Szyna Długa_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=208976722]
-transform = Transform3D(0, 1, -5.778485e-09, 1, 0, 5.778485e-09, 5.778485e-09, -5.778485e-09, -1, -9.294589, -1.5191795, 299.99997)
-mesh = SubResource("ArrayMesh_r8er0")
-skeleton = NodePath("")
-
-[node name="mocowanie_2_Szyna Długa_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1422066638]
-transform = Transform3D(-1.1920929e-07, -0.99999994, 0, 0.99999994, -1.1920929e-07, 0, 0, 0, 1, 5.705411, -1.5192009, 573.83997)
-mesh = SubResource("ArrayMesh_w1nc2")
-skeleton = NodePath("")
-
-[node name="mocowanie_2_Szyna Długa_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=139437226]
-transform = Transform3D(-1.1920929e-07, -0.99999994, 0, 0.99999994, -1.1920929e-07, 0, 0, 0, 1, 5.705412, -1.519197, 552.12)
-mesh = SubResource("ArrayMesh_wq3co")
-skeleton = NodePath("")
-
-[node name="mocowanie_2_Szyna Długa_Domyślna_002" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=2111659307]
-transform = Transform3D(-1.1920929e-07, -0.99999994, 0, 0.99999994, -1.1920929e-07, 0, 0, 0, 1, 5.705411, -1.5192108, 530.39996)
-mesh = SubResource("ArrayMesh_76a7a")
-skeleton = NodePath("")
-
-[node name="Mocowanie_enkoder_ramie_1_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=670048126]
-transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, 5.705411, -1.5191838, 299.99997)
-mesh = SubResource("ArrayMesh_vxp5r")
-skeleton = NodePath("")
-
-[node name="Mocowanie_enkoder_ramie_2_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1698992679]
-transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, 7.205411, 2.3807821, 457.49997)
-mesh = SubResource("ArrayMesh_jjnu1")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=683716545]
-transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, 3.6054108, -2.1191745, 301.5)
-mesh = SubResource("ArrayMesh_k2x8l")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=189599691]
-transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, -7.1945887, -2.119189, 301.49997)
-mesh = SubResource("ArrayMesh_2ycjo")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_002" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=470627422]
-transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, 3.605411, -2.1191654, 306.89996)
-mesh = SubResource("ArrayMesh_ipl1t")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_003" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=981776996]
-transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, -7.1945887, -2.1191714, 306.89996)
-mesh = SubResource("ArrayMesh_l5sdp")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_004" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1454629985]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -7.194589, 6.8808103, 301.49997)
-mesh = SubResource("ArrayMesh_t3byo")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_005" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1838288704]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 3.605411, 6.880825, 301.49997)
-mesh = SubResource("ArrayMesh_kdl3a")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_006" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=887589706]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 3.6054108, 6.880836, 306.89996)
-mesh = SubResource("ArrayMesh_ewhlb")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_007" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=219450725]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -7.1945887, 6.8808217, 306.89996)
-mesh = SubResource("ArrayMesh_eu65p")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_008" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=926571397]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -8.09459, 7.7808084, 370.19995)
-mesh = SubResource("ArrayMesh_fogdb")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_009" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1573465165]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -1.794589, 7.7808065, 370.19995)
-mesh = SubResource("ArrayMesh_l6y2d")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_010" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=401396967]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 4.5054116, 7.780805, 370.19995)
-mesh = SubResource("ArrayMesh_xtece")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_011" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=40628599]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 4.5054116, 7.7808022, 376.80002)
-mesh = SubResource("ArrayMesh_jjlyu")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_012" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=218707454]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -1.794589, 7.7808127, 376.8)
-mesh = SubResource("ArrayMesh_3bmi1")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_013" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1825031936]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -8.094589, 7.7807965, 376.80002)
-mesh = SubResource("ArrayMesh_dtna2")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_014" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=547876484]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 4.505411, 7.780819, 379.2)
-mesh = SubResource("ArrayMesh_jumtb")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_015" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=947677858]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -1.7945896, 7.7808294, 379.2)
-mesh = SubResource("ArrayMesh_hlift")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_016" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=122760859]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -8.09459, 7.780813, 379.2)
-mesh = SubResource("ArrayMesh_rsnku")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_017" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=323524968]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 4.505411, 7.7808027, 385.79996)
-mesh = SubResource("ArrayMesh_vy0uk")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_018" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=454807461]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -1.794589, 7.7808046, 385.80002)
-mesh = SubResource("ArrayMesh_rt34d")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_019" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=922687452]
-transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -8.09459, 7.780797, 385.79996)
-mesh = SubResource("ArrayMesh_nx3xq")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_020" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1024250542]
-transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.79459, -0.31921816, 441.29996)
-mesh = SubResource("ArrayMesh_jo056")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_021" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=661285910]
-transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.794588, -0.31920218, 445.8)
-mesh = SubResource("ArrayMesh_ncv3d")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_022" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1128280693]
-transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.79459, -0.31919515, 450.30002)
-mesh = SubResource("ArrayMesh_sl37x")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_023" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1904786035]
-transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.794589, 5.08078, 441.30002)
-mesh = SubResource("ArrayMesh_t1313")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_024" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=696852889]
-transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.794589, 5.0807776, 445.8)
-mesh = SubResource("ArrayMesh_rshwe")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_025" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=831347166]
-transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.79459, 5.080821, 450.3)
-mesh = SubResource("ArrayMesh_e0tn6")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_026" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=2037533527]
-transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.205412, -0.31923226, 441.29996)
-mesh = SubResource("ArrayMesh_nmpov")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_027" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=584695229]
-transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.2054114, -0.31920734, 445.8)
-mesh = SubResource("ArrayMesh_pj65i")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_028" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=2088358355]
-transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.205412, -0.31920928, 450.30002)
-mesh = SubResource("ArrayMesh_swh4b")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_029" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=158775850]
-transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.205411, 5.0807743, 441.3)
-mesh = SubResource("ArrayMesh_ha3yb")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_030" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1333689550]
-transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.2054114, 5.0807815, 445.8)
-mesh = SubResource("ArrayMesh_7sjdk")
-skeleton = NodePath("")
-
-[node name="nit_3mm_Domyślna_031" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=440537703]
-transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.2054124, 5.0808063, 450.3)
-mesh = SubResource("ArrayMesh_q8gmr")
-skeleton = NodePath("")
-
-[node name="profil50x30x2_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=2102866117]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.29459, -2.1191835, 299.99997)
-mesh = SubResource("ArrayMesh_xvolo")
-skeleton = NodePath("")
-
-[node name="Szyna Długa_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=514019272]
-transform = Transform3D(-1, -8.8734914e-10, 0, 8.8734914e-10, -1, 0, 0, 0, 1, -1.7945892, -2.1191676, 446.175)
-mesh = SubResource("ArrayMesh_8t18r")
-skeleton = NodePath("")
-
-[node name="Szyna Długa_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=2092663271]
-transform = Transform3D(1, 0, 0, 0, -1, -3.639755e-12, 0, 3.639755e-12, -1, -1.7945892, -2.1191878, 310.42496)
-mesh = SubResource("ArrayMesh_lee4e")
-skeleton = NodePath("")
-
-[node name="Łożysko kulkowe z kołnierzem F 688 ZZ 8x16x5mm F688 ZZ_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=94847459]
-transform = Transform3D(-1.1920929e-07, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -1.1920929e-07, -9.32459, 2.380786, 457.49997)
-mesh = SubResource("ArrayMesh_rtctu")
-skeleton = NodePath("")
-
-[node name="Łożysko kulkowe z kołnierzem F 688 ZZ 8x16x5mm F688 ZZ_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=652788667]
-transform = Transform3D(-1.1920929e-07, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -1.1920929e-07, 5.735411, 2.3807836, 457.49997)
-mesh = SubResource("ArrayMesh_bsicy")
-skeleton = NodePath("")
-
-[node name="Łożysko kulkowe z kołnierzem F 688 ZZ 8x16x5mm F688 ZZ_Domyślna_002" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=1043882602]
-transform = Transform3D(-1.1920929e-07, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -1.1920929e-07, -7.8245897, 2.3808074, 291.59998)
-mesh = SubResource("ArrayMesh_qiurl")
-skeleton = NodePath("")
-
-[node name="Łożysko kulkowe z kołnierzem F 688 ZZ 8x16x5mm F688 ZZ_Domyślna_003" type="MeshInstance3D" parent="Axis1/Axis2/Axis2Body/Ramie_1_Domyślna" unique_id=899136714]
-transform = Transform3D(-1.1920929e-07, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -1.1920929e-07, 4.2354116, 2.3808236, 291.59998)
-mesh = SubResource("ArrayMesh_7vinf")
 skeleton = NodePath("")
 
 [node name="Axis3" type="Node3D" parent="Axis1/Axis2" unique_id=57351639]
@@ -5525,8 +5182,351 @@ transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0,
 [node name="Actuator2" type="Node3D" parent="Axis1/Axis2/Axis3" unique_id=89679356]
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 16.322922, -26.24715, -191.51326)
 
+[node name="Axis2Body" type="Node3D" parent="Axis1/Axis2/Axis3/Actuator2" unique_id=2020800757]
+transform = Transform3D(0.99999994, 0, 1.4210855e-14, 0, 0.8964863, 0.44307107, 8.4703295e-22, -0.44307113, 0.8964864, -16.32292, 27.996143, 25.921234)
+
+[node name="Driver obudowa_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body" unique_id=1419073623]
+transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 35.125244, 230.32878, 175.8964)
+mesh = SubResource("ArrayMesh_k276x")
+surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
+
+[node name="Driver obudowa_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body" unique_id=140317681]
+transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 35.054585, 222.20316, 192.15923)
+mesh = SubResource("ArrayMesh_mvi6g")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
+
+[node name="Driver obudowa_Domyślna_002" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body" unique_id=783029966]
+transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 34.98394, 214.07768, 208.42226)
+mesh = SubResource("ArrayMesh_tjqlr")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
+
+[node name="Driver obudowa_Domyślna_003" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body" unique_id=1764734443]
+transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 34.91327, 205.95216, 224.68527)
+mesh = SubResource("ArrayMesh_ryoqr")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
+
+[node name="Driver obudowa_Domyślna_004" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body" unique_id=1889010516]
+transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 34.842617, 197.82657, 240.94821)
+mesh = SubResource("ArrayMesh_k7leu")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
+
+[node name="Driver obudowa_Domyślna_005" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body" unique_id=1686474840]
+transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 34.77195, 189.70111, 257.21118)
+mesh = SubResource("ArrayMesh_xl0e5")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
+
+[node name="Power obudowa_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body" unique_id=2145393454]
+transform = Transform3D(-0.0038862224, -0.99996203, -0.0077784946, -0.44694844, 0.008695244, -0.8945175, 0.89455104, 2.683664e-07, -0.4469655, 0.4189663, 242.83565, 184.4206)
+mesh = SubResource("ArrayMesh_3nvqg")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_4jnsp")
+
+[node name="Ramie_1_Domyślna" type="Node3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body" unique_id=214006684]
+transform = Transform3D(0.99996203, 0.007778414, -0.0038865076, -0.008695321, 0.89451736, -0.44694847, -9.313223e-10, 0.4469655, 0.894551, 3.335332, 127.52414, -262.50418)
+
+[node name="DIN 7379 M6 L30" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=931023849]
+transform = Transform3D(-1, -5.0669885e-10, -7.5758777e-10, 5.0669885e-10, 0.38184905, -0.92422473, 7.5758777e-10, -0.92422473, -0.38184917, 4.5054116, 14.380796, 370.49997)
+mesh = SubResource("ArrayMesh_wfvmo")
+skeleton = NodePath("")
+
+[node name="DIN 7379 M6 L30_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1988469171]
+transform = Transform3D(-1, -5.0669885e-10, -7.5758777e-10, 5.0669885e-10, 0.38184905, -0.92422473, 7.5758777e-10, -0.92422473, -0.38184917, 4.505412, 14.380832, 385.5)
+mesh = SubResource("ArrayMesh_m5kn6")
+skeleton = NodePath("")
+
+[node name="DIN 7379 M6 L60" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=849910257]
+transform = Transform3D(-1, -5.0669885e-10, -7.5758777e-10, 5.0669885e-10, 0.38184905, -0.92422473, 7.5758777e-10, -0.92422473, -0.38184917, 8.885412, 2.380796, 457.49997)
+mesh = SubResource("ArrayMesh_b1whv")
+skeleton = NodePath("")
+
+[node name="enkoder_Domyślna" type="Node3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1226732351]
+transform = Transform3D(0, 0, 1, 1, 0, 0, 0, 1, 0, 8.945413, 2.3808196, 291.59998)
+
+[node name="Część88^enkoder_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna/enkoder_Domyślna" unique_id=934995755]
+transform = Transform3D(0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0)
+mesh = SubResource("ArrayMesh_p86qi")
+skeleton = NodePath("")
+
+[node name="Część89^enkoder_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna/enkoder_Domyślna" unique_id=409279382]
+transform = Transform3D(-1.1920929e-07, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -1.1920929e-07, 0, 0, 0)
+mesh = SubResource("ArrayMesh_46ewx")
+skeleton = NodePath("")
+
+[node name="enkoder_Domyślna_1" type="Node3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1732199675]
+transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, 10.445413, 2.3808062, 457.49997)
+
+[node name="Część88^enkoder_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna/enkoder_Domyślna_1" unique_id=421499054]
+transform = Transform3D(0, -1, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0)
+mesh = SubResource("ArrayMesh_g8sah")
+skeleton = NodePath("")
+
+[node name="Część89^enkoder_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna/enkoder_Domyślna_1" unique_id=201351440]
+transform = Transform3D(-1.1920929e-07, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -1.1920929e-07, 0, 0, 0)
+mesh = SubResource("ArrayMesh_k4cbw")
+skeleton = NodePath("")
+
+[node name="moc_podstawadoramie1_cz2_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=490917300]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.69459, -1.5191796, 299.99997)
+mesh = SubResource("ArrayMesh_bhtal")
+skeleton = NodePath("")
+
+[node name="moc_ramie1doramie2_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1381324885]
+transform = Transform3D(0, -9.333599e-09, -1, 9.333599e-09, -1, 9.333599e-09, -1, -9.333599e-09, 0, -9.294589, 2.3807957, 457.49997)
+mesh = SubResource("ArrayMesh_bu20m")
+skeleton = NodePath("")
+
+[node name="moc_ramie1doramie2_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1700901432]
+transform = Transform3D(-1.1920929e-07, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -1.1920929e-07, 5.705412, 2.3807826, 457.49997)
+mesh = SubResource("ArrayMesh_4okxf")
+skeleton = NodePath("")
+
+[node name="moc_siłownik1_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=811594593]
+transform = Transform3D(-1, -1.5652703e-11, -1.5652703e-11, 1.5652703e-11, 0, -1, 1.5652703e-11, -1, 0, 5.705411, 7.780811, 387)
+mesh = SubResource("ArrayMesh_o60qf")
+skeleton = NodePath("")
+
+[node name="moc_siłownik1_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1399022400]
+transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, -0.99999994, 0, 0.99999994, -3.5762787e-07, -9.294589, 7.780787, 368.99997)
+mesh = SubResource("ArrayMesh_0th1c")
+skeleton = NodePath("")
+
+[node name="mocowanie_1_Szyna Długa_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=2131085188]
+transform = Transform3D(0, 1, -5.778485e-09, 1, 0, 5.778485e-09, 5.778485e-09, -5.778485e-09, -1, -9.29459, -1.519197, 276.47995)
+mesh = SubResource("ArrayMesh_ccwea")
+skeleton = NodePath("")
+
+[node name="mocowanie_1_Szyna Długa_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=208976722]
+transform = Transform3D(0, 1, -5.778485e-09, 1, 0, 5.778485e-09, 5.778485e-09, -5.778485e-09, -1, -9.294589, -1.5191795, 299.99997)
+mesh = SubResource("ArrayMesh_r8er0")
+skeleton = NodePath("")
+
+[node name="mocowanie_2_Szyna Długa_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1422066638]
+transform = Transform3D(-1.1920929e-07, -0.99999994, 0, 0.99999994, -1.1920929e-07, 0, 0, 0, 1, 5.705411, -1.5192009, 573.83997)
+mesh = SubResource("ArrayMesh_w1nc2")
+skeleton = NodePath("")
+
+[node name="mocowanie_2_Szyna Długa_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=139437226]
+transform = Transform3D(-1.1920929e-07, -0.99999994, 0, 0.99999994, -1.1920929e-07, 0, 0, 0, 1, 5.705412, -1.519197, 552.12)
+mesh = SubResource("ArrayMesh_wq3co")
+skeleton = NodePath("")
+
+[node name="mocowanie_2_Szyna Długa_Domyślna_002" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=2111659307]
+transform = Transform3D(-1.1920929e-07, -0.99999994, 0, 0.99999994, -1.1920929e-07, 0, 0, 0, 1, 5.705411, -1.5192108, 530.39996)
+mesh = SubResource("ArrayMesh_76a7a")
+skeleton = NodePath("")
+
+[node name="Mocowanie_enkoder_ramie_1_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=670048126]
+transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, 5.705411, -1.5191838, 299.99997)
+mesh = SubResource("ArrayMesh_vxp5r")
+skeleton = NodePath("")
+
+[node name="Mocowanie_enkoder_ramie_2_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1698992679]
+transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, 7.205411, 2.3807821, 457.49997)
+mesh = SubResource("ArrayMesh_jjnu1")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=683716545]
+transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, 3.6054108, -2.1191745, 301.5)
+mesh = SubResource("ArrayMesh_k2x8l")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=189599691]
+transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, -7.1945887, -2.119189, 301.49997)
+mesh = SubResource("ArrayMesh_2ycjo")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_002" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=470627422]
+transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, 3.605411, -2.1191654, 306.89996)
+mesh = SubResource("ArrayMesh_ipl1t")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_003" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=981776996]
+transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, 0.99999994, 0, -0.99999994, -3.5762787e-07, -7.1945887, -2.1191714, 306.89996)
+mesh = SubResource("ArrayMesh_l5sdp")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_004" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1454629985]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -7.194589, 6.8808103, 301.49997)
+mesh = SubResource("ArrayMesh_t3byo")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_005" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1838288704]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 3.605411, 6.880825, 301.49997)
+mesh = SubResource("ArrayMesh_kdl3a")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_006" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=887589706]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 3.6054108, 6.880836, 306.89996)
+mesh = SubResource("ArrayMesh_ewhlb")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_007" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=219450725]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -7.1945887, 6.8808217, 306.89996)
+mesh = SubResource("ArrayMesh_eu65p")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_008" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=926571397]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -8.09459, 7.7808084, 370.19995)
+mesh = SubResource("ArrayMesh_fogdb")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_009" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1573465165]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -1.794589, 7.7808065, 370.19995)
+mesh = SubResource("ArrayMesh_l6y2d")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_010" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=401396967]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 4.5054116, 7.780805, 370.19995)
+mesh = SubResource("ArrayMesh_xtece")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_011" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=40628599]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 4.5054116, 7.7808022, 376.80002)
+mesh = SubResource("ArrayMesh_jjlyu")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_012" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=218707454]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -1.794589, 7.7808127, 376.8)
+mesh = SubResource("ArrayMesh_3bmi1")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_013" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1825031936]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -8.094589, 7.7807965, 376.80002)
+mesh = SubResource("ArrayMesh_dtna2")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_014" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=547876484]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 4.505411, 7.780819, 379.2)
+mesh = SubResource("ArrayMesh_jumtb")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_015" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=947677858]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -1.7945896, 7.7808294, 379.2)
+mesh = SubResource("ArrayMesh_hlift")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_016" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=122760859]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -8.09459, 7.780813, 379.2)
+mesh = SubResource("ArrayMesh_rsnku")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_017" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=323524968]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, 4.505411, 7.7808027, 385.79996)
+mesh = SubResource("ArrayMesh_vy0uk")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_018" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=454807461]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -1.794589, 7.7808046, 385.80002)
+mesh = SubResource("ArrayMesh_rt34d")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_019" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=922687452]
+transform = Transform3D(-0.8371692, 0.54694414, 0, 0, 0, -1, -0.54694414, -0.8371692, 0, -8.09459, 7.780797, 385.79996)
+mesh = SubResource("ArrayMesh_nx3xq")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_020" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1024250542]
+transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.79459, -0.31921816, 441.29996)
+mesh = SubResource("ArrayMesh_jo056")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_021" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=661285910]
+transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.794588, -0.31920218, 445.8)
+mesh = SubResource("ArrayMesh_ncv3d")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_022" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1128280693]
+transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.79459, -0.31919515, 450.30002)
+mesh = SubResource("ArrayMesh_sl37x")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_023" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1904786035]
+transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.794589, 5.08078, 441.30002)
+mesh = SubResource("ArrayMesh_t1313")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_024" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=696852889]
+transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.794589, 5.0807776, 445.8)
+mesh = SubResource("ArrayMesh_rshwe")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_025" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=831347166]
+transform = Transform3D(0, 0, 1, -1, 0, 0, 0, -1, 0, -10.79459, 5.080821, 450.3)
+mesh = SubResource("ArrayMesh_e0tn6")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_026" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=2037533527]
+transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.205412, -0.31923226, 441.29996)
+mesh = SubResource("ArrayMesh_nmpov")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_027" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=584695229]
+transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.2054114, -0.31920734, 445.8)
+mesh = SubResource("ArrayMesh_pj65i")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_028" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=2088358355]
+transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.205412, -0.31920928, 450.30002)
+mesh = SubResource("ArrayMesh_swh4b")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_029" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=158775850]
+transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.205411, 5.0807743, 441.3)
+mesh = SubResource("ArrayMesh_ha3yb")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_030" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1333689550]
+transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.2054114, 5.0807815, 445.8)
+mesh = SubResource("ArrayMesh_7sjdk")
+skeleton = NodePath("")
+
+[node name="nit_3mm_Domyślna_031" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=440537703]
+transform = Transform3D(0, 0, -1, 1, 0, 0, 0, -1, 0, 7.2054124, 5.0808063, 450.3)
+mesh = SubResource("ArrayMesh_q8gmr")
+skeleton = NodePath("")
+
+[node name="profil50x30x2_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=2102866117]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.29459, -2.1191835, 299.99997)
+mesh = SubResource("ArrayMesh_xvolo")
+skeleton = NodePath("")
+
+[node name="Szyna Długa_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=514019272]
+transform = Transform3D(-1, -8.8734914e-10, 0, 8.8734914e-10, -1, 0, 0, 0, 1, -1.7945892, -2.1191676, 446.175)
+mesh = SubResource("ArrayMesh_8t18r")
+skeleton = NodePath("")
+
+[node name="Szyna Długa_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=2092663271]
+transform = Transform3D(1, 0, 0, 0, -1, -3.639755e-12, 0, 3.639755e-12, -1, -1.7945892, -2.1191878, 310.42496)
+mesh = SubResource("ArrayMesh_lee4e")
+skeleton = NodePath("")
+
+[node name="Łożysko kulkowe z kołnierzem F 688 ZZ 8x16x5mm F688 ZZ_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=94847459]
+transform = Transform3D(-1.1920929e-07, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -1.1920929e-07, -9.32459, 2.380786, 457.49997)
+mesh = SubResource("ArrayMesh_rtctu")
+skeleton = NodePath("")
+
+[node name="Łożysko kulkowe z kołnierzem F 688 ZZ 8x16x5mm F688 ZZ_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=652788667]
+transform = Transform3D(-1.1920929e-07, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -1.1920929e-07, 5.735411, 2.3807836, 457.49997)
+mesh = SubResource("ArrayMesh_bsicy")
+skeleton = NodePath("")
+
+[node name="Łożysko kulkowe z kołnierzem F 688 ZZ 8x16x5mm F688 ZZ_Domyślna_002" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=1043882602]
+transform = Transform3D(-1.1920929e-07, 0, -0.99999994, 0, 1, 0, 0.99999994, 0, -1.1920929e-07, -7.8245897, 2.3808074, 291.59998)
+mesh = SubResource("ArrayMesh_qiurl")
+skeleton = NodePath("")
+
+[node name="Łożysko kulkowe z kołnierzem F 688 ZZ 8x16x5mm F688 ZZ_Domyślna_003" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Axis2Body/Ramie_1_Domyślna" unique_id=899136714]
+transform = Transform3D(-1.1920929e-07, 0, 0.99999994, 0, 1, 0, -0.99999994, 0, -1.1920929e-07, 4.2354116, 2.3808236, 291.59998)
+mesh = SubResource("ArrayMesh_7vinf")
+skeleton = NodePath("")
+
 [node name="Part2" type="Node3D" parent="Axis1/Axis2/Axis3/Actuator2" unique_id=1658497267]
-transform = Transform3D(-0.9999999, -0.0002919002, 3.4707915e-05, 0.0002939564, -0.99300045, 0.118108936, -1.1048541e-08, 0.11810895, 0.9930004, -16.321596, 47.867947, 198.96968)
+transform = Transform3D(-0.9999998, -0.00029189375, 3.473474e-05, 0.0002939532, -0.99298954, 0.11820021, -1.0670191e-08, 0.11820022, 0.99298954, -16.321596, 47.867947, 198.90785)
 
 [node name="tłoczysko_SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Part2" unique_id=1674269327]
 transform = Transform3D(0.9999997, 1.1368684e-13, 7.1054274e-15, 0, 0.9999997, -7.450581e-09, -1.4210855e-14, 1.4901161e-08, 0.99999994, 0.050683975, -0.24641609, -32.64244)

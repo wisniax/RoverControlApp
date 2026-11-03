@@ -30,6 +30,7 @@ public partial class ThreeDVisualizer : Node3D
 	[Export] private Node3D _hotswap1 = null!;
 	[Export] private Node3D _hotswap2 = null!;
 
+	[Export] private ThreeDManipulator _threeDManipulator = null!;
 
 	[Export] private Camera3D _camera = null!;
 	private Camera3D _targetCamera = null!;
@@ -99,6 +100,27 @@ public partial class ThreeDVisualizer : Node3D
 				break;
 			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.BackRightTurn): // Rear Right turn
 				CallDeferred(nameof(UpdateWheelRotation), _wheelRR, velData.PrecisePos);
+				break;
+			case 0x70: // Manipulator Axis 1
+				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 0, velData.PrecisePos);
+				break;
+			case 0x71: // Manipulator Axis 2
+				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 1, velData.PrecisePos);
+				break;
+			case 0x72: // Manipulator Axis 3
+				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 2, velData.PrecisePos);
+				break;
+			case 0x73: // Manipulator Axis 4
+				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 3, velData.PrecisePos);
+				break;
+			case 0x74: // Manipulator Axis 5
+				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 4, velData.PrecisePos);
+				break;
+			case 0x75: // Manipulator Axis 6
+				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 5, velData.PrecisePos);
+				break;
+			case 0x76: // Manipulator Gripper
+				CallDeferred(nameof(_threeDManipulator.UpdateManipulatorAxis), 6, velData.PrecisePos);
 				break;
 			default:
 				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled VESC ID: {vescID}");

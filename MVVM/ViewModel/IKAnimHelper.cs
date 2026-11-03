@@ -6,8 +6,6 @@ public partial class IKAnimHelper : Node3D
 {
 	[Export] Node3D Part1 = null!;
 
-	[Export] Vector3 MaxRotationPart1 = Vector3.Zero;
-
 	[Export] Node3D Part2 = null!;
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
