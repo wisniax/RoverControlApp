@@ -1,4 +1,5 @@
 using Godot;
+using RoverControlApp.Core;
 using System;
 
 public partial class ThreeDManipulator : Node3D
@@ -11,8 +12,13 @@ public partial class ThreeDManipulator : Node3D
 	[Export] private Node3D _axis6 = null!;
 	[Export] private Node3D _gripper = null!;
 
+	public DateTime _lastUpdateTime = DateTime.MinValue;
+
 	public void UpdateManipulatorAxis(int axisNumber, double value)
 	{
+		_lastUpdateTime = DateTime.Now;
+		CallDeferred(nameof(UpdateManipulatorVisibility), true);
+
 		switch (axisNumber)
 		{
 			case 0:
@@ -42,13 +48,19 @@ public partial class ThreeDManipulator : Node3D
 		}
 	}
 
-	// Called when the node enters the scene tree for the first time.
-	public override void _Ready()
+	public void UpdateManipulatorVisibility(bool isVisible)
 	{
+		this.Visible = isVisible;
 	}
+
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
 	public override void _Process(double delta)
 	{
+		if ((DateTime.Now - _lastUpdateTime).TotalSeconds > LocalSettings.Singleton.Battery.ExpectedMessageInterval)
+		{
+			CallDeferred(nameof(UpdateManipulatorVisibility), false);
+		}
 	}
+
 }

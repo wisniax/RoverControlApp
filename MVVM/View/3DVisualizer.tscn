@@ -23468,6 +23468,7 @@ transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, 0.0
 
 [node name="Sampler" parent="Rover" unique_id=1216958742 instance=ExtResource("2_qu72h")]
 transform = Transform3D(-0.001, 9.3885105e-17, 1.5099583e-10, 3.988478e-17, 0.0010000002, -3.5762796e-10, -1.5099581e-10, -3.5762796e-10, -0.0010000002, -0.015000001, 4.2915353e-08, 0.12000002)
+visible = false
 
 [node name="Rotary" parent="Rover" unique_id=665061669 instance=ExtResource("3_qq1bi")]
 transform = Transform3D(0.00077547546, -3.5905712e-11, -0.00063137774, 1.6619363e-10, 0.0010000002, 1.4725475e-10, 0.00063137774, -2.191234e-10, 0.00077547546, -0.044614453, -0.0041999663, 0.0960204)
@@ -23477,6 +23478,7 @@ transform = Transform3D(0.001, -1.323489e-23, 7.3468392e-37, 1.323489e-23, 0.001
 
 [node name="Manipulator" parent="Rover" unique_id=489036806 instance=ExtResource("1_i5l4o")]
 transform = Transform3D(-0.001, -8.742279e-11, -3.8213714e-18, 0, -4.3711396e-11, 0.0010000002, -8.742278e-11, 0.0010000002, 4.3711396e-11, -0.015986947, 0.03406689, -0.10238466)
+visible = false
 
 [node name="Frame" type="Node3D" parent="Rover" unique_id=201270566]
 transform = Transform3D(0.001, 1.5336665e-24, 4.5494934e-24, 0, -3.5762796e-10, 0.0010000002, -1.6703744e-25, -0.0010000002, -3.5762796e-10, -1.8626451e-09, 0, -7.450581e-09)

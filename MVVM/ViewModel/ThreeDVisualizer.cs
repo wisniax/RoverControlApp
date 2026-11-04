@@ -44,7 +44,6 @@ public partial class ThreeDVisualizer : Node3D
 	[Export] private Camera3D _cameraTargetBack = null!;
 	[Export] private Camera3D _cameraTargetLeft = null!;
 	[Export] private Camera3D _cameraTargetRight = null!;
-	[Export] private Camera3D _cameraTargetFront = null!;
 
 	public void ChangeCameraTarget(MqttClasses.CameraTarget3D target)
 	{
