@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
@@ -23,6 +23,7 @@ public partial class LocalSettings : Node
 		public Settings.Sampler? Sampler { get; set; } = null;
 		public Settings.Battery? Battery { get; set; } = null;
 		public Settings.WheelData? WheelData { get; set; } = null;
+		public Settings.CanIds? CanIds { get; set; } = null;
 	}
 
 	private JsonSerializerOptions serializerOptions = new() { WriteIndented = true };
@@ -119,6 +120,7 @@ public partial class LocalSettings : Node
 			Sampler = packedSettings.Sampler ?? new();
 			Battery = packedSettings.Battery ?? new();
 			WheelData = packedSettings.WheelData ?? new();
+			CanIds = packedSettings.CanIds ?? new();
 		}
 		catch (Exception e)
 		{
@@ -152,7 +154,8 @@ public partial class LocalSettings : Node
 				General = General,
 				Sampler = Sampler,
 				Battery = Battery,
-				WheelData = WheelData
+				WheelData = WheelData,
+				CanIds = CanIds
 			};
 
 			settingsFileAccess.StoreString(JsonSerializer.Serialize(packedSettings, serializerOptions));
@@ -183,6 +186,7 @@ public partial class LocalSettings : Node
 		Sampler = new();
 		Battery = new();
 		WheelData = new();
+		CanIds = new();
 	}
 
 	private void EmitSignalCategoryChanged(string sectionName)
@@ -404,6 +408,28 @@ public partial class LocalSettings : Node
 		}
 	}
 
+	[SettingsManagerVisible(customName: "CAN IDs")]
+	public Settings.CanIds CanIds
+	{
+		get => _canIds;
+		set
+		{
+			_canIds = value;
+
+			_canIds.Connect(
+				Settings.CanIds.SignalName.SubcategoryChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedSubcategoryChanged))
+			);
+			_canIds.Connect(
+				Settings.CanIds.SignalName.PropertyChanged,
+				Callable.From(CreatePropagator(SignalName.PropagatedPropertyChanged))
+			);
+
+			EmitSignalCategoryChanged(nameof(CanIds));
+		}
+	}
+
+	Settings.CanIds _canIds = null!;
 	Settings.Camera _camera;
 	Settings.Mqtt _mqtt;
 	Settings.Joystick _joystick;

@@ -89,37 +89,37 @@ public partial class ThreeDVisualizer : Node3D
 
 		switch (vescID)
 		{
-			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.FrontLeftTurn): // Front Left turn
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontLeft): // Front Left turn
 				CallDeferred(nameof(UpdateWheelRotation), _wheelFL, velData.PrecisePos);
 				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.FrontRightTurn): // Front Right turn
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontRight): // Front Right turn
 				CallDeferred(nameof(UpdateWheelRotation), _wheelFR, velData.PrecisePos);
 				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.BackLeftTurn): // Rear Left turn
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearLeft): // Rear Left turn
 				CallDeferred(nameof(UpdateWheelRotation), _wheelRL, velData.PrecisePos);
 				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.WheelData.BackRightTurn): // Rear Right turn
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearRight): // Rear Right turn
 				CallDeferred(nameof(UpdateWheelRotation), _wheelRR, velData.PrecisePos);
 				break;
-			case 0x70: // Manipulator Axis 1
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis1): // Manipulator Axis 1
 				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 0, velData.PrecisePos);
 				break;
-			case 0x71: // Manipulator Axis 2
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis2): // Manipulator Axis 2
 				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 1, velData.PrecisePos);
 				break;
-			case 0x72: // Manipulator Axis 3
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis3): // Manipulator Axis 3
 				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 2, velData.PrecisePos);
 				break;
-			case 0x73: // Manipulator Axis 4
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis4): // Manipulator Axis 4
 				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 3, velData.PrecisePos);
 				break;
-			case 0x74: // Manipulator Axis 5
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis5): // Manipulator Axis 5
 				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 4, velData.PrecisePos);
 				break;
-			case 0x75: // Manipulator Axis 6
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis6): // Manipulator Axis 6
 				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 5, velData.PrecisePos);
 				break;
-			case 0x76: // Manipulator Gripper
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Gripper): // Manipulator Gripper
 				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 6, velData.PrecisePos);
 				break;
 			default:

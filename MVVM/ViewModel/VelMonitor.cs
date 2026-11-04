@@ -48,12 +48,16 @@ public partial class VelMonitor : Panel
 		}
 
 		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedSubcategoryChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 		MqttNode.Singleton.MessageReceivedAsync += VelInfoChanged;
 
 	}
 	public override void _ExitTree()
 	{
 		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedSubcategoryChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.CategoryChanged, Callable.From<StringName>(OnSettingsCategoryChanged));
 		MqttNode.Singleton.MessageReceivedAsync -= VelInfoChanged;
 	}
 
@@ -99,30 +103,35 @@ public partial class VelMonitor : Panel
 
 	void OnSettingsPropertyChanged(StringName category, StringName name, Variant oldValue, Variant newValue)
 	{
-		if (category != nameof(WheelData)) return;
+		OnSettingsCategoryChanged(category);
+	}
+
+	private void OnSettingsCategoryChanged(StringName category)
+	{
+		if (category != nameof(LocalSettings.CanIds)) return;
 		UpdateCanIDLabels();
 	}
 
 	private void UpdateCanIDLabels()
 	{
-		_flLabel.SetText($"D: {LocalSettings.Singleton.WheelData.FrontLeftDrive}\n" +
-						 $"R: {LocalSettings.Singleton.WheelData.FrontLeftTurn}");
-		_frLabel.SetText($"D: {LocalSettings.Singleton.WheelData.FrontRightDrive}\n" +
-						 $"R: {LocalSettings.Singleton.WheelData.FrontRightTurn}");
-		_blLabel.SetText($"D: {LocalSettings.Singleton.WheelData.BackLeftDrive}\n" +
-						 $"R: {LocalSettings.Singleton.WheelData.BackLeftTurn}");
-		_brLabel.SetText($"D: {LocalSettings.Singleton.WheelData.BackRightDrive}\n" +
-						 $"R: {LocalSettings.Singleton.WheelData.BackRightTurn}");
+		_flLabel.SetText($"D: {LocalSettings.Singleton.CanIds.DriveMotors.FrontLeft}\n" +
+						 $"R: {LocalSettings.Singleton.CanIds.TurnMotors.FrontLeft}");
+		_frLabel.SetText($"D: {LocalSettings.Singleton.CanIds.DriveMotors.FrontRight}\n" +
+						 $"R: {LocalSettings.Singleton.CanIds.TurnMotors.FrontRight}");
+		_blLabel.SetText($"D: {LocalSettings.Singleton.CanIds.DriveMotors.RearLeft}\n" +
+						 $"R: {LocalSettings.Singleton.CanIds.TurnMotors.RearLeft}");
+		_brLabel.SetText($"D: {LocalSettings.Singleton.CanIds.DriveMotors.RearRight}\n" +
+						 $"R: {LocalSettings.Singleton.CanIds.TurnMotors.RearRight}");
 
-		driveMotorID[(int)Pos.FrontLeft] = StringToHexInt(LocalSettings.Singleton.WheelData.FrontLeftDrive);
-		driveMotorID[(int)Pos.FrontRight] = StringToHexInt(LocalSettings.Singleton.WheelData.FrontRightDrive);
-		driveMotorID[(int)Pos.BackRight] = StringToHexInt(LocalSettings.Singleton.WheelData.BackRightDrive);
-		driveMotorID[(int)Pos.BackLeft] = StringToHexInt(LocalSettings.Singleton.WheelData.BackLeftDrive);
+		driveMotorID[(int)Pos.FrontLeft] = StringToHexInt(LocalSettings.Singleton.CanIds.DriveMotors.FrontLeft);
+		driveMotorID[(int)Pos.FrontRight] = StringToHexInt(LocalSettings.Singleton.CanIds.DriveMotors.FrontRight);
+		driveMotorID[(int)Pos.BackRight] = StringToHexInt(LocalSettings.Singleton.CanIds.DriveMotors.RearRight);
+		driveMotorID[(int)Pos.BackLeft] = StringToHexInt(LocalSettings.Singleton.CanIds.DriveMotors.RearLeft);
 
-		rotationMotorID[(int)Pos.FrontLeft] = StringToHexInt(LocalSettings.Singleton.WheelData.FrontLeftTurn);
-		rotationMotorID[(int)Pos.FrontRight] = StringToHexInt(LocalSettings.Singleton.WheelData.FrontRightTurn);
-		rotationMotorID[(int)Pos.BackRight] = StringToHexInt(LocalSettings.Singleton.WheelData.BackRightTurn);
-		rotationMotorID[(int)Pos.BackLeft] = StringToHexInt(LocalSettings.Singleton.WheelData.BackLeftTurn);
+		rotationMotorID[(int)Pos.FrontLeft] = StringToHexInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontLeft);
+		rotationMotorID[(int)Pos.FrontRight] = StringToHexInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontRight);
+		rotationMotorID[(int)Pos.BackRight] = StringToHexInt(LocalSettings.Singleton.CanIds.TurnMotors.RearRight);
+		rotationMotorID[(int)Pos.BackLeft] = StringToHexInt(LocalSettings.Singleton.CanIds.TurnMotors.RearLeft);
 	}
 
 	private async Task VelInfoChanged(string subTopic, MqttApplicationMessage? msg)

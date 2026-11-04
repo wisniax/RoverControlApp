@@ -94,10 +94,10 @@ public partial class BatteryMonitor : Panel
 
 		var altData = JsonSerializer.Deserialize<MqttClasses.WheelFeedback>(msg.ConvertPayloadToString());
 		
-		if (!(altData.VescId == Convert.ToInt32(LocalSettings.Singleton.WheelData.FrontLeftDrive.Replace("0x", ""), 16) || 
-			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.WheelData.FrontRightDrive.Replace("0x", ""), 16) || 
-			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.WheelData.BackRightDrive.Replace("0x", ""), 16) || 
-			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.WheelData.BackLeftDrive.Replace("0x", ""), 16)))
+		if (!(altData.VescId == Convert.ToInt32(LocalSettings.Singleton.CanIds.DriveMotors.FrontLeft.Replace("0x", ""), 16) ||
+			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.CanIds.DriveMotors.FrontRight.Replace("0x", ""), 16) ||
+			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.CanIds.DriveMotors.RearRight.Replace("0x", ""), 16) ||
+			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.CanIds.DriveMotors.RearLeft.Replace("0x", ""), 16)))
 			  return Task.CompletedTask;
 
 		CallDeferred(nameof(ResetVescTimer));
