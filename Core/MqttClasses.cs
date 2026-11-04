@@ -111,6 +111,9 @@ namespace RoverControlApp.Core
 			Battery = 2,
 			Manipulator = 4,
 			Sampler = 8,
+			Left = 16,
+			Right = 32,
+			Back = 64,
 		}
 
 		public class RoverStatus

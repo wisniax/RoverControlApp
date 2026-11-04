@@ -65,6 +65,15 @@ public partial class ThreeDVisualizer : Node3D
 			case MqttClasses.CameraTarget3D.Battery:
 				_targetCamera = _cameraTargetBattery;
 				break;
+			case MqttClasses.CameraTarget3D.Left:
+				_targetCamera = _cameraTargetLeft;
+				break;
+			case MqttClasses.CameraTarget3D.Right:
+				_targetCamera = _cameraTargetRight;
+				break;
+			case MqttClasses.CameraTarget3D.Back:
+				_targetCamera = _cameraTargetBack;
+				break;
 			default:
 				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled Camera Target: {target}");
 				return;
@@ -183,10 +192,16 @@ public partial class ThreeDVisualizer : Node3D
 			_availableCameras |= MqttClasses.CameraTarget3D.Wheels;
 		if (_cameraTargetBattery != null)
 			_availableCameras |= MqttClasses.CameraTarget3D.Battery;
-		if (_cameraTargetManipulator != null && _threeDManipulator.Visible) // TODO: Implement visibility check for manipulator
+		if (_cameraTargetManipulator != null && _threeDManipulator.Visible)
 			_availableCameras |= MqttClasses.CameraTarget3D.Manipulator;
-		if (_cameraTargetSampler != null && /*_threeDSampler.Visible*/ false) // TODO: Implement visibility check for sampler
+		if (_cameraTargetSampler != null && _threeDSampler.Visible)
 			_availableCameras |= MqttClasses.CameraTarget3D.Sampler;
+		if (_cameraTargetLeft != null)
+			_availableCameras |= MqttClasses.CameraTarget3D.Left;
+		if (_cameraTargetRight != null)
+			_availableCameras |= MqttClasses.CameraTarget3D.Right;
+		if (_cameraTargetBack != null)
+			_availableCameras |= MqttClasses.CameraTarget3D.Back;
 
 		return _availableCameras;
 	}

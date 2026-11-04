@@ -23,11 +23,14 @@ public partial class ThreeDModelView : Panel
 		{
 			_currentCameraType = _currentCameraType switch
 			{
-				MqttClasses.CameraTarget3D.Freemode => MqttClasses.CameraTarget3D.Wheels,
-				MqttClasses.CameraTarget3D.Wheels => MqttClasses.CameraTarget3D.Manipulator,
-				MqttClasses.CameraTarget3D.Manipulator => MqttClasses.CameraTarget3D.Sampler,
-				MqttClasses.CameraTarget3D.Sampler => MqttClasses.CameraTarget3D.Battery,
-				MqttClasses.CameraTarget3D.Battery => MqttClasses.CameraTarget3D.Freemode,
+				MqttClasses.CameraTarget3D.Freemode => MqttClasses.CameraTarget3D.Right,
+				MqttClasses.CameraTarget3D.Right => MqttClasses.CameraTarget3D.Battery,
+				MqttClasses.CameraTarget3D.Battery => MqttClasses.CameraTarget3D.Sampler,
+				MqttClasses.CameraTarget3D.Sampler => MqttClasses.CameraTarget3D.Back,
+				MqttClasses.CameraTarget3D.Back => MqttClasses.CameraTarget3D.Left,
+				MqttClasses.CameraTarget3D.Left => MqttClasses.CameraTarget3D.Manipulator,
+				MqttClasses.CameraTarget3D.Manipulator => MqttClasses.CameraTarget3D.Wheels,
+				MqttClasses.CameraTarget3D.Wheels => MqttClasses.CameraTarget3D.Freemode,
 				_ => throw new ArgumentOutOfRangeException()
 			};
 		} while (!AvailableCameras.HasFlag(_currentCameraType));
@@ -42,11 +45,14 @@ public partial class ThreeDModelView : Panel
 		{
 			_currentCameraType = _currentCameraType switch
 			{
-				MqttClasses.CameraTarget3D.Freemode => MqttClasses.CameraTarget3D.Battery,
-				MqttClasses.CameraTarget3D.Wheels => MqttClasses.CameraTarget3D.Freemode,
-				MqttClasses.CameraTarget3D.Manipulator => MqttClasses.CameraTarget3D.Wheels,
-				MqttClasses.CameraTarget3D.Sampler => MqttClasses.CameraTarget3D.Manipulator,
-				MqttClasses.CameraTarget3D.Battery => MqttClasses.CameraTarget3D.Sampler,
+				MqttClasses.CameraTarget3D.Freemode => MqttClasses.CameraTarget3D.Wheels,
+				MqttClasses.CameraTarget3D.Wheels => MqttClasses.CameraTarget3D.Manipulator,
+				MqttClasses.CameraTarget3D.Manipulator => MqttClasses.CameraTarget3D.Left,
+				MqttClasses.CameraTarget3D.Left => MqttClasses.CameraTarget3D.Back,
+				MqttClasses.CameraTarget3D.Back => MqttClasses.CameraTarget3D.Sampler,
+				MqttClasses.CameraTarget3D.Sampler => MqttClasses.CameraTarget3D.Battery,
+				MqttClasses.CameraTarget3D.Battery => MqttClasses.CameraTarget3D.Right,
+				MqttClasses.CameraTarget3D.Right => MqttClasses.CameraTarget3D.Freemode,
 				_ => throw new ArgumentOutOfRangeException()
 			};
 		} while (!AvailableCameras.HasFlag(_currentCameraType));

@@ -23363,7 +23363,7 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_vfv1m")
 
-[node name="RoverVisualizer" type="Node3D" unique_id=1750992984 node_paths=PackedStringArray("_chassis", "_suspensionFL", "_suspensionFR", "_suspensionRL", "_suspensionRR", "_wheelFL", "_wheelFR", "_wheelRL", "_wheelRR", "_battery0", "_battery1", "_battery2", "_hotswap0", "_hotswap1", "_hotswap2", "_threeDManipulator", "_camera", "_cameraTargetFreemode", "_cameraTargetWheels", "_cameraTargetBattery")]
+[node name="RoverVisualizer" type="Node3D" unique_id=1750992984 node_paths=PackedStringArray("_chassis", "_suspensionFL", "_suspensionFR", "_suspensionRL", "_suspensionRR", "_wheelFL", "_wheelFR", "_wheelRL", "_wheelRR", "_battery0", "_battery1", "_battery2", "_hotswap0", "_hotswap1", "_hotswap2", "_threeDManipulator", "_threeDSampler", "_camera", "_cameraTargetFreemode", "_cameraTargetWheels", "_cameraTargetBattery", "_cameraTargetManipulator", "_cameraTargetSampler", "_cameraTargetBack", "_cameraTargetLeft", "_cameraTargetRight")]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 script = ExtResource("1_3ui5f")
 _chassis = NodePath("Rover/Frame")
@@ -23382,10 +23382,16 @@ _hotswap0 = NodePath("Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembl
 _hotswap1 = NodePath("Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembly_14_03_2025 v1_2/wm686 v1 (1)_2/wm686 v1_002")
 _hotswap2 = NodePath("Rover/Frame/FrameBody/obudowa v1/obudowa_zlozenie v7/hotswap_lewy v15/elektronika/assembly_hotswap_lewy_2/hotswap_poprawione v1 (1)_001/wm686 v1 (1) (1)_001/wm686 v1_1_002")
 _threeDManipulator = NodePath("Rover/Manipulator")
+_threeDSampler = NodePath("Rover/Sampler")
 _camera = NodePath("Camera3D")
 _cameraTargetFreemode = NodePath("FreemodeCamera")
 _cameraTargetWheels = NodePath("Rover/WheelCamera")
 _cameraTargetBattery = NodePath("Rover/BatteryCamera")
+_cameraTargetManipulator = NodePath("Rover/ManipulatorCamera")
+_cameraTargetSampler = NodePath("Rover/SamplerCamera")
+_cameraTargetBack = NodePath("Rover/BackCamera")
+_cameraTargetLeft = NodePath("Rover/LeftCamera")
+_cameraTargetRight = NodePath("Rover/RightCamera")
 
 [node name="FreemodeCamera" type="Camera3D" parent="." unique_id=543991512]
 transform = Transform3D(-0.3457514, -0.10285809, 0.3462314, 0, 0.47929674, 0.14238901, -0.3611869, 0.0984624, -0.33143505, 1.4038031, 0.6234751, -1.3583133)
@@ -23422,26 +23428,26 @@ projection = 1
 size = 2.0
 
 [node name="ManipulatorCamera" type="Camera3D" parent="Rover" unique_id=647434726]
-transform = Transform3D(0.25, 0, 0, 0, -1.0927847e-08, 0.25, 0, -0.25, -1.0927847e-08, -0.0015922149, 0.628799, -0.14610277)
+transform = Transform3D(0.25, 0, 0, 0, -1.0927847e-08, 0.25, 0, -0.25, -1.0927847e-08, -0.0015922149, 0.628799, -0.17119257)
 projection = 1
 size = 2.0
 
 [node name="LeftCamera" type="Camera3D" parent="Rover" unique_id=218443742]
-transform = Transform3D(-1.0927847e-08, 0, -0.25, 0, 0.25, 0, 0.25, 0, -1.0927847e-08, -0.3861545, 0.10249609, -0.08114302)
+transform = Transform3D(-1.0927847e-08, 0, -0.25, 0, 0.25, 0, 0.25, 0, -1.0927847e-08, -0.3861545, 0.10249609, -0.12374362)
 projection = 1
-size = 2.0
+size = 2.5
 
 [node name="RightCamera" type="Camera3D" parent="Rover" unique_id=183956692]
-transform = Transform3D(-1.0927847e-08, 0, 0.25, 0, 0.25, 0, -0.25, 0, -1.0927847e-08, 0.386, 0.102, -0.081)
+transform = Transform3D(-1.0927847e-08, 0, 0.25, 0, 0.25, 0, -0.25, 0, -1.0927847e-08, 0.386, 0.102, -0.124)
 projection = 1
-size = 2.0
+size = 2.5
 
 [node name="BackCamera" type="Camera3D" parent="Rover" unique_id=1394589668]
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0.0006507039, 0.06954062, 0.5113437)
 projection = 1
 size = 2.0
 
-[node name="BackCamera2" type="Camera3D" parent="Rover" unique_id=1565419712]
+[node name="SamplerCamera" type="Camera3D" parent="Rover" unique_id=1565419712]
 transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0.0006507039, 0.012511179, 0.5113437)
 projection = 1
 size = 1.4
@@ -23462,7 +23468,6 @@ transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, 0.0
 
 [node name="Sampler" parent="Rover" unique_id=1216958742 instance=ExtResource("2_qu72h")]
 transform = Transform3D(-0.001, 9.3885105e-17, 1.5099583e-10, 3.988478e-17, 0.0010000002, -3.5762796e-10, -1.5099581e-10, -3.5762796e-10, -0.0010000002, -0.015000001, 4.2915353e-08, 0.12000002)
-visible = true
 
 [node name="Rotary" parent="Rover" unique_id=665061669 instance=ExtResource("3_qq1bi")]
 transform = Transform3D(0.00077547546, -3.5905712e-11, -0.00063137774, 1.6619363e-10, 0.0010000002, 1.4725475e-10, 0.00063137774, -2.191234e-10, 0.00077547546, -0.044614453, -0.0041999663, 0.0960204)
