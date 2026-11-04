@@ -1,7 +1,7 @@
 [gd_scene format=4 uid="uid://dqj7wislvklqc"]
 
 [ext_resource type="Script" uid="uid://7dudfbkqm5yj" path="res://MVVM/ViewModel/IKAnimHelper.cs" id="1_l4l7g"]
-[ext_resource type="Script" uid="uid://b5e1nyvl2bodr" path="res://MVVM/View/ThreeDManipulator.cs" id="1_q2411"]
+[ext_resource type="Script" uid="uid://dti4wp3ktwdm5" path="res://MVVM/ViewModel/ThreeDManipulator.cs" id="1_q2411"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ohfj3"]
 resource_name = "mat_36"

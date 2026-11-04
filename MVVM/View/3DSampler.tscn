@@ -1,5 +1,7 @@
 [gd_scene format=4 uid="uid://dips3ro0ypm3i"]
 
+[ext_resource type="Script" uid="uid://bfvnrabf6ofqd" path="res://MVVM/ViewModel/ThreeDSampler.cs" id="1_ksftw"]
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jr5db"]
 resource_name = "mat_3"
 cull_mode = 2
@@ -4706,7 +4708,7 @@ shadow_mesh = SubResource("ArrayMesh_lfusm")
 
 [node name="Sampler" type="Node3D" unique_id=1216958742]
 transform = Transform3D(-0.002, 1.4229923e-16, 1.7484558e-10, 7.976956e-17, 0.0020000003, -7.152559e-10, -1.7484555e-10, -7.152559e-10, -0.0020000003, 0, 0, 0)
-visible = false
+script = ExtResource("1_ksftw")
 
 [node name="30t_htd3_9mm v3" type="MeshInstance3D" parent="." unique_id=212435583]
 transform = Transform3D(1, 0, 0, 0, -3.5762787e-07, -0.99999994, 0, 0.99999994, -3.5762787e-07, -15, 173.54997, -12.034803)

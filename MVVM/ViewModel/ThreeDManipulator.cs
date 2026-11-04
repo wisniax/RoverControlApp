@@ -31,7 +31,7 @@ public partial class ThreeDManipulator : Node3D
 				_axis5.RotationDegrees = new Vector3((float)value, 0, 0);
 				break;
 			case 5:
-				_axis6.RotationDegrees = new Vector3(0, 0, (float)value);
+				_axis6.RotationDegrees = new Vector3(0, (float)value, 0);
 				break;
 			case 6:
 				//_gripper.RotationDegrees = new Vector3(0, 0, (float)value);

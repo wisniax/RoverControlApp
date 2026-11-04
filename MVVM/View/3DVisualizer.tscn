@@ -23421,6 +23421,31 @@ transform = Transform3D(0.25, 0, 0, 0, -1.0927847e-08, 0.25, 0, -0.25, -1.092784
 projection = 1
 size = 2.0
 
+[node name="ManipulatorCamera" type="Camera3D" parent="Rover" unique_id=647434726]
+transform = Transform3D(0.25, 0, 0, 0, -1.0927847e-08, 0.25, 0, -0.25, -1.0927847e-08, -0.0015922149, 0.628799, -0.14610277)
+projection = 1
+size = 2.0
+
+[node name="LeftCamera" type="Camera3D" parent="Rover" unique_id=218443742]
+transform = Transform3D(-1.0927847e-08, 0, -0.25, 0, 0.25, 0, 0.25, 0, -1.0927847e-08, -0.3861545, 0.10249609, -0.08114302)
+projection = 1
+size = 2.0
+
+[node name="RightCamera" type="Camera3D" parent="Rover" unique_id=183956692]
+transform = Transform3D(-1.0927847e-08, 0, 0.25, 0, 0.25, 0, -0.25, 0, -1.0927847e-08, 0.386, 0.102, -0.081)
+projection = 1
+size = 2.0
+
+[node name="BackCamera" type="Camera3D" parent="Rover" unique_id=1394589668]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0.0006507039, 0.06954062, 0.5113437)
+projection = 1
+size = 2.0
+
+[node name="BackCamera2" type="Camera3D" parent="Rover" unique_id=1565419712]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0.0006507039, 0.012511179, 0.5113437)
+projection = 1
+size = 1.4
+
 [node name="BatteryCamera" type="Camera3D" parent="Rover" unique_id=1656265488]
 transform = Transform3D(0.25, 0, 0, 0, 0.21758892, 0.12310589, 0, -0.12310589, 0.21758892, 0, 0.054, 0.079)
 projection = 1
@@ -23437,6 +23462,7 @@ transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, 0.0
 
 [node name="Sampler" parent="Rover" unique_id=1216958742 instance=ExtResource("2_qu72h")]
 transform = Transform3D(-0.001, 9.3885105e-17, 1.5099583e-10, 3.988478e-17, 0.0010000002, -3.5762796e-10, -1.5099581e-10, -3.5762796e-10, -0.0010000002, -0.015000001, 4.2915353e-08, 0.12000002)
+visible = true
 
 [node name="Rotary" parent="Rover" unique_id=665061669 instance=ExtResource("3_qq1bi")]
 transform = Transform3D(0.00077547546, -3.5905712e-11, -0.00063137774, 1.6619363e-10, 0.0010000002, 1.4725475e-10, 0.00063137774, -2.191234e-10, 0.00077547546, -0.044614453, -0.0041999663, 0.0960204)

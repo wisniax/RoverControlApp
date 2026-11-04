@@ -31,6 +31,7 @@ public partial class ThreeDVisualizer : Node3D
 	[Export] private Node3D _hotswap2 = null!;
 
 	[Export] private ThreeDManipulator _threeDManipulator = null!;
+	[Export] private ThreeDSampler _threeDSampler = null!;
 
 	[Export] private Camera3D _camera = null!;
 	private Camera3D _targetCamera = null!;
@@ -40,6 +41,10 @@ public partial class ThreeDVisualizer : Node3D
 	[Export] private Camera3D _cameraTargetBattery = null!;
 	[Export] private Camera3D _cameraTargetManipulator = null!;
 	[Export] private Camera3D _cameraTargetSampler = null!;
+	[Export] private Camera3D _cameraTargetBack = null!;
+	[Export] private Camera3D _cameraTargetLeft = null!;
+	[Export] private Camera3D _cameraTargetRight = null!;
+	[Export] private Camera3D _cameraTargetFront = null!;
 
 	public void ChangeCameraTarget(MqttClasses.CameraTarget3D target)
 	{
@@ -178,7 +183,7 @@ public partial class ThreeDVisualizer : Node3D
 			_availableCameras |= MqttClasses.CameraTarget3D.Wheels;
 		if (_cameraTargetBattery != null)
 			_availableCameras |= MqttClasses.CameraTarget3D.Battery;
-		if (_cameraTargetManipulator != null && /*_threeDManipulator.Visible*/ false) // TODO: Implement visibility check for manipulator
+		if (_cameraTargetManipulator != null && _threeDManipulator.Visible) // TODO: Implement visibility check for manipulator
 			_availableCameras |= MqttClasses.CameraTarget3D.Manipulator;
 		if (_cameraTargetSampler != null && /*_threeDSampler.Visible*/ false) // TODO: Implement visibility check for sampler
 			_availableCameras |= MqttClasses.CameraTarget3D.Sampler;
