@@ -80,7 +80,7 @@ public partial class BatteryMonitor : Panel
 			return;
 		}
 
-		await (battery[data.Slot - 1].UpdateBattInfoHandler(msg.ConvertPayloadToString()));
+		await (battery[data.Slot].UpdateBattInfoHandler(msg.ConvertPayloadToString()));
 
 		UpdateGeneralPowerInfo(data.HotswapStatus);
 
