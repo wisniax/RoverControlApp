@@ -24,6 +24,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 		string? topicKmlSetPoint = null;
 		string? topicWheelFeedback = null;
 		string? topicZedImuData = null;
+		string? topicImuBoardFeedback = null;
 		string? topicEStopStatus = null;
 		string? topicKmlListOfActiveObj = null;
 		string? topicSampler = null;
@@ -73,6 +74,9 @@ public class MqttConverter : JsonConverter<Mqtt>
 				case nameof(Mqtt.TopicZedImuData):
 					topicZedImuData = reader.GetString();
 					break;
+				case nameof(Mqtt.TopicImuBoardFeedback):
+					topicImuBoardFeedback = reader.GetString();
+					break;
 				case nameof(Mqtt.TopicKmlListOfActiveObj):
 					topicKmlListOfActiveObj = reader.GetString();
 					break;
@@ -103,6 +107,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 			topicWheelFeedback ?? Default.TopicWheelFeedback,
 			topicEStopStatus ?? Default.TopicEStopStatus,
 			topicZedImuData ?? Default.TopicZedImuData,
+			topicImuBoardFeedback ?? Default.TopicImuBoardFeedback,
 			topicKmlListOfActiveObj ?? Default.TopicKmlListOfActiveObj,
 			topicSampler ?? Default.TopicSamplerControl,
 			topicBatteryInfo ?? Default.TopicBatteryInfo,
@@ -124,6 +129,7 @@ public class MqttConverter : JsonConverter<Mqtt>
 		writer.WriteString(nameof(Mqtt.TopicWheelFeedback), value.TopicWheelFeedback);
 		writer.WriteString(nameof(Mqtt.TopicEStopStatus), value.TopicEStopStatus);
 		writer.WriteString(nameof(Mqtt.TopicZedImuData), value.TopicZedImuData);
+		writer.WriteString(nameof(Mqtt.TopicImuBoardFeedback), value.TopicImuBoardFeedback);
 		writer.WriteString(nameof(Mqtt.TopicKmlListOfActiveObj), value.TopicKmlListOfActiveObj);
 		writer.WriteString(nameof(Mqtt.TopicSamplerControl), value.TopicSamplerControl);
 		writer.WriteString(nameof(Mqtt.TopicBatteryInfo), value.TopicBatteryInfo);

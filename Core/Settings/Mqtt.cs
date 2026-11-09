@@ -24,6 +24,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicWheelFeedback = "VescStatus";
 		_topicEStopStatus = "button_stop";
 		_topicZedImuData = "TopicZedImuData";
+		_topicImuBoardFeedback = "ImuBoardFeedback";
 		_topicKmlListOfActiveObj = "KMLNode/ActiveKMLObjects";
 		_topicSamplerControlControl = "SamplerControl";
 		_topicBatteryInfo = "BatteryInfo";
@@ -42,6 +43,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		string topicWheelFeedback,
 		string topicEStopStatus,
 		string topicZedImuData,
+		string topicImuBoardFeedback,
 		string topicKmlListOfActiveObj,
 		string topicSamplerControlControl,
 		string topicBatteryInfo,
@@ -58,6 +60,7 @@ public partial class Mqtt : SettingBase, ICloneable
 		_topicWheelFeedback = topicWheelFeedback;
 		_topicEStopStatus = topicEStopStatus;
 		_topicZedImuData = topicZedImuData;
+		_topicImuBoardFeedback = topicImuBoardFeedback;
 		_topicKmlListOfActiveObj = topicKmlListOfActiveObj;
 		_topicSamplerControlControl = topicSamplerControlControl;
 		_topicBatteryInfo = topicBatteryInfo;
@@ -79,6 +82,7 @@ public partial class Mqtt : SettingBase, ICloneable
 			TopicKmlSetPoint = _topicKmlSetPoint,
 			TopicWheelFeedback = _topicWheelFeedback,
 			TopicZedImuData = _topicZedImuData,
+			TopicImuBoardFeedback = _topicImuBoardFeedback,
 			TopicEStopStatus = _topicEStopStatus,
 			TopicKmlListOfActiveObj = _topicKmlListOfActiveObj,
 			TopicSamplerControl = _topicSamplerControlControl,
@@ -151,6 +155,13 @@ public partial class Mqtt : SettingBase, ICloneable
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
+	public string TopicImuBoardFeedback
+	{
+		get => _topicImuBoardFeedback;
+		set => EmitSignal_SettingChanged(ref _topicImuBoardFeedback, value);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String)]
 	public string TopicEStopStatus
 	{
 		get => _topicEStopStatus;
@@ -197,6 +208,7 @@ public partial class Mqtt : SettingBase, ICloneable
 	string _topicWheelFeedback;
 	string _topicEStopStatus;
 	string _topicZedImuData;
+	string _topicImuBoardFeedback;
 	string _topicKmlListOfActiveObj;
 	string _topicSamplerControlControl;
 	string _topicBatteryInfo;
