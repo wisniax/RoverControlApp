@@ -5075,10 +5075,10 @@ Part1 = NodePath("Part1")
 Part2 = NodePath("../Axis2/Actuator1/Part2")
 
 [node name="Part1" type="Node3D" parent="Axis1/Actuator1" unique_id=149028895]
-transform = Transform3D(-0.99999976, -9.8260054e-05, -3.7247642e-06, -9.833055e-05, 0.9993267, 0.036685042, 1.17582175e-07, 0.03668505, -0.99932647, 16.322918, 66.39119, -139.90817)
+transform = Transform3D(-0.8934191, 0.44901222, 0.0016737476, 0.44874159, 0.8927381, 0.038239688, 0.015676502, 0.03491656, -0.99922657, 0.8916645, 66.38953, -139.9112)
 
 [node name="SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna" type="MeshInstance3D" parent="Axis1/Actuator1/Part1" unique_id=686693388]
-transform = Transform3D(0.9999996, 1.779772e-07, -1.6911838e-07, 1.7797716e-07, -0.9999996, 3.9284623e-07, -1.691184e-07, -1.309117e-07, -0.9999998, 9.536905, 16.802053, -3.5652885)
+transform = Transform3D(0.9999996, 1.7796265e-07, -1.6911781e-07, 1.7796992e-07, -0.99999964, 3.9488077e-07, -1.6911872e-07, -1.3038516e-07, -0.9999998, -5.894265, 16.802055, -3.5652962)
 mesh = SubResource("ArrayMesh_borte")
 skeleton = NodePath("")
 
@@ -5498,10 +5498,10 @@ skeleton = NodePath("")
 transform = Transform3D(0.99999994, 0, 0, 0, 0.99999976, 0, 0, 0, 0.9999997, 16.246058, -27.996334, -25.921703)
 
 [node name="Part2" type="Node3D" parent="Axis1/Axis2/Actuator1" unique_id=1960391873]
-transform = Transform3D(0.99999994, -9.826441e-05, 3.60726e-06, 9.8330594e-05, 0.9993269, -0.03668506, 4.3200994e-12, 0.036685064, 0.9993268, 0.00022138651, 38.7293, 104.78906)
+transform = Transform3D(0.9999178, 8.623535e-05, -0.0016736673, -0.00015017304, 0.9991874, -0.038239688, 0.0016690781, 0.03823833, 0.99922657, -15.53547, 38.623154, 104.989)
 
 [node name="tłoczysko_SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna" type="MeshInstance3D" parent="Axis1/Axis2/Actuator1/Part2" unique_id=1555137980]
-transform = Transform3D(0.9999997, 0, 0, 0, 0.99999964, 0, 0, 0, 0.9999998, -15.887328, 0.17235565, -32.035854)
+transform = Transform3D(0.9999997, 0, -4.5474735e-13, 0, 0.9999997, -3.7252903e-09, 0, 3.7252903e-09, 0.9999998, 0.033390045, 0.17235947, -32.035843)
 mesh = SubResource("ArrayMesh_07i3j")
 skeleton = NodePath("")
 
@@ -5512,10 +5512,10 @@ Part1 = NodePath("Part1")
 Part2 = NodePath("../Axis3/Actuator2/Part2")
 
 [node name="Part1" type="Node3D" parent="Axis1/Axis2/Actuator2" unique_id=951789964]
-transform = Transform3D(0.99999917, -0.000575757, -6.903588e-05, -0.0005798808, -0.9928821, -0.11909799, 2.7008337e-08, 0.11909804, -0.992882, -0.003440857, 10.484301, 94.121185)
+transform = Transform3D(0.99987423, 8.083612e-06, -0.0010790986, -0.00012412519, -0.9923482, -0.12246405, -0.0010718864, 0.12245513, -0.9924204, -0.049741745, 10.487888, 94.245224)
 
 [node name="SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Actuator2/Part1" unique_id=1189256209]
-transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.742278e-08, 0, -1.0000002, 5.998665, -17.208132, -3.1570578)
+transform = Transform3D(-1, 0, 1.5099585e-07, 0, 1, 0, -1.509958e-07, 0, -1.0000002, 5.998665, -17.208132, -3.1570578)
 mesh = SubResource("ArrayMesh_3qrnk")
 skeleton = NodePath("")
 
@@ -5526,7 +5526,7 @@ transform = Transform3D(0.99999994, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0,
 transform = Transform3D(1, 0, 0, 0, 1.0000001, 0, 0, 0, 1, 16.322922, -26.24715, -191.51326)
 
 [node name="Part2" type="Node3D" parent="Axis1/Axis2/Axis3/Actuator2" unique_id=1658497267]
-transform = Transform3D(-0.9999997, -0.00057575223, 6.907541e-05, 0.00057988113, -0.99288213, 0.11909804, 1.277658e-08, 0.11909806, 0.99288225, -16.320917, 47.8685, 198.30763)
+transform = Transform3D(-0.9998822, 8.083558e-06, 0.0010791061, 0.00012412618, -0.99235404, 0.12246504, 0.0010718941, 0.122455865, 0.99242824, -16.28744, 48.155876, 198.54485)
 
 [node name="tłoczysko_SIŁOWNIK ELEKTRYCZNY 12V MICRO SILNIK LINIOWY NAPE_Domyślna_001" type="MeshInstance3D" parent="Axis1/Axis2/Axis3/Actuator2/Part2" unique_id=1674269327]
 transform = Transform3D(0.9999997, 1.1368684e-13, 7.1054274e-15, 0, 0.9999997, -7.450581e-09, -1.4210855e-14, 1.4901161e-08, 0.99999994, 0.050683975, -0.24641609, -32.64244)
