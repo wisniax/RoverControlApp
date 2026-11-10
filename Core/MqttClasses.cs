@@ -311,6 +311,16 @@ namespace RoverControlApp.Core
 			public long Timestamp { get; set; } = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 		}
 
+		public class ImuBoardFeedback
+		{
+			public int VescID { get; set; }
+			public float W { get; set; }
+			public float X { get; set; }
+			public float Y { get; set; }
+			public float Z { get; set; }
+			public long Timestamp { get; set; }
+		}
+
 		public class WheelFeedback
 		{
 			public int ERPM { get; set; }

@@ -83,6 +83,7 @@ public partial class ThreeDVisualizer : Node3D
 	{
 		MqttNode.Singleton.MessageReceivedAsync += VescInfoChanged;
 		MqttNode.Singleton.MessageReceivedAsync += BatteryInfoChanged;
+		MqttNode.Singleton.MessageReceivedAsync += ImuBoardInfoChanged;
 
 		_targetCamera = _cameraTargetFreemode;
 	}
@@ -170,6 +171,39 @@ public partial class ThreeDVisualizer : Node3D
 		await Task.Yield();
 	}
 
+	public async Task ImuBoardInfoChanged(string subTopic, MqttApplicationMessage? msg)
+	{
+		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicImuBoardFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicImuBoardFeedback)
+			return;
+		if (msg is null || msg.PayloadSegment.Count == 0)
+			return;
+		string payload = System.Text.Encoding.UTF8.GetString(msg.PayloadSegment.ToArray());
+		var imuData = JsonSerializer.Deserialize<MqttClasses.ImuBoardFeedback>(payload);
+
+		if (imuData is null) return;
+
+		int vescID = imuData.VescID;
+
+		switch (vescID)
+		{
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.FrontLeft): // Front Left suspension
+				CallDeferred(nameof(UpdateImuBoardRotation), _suspensionFL, imuData.X, imuData.Y, imuData.Z, imuData.W, true);
+				break;															 
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.FrontRight): // Front Right suspension
+				CallDeferred(nameof(UpdateImuBoardRotation), _suspensionFR, imuData.X, imuData.Y, imuData.Z, imuData.W, true);
+				break;
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.RearLeft): // Rear Left suspension
+				CallDeferred(nameof(UpdateImuBoardRotation), _suspensionRL, imuData.X, imuData.Y, imuData.Z, imuData.W, false);
+				break;
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.RearRight): // Rear Right suspension
+				CallDeferred(nameof(UpdateImuBoardRotation), _suspensionRR, imuData.X, imuData.Y, imuData.Z, imuData.W, false);
+				break;
+			default:
+				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled VESC ID: {vescID}");
+				break;
+		}
+	}
+
 	int HexStringToInt(string hexString)
 	{
 		if (hexString.StartsWith("0x"))
@@ -182,6 +216,24 @@ public partial class ThreeDVisualizer : Node3D
 	void UpdateWheelRotation(Node3D wheelNode, double precisePos)
 	{
 		wheelNode.RotationDegrees = new Vector3(0, -(float)precisePos, 0);
+	}
+
+	void UpdateImuBoardRotation(Node3D imuBoardNode, float X, float Y, float Z, float W, bool forward)
+	{
+		// The imu boards rotation is represented as a quaternion.
+		// It's "up" axis is Z, Y is towards the emergency stop button
+		// The forward parameter indicates whether the board is mounted in a forward or backward orientation,
+		// thus changing the Y direction.
+		if (forward)
+		{
+			imuBoardNode.Quaternion = new Quaternion(-X, Z, Y, W);
+		}
+		else
+		{
+			imuBoardNode.Quaternion = new Quaternion(X, -Z, -Y, W);
+		}
+
+
 	}
 
 	public MqttClasses.CameraTarget3D ReportAvailableCameras()
