@@ -46,6 +46,7 @@ layout_mode = 2
 [node name="ButtonCameraForward" type="Button" parent="VBoxContainer/HBoxContainer" unique_id=854387190]
 custom_minimum_size = Vector2(50, 50)
 layout_mode = 2
+focus_mode = 0
 theme_override_font_sizes/font_size = 30
 text = "◀
 "
