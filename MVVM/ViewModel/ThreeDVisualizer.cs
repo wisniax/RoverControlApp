@@ -171,16 +171,16 @@ public partial class ThreeDVisualizer : Node3D
 		await Task.Yield();
 	}
 
-	public async Task ImuBoardInfoChanged(string subTopic, MqttApplicationMessage? msg)
+	public Task ImuBoardInfoChanged(string subTopic, MqttApplicationMessage? msg)
 	{
 		if (string.IsNullOrEmpty(LocalSettings.Singleton.Mqtt.TopicImuBoardFeedback) || subTopic != LocalSettings.Singleton.Mqtt.TopicImuBoardFeedback)
-			return;
+			return Task.CompletedTask;
 		if (msg is null || msg.PayloadSegment.Count == 0)
-			return;
+			return Task.CompletedTask;
 		string payload = System.Text.Encoding.UTF8.GetString(msg.PayloadSegment.ToArray());
 		var imuData = JsonSerializer.Deserialize<MqttClasses.ImuBoardFeedback>(payload);
 
-		if (imuData is null) return;
+		if (imuData is null) return Task.CompletedTask;
 
 		int vescID = imuData.VescID;
 
@@ -202,6 +202,7 @@ public partial class ThreeDVisualizer : Node3D
 				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled VESC ID: {vescID}");
 				break;
 		}
+		return Task.CompletedTask;
 	}
 
 	int HexStringToInt(string hexString)
