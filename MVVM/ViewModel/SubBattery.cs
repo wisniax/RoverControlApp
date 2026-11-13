@@ -23,10 +23,10 @@ public partial class SubBattery : VBoxContainer
 	[Export] private Button _onButton = new();
 	[Export] private Button _offButton = new();
 
-	[Export] private Timer _timer;
-	[Export] private VBoxContainer _labels;
+	[Export] private Timer _timer = null!;
+	[Export] private VBoxContainer _labels = null!;
 
-	private BatteryMonitor _batteryMonitor;
+	private BatteryMonitor _batteryMonitor = null!;
 
 	public volatile MqttClasses.BatteryInfo myData = new();
 
@@ -62,6 +62,12 @@ public partial class SubBattery : VBoxContainer
 	{
 		var data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg);
 
+		if (data is null)
+		{
+			EventLogger.LogMessage("SubBattery", EventLogger.LogLevel.Error, "Parsing BatteryInfo");
+			return;
+		}
+
 		myData = data;
 
 		_idLabel.Text = "Battery ID: " + data.ID;
@@ -91,8 +97,9 @@ public partial class SubBattery : VBoxContainer
 		_delayLabel.Text = $"Delay: {(((data.Timestamp - LastTimestamp)<10000)?(data.Timestamp - LastTimestamp):"???")} ms";
 		LastTimestamp = data.Timestamp;
 
-		NewBatteryInfo.Invoke();
-		
+		if (NewBatteryInfo is not null)
+			NewBatteryInfo.Invoke();
+
 		
 		batteryDetectedHandler(true);
 		_timer.SetWaitTime(LocalSettings.Singleton.Battery.ExpectedMessageInterval);

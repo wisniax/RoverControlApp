@@ -69,12 +69,14 @@ public partial class BatteryMonitor : Panel
 			EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Empty payload");
 			return;
 		}
-		
-		MqttClasses.BatteryInfo data;
+
+		MqttClasses.BatteryInfo? data;
+
 		data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
 
-		if (data == null || data.Voltage == 0)
+		if(data is null || data.Volage == 0)
 		{
+			EventLogger.LogMessage("BatteryMonitor", EventLogger.LogLevel.Error, "Parsing BatteryInfo");
 			return;
 		}
 
@@ -97,11 +99,12 @@ public partial class BatteryMonitor : Panel
 		}
 
 		var altData = JsonSerializer.Deserialize<MqttClasses.WheelFeedback>(msg.ConvertPayloadToString());
-		
-		if (!(altData.VescId == Convert.ToInt32(LocalSettings.Singleton.CanIds.DriveMotors.FrontLeft.Replace("0x", ""), 16) ||
-			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.CanIds.DriveMotors.FrontRight.Replace("0x", ""), 16) ||
-			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.CanIds.DriveMotors.RearRight.Replace("0x", ""), 16) ||
-			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.CanIds.DriveMotors.RearLeft.Replace("0x", ""), 16)))
+
+		if (altData is null ||
+		  !(altData.VescId == Convert.ToInt32(LocalSettings.Singleton.WheelData.FrontLeftDrive.Replace("0x", ""), 16) || 
+			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.WheelData.FrontRightDrive.Replace("0x", ""), 16) || 
+			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.WheelData.BackRightDrive.Replace("0x", ""), 16) || 
+			  altData.VescId == Convert.ToInt32(LocalSettings.Singleton.WheelData.BackLeftDrive.Replace("0x", ""), 16)))
 			  return Task.CompletedTask;
 
 		CallDeferred(nameof(ResetVescTimer));
@@ -182,6 +185,9 @@ public partial class BatteryMonitor : Panel
 
 	public Task SendToHUD()
 	{
+		if (OnBatteryDataChanged is null)
+			return Task.CompletedTask;
+
 		if (LocalSettings.Singleton.Battery.AltMode || CountConnectedBatts() == 0)
 		{
 			OnBatteryDataChanged.Invoke(0, _currentVoltageAlt, CheckForWarnings());
@@ -234,7 +240,7 @@ public partial class BatteryMonitor : Panel
 			Slot = slot,
 			Set = set
 		};
-		OnBatteryControlChanged(control);
+		_ = OnBatteryControlChanged(control);
 		return Task.CompletedTask;
 	}
 
