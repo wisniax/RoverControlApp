@@ -21,6 +21,11 @@ public partial class ThreeDBattery : Node3D
 
 	public void UpdateBatteryLevel(MqttClasses.BatteryInfo batteryInfo)
 	{
+		if (batteryInfo == null || batteryInfo.Voltage == 0)
+		{
+			CallDeferred(nameof(UpdateBatteryVisibility), false);
+			return;
+		}
 		_lastUpdateTime = DateTime.Now;
 
 		CallDeferred(nameof(UpdateBatteryVisibility), true);

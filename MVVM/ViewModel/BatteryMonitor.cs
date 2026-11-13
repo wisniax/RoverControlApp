@@ -71,8 +71,12 @@ public partial class BatteryMonitor : Panel
 		}
 		
 		MqttClasses.BatteryInfo data;
-		
 		data = JsonSerializer.Deserialize<MqttClasses.BatteryInfo>(msg.ConvertPayloadToString());
+
+		if (data == null || data.Voltage == 0)
+		{
+			return;
+		}
 
 		await (battery[data.Slot].UpdateBattInfoHandler(msg.ConvertPayloadToString()));
 
