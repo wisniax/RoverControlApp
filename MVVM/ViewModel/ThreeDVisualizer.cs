@@ -198,6 +198,9 @@ public partial class ThreeDVisualizer : Node3D
 			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.RearRight): // Rear Right suspension
 				CallDeferred(nameof(UpdateImuBoardRotation), _suspensionRR, imuData.X, imuData.Y, imuData.Z, imuData.W, false);
 				break;
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.Body): // Body
+				CallDeferred(nameof(UpdateImuBoardRotation), _chassis, imuData.X, imuData.Y, imuData.Z, imuData.W, false);
+				break;
 			default:
 				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled VESC ID: {vescID}");
 				break;
@@ -227,14 +230,23 @@ public partial class ThreeDVisualizer : Node3D
 		// thus changing the Y direction.
 		if (forward)
 		{
-			imuBoardNode.Quaternion = new Quaternion(-X, Z, Y, W);
+			imuBoardNode.GlobalBasis = new Basis(new Quaternion(-X, Z, Y, W).Normalized()).ScaledLocal(imuBoardNode.GlobalBasis.Scale);
 		}
 		else
 		{
-			imuBoardNode.Quaternion = new Quaternion(X, -Z, -Y, W);
+			imuBoardNode.GlobalBasis = new Basis(new Quaternion(X, -Z, -Y, W).Normalized()).ScaledLocal(imuBoardNode.GlobalBasis.Scale);
 		}
 
 
+		// If the chassis board is not connected - use the vesc boards to aproximate it
+		if (LocalSettings.Singleton.CanIds.ImuBoards.Body is null ||
+			LocalSettings.Singleton.CanIds.ImuBoards.Body == "")
+		{
+			Vector3 error = imuBoardNode.RotationDegrees - _chassis.RotationDegrees;
+			float mutlipier = 0.05f;
+
+			_chassis.RotationDegrees = new Vector3(_chassis.RotationDegrees.X + error.X * mutlipier, _chassis.RotationDegrees.Y + error.Y * mutlipier, _chassis.RotationDegrees.Z + error.Z * mutlipier);
+		}
 	}
 
 	public MqttClasses.CameraTarget3D ReportAvailableCameras()

@@ -23281,28 +23281,23 @@ _wheelFL = NodePath("Rover/Frame/Suspension/FLSuspension/FLWheel")
 _wheelFR = NodePath("Rover/Frame/Suspension/FRSuspension/FRWheel")
 _wheelRL = NodePath("Rover/Frame/Suspension/RLSuspension/RLWheel")
 _wheelRR = NodePath("Rover/Frame/Suspension/RRSuspension/RRWheel")
-_battery0 = NodePath("Rover/Battery0")
-_battery1 = NodePath("Rover/Battery1")
-_battery2 = NodePath("Rover/Battery2")
+_battery0 = NodePath("Rover/Frame/Battery0")
+_battery1 = NodePath("Rover/Frame/Battery1")
+_battery2 = NodePath("Rover/Frame/Battery2")
 _hotswap0 = NodePath("Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembly_14_03_2025 v1_2/wm686 v1 (1)_2/wm686 v1_003")
 _hotswap1 = NodePath("Rover/Frame/FrameBody/elektronika v5/simpleHotswap assembly_14_03_2025 v1_2/wm686 v1 (1)_2/wm686 v1_002")
 _hotswap2 = NodePath("Rover/Frame/FrameBody/obudowa v1/obudowa_zlozenie v7/hotswap_lewy v15/elektronika/assembly_hotswap_lewy_2/hotswap_poprawione v1 (1)_001/wm686 v1 (1) (1)_001/wm686 v1_1_002")
-_threeDManipulator = NodePath("Rover/Manipulator")
-_threeDSampler = NodePath("Rover/Sampler")
+_threeDManipulator = NodePath("Rover/Frame/Manipulator")
+_threeDSampler = NodePath("Rover/Frame/Sampler")
 _camera = NodePath("Camera3D")
-_cameraTargetFreemode = NodePath("FreemodeCamera")
-_cameraTargetWheels = NodePath("Rover/WheelCamera")
-_cameraTargetBattery = NodePath("Rover/BatteryCamera")
-_cameraTargetManipulator = NodePath("Rover/ManipulatorCamera")
-_cameraTargetSampler = NodePath("Rover/SamplerCamera")
-_cameraTargetBack = NodePath("BackCamera")
-_cameraTargetLeft = NodePath("LeftCamera")
-_cameraTargetRight = NodePath("RightCamera")
-
-[node name="FreemodeCamera" type="Camera3D" parent="." unique_id=543991512]
-transform = Transform3D(-0.3457514, -0.10285809, 0.3462314, 0, 0.47929674, 0.14238901, -0.3611869, 0.0984624, -0.33143505, 1.4038031, 0.6234751, -1.3583133)
-projection = 1
-size = 2.0
+_cameraTargetFreemode = NodePath("Rover/FreemodeCamera")
+_cameraTargetWheels = NodePath("Rover/Frame/WheelCamera")
+_cameraTargetBattery = NodePath("Rover/Frame/BatteryCamera")
+_cameraTargetManipulator = NodePath("Rover/Frame/ManipulatorCamera")
+_cameraTargetSampler = NodePath("Rover/Frame/SamplerCamera")
+_cameraTargetBack = NodePath("Rover/BackCamera")
+_cameraTargetLeft = NodePath("Rover/LeftCamera")
+_cameraTargetRight = NodePath("Rover/RightCamera")
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=91785477]
 transform = Transform3D(0.24991433, 0.003222471, -0.005695692, 0, 0.21758887, 0.12310595, 0.0065440997, -0.123063795, 0.21751426, 0.004559671, 0.10783432, 0.15840831)
@@ -23325,72 +23320,77 @@ light_size = 1.0
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Camera3D" unique_id=249419225]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.9604645e-08, 4.5519857)
 
-[node name="LeftCamera" type="Camera3D" parent="." unique_id=218443742]
-transform = Transform3D(-2.1855694e-08, 0, -0.5, 0, 0.5, 0, 0.5, 0, -2.1855694e-08, -0.772309, 0.20499218, -0.24748725)
-projection = 1
-size = 2.5
-
-[node name="RightCamera" type="Camera3D" parent="." unique_id=183956692]
-transform = Transform3D(-2.1855694e-08, 0, 0.5, 0, 0.5, 0, -0.5, 0, -2.1855694e-08, 0.772, 0.204, -0.248)
-projection = 1
-size = 2.5
-
-[node name="BackCamera" type="Camera3D" parent="." unique_id=1394589668]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0.0013014078, 0.13908124, 1.0226874)
-projection = 1
-size = 2.0
-
 [node name="Rover" type="Node3D" parent="." unique_id=1231744712]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 
-[node name="WheelCamera" type="Camera3D" parent="Rover" unique_id=1931103316]
-transform = Transform3D(0.25, 0, 0, 0, -1.0927847e-08, 0.25, 0, -0.25, -1.0927847e-08, -0.0015922149, 0.628799, 0.0005078731)
+[node name="FreemodeCamera" type="Camera3D" parent="Rover" unique_id=543991512]
+transform = Transform3D(-0.1728757, -0.051429044, 0.1731157, 0, 0.23964837, 0.07119451, -0.18059345, 0.0492312, -0.16571753, 0.70190156, 0.31173754, -0.67915666)
 projection = 1
 size = 2.0
 
-[node name="ManipulatorCamera" type="Camera3D" parent="Rover" unique_id=647434726]
-transform = Transform3D(0.25, 0, 0, 0, -1.0927847e-08, 0.25, 0, -0.25, -1.0927847e-08, -0.0015922149, 0.628799, -0.17119257)
+[node name="LeftCamera" type="Camera3D" parent="Rover" unique_id=218443742]
+transform = Transform3D(-1.0927847e-08, 0, -0.25, 0, 0.25, 0, 0.25, 0, -1.0927847e-08, -0.3861545, 0.10249609, -0.12374362)
+projection = 1
+size = 2.5
+
+[node name="RightCamera" type="Camera3D" parent="Rover" unique_id=183956692]
+transform = Transform3D(-1.0927847e-08, 0, 0.25, 0, 0.25, 0, -0.25, 0, -1.0927847e-08, 0.386, 0.102, -0.124)
+projection = 1
+size = 2.5
+
+[node name="BackCamera" type="Camera3D" parent="Rover" unique_id=1394589668]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0.0006507039, 0.06954062, 0.5113437)
 projection = 1
 size = 2.0
 
-[node name="SamplerCamera" type="Camera3D" parent="Rover" unique_id=1565419712]
-transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0.0006507039, 0.012511179, 0.5113437)
+[node name="Frame" type="Node3D" parent="Rover" unique_id=201270566]
+transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, -1.8626451e-09, 0, -7.450581e-09)
+
+[node name="WheelCamera" type="Camera3D" parent="Rover/Frame" unique_id=1931103316]
+transform = Transform3D(249.99998, 0, 0, 0, -1.0927845e-05, 249.99995, 0, -249.99995, -1.0927845e-05, -1.5922129, 628.7989, 0.50788045)
+projection = 1
+size = 2.0
+
+[node name="ManipulatorCamera" type="Camera3D" parent="Rover/Frame" unique_id=647434726]
+transform = Transform3D(249.99998, 0, 0, 0, -1.0927845e-05, 249.99995, 0, -249.99995, -1.0927845e-05, -1.5922129, 628.7989, -171.19254)
+projection = 1
+size = 2.0
+
+[node name="SamplerCamera" type="Camera3D" parent="Rover/Frame" unique_id=1565419712]
+transform = Transform3D(249.99998, 0, 0, 0, 249.99995, 0, 0, 0, 249.99995, 0.6507057, 12.511176, 511.34363)
 projection = 1
 size = 1.4
 
-[node name="BatteryCamera" type="Camera3D" parent="Rover" unique_id=1656265488]
-transform = Transform3D(0.25, 0, 0, 0, 0.21758892, 0.12310589, 0, -0.12310589, 0.21758892, 0, 0.054, 0.079)
+[node name="BatteryCamera" type="Camera3D" parent="Rover/Frame" unique_id=1656265488]
+transform = Transform3D(249.99998, 0, 0, 0, 217.58888, 123.105865, 0, -123.105865, 217.58888, 1.862645e-06, 53.999992, 79)
 projection = 1
 size = 0.4
 
-[node name="Battery0" parent="Rover" unique_id=345640126 instance=ExtResource("1_qq1bi")]
-transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, -0.02308707, 0.004368863, 0.029366102)
+[node name="Battery0" parent="Rover/Frame" unique_id=345640126 instance=ExtResource("1_qq1bi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.087067, 4.368862, 29.366104)
 
-[node name="Battery1" parent="Rover" unique_id=726907507 instance=ExtResource("1_qq1bi")]
-transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, -0.00020480709, 0.004368863, 0.029366102)
+[node name="Battery1" parent="Rover/Frame" unique_id=726907507 instance=ExtResource("1_qq1bi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.20480521, 4.368862, 29.366104)
 
-[node name="Battery2" parent="Rover" unique_id=2117011454 instance=ExtResource("1_qq1bi")]
-transform = Transform3D(0.001, 0, 0, 0, 0.0010000002, 0, 0, 0, 0.0010000002, 0.022549909, 0.004368863, 0.029366102)
+[node name="Battery2" parent="Rover/Frame" unique_id=2117011454 instance=ExtResource("1_qq1bi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.54991, 4.368862, 29.366104)
 
-[node name="Sampler" parent="Rover" unique_id=1216958742 instance=ExtResource("2_qu72h")]
-transform = Transform3D(-0.001, 9.3885105e-17, 1.5099583e-10, 3.988478e-17, 0.0010000002, -3.5762796e-10, -1.5099581e-10, -3.5762796e-10, -0.0010000002, -0.015000001, 4.2915353e-08, 0.12000002)
+[node name="Manipulator" parent="Rover/Frame" unique_id=489036806 instance=ExtResource("1_i5l4o")]
+transform = Transform3D(-1, -8.7422784e-08, -3.8213705e-15, 0, -4.371139e-08, 1, -8.742276e-08, 1, 4.371139e-08, -15.986944, 34.066883, -102.38462)
 visible = false
 
-[node name="Rotary" parent="Rover" unique_id=665061669 instance=ExtResource("3_qq1bi")]
-transform = Transform3D(0.00077547546, -3.5905712e-11, -0.00063137774, 1.6619363e-10, 0.0010000002, 1.4725475e-10, 0.00063137774, -2.191234e-10, 0.00077547546, -0.044614453, -0.0041999663, 0.0960204)
-
-[node name="Vaccum" parent="Rover" unique_id=1368367355 instance=ExtResource("4_3ui5f")]
-transform = Transform3D(0.001, -1.323489e-23, 7.3468392e-37, 1.323489e-23, 0.001, -5.551115e-17, 0, 5.551115e-17, 0.001, 0.036000002, -0.011999941, 0.16680004)
-
-[node name="Manipulator" parent="Rover" unique_id=489036806 instance=ExtResource("1_i5l4o")]
-transform = Transform3D(-0.001, -8.742279e-11, -3.8213714e-18, 0, -4.3711396e-11, 0.0010000002, -8.742278e-11, 0.0010000002, 4.3711396e-11, -0.015986947, 0.03406689, -0.10238466)
+[node name="Sampler" parent="Rover/Frame" unique_id=1216958742 instance=ExtResource("2_qu72h")]
+transform = Transform3D(-1, 9.38851e-14, 1.5099582e-07, 3.9884772e-14, 1, -3.576279e-07, -1.5099579e-07, -3.576279e-07, -1, -14.999998, 4.2915344e-05, 120.00001)
 visible = false
 
-[node name="Frame" type="Node3D" parent="Rover" unique_id=201270566]
-transform = Transform3D(0.001, 1.5336665e-24, 4.5494934e-24, 0, -3.5762796e-10, 0.0010000002, -1.6703744e-25, -0.0010000002, -3.5762796e-10, -1.8626451e-09, 0, -7.450581e-09)
+[node name="Rotary" parent="Rover/Frame" unique_id=665061669 instance=ExtResource("3_qq1bi")]
+transform = Transform3D(0.77547544, -3.590571e-08, -0.6313777, 1.661936e-07, 1, 1.4725472e-07, 0.63137764, -2.1912336e-07, 0.7754753, -44.61445, -4.1999655, 96.02039)
+
+[node name="Vaccum" parent="Rover/Frame" unique_id=1368367355 instance=ExtResource("4_3ui5f")]
+transform = Transform3D(1, -1.3234889e-20, 7.346839e-34, 1.3234887e-20, 0.9999999, -5.551114e-14, 0, 5.551114e-14, 0.9999999, 36, -11.999939, 166.8)
 
 [node name="FrameBody" type="Node3D" parent="Rover/Frame" unique_id=646611836]
-transform = Transform3D(1, -2.019484e-28, -9.523793e-28, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+transform = Transform3D(1, 1.5336662e-21, 4.549492e-21, 0, -3.576279e-07, 1, -1.6703741e-22, -1, -3.576279e-07, 0, 0, 0)
 
 [node name="analog_mux_simple v1" type="Node3D" parent="Rover/Frame/FrameBody" unique_id=316368837]
 transform = Transform3D(1, 0, -1.4458568e-28, 0, 1, 0, 0, 0, 1, -33.449997, 109.49999, 7.5)
@@ -24967,7 +24967,7 @@ mesh = SubResource("ArrayMesh_ccdht")
 skeleton = NodePath("")
 
 [node name="Suspension" type="Node3D" parent="Rover/Frame" unique_id=410998852]
-transform = Transform3D(999.99994, 0, 0, 0, -0.00035762784, -999.9998, 0, 999.9998, -0.00035762784, 0, 0, 0)
+transform = Transform3D(999.99994, 0, 1.6703734e-19, 0, 999.9998, -7.59504e-40, -1.6703736e-19, 7.59504e-40, 999.9998, 0, 0, 0)
 
 [node name="FRSuspension" type="Node3D" parent="Rover/Frame/Suspension" unique_id=345510725]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.08873135, 0.009657573, -0.009061497)
@@ -25389,7 +25389,7 @@ Part1 = NodePath("Part1")
 Part2 = NodePath("../../../BodyActuators/FR")
 
 [node name="Part1" type="Node3D" parent="Rover/Frame/Suspension/FRSuspension/Actuator" unique_id=903614562]
-transform = Transform3D(0.0040642563, -0.999984, -0.003922195, -0.87800753, -0.0016911394, -0.47864383, 0.4786296, 0.005389048, -0.8780003, 0, 0.011675239, -0.064152196)
+transform = Transform3D(0.0040268083, -0.99998415, -0.0039222045, -0.8780097, -0.001658278, -0.47864005, 0.478626, 0.005371125, -0.8780024, 0, 0.011675248, -0.06415272)
 
 [node name="9261 SGS-M10x1,25---(S_0_0_0)_001" type="MeshInstance3D" parent="Rover/Frame/Suspension/FRSuspension/Actuator/Part1" unique_id=1082759535]
 transform = Transform3D(1.5065875e-19, 0.001, 4.4202273e-20, -1.285161e-05, 4.613483e-20, -0.0009999176, -0.0009999176, 1.5007826e-19, 1.2851552e-05, 6.8672e-05, 3.156066e-05, 7.3462725e-06)
@@ -25830,7 +25830,7 @@ Part1 = NodePath("Part1")
 Part2 = NodePath("../../../BodyActuators/FL")
 
 [node name="Part1" type="Node3D" parent="Rover/Frame/Suspension/FLSuspension/Actuator" unique_id=395433588]
-transform = Transform3D(0.9997181, -0.023564544, -0.002893174, -0.022081634, -0.87812966, -0.47791287, 0.008721217, 0.47784203, -0.8784025, 0, 0.011642031, -0.06407376)
+transform = Transform3D(0.99971795, -0.023572644, -0.002893172, -0.022088736, -0.8781288, -0.4779141, 0.008725122, 0.4778432, -0.8784018, 0, 0.011642022, -0.06407361)
 
 [node name="9261 SGS-M10x1,25---(S_0_0_0)_002" type="MeshInstance3D" parent="Rover/Frame/Suspension/FLSuspension/Actuator/Part1" unique_id=1500390131]
 transform = Transform3D(-1.7557667e-11, -0.001, 1.4288487e-11, 6.1264145e-06, 1.4180653e-11, 0.0009999813, -0.0009999813, 1.7644875e-11, 6.1264145e-06, -0.00012160838, -3.2536685e-05, 5.8062375e-05)
@@ -26291,7 +26291,7 @@ Part1 = NodePath("Part1")
 Part2 = NodePath("../../../BodyActuators/RR")
 
 [node name="Part1" type="Node3D" parent="Rover/Frame/Suspension/RRSuspension/Actuator" unique_id=1276389396]
-transform = Transform3D(0.99966735, 0.020091554, -0.016172249, -0.025388805, 0.87696725, -0.47987908, 0.004541016, 0.48013005, 0.8771856, 0, 0.011664756, 0.06432561)
+transform = Transform3D(0.9996684, 0.020040033, -0.016171906, -0.025343386, 0.8769742, -0.47986868, 0.0045657586, 0.48011944, 0.8771913, 0, 0.011664769, 0.06432704)
 
 [node name="9261 SGS-M10x1,25---(S_0_0_0)" type="MeshInstance3D" parent="Rover/Frame/Suspension/RRSuspension/Actuator/Part1" unique_id=1717158593]
 transform = Transform3D(-4.041175e-20, 0.001, -1.5171944e-19, 1.4843536e-06, -1.516593e-19, -0.000999999, -0.000999999, -4.0636934e-20, -1.4843536e-06, 6.86571e-05, -1.2993813e-05, 2.2362918e-05)
@@ -26756,7 +26756,7 @@ Part1 = NodePath("Part1")
 Part2 = NodePath("../../../BodyActuators/RL")
 
 [node name="Part1" type="Node3D" parent="Rover/Frame/Suspension/RLSuspension/Actuator" unique_id=745851011]
-transform = Transform3D(0.9998228, -0.017933536, 0.00572361, 0.018482668, 0.87747914, -0.47925857, 0.0035724523, 0.47927943, 0.8776551, 0, 0.011565533, 0.06434834)
+transform = Transform3D(0.999823, -0.01792316, 0.0057235127, 0.018473543, 0.87748337, -0.47925118, 0.0035674078, 0.47927207, 0.87765914, 0, 0.011565486, 0.064349465)
 
 [node name="9261 SGS-M10x1,25---(S_0_0_0)_003" type="MeshInstance3D" parent="Rover/Frame/Suspension/RLSuspension/Actuator/Part1" unique_id=160422815]
 transform = Transform3D(-1.1915709e-10, -0.001, 8.947652e-11, -5.732436e-06, 4.331412e-11, 0.0009999836, -0.0009999836, 7.821441e-11, -5.732465e-06, -0.000121593475, 6.294623e-05, -4.5493245e-05)
@@ -26769,9 +26769,10 @@ mesh = SubResource("ArrayMesh_gi2k3")
 skeleton = NodePath("")
 
 [node name="BodyActuators" type="Node3D" parent="Rover/Frame" unique_id=221661245]
+transform = Transform3D(1, 1.5336664e-21, 4.549493e-21, 0, -3.576279e-07, 1, -1.6703741e-22, -1, -3.576279e-07, 0, 0, 0)
 
 [node name="FL" type="Node3D" parent="Rover/Frame/BodyActuators" unique_id=1684247375]
-transform = Transform3D(0.006412493, 0.99997526, 0.002893103, -0.47788858, 0.005605905, -0.8784026, -0.87839705, 0.0042501693, 0.47791272, -88.5086, 21.576488, 49.351192)
+transform = Transform3D(0.0063312002, 0.9999758, 0.002893108, -0.47789007, 0.0055670645, -0.878402, -0.8783968, 0.004178751, 0.47791377, -88.5086, 21.576488, 49.351192)
 
 [node name="19270 ESNU-25-25-P---(A----0-ZR)_002" type="MeshInstance3D" parent="Rover/Frame/BodyActuators/FL" unique_id=610893935]
 transform = Transform3D(-1.1920929e-07, -1.4901161e-08, 0.9999999, 0.032768458, -0.99946284, -4.0391257e-08, 0.9994628, 0.03276843, 1.1314346e-07, -0.29140472, -1.0737648, -36.818264)
@@ -26779,7 +26780,7 @@ mesh = SubResource("ArrayMesh_nuwx0")
 skeleton = NodePath("")
 
 [node name="FR" type="Node3D" parent="Rover/Frame/BodyActuators" unique_id=552764569]
-transform = Transform3D(0.017968383, 0.99983084, 0.003922281, -0.47850809, 0.012043817, -0.87800056, -0.8778993, 0.0138994055, 0.47864357, 88.96192, 21.598345, 49.471024)
+transform = Transform3D(0.017235102, 0.9998437, 0.003922252, -0.4785129, 0.011692792, -0.87800264, -0.8779113, 0.013255616, 0.4786397, 88.96192, 21.598345, 49.471024)
 
 [node name="19270 ESNU-25-25-P---(A----0-ZR)_001" type="MeshInstance3D" parent="Rover/Frame/BodyActuators/FR" unique_id=1990643148]
 transform = Transform3D(5.5258617e-05, -0.008726403, -0.9999619, -0.0063182856, 0.9999419, -0.008726579, 0.99998, 0.0063185273, 1.1949419e-07, -0.16410065, 0.24925995, -36.871124)
@@ -26787,7 +26788,7 @@ mesh = SubResource("ArrayMesh_ks66n")
 skeleton = NodePath("")
 
 [node name="RL" type="Node3D" parent="Rover/Frame/BodyActuators" unique_id=1389725575]
-transform = Transform3D(-0.994951, 0.10019883, -0.005723595, -0.053020887, -0.47635123, 0.8776549, 0.085213564, 0.87352705, 0.47925878, -89.015205, -21.56662, 49.423615)
+transform = Transform3D(-0.99474096, 0.10226281, -0.0057235043, -0.05400824, -0.4762329, 0.8776589, 0.08702616, 0.8733523, 0.47925144, -89.015205, -21.56662, 49.423615)
 
 [node name="19270 ESNU-25-25-P---(A----0-ZR)_003" type="MeshInstance3D" parent="Rover/Frame/BodyActuators/RL" unique_id=2038811328]
 transform = Transform3D(0.00013040545, 0.00024292243, 1, -0.013860822, -0.9999038, 0.000244709, 0.9999039, -0.013861001, -0.0001270292, 0.21041107, 0.43672943, -36.874638)
@@ -26795,7 +26796,7 @@ mesh = SubResource("ArrayMesh_36mxp")
 skeleton = NodePath("")
 
 [node name="RR" type="Node3D" parent="Rover/Frame/BodyActuators" unique_id=424277823]
-transform = Transform3D(-0.41627458, 0.90909517, 0.016172236, -0.43046328, -0.21271369, 0.8771854, 0.8008851, 0.35818842, 0.47987938, 89.68187, -21.630342, 49.527172)
+transform = Transform3D(-0.4090417, 0.9123724, 0.016171921, -0.43212953, -0.20928392, 0.8771911, 0.80370945, 0.3518194, 0.47986892, 89.68187, -21.630342, 49.527172)
 
 [node name="19270 ESNU-25-25-P---(A----0-ZR)" type="MeshInstance3D" parent="Rover/Frame/BodyActuators/RR" unique_id=515482956]
 transform = Transform3D(0.025061786, -8.9130474e-08, -0.9996859, 0.027721852, 0.9996152, 0.0006948933, 0.99930125, -0.027730614, 0.025052108, -0.88191223, -0.9755287, -36.857937)
