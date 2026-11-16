@@ -754,7 +754,7 @@ _suspensionRL = NodePath("Rover/Frame/Suspension/RLSuspension")
 _suspensionRR = NodePath("Rover/Frame/Suspension/RRSuspension")
 _wheelFL = NodePath("Rover/Frame/Suspension/FLSuspension/WheelHelper/FLWheel")
 _wheelFR = NodePath("Rover/Frame/Suspension/FRSuspension/FRWheel")
-_wheelRL = NodePath("Rover/Frame/Suspension/RLSuspension/RLWheel")
+_wheelRL = NodePath("Rover/Frame/Suspension/RLSuspension/WheelHelper/RLWheel")
 _wheelRR = NodePath("Rover/Frame/Suspension/RRSuspension/RRWheel")
 _battery0 = NodePath("Rover/Frame/Battery0")
 _battery1 = NodePath("Rover/Frame/Battery1")
@@ -917,7 +917,7 @@ Part1 = NodePath("Part1")
 Part2 = NodePath("../../../BodyActuators/FL")
 
 [node name="Part1" type="Node3D" parent="Rover/Frame/Suspension/FLSuspension/Actuator" unique_id=395433588]
-transform = Transform3D(0.9928174, -0.11960494, -0.0028931717, -0.10643484, -0.8719345, -0.47791415, 0.054638237, 0.4747894, -0.87840176, 0, 0.011642022, -0.06407359)
+transform = Transform3D(0.9928174, -0.11960494, -0.0028931715, -0.10643484, -0.8719345, -0.47791412, 0.054638237, 0.4747894, -0.8784017, 0, 0.011642022, -0.06407359)
 
 [node name="9261 SGS-M10x1,25---(S_0_0_0)_002" type="MeshInstance3D" parent="Rover/Frame/Suspension/FLSuspension/Actuator/Part1" unique_id=1500390131]
 transform = Transform3D(-1.7557667e-11, -0.001, 1.4288487e-11, 6.1264145e-06, 1.4180653e-11, 0.0009999813, -0.0009999813, 1.7644875e-11, 6.1264145e-06, -0.00012160838, -3.2536685e-05, 5.8062375e-05)
@@ -949,7 +949,7 @@ Part1 = NodePath("Part1")
 Part2 = NodePath("../../../BodyActuators/RR")
 
 [node name="Part1" type="Node3D" parent="Rover/Frame/Suspension/RRSuspension/Actuator" unique_id=1276389396]
-transform = Transform3D(0.9996684, 0.020040033, -0.016171906, -0.025343386, 0.8769742, -0.47986868, 0.0045657586, 0.48011944, 0.8771913, 0, 0.011664769, 0.06432704)
+transform = Transform3D(0.9996684, 0.020040032, -0.016171904, -0.025343383, 0.8769742, -0.47986868, 0.0045657586, 0.4801194, 0.8771913, 0, 0.011664769, 0.06432704)
 
 [node name="9261 SGS-M10x1,25---(S_0_0_0)" type="MeshInstance3D" parent="Rover/Frame/Suspension/RRSuspension/Actuator/Part1" unique_id=1717158593]
 transform = Transform3D(-4.041175e-20, 0.001, -1.5171944e-19, 1.4843536e-06, -1.516593e-19, -0.000999999, -0.000999999, -4.0636934e-20, -1.4843536e-06, 6.86571e-05, -1.2993813e-05, 2.2362918e-05)
@@ -977,11 +977,11 @@ skeleton = NodePath("")
 [node name="RLSuspension" type="Node3D" parent="Rover/Frame/Suspension" unique_id=1414052367]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.08867842, 0.009657573, 0.008861238)
 
-[node name="Node3D" type="Node3D" parent="Rover/Frame/Suspension/RLSuspension" unique_id=1654008342]
-transform = Transform3D(1, 0, 0, 0, 1, 6e-45, 0, -6e-45, 1, 0, 0, 0)
+[node name="WheelHelper" type="Node3D" parent="Rover/Frame/Suspension/RLSuspension" unique_id=90296077]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, 0)
 
-[node name="RLWheel" parent="Rover/Frame/Suspension/RLSuspension" unique_id=1109626176 instance=ExtResource("8_sgjqe")]
-transform = Transform3D(-0.001, 0, -8.742279e-11, 0, 0.0010000002, 0, 8.742278e-11, 0, -0.0010000002, -0.00023506582, -0.009657573, 0.13265969)
+[node name="RLWheel" parent="Rover/Frame/Suspension/RLSuspension/WheelHelper" unique_id=1109626176 instance=ExtResource("8_sgjqe")]
+transform = Transform3D(0.001, 0, 1.7484558e-10, 0, 0.0010000002, -1e-45, -1.7484555e-10, 1e-45, 0.0010000002, 0.00023505092, -0.009657573, -0.13265969)
 
 [node name="SuspensionBody4" parent="Rover/Frame/Suspension/RLSuspension" unique_id=1003796016 instance=ExtResource("8_buw08")]
 transform = Transform3D(-1, 8.742278e-08, 0, 8.742278e-08, 1, 8.742278e-08, 7.642742e-15, 8.742278e-08, -1, 0, 0, 0)
@@ -1008,7 +1008,7 @@ skeleton = NodePath("")
 transform = Transform3D(1, 1.5336664e-21, 4.549493e-21, 0, -3.576279e-07, 1, -1.6703741e-22, -1, -3.576279e-07, 0, 0, 0)
 
 [node name="FL" type="Node3D" parent="Rover/Frame/BodyActuators" unique_id=1684247375]
-transform = Transform3D(0.1137118, 0.9935096, 0.0028931135, -0.47452694, 0.056869745, -0.87840194, -0.8728652, 0.09851181, 0.4779139, -88.5086, 21.576488, 49.351192)
+transform = Transform3D(0.11371179, 0.9935096, 0.0028931133, -0.4745269, 0.056869745, -0.8784019, -0.87286514, 0.09851181, 0.47791386, -88.5086, 21.576488, 49.351192)
 
 [node name="19270 ESNU-25-25-P---(A----0-ZR)_002" type="MeshInstance3D" parent="Rover/Frame/BodyActuators/FL" unique_id=610893935]
 transform = Transform3D(-1.1920929e-07, -1.4901161e-08, 0.9999999, 0.032768458, -0.99946284, -4.0391257e-08, 0.9994628, 0.03276843, 1.1314346e-07, -0.29140472, -1.0737648, -36.818264)
@@ -1016,7 +1016,7 @@ mesh = SubResource("ArrayMesh_nuwx0")
 skeleton = NodePath("")
 
 [node name="FR" type="Node3D" parent="Rover/Frame/BodyActuators" unique_id=552764569]
-transform = Transform3D(0.017235098, 0.9998437, 0.0039222515, -0.4785128, 0.011692792, -0.8780026, -0.8779111, 0.013255616, 0.47863966, 88.96192, 21.598345, 49.471024)
+transform = Transform3D(0.017235097, 0.9998437, 0.0039222515, -0.47851276, 0.011692792, -0.8780026, -0.8779111, 0.013255616, 0.47863966, 88.96192, 21.598345, 49.471024)
 
 [node name="19270 ESNU-25-25-P---(A----0-ZR)_001" type="MeshInstance3D" parent="Rover/Frame/BodyActuators/FR" unique_id=1990643148]
 transform = Transform3D(5.5258617e-05, -0.008726403, -0.9999619, -0.0063182856, 0.9999419, -0.008726579, 0.99998, 0.0063185273, 1.1949419e-07, -0.16410065, 0.24925995, -36.871124)
@@ -1032,7 +1032,7 @@ mesh = SubResource("ArrayMesh_36mxp")
 skeleton = NodePath("")
 
 [node name="RR" type="Node3D" parent="Rover/Frame/BodyActuators" unique_id=424277823]
-transform = Transform3D(-0.40904164, 0.9123724, 0.016171921, -0.43212944, -0.20928392, 0.8771911, 0.8037093, 0.3518194, 0.47986892, 89.68187, -21.630342, 49.527172)
+transform = Transform3D(-0.40904167, 0.91237235, 0.016171908, -0.43212944, -0.20928392, 0.8771911, 0.8037093, 0.35181943, 0.47986892, 89.68187, -21.630342, 49.527172)
 
 [node name="19270 ESNU-25-25-P---(A----0-ZR)" type="MeshInstance3D" parent="Rover/Frame/BodyActuators/RR" unique_id=515482956]
 transform = Transform3D(0.025061786, -8.9130474e-08, -0.9996859, 0.027721852, 0.9996152, 0.0006948933, 0.99930125, -0.027730614, 0.025052108, -0.88191223, -0.9755287, -36.857937)
