@@ -68,6 +68,15 @@ ID sa wczytywane z `CanIds.ImuBoards` zapisanego pliku ustawien. Puste `Body`
 wylacza wysylanie ramki tej plytki. Mozna nadpisac piec ID opcja
 `--imu-ids 0xB0 0xB1 0xB2 0xB3 0xB4` lub zmienic podtemat przez `--imu-topic`.
 
+Opcja `--imu-same-values` wysyla identyczne `W`, `X`, `Y`, `Z` oraz `Timestamp`
+do wszystkich aktywnych plytek, lacznie z Body. Kazda ramka zachowuje wlasne
+`VescID`. Wspolny kwaternion nadal zmienia sie w czasie i ma usuniety yaw.
+Bez tej opcji kazda plytka symuluje wlasny ruch.
+
+```powershell
+python scripts/mqtt_telemetry_simulator.py --imu-same-values
+```
+
 Kwaterniony sa znormalizowane i zmieniaja sie plynnie dla kazdej plytki.
 Symulacja stosuje konwencje body-to-world ZYX, a nastepnie usuwa yaw zgodnie
 z funkcja `IMU_WithoutYaw` w

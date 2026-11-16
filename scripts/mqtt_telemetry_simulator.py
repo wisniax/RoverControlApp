@@ -51,15 +51,16 @@ def quaternion_without_yaw(quaternion):
     return dict(zip(("x", "y", "z", "w"), (min(1.0, max(-1.0, value)) for value in values)))
 
 
-def sample_imu_messages(elapsed, imu_ids, timestamp=None):
+def sample_imu_messages(elapsed, imu_ids, timestamp=None, same_values=False):
     """Frames matching MqttClasses.ImuBoardFeedback, with a Unix-ms timestamp."""
     if timestamp is None:
         timestamp = time.time_ns() // 1_000_000
     for index, can_id in enumerate(imu_ids):
         if can_id is None:  # Body IMU can be unconfigured in app settings.
             continue
-        phase = index * 0.35
-        roll_amplitude = math.radians(8 if index == 4 else 15)
+        profile_index = 0 if same_values else index
+        phase = profile_index * 0.35
+        roll_amplitude = math.radians(8 if profile_index == 4 else 15)
         pitch_amplitude = math.radians(10)
         yaw_amplitude = math.radians(25)
         roll = roll_amplitude * math.sin(elapsed / 4 + phase)
@@ -89,6 +90,8 @@ def parse_args():
     parser.add_argument("--imu-topic", help="IMUBoard subtopic (default: ImuBoardFeedback)")
     parser.add_argument("--imu-ids", nargs=5, metavar=("FL", "FR", "RR", "RL", "BODY"),
                         help="IMUBoard IDs, decimal or 0x hex (default: 0xB0 0xB1 0xB2 0xB3 0xB4)")
+    parser.add_argument("--imu-same-values", action="store_true",
+                        help="Send the same changing quaternion to all IMU boards, including Body")
     parser.add_argument("--steering-ids", nargs=4, metavar=("FL", "FR", "RR", "RL"),
                         help="VESC IDs, decimal or 0x hex (default: 0x60 0x61 0x62 0x63)")
     parser.add_argument("--gripper-range", nargs=2, type=float, default=(0.0, 1.0), metavar=("MIN", "MAX"),
@@ -172,7 +175,7 @@ def parse_args():
     return args
 
 
-def sample_messages(elapsed, steering_ids, gripper_range=(0.0, 1.0), imu_ids=(0xB0, 0xB1, 0xB2, 0xB3, 0xB4)):
+def sample_messages(elapsed, steering_ids, gripper_range=(0.0, 1.0), imu_ids=(0xB0, 0xB1, 0xB2, 0xB3, 0xB4), imu_same_values=False):
     """Yield (subtopic kind, JSON payload, QoS), using the C# property names."""
     timestamp = time.time_ns() // 1_000_000
     for slot in range(1, 4):
@@ -248,7 +251,7 @@ def sample_messages(elapsed, steering_ids, gripper_range=(0.0, 1.0), imu_ids=(0x
             "Timestamp": timestamp,
         }, 0
 
-    yield from sample_imu_messages(elapsed, imu_ids, timestamp)
+    yield from sample_imu_messages(elapsed, imu_ids, timestamp, same_values=imu_same_values)
 
 
 def main():
@@ -297,7 +300,7 @@ def main():
         cycle = 0
         while args.count == 0 or cycle < args.count:
             pending = []
-            for kind, payload, qos in sample_messages(time.monotonic() - started, args.steering_ids, args.gripper_range, args.imu_ids):
+            for kind, payload, qos in sample_messages(time.monotonic() - started, args.steering_ids, args.gripper_range, args.imu_ids, imu_same_values=args.imu_same_values):
                 topic = topics[kind]
                 encoded = json.dumps(payload, separators=(",", ":"), allow_nan=False)
                 if args.dry_run:
