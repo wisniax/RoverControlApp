@@ -6,7 +6,7 @@
 [sub_resource type="ViewportTexture" id="ViewportTexture_vui5t"]
 viewport_path = NodePath("SubViewport")
 
-[node name="3DModelView" type="Panel" unique_id=1552232 node_paths=PackedStringArray("_threeDVisualizer", "_buttonForward", "_buttonBackward", "_labelCurrentCamera")]
+[node name="3DModelView" type="Panel" unique_id=1552232 node_paths=PackedStringArray("_threeDVisualizer", "_buttonForward", "_buttonBackward", "_labelCurrentCamera", "_driveLabels", "_turnLabels", "_imuLabels", "_manipulatorLabels", "_samplerLabels")]
 offset_right = 799.0
 offset_bottom = 532.0
 script = ExtResource("1_vui5t")
@@ -14,6 +14,11 @@ _threeDVisualizer = NodePath("SubViewport/RoverVisualizer")
 _buttonForward = NodePath("VBoxContainer/HBoxContainer/ButtonCameraForward")
 _buttonBackward = NodePath("VBoxContainer/HBoxContainer/ButtonCameraBackward")
 _labelCurrentCamera = NodePath("VBoxContainer/HBoxContainer/CurrentCameraLabel")
+_driveLabels = [NodePath("VBoxContainer/HearthBeatBox/Drive/Drive1"), NodePath("VBoxContainer/HearthBeatBox/Drive/Drive2"), NodePath("VBoxContainer/HearthBeatBox/Drive/Drive3"), NodePath("VBoxContainer/HearthBeatBox/Drive/Drive4")]
+_turnLabels = [NodePath("VBoxContainer/HearthBeatBox/Turn/Turn1"), NodePath("VBoxContainer/HearthBeatBox/Turn/Turn2"), NodePath("VBoxContainer/HearthBeatBox/Turn/Turn3"), NodePath("VBoxContainer/HearthBeatBox/Turn/Turn4")]
+_imuLabels = [NodePath("VBoxContainer/HearthBeatBox/ImuBoards/IMU1"), NodePath("VBoxContainer/HearthBeatBox/ImuBoards/IMU2"), NodePath("VBoxContainer/HearthBeatBox/ImuBoards/IMU3"), NodePath("VBoxContainer/HearthBeatBox/ImuBoards/IMU4"), NodePath("VBoxContainer/HearthBeatBox/ImuBoards/IMU5")]
+_manipulatorLabels = [NodePath("VBoxContainer/HearthBeatBox/Manipulator/Manipulator1"), NodePath("VBoxContainer/HearthBeatBox/Manipulator/Manipulator2"), NodePath("VBoxContainer/HearthBeatBox/Manipulator/Manipulator3"), NodePath("VBoxContainer/HearthBeatBox/Manipulator/Manipulator4"), NodePath("VBoxContainer/HearthBeatBox/Manipulator/Manipulator5"), NodePath("VBoxContainer/HearthBeatBox/Manipulator/Manipulator6"), NodePath("VBoxContainer/HearthBeatBox/Manipulator/Manipulator7")]
+_samplerLabels = [NodePath("VBoxContainer/HearthBeatBox/Sampler/Sampler1"), NodePath("VBoxContainer/HearthBeatBox/Sampler/Sampler2"), NodePath("VBoxContainer/HearthBeatBox/Sampler/Sampler3"), NodePath("VBoxContainer/HearthBeatBox/Sampler/Sampler4"), NodePath("VBoxContainer/HearthBeatBox/Sampler/Sampler5"), NodePath("VBoxContainer/HearthBeatBox/Sampler/Sampler6"), NodePath("VBoxContainer/HearthBeatBox/Sampler/Sampler7"), NodePath("VBoxContainer/HearthBeatBox/Sampler/Sampler8")]
 
 [node name="VisualiserView" type="TextureRect" parent="." unique_id=127261473]
 layout_mode = 0
@@ -65,6 +70,177 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 30
 text = "▶"
 icon_alignment = 1
+
+[node name="DataBox" type="Control" parent="VBoxContainer" unique_id=1294164432]
+custom_minimum_size = Vector2(0, 280)
+custom_maximum_size = Vector2(-1, 300)
+layout_mode = 2
+
+[node name="HearthBeatBox" type="VBoxContainer" parent="VBoxContainer" unique_id=1754469760]
+custom_minimum_size = Vector2(0, 115)
+layout_mode = 2
+
+[node name="Drive" type="HBoxContainer" parent="VBoxContainer/HearthBeatBox" unique_id=1918423163]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="VBoxContainer/HearthBeatBox/Drive" unique_id=1153221178]
+custom_minimum_size = Vector2(40, 0)
+custom_maximum_size = Vector2(40, -1)
+layout_mode = 2
+text = "DRV"
+
+[node name="Drive1" type="Label" parent="VBoxContainer/HearthBeatBox/Drive" unique_id=30991471]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Drive2" type="Label" parent="VBoxContainer/HearthBeatBox/Drive" unique_id=269059028]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Drive3" type="Label" parent="VBoxContainer/HearthBeatBox/Drive" unique_id=1541921702]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Drive4" type="Label" parent="VBoxContainer/HearthBeatBox/Drive" unique_id=526515719]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Turn" type="HBoxContainer" parent="VBoxContainer/HearthBeatBox" unique_id=1253742846]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="VBoxContainer/HearthBeatBox/Turn" unique_id=433343770]
+custom_minimum_size = Vector2(40, 0)
+custom_maximum_size = Vector2(40, -1)
+layout_mode = 2
+text = "TRN"
+
+[node name="Turn1" type="Label" parent="VBoxContainer/HearthBeatBox/Turn" unique_id=920479158]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Turn2" type="Label" parent="VBoxContainer/HearthBeatBox/Turn" unique_id=574093158]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Turn3" type="Label" parent="VBoxContainer/HearthBeatBox/Turn" unique_id=37102712]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Turn4" type="Label" parent="VBoxContainer/HearthBeatBox/Turn" unique_id=1350219369]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="ImuBoards" type="HBoxContainer" parent="VBoxContainer/HearthBeatBox" unique_id=1800700330]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="VBoxContainer/HearthBeatBox/ImuBoards" unique_id=1512459571]
+custom_minimum_size = Vector2(40, 0)
+custom_maximum_size = Vector2(40, -1)
+layout_mode = 2
+text = "IMU"
+
+[node name="IMU1" type="Label" parent="VBoxContainer/HearthBeatBox/ImuBoards" unique_id=1895416695]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="IMU2" type="Label" parent="VBoxContainer/HearthBeatBox/ImuBoards" unique_id=126504636]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="IMU3" type="Label" parent="VBoxContainer/HearthBeatBox/ImuBoards" unique_id=578287006]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="IMU4" type="Label" parent="VBoxContainer/HearthBeatBox/ImuBoards" unique_id=2014040949]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="IMU5" type="Label" parent="VBoxContainer/HearthBeatBox/ImuBoards" unique_id=1043137983]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Manipulator" type="HBoxContainer" parent="VBoxContainer/HearthBeatBox" unique_id=15744039]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="VBoxContainer/HearthBeatBox/Manipulator" unique_id=2047398273]
+custom_minimum_size = Vector2(40, 0)
+custom_maximum_size = Vector2(40, -1)
+layout_mode = 2
+text = "MAN"
+
+[node name="Manipulator1" type="Label" parent="VBoxContainer/HearthBeatBox/Manipulator" unique_id=208082996]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Manipulator2" type="Label" parent="VBoxContainer/HearthBeatBox/Manipulator" unique_id=840477530]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Manipulator3" type="Label" parent="VBoxContainer/HearthBeatBox/Manipulator" unique_id=132817401]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Manipulator4" type="Label" parent="VBoxContainer/HearthBeatBox/Manipulator" unique_id=1786316]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Manipulator5" type="Label" parent="VBoxContainer/HearthBeatBox/Manipulator" unique_id=727504832]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Manipulator6" type="Label" parent="VBoxContainer/HearthBeatBox/Manipulator" unique_id=2051613459]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Manipulator7" type="Label" parent="VBoxContainer/HearthBeatBox/Manipulator" unique_id=272695306]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Sampler" type="HBoxContainer" parent="VBoxContainer/HearthBeatBox" unique_id=1536662597]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="NameLabel" type="Label" parent="VBoxContainer/HearthBeatBox/Sampler" unique_id=2056444679]
+custom_minimum_size = Vector2(40, 0)
+custom_maximum_size = Vector2(40, -1)
+layout_mode = 2
+text = "SAM"
+
+[node name="Sampler1" type="Label" parent="VBoxContainer/HearthBeatBox/Sampler" unique_id=1368614606]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Sampler2" type="Label" parent="VBoxContainer/HearthBeatBox/Sampler" unique_id=1163118534]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Sampler3" type="Label" parent="VBoxContainer/HearthBeatBox/Sampler" unique_id=1857411141]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Sampler4" type="Label" parent="VBoxContainer/HearthBeatBox/Sampler" unique_id=1741322899]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Sampler5" type="Label" parent="VBoxContainer/HearthBeatBox/Sampler" unique_id=383542949]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Sampler6" type="Label" parent="VBoxContainer/HearthBeatBox/Sampler" unique_id=1454051001]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Sampler7" type="Label" parent="VBoxContainer/HearthBeatBox/Sampler" unique_id=1328072227]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
+
+[node name="Sampler8" type="Label" parent="VBoxContainer/HearthBeatBox/Sampler" unique_id=227321074]
+custom_minimum_size = Vector2(24, 0)
+layout_mode = 2
 
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/ButtonCameraForward" to="." method="_OnForwardButtonPressed"]
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/ButtonCameraBackward" to="." method="_OnBackwardButtonPressed"]

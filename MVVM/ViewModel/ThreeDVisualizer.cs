@@ -208,7 +208,7 @@ public partial class ThreeDVisualizer : Node3D
 		return Task.CompletedTask;
 	}
 
-	int HexStringToInt(string hexString)
+	public int HexStringToInt(string hexString)
 	{
 		if (hexString.StartsWith("0x"))
 		{
