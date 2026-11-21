@@ -25,33 +25,46 @@ public partial class ThreeDModelView : Panel
 
 	public override void _Ready()
 	{
-		_driveLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.FrontLeft).ToString();
-		_driveLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.FrontRight).ToString();
-		_driveLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.RearRight).ToString();
-		_driveLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.RearLeft).ToString();
+		ChangeLabels();
+	}
 
-		_turnLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontLeft).ToString();
-		_turnLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontRight).ToString();
-		_turnLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearRight).ToString();
-		_turnLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearLeft).ToString();
+	private void ChangeLabels()
+	{
+		_driveLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.FrontLeft).ToString("X2");
+		_driveLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.FrontRight).ToString("X2");
+		_driveLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.RearRight).ToString("X2");
+		_driveLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.RearLeft).ToString("X2");
 
-		_imuLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.FrontLeft).ToString();
-		_imuLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.FrontRight).ToString();
-		_imuLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.RearRight).ToString();
-		_imuLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.RearLeft).ToString();
-		_imuLabels[4].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.Body).ToString();
+		_turnLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontLeft).ToString("X2");
+		_turnLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontRight).ToString("X2");
+		_turnLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearRight).ToString("X2");
+		_turnLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearLeft).ToString("X2");
 
-		_manipulatorLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis1).ToString();
-		_manipulatorLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis2).ToString();
-		_manipulatorLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis3).ToString();
-		_manipulatorLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis4).ToString();
-		_manipulatorLabels[4].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis5).ToString();
-		_manipulatorLabels[5].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis6).ToString();
-		// _manipulatorLabels[6].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Gripper).ToString();
+		_imuLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.FrontLeft).ToString("X2");
+		_imuLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.FrontRight).ToString("X2");
+		_imuLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.RearRight).ToString("X2");
+		_imuLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.RearLeft).ToString("X2");
+		_imuLabels[4].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.Body).ToString("X2");
+		_manipulatorLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis1).ToString("X2");
+		_manipulatorLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis2).ToString("X2");
+		_manipulatorLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis3).ToString("X2");
+		_manipulatorLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis4).ToString("X2");
+		_manipulatorLabels[4].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis5).ToString("X2");
+		_manipulatorLabels[5].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis6).ToString("X2");
+		_manipulatorLabels[6].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Gripper).ToString("X2");
 
-		_samplerLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Sampler.Platform).ToString();
-		_samplerLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Sampler.DrillMovement).ToString();
-		_samplerLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Sampler.Drill).ToString();
+		_samplerLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Sampler.Platform).ToString("X2");
+		_samplerLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Sampler.DrillMovement).ToString("X2");
+		_samplerLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Sampler.Drill).ToString("X2");
+	}
+
+	string GetCanHexStringFromSettings(string canIdString)
+	{
+		if (canIdString == null || canIdString == "")
+		{
+			return "-";
+		}
+		return _threeDVisualizer.HexStringToInt(canIdString).ToString("X2");
 	}
 
 	private void _OnForwardButtonPressed()
