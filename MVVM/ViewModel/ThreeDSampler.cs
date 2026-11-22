@@ -7,7 +7,7 @@ public partial class ThreeDSampler : Node3D
 	[Export] private Node3D _drillMover = null!;
 
 	private DateTime _lastUpdateTime = DateTime.MinValue;
-
+	public DateTime[] samplerTimers = Array.Empty<DateTime>();
 	public void UpdateSamplerAxis(int axisNumber, double value)
 	{
 		// TODO: Implement the logic to update the sampler's axis based on the axisNumber and value.

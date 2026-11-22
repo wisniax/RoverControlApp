@@ -11,20 +11,22 @@ public partial class ThreeDModelView : Panel
 	[Export] private Button _buttonBackward = null!;
 	[Export] private Label _labelCurrentCamera = null!;
 
+
+	// Heartbeat stuff
 	[Export] private Label[] _driveLabels = null!;
-	private DateTime[] _driveTimers = Array.Empty<DateTime>();
+	private DateTime[] DriveTimers => _threeDVisualizer.driveTimers;
 
 	[Export] private Label[] _turnLabels = null!;
-	private DateTime[] _turnTimers = Array.Empty<DateTime>();
+	private DateTime[] TurnTimers => _threeDVisualizer.turnTimers;
 
 	[Export] private Label[] _imuLabels = null!;
-	private DateTime[] _imuTimers = Array.Empty<DateTime>();
+	private DateTime[] ImuTimers => _threeDVisualizer.imuTimers;
 
 	[Export] private Label[] _manipulatorLabels = null!;
-	private DateTime[] _manipulatorTimers = Array.Empty<DateTime>();
+	private DateTime[] ManipulatorTimers => _threeDVisualizer.ManipulatorTimers;
 
 	[Export] private Label[] _samplerLabels = null!;
-	private DateTime[] _samplerTimers = Array.Empty<DateTime>();
+	private DateTime[] SamplerTimers => _threeDVisualizer.SamplerTimers;
 
 
 	private MqttClasses.CameraTarget3D _currentCameraType = MqttClasses.CameraTarget3D.Freemode;
@@ -71,6 +73,7 @@ public partial class ThreeDModelView : Panel
 		_imuLabels[2].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.ImuBoards.RearRight);
 		_imuLabels[3].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.ImuBoards.RearLeft);
 		_imuLabels[4].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.ImuBoards.Body);
+
 		_manipulatorLabels[0].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Manipulator.Axis1);
 		_manipulatorLabels[1].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Manipulator.Axis2);
 		_manipulatorLabels[2].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Manipulator.Axis3);

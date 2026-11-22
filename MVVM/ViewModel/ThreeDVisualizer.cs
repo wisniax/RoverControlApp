@@ -45,6 +45,14 @@ public partial class ThreeDVisualizer : Node3D
 	[Export] private Camera3D _cameraTargetLeft = null!;
 	[Export] private Camera3D _cameraTargetRight = null!;
 
+	// Heartbeat stuff
+
+	public DateTime[] driveTimers = Array.Empty<DateTime>();
+	public DateTime[] turnTimers = Array.Empty<DateTime>();
+	public DateTime[] imuTimers = Array.Empty<DateTime>();
+	public DateTime[] ManipulatorTimers => _threeDManipulator.manipulatorTimers;
+	public DateTime[] SamplerTimers => _threeDSampler.samplerTimers;
+
 	public void ChangeCameraTarget(MqttClasses.CameraTarget3D target)
 	{
 		switch (target)
@@ -103,38 +111,37 @@ public partial class ThreeDVisualizer : Node3D
 
 		switch (vescID)
 		{
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.FrontLeft):
+				driveTimers[0] = DateTime.Now;
+				break;
+			
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.FrontRight):
+				driveTimers[1] = DateTime.Now;
+				break;
+			
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.RearRight):
+				driveTimers[2] = DateTime.Now;
+				break;
+			
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.RearLeft):
+				driveTimers[3] = DateTime.Now;
+				break;
+			
 			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontLeft): // Front Left turn
 				CallDeferred(nameof(UpdateWheelRotation), _wheelFL, velData.PrecisePos);
+				turnTimers[0] = DateTime.Now;
 				break;
 			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontRight): // Front Right turn
 				CallDeferred(nameof(UpdateWheelRotation), _wheelFR, velData.PrecisePos);
+				turnTimers[1] = DateTime.Now;
 				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearLeft): // Rear Left turn
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearRight): // Rear Left turn
 				CallDeferred(nameof(UpdateWheelRotation), _wheelRL, velData.PrecisePos);
+				turnTimers[2] = DateTime.Now;
 				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearRight): // Rear Right turn
+			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearLeft): // Rear Right turn
 				CallDeferred(nameof(UpdateWheelRotation), _wheelRR, velData.PrecisePos);
-				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis1): // Manipulator Axis 1
-				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 0, velData.PrecisePos);
-				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis2): // Manipulator Axis 2
-				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 1, velData.PrecisePos);
-				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis3): // Manipulator Axis 3
-				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 2, velData.PrecisePos);
-				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis4): // Manipulator Axis 4
-				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 3, velData.PrecisePos);
-				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis5): // Manipulator Axis 5
-				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 4, velData.PrecisePos);
-				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis6): // Manipulator Axis 6
-				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 5, velData.PrecisePos);
-				break;
-			case var id when id == HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Gripper): // Manipulator Gripper
-				_threeDManipulator.CallDeferred(nameof(ThreeDManipulator.UpdateManipulatorAxis), 6, velData.PrecisePos);
+				turnTimers[3] = DateTime.Now;
 				break;
 			default:
 				EventLogger.LogMessage("ThreeDVisualizer", EventLogger.LogLevel.Warning, $"Unhandled VESC ID: {vescID}");
