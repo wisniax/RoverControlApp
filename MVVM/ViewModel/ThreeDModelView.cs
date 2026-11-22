@@ -10,12 +10,22 @@ public partial class ThreeDModelView : Panel
 	[Export] private Button _buttonForward = null!;
 	[Export] private Button _buttonBackward = null!;
 	[Export] private Label _labelCurrentCamera = null!;
+
 	[Export] private Label[] _driveLabels = null!;
+	private DateTime[] _driveTimers = Array.Empty<DateTime>();
+
 	[Export] private Label[] _turnLabels = null!;
+	private DateTime[] _turnTimers = Array.Empty<DateTime>();
+
 	[Export] private Label[] _imuLabels = null!;
+	private DateTime[] _imuTimers = Array.Empty<DateTime>();
+
 	[Export] private Label[] _manipulatorLabels = null!;
+	private DateTime[] _manipulatorTimers = Array.Empty<DateTime>();
+
 	[Export] private Label[] _samplerLabels = null!;
-	
+	private DateTime[] _samplerTimers = Array.Empty<DateTime>();
+
 
 	private MqttClasses.CameraTarget3D _currentCameraType = MqttClasses.CameraTarget3D.Freemode;
 	private MqttClasses.CameraTarget3D AvailableCameras
@@ -25,37 +35,53 @@ public partial class ThreeDModelView : Panel
 
 	public override void _Ready()
 	{
-		ChangeLabels();
+		UpdateLabels();
+		//LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+
 	}
 
-	private void ChangeLabels()
+	public override void _ExitTree()
 	{
-		_driveLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.FrontLeft).ToString("X2");
-		_driveLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.FrontRight).ToString("X2");
-		_driveLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.RearRight).ToString("X2");
-		_driveLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.DriveMotors.RearLeft).ToString("X2");
+		//LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
+		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+	}
 
-		_turnLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontLeft).ToString("X2");
-		_turnLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.FrontRight).ToString("X2");
-		_turnLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearRight).ToString("X2");
-		_turnLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.TurnMotors.RearLeft).ToString("X2");
+	private void OnSettingsPropertyChanged(StringName category, StringName property, Variant oldValue, Variant newValue)
+	{
+		if (category != nameof(LocalSettings.CanIds)) return;
 
-		_imuLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.FrontLeft).ToString("X2");
-		_imuLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.FrontRight).ToString("X2");
-		_imuLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.RearRight).ToString("X2");
-		_imuLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.RearLeft).ToString("X2");
-		_imuLabels[4].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.ImuBoards.Body).ToString("X2");
-		_manipulatorLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis1).ToString("X2");
-		_manipulatorLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis2).ToString("X2");
-		_manipulatorLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis3).ToString("X2");
-		_manipulatorLabels[3].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis4).ToString("X2");
-		_manipulatorLabels[4].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis5).ToString("X2");
-		_manipulatorLabels[5].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Axis6).ToString("X2");
-		_manipulatorLabels[6].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Manipulator.Gripper).ToString("X2");
+		UpdateLabels();
+	}
 
-		_samplerLabels[0].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Sampler.Platform).ToString("X2");
-		_samplerLabels[1].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Sampler.DrillMovement).ToString("X2");
-		_samplerLabels[2].Text = _threeDVisualizer.HexStringToInt(LocalSettings.Singleton.CanIds.Sampler.Drill).ToString("X2");
+	private void UpdateLabels()
+	{
+		_driveLabels[0].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.DriveMotors.FrontLeft);
+		_driveLabels[1].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.DriveMotors.FrontRight);
+		_driveLabels[2].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.DriveMotors.RearRight);
+		_driveLabels[3].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.DriveMotors.RearLeft);
+
+		_turnLabels[0].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.TurnMotors.FrontLeft);
+		_turnLabels[1].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.TurnMotors.FrontRight);
+		_turnLabels[2].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.TurnMotors.RearRight);
+		_turnLabels[3].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.TurnMotors.RearLeft);
+
+		_imuLabels[0].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.ImuBoards.FrontLeft);
+		_imuLabels[1].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.ImuBoards.FrontRight);
+		_imuLabels[2].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.ImuBoards.RearRight);
+		_imuLabels[3].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.ImuBoards.RearLeft);
+		_imuLabels[4].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.ImuBoards.Body);
+		_manipulatorLabels[0].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Manipulator.Axis1);
+		_manipulatorLabels[1].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Manipulator.Axis2);
+		_manipulatorLabels[2].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Manipulator.Axis3);
+		_manipulatorLabels[3].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Manipulator.Axis4);
+		_manipulatorLabels[4].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Manipulator.Axis5);
+		_manipulatorLabels[5].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Manipulator.Axis6);
+		_manipulatorLabels[6].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Manipulator.Gripper);
+
+		_samplerLabels[0].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Sampler.Platform);
+		_samplerLabels[1].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Sampler.DrillMovement);
+		_samplerLabels[2].Text = GetCanHexStringFromSettings(LocalSettings.Singleton.CanIds.Sampler.Drill);
 	}
 
 	string GetCanHexStringFromSettings(string canIdString)
