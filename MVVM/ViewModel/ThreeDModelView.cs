@@ -37,17 +37,17 @@ public partial class ThreeDModelView : Panel
 	{
 		UpdateLabels();
 		//LocalSettings.Singleton.PropagatedPropertyChanged += OnSettingsPropertyChanged;
-		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		LocalSettings.Singleton.Connect(LocalSettings.SignalName.PropagatedSubcategoryChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsSubcategoryChanged));
 
 	}
 
 	public override void _ExitTree()
 	{
 		//LocalSettings.Singleton.PropagatedPropertyChanged -= OnSettingsPropertyChanged;
-		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedPropertyChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsPropertyChanged));
+		LocalSettings.Singleton.Disconnect(LocalSettings.SignalName.PropagatedSubcategoryChanged, Callable.From<StringName, StringName, Variant, Variant>(OnSettingsSubcategoryChanged));
 	}
 
-	private void OnSettingsPropertyChanged(StringName category, StringName property, Variant oldValue, Variant newValue)
+	private void OnSettingsSubcategoryChanged(StringName category, StringName subcategory, Variant oldValue, Variant newValue)
 	{
 		if (category != nameof(LocalSettings.CanIds)) return;
 
