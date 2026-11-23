@@ -15,20 +15,30 @@ public partial class ImuBoardCanIds : SettingBase, ICloneable
 		_rearRight = "0xB2";
 		_rearLeft = "0xB3";
 		_body = "0xB4";
+		_expectedFeedbackInterval = 500;
 	}
 
-	public ImuBoardCanIds(string frontLeft, string frontRight, string rearRight, string rearLeft, string body)
+	public ImuBoardCanIds(string frontLeft, string frontRight, string rearRight, string rearLeft, string body, int expectedFeedbackInterval)
 	{
 		_frontLeft = frontLeft;
 		_frontRight = frontRight;
 		_rearRight = rearRight;
 		_rearLeft = rearLeft;
 		_body = body;
+		_expectedFeedbackInterval = expectedFeedbackInterval;
 	}
 
 	public object Clone()
 	{
-		return new ImuBoardCanIds(_frontLeft, _frontRight, _rearRight, _rearLeft, _body);
+		return new ImuBoardCanIds(_frontLeft, _frontRight, _rearRight, _rearLeft, _body, _expectedFeedbackInterval);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "10;10000;10;f;i",
+		customTooltip: "Expected interval between feedback frames from this group, in milliseconds.")]
+	public int ExpectedFeedbackInterval
+	{
+		get => _expectedFeedbackInterval;
+		set => EmitSignal_SettingChanged(ref _expectedFeedbackInterval, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: CanIds.IdPattern)]
@@ -72,4 +82,5 @@ public partial class ImuBoardCanIds : SettingBase, ICloneable
 	private string _rearRight;
 	private string _rearLeft;
 	private string _body;
+	private int _expectedFeedbackInterval;
 }

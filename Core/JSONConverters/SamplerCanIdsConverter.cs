@@ -22,6 +22,7 @@ public class SamplerCanIdsConverter : JsonConverter<SamplerCanIds>
 		string? vacuumSuction = null;
 		string? vacuumA = null;
 		string? vacuumB = null;
+		int? expectedFeedbackInterval = null;
 
 		while (reader.Read())
 		{
@@ -60,6 +61,9 @@ public class SamplerCanIdsConverter : JsonConverter<SamplerCanIds>
 				case nameof(SamplerCanIds.VacuumB):
 					vacuumB = reader.GetString();
 					break;
+				case nameof(SamplerCanIds.ExpectedFeedbackInterval):
+					expectedFeedbackInterval = reader.GetInt32();
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -74,7 +78,8 @@ public class SamplerCanIdsConverter : JsonConverter<SamplerCanIds>
 			containerB ?? Default.ContainerB,
 			vacuumSuction ?? Default.VacuumSuction,
 			vacuumA ?? Default.VacuumA,
-			vacuumB ?? Default.VacuumB);
+			vacuumB ?? Default.VacuumB,
+			expectedFeedbackInterval ?? Default.ExpectedFeedbackInterval);
 	}
 
 	public override void Write(Utf8JsonWriter writer, SamplerCanIds value, JsonSerializerOptions options)
@@ -88,6 +93,7 @@ public class SamplerCanIdsConverter : JsonConverter<SamplerCanIds>
 		writer.WriteString(nameof(SamplerCanIds.VacuumSuction), value.VacuumSuction);
 		writer.WriteString(nameof(SamplerCanIds.VacuumA), value.VacuumA);
 		writer.WriteString(nameof(SamplerCanIds.VacuumB), value.VacuumB);
+		writer.WriteNumber(nameof(SamplerCanIds.ExpectedFeedbackInterval), value.ExpectedFeedbackInterval);
 		writer.WriteEndObject();
 	}
 }

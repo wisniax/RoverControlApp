@@ -21,6 +21,7 @@ public class ManipulatorCanIdsConverter : JsonConverter<ManipulatorCanIds>
 		string? axis5 = null;
 		string? axis6 = null;
 		string? gripper = null;
+		int? expectedFeedbackInterval = null;
 
 		while (reader.Read())
 		{
@@ -56,6 +57,9 @@ public class ManipulatorCanIdsConverter : JsonConverter<ManipulatorCanIds>
 				case nameof(ManipulatorCanIds.Gripper):
 					gripper = reader.GetString();
 					break;
+				case nameof(ManipulatorCanIds.ExpectedFeedbackInterval):
+					expectedFeedbackInterval = reader.GetInt32();
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -69,7 +73,8 @@ public class ManipulatorCanIdsConverter : JsonConverter<ManipulatorCanIds>
 			axis4 ?? Default.Axis4,
 			axis5 ?? Default.Axis5,
 			axis6 ?? Default.Axis6,
-			gripper ?? Default.Gripper);
+			gripper ?? Default.Gripper,
+			expectedFeedbackInterval ?? Default.ExpectedFeedbackInterval);
 	}
 
 	public override void Write(Utf8JsonWriter writer, ManipulatorCanIds value, JsonSerializerOptions options)
@@ -82,6 +87,7 @@ public class ManipulatorCanIdsConverter : JsonConverter<ManipulatorCanIds>
 		writer.WriteString(nameof(ManipulatorCanIds.Axis5), value.Axis5);
 		writer.WriteString(nameof(ManipulatorCanIds.Axis6), value.Axis6);
 		writer.WriteString(nameof(ManipulatorCanIds.Gripper), value.Gripper);
+		writer.WriteNumber(nameof(ManipulatorCanIds.ExpectedFeedbackInterval), value.ExpectedFeedbackInterval);
 		writer.WriteEndObject();
 	}
 }

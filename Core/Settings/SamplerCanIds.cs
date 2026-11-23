@@ -19,9 +19,10 @@ public partial class SamplerCanIds : SettingBase, ICloneable
 		_vacuumSuction = "0x85";
 		_vacuumA = "0x86";
 		_vacuumB = "0x87";
+		_expectedFeedbackInterval = 500;
 	}
 
-	public SamplerCanIds(string platform, string drillMovement, string drill, string containerA, string containerB, string vacuumSuction, string vacuumA, string vacuumB)
+	public SamplerCanIds(string platform, string drillMovement, string drill, string containerA, string containerB, string vacuumSuction, string vacuumA, string vacuumB, int expectedFeedbackInterval)
 	{
 		_platform = platform;
 		_drillMovement = drillMovement;
@@ -31,11 +32,20 @@ public partial class SamplerCanIds : SettingBase, ICloneable
 		_vacuumSuction = vacuumSuction;
 		_vacuumA = vacuumA;
 		_vacuumB = vacuumB;
+		_expectedFeedbackInterval = expectedFeedbackInterval;
 	}
 
 	public object Clone()
 	{
-		return new SamplerCanIds(_platform, _drillMovement, _drill, _containerA, _containerB, _vacuumSuction, _vacuumA, _vacuumB);
+		return new SamplerCanIds(_platform, _drillMovement, _drill, _containerA, _containerB, _vacuumSuction, _vacuumA, _vacuumB, _expectedFeedbackInterval);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "10;10000;10;f;i",
+		customTooltip: "Expected interval between feedback frames from this group, in milliseconds.")]
+	public int ExpectedFeedbackInterval
+	{
+		get => _expectedFeedbackInterval;
+		set => EmitSignal_SettingChanged(ref _expectedFeedbackInterval, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: CanIds.IdPattern)]
@@ -102,4 +112,5 @@ public partial class SamplerCanIds : SettingBase, ICloneable
 	private string _vacuumSuction;
 	private string _vacuumA;
 	private string _vacuumB;
+	private int _expectedFeedbackInterval;
 }

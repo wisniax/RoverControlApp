@@ -19,6 +19,7 @@ public class ImuBoardCanIdsConverter : JsonConverter<ImuBoardCanIds>
 		string? rearRight = null;
 		string? rearLeft = null;
 		string? body = null;
+		int? expectedFeedbackInterval = null;
 
 		while (reader.Read())
 		{
@@ -48,6 +49,9 @@ public class ImuBoardCanIdsConverter : JsonConverter<ImuBoardCanIds>
 				case nameof(ImuBoardCanIds.Body):
 					body = reader.GetString();
 					break;
+				case nameof(ImuBoardCanIds.ExpectedFeedbackInterval):
+					expectedFeedbackInterval = reader.GetInt32();
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -59,7 +63,8 @@ public class ImuBoardCanIdsConverter : JsonConverter<ImuBoardCanIds>
 			frontRight ?? Default.FrontRight,
 			rearRight ?? Default.RearRight,
 			rearLeft ?? Default.RearLeft,
-			body ?? Default.Body);
+			body ?? Default.Body,
+			expectedFeedbackInterval ?? Default.ExpectedFeedbackInterval);
 	}
 
 	public override void Write(Utf8JsonWriter writer, ImuBoardCanIds value, JsonSerializerOptions options)
@@ -70,6 +75,7 @@ public class ImuBoardCanIdsConverter : JsonConverter<ImuBoardCanIds>
 		writer.WriteString(nameof(ImuBoardCanIds.RearRight), value.RearRight);
 		writer.WriteString(nameof(ImuBoardCanIds.RearLeft), value.RearLeft);
 		writer.WriteString(nameof(ImuBoardCanIds.Body), value.Body);
+		writer.WriteNumber(nameof(ImuBoardCanIds.ExpectedFeedbackInterval), value.ExpectedFeedbackInterval);
 		writer.WriteEndObject();
 	}
 }

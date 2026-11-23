@@ -14,19 +14,29 @@ public partial class DriveMotorCanIds : SettingBase, ICloneable
 		_frontRight = "0x51";
 		_rearRight = "0x52";
 		_rearLeft = "0x53";
+		_expectedFeedbackInterval = 500;
 	}
 
-	public DriveMotorCanIds(string frontLeft, string frontRight, string rearRight, string rearLeft)
+	public DriveMotorCanIds(string frontLeft, string frontRight, string rearRight, string rearLeft, int expectedFeedbackInterval)
 	{
 		_frontLeft = frontLeft;
 		_frontRight = frontRight;
 		_rearRight = rearRight;
 		_rearLeft = rearLeft;
+		_expectedFeedbackInterval = expectedFeedbackInterval;
 	}
 
 	public object Clone()
 	{
-		return new DriveMotorCanIds(_frontLeft, _frontRight, _rearRight, _rearLeft);
+		return new DriveMotorCanIds(_frontLeft, _frontRight, _rearRight, _rearLeft, _expectedFeedbackInterval);
+	}
+
+	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.Range, formatData: "10;10000;10;f;i",
+		customTooltip: "Expected interval between feedback frames from this group, in milliseconds.")]
+	public int ExpectedFeedbackInterval
+	{
+		get => _expectedFeedbackInterval;
+		set => EmitSignal_SettingChanged(ref _expectedFeedbackInterval, value);
 	}
 
 	[SettingsManagerVisible(cellMode: TreeItem.TreeCellMode.String, formatData: CanIds.IdPattern)]
@@ -61,4 +71,5 @@ public partial class DriveMotorCanIds : SettingBase, ICloneable
 	private string _frontRight;
 	private string _rearRight;
 	private string _rearLeft;
+	private int _expectedFeedbackInterval;
 }

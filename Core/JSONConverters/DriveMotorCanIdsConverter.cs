@@ -18,6 +18,7 @@ public class DriveMotorCanIdsConverter : JsonConverter<DriveMotorCanIds>
 		string? frontRight = null;
 		string? rearRight = null;
 		string? rearLeft = null;
+		int? expectedFeedbackInterval = null;
 
 		while (reader.Read())
 		{
@@ -44,6 +45,9 @@ public class DriveMotorCanIdsConverter : JsonConverter<DriveMotorCanIds>
 				case nameof(DriveMotorCanIds.RearLeft):
 					rearLeft = reader.GetString();
 					break;
+				case nameof(DriveMotorCanIds.ExpectedFeedbackInterval):
+					expectedFeedbackInterval = reader.GetInt32();
+					break;
 				default:
 					reader.Skip();
 					break;
@@ -54,7 +58,8 @@ public class DriveMotorCanIdsConverter : JsonConverter<DriveMotorCanIds>
 			frontLeft ?? Default.FrontLeft,
 			frontRight ?? Default.FrontRight,
 			rearRight ?? Default.RearRight,
-			rearLeft ?? Default.RearLeft);
+			rearLeft ?? Default.RearLeft,
+			expectedFeedbackInterval ?? Default.ExpectedFeedbackInterval);
 	}
 
 	public override void Write(Utf8JsonWriter writer, DriveMotorCanIds value, JsonSerializerOptions options)
@@ -64,6 +69,7 @@ public class DriveMotorCanIdsConverter : JsonConverter<DriveMotorCanIds>
 		writer.WriteString(nameof(DriveMotorCanIds.FrontRight), value.FrontRight);
 		writer.WriteString(nameof(DriveMotorCanIds.RearRight), value.RearRight);
 		writer.WriteString(nameof(DriveMotorCanIds.RearLeft), value.RearLeft);
+		writer.WriteNumber(nameof(DriveMotorCanIds.ExpectedFeedbackInterval), value.ExpectedFeedbackInterval);
 		writer.WriteEndObject();
 	}
 }
